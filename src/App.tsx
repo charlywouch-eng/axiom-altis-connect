@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import OnboardingRole from "./pages/OnboardingRole";
 import Dashboard from "./pages/Dashboard";
+import DashboardEntreprise from "./pages/DashboardEntreprise";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard-entreprise/*"
+              element={
+                <ProtectedRoute>
+                  <DashboardEntreprise />
                 </ProtectedRoute>
               }
             />
