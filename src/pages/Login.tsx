@@ -17,7 +17,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   if (loading) return null;
-  if (session) return <Navigate to="/dashboard" replace />;
+  if (session) return <Navigate to="/onboarding-role" replace />;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
