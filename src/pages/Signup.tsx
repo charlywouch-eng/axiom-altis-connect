@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,11 +14,10 @@ export default function Signup() {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<string>("talent");
   const [submitting, setSubmitting] = useState(false);
 
   if (loading) return null;
-  if (session) return <Navigate to="/dashboard" replace />;
+  if (session) return <Navigate to="/onboarding-role" replace />;
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +28,6 @@ export default function Signup() {
       password,
       options: {
         emailRedirectTo: window.location.origin,
-        data: { role },
       },
     });
 
@@ -64,18 +61,6 @@ export default function Signup() {
             <div className="space-y-2">
               <Label htmlFor="password">Mot de passe</Label>
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" minLength={6} />
-            </div>
-            <div className="space-y-2">
-              <Label>Je suis</Label>
-              <Select value={role} onValueChange={setRole}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="talent">Un talent (candidat)</SelectItem>
-                  <SelectItem value="entreprise">Une entreprise (recruteur)</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={submitting}>
               {submitting ? "Création…" : "Créer mon compte"}
