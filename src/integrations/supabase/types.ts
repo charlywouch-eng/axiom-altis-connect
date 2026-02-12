@@ -93,6 +93,7 @@ export type Database = {
           created_at: string
           experience_years: number | null
           french_level: string | null
+          full_name: string | null
           id: string
           score: number | null
           skills: string[] | null
@@ -105,6 +106,7 @@ export type Database = {
           created_at?: string
           experience_years?: number | null
           french_level?: string | null
+          full_name?: string | null
           id?: string
           score?: number | null
           skills?: string[] | null
@@ -117,6 +119,7 @@ export type Database = {
           created_at?: string
           experience_years?: number | null
           french_level?: string | null
+          full_name?: string | null
           id?: string
           score?: number | null
           skills?: string[] | null
