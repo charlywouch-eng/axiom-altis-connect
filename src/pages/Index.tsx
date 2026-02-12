@@ -10,6 +10,7 @@ export default function Index() {
   if (loading) return null;
   if (session && role === "entreprise") return <Navigate to="/dashboard-entreprise" replace />;
   if (session && role === "talent") return <Navigate to="/dashboard-talent" replace />;
+  if (session && role === "admin") return <Navigate to="/admin" replace />;
   if (session) return <Navigate to="/dashboard" replace />;
 
   return (
