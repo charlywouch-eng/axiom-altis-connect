@@ -13,6 +13,9 @@ import Dashboard from "./pages/Dashboard";
 import DashboardEntreprise from "./pages/DashboardEntreprise";
 import OfferDetail from "./pages/OfferDetail";
 import DashboardTalent from "./pages/DashboardTalent";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminOffres from "./pages/AdminOffres";
+import AdminSubventions from "./pages/AdminSubventions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -65,6 +68,30 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <DashboardTalent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/offres"
+              element={
+                <ProtectedRoute>
+                  <AdminOffres />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/subventions"
+              element={
+                <ProtectedRoute>
+                  <AdminSubventions />
                 </ProtectedRoute>
               }
             />

@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Shield, Globe, Briefcase, CreditCard } from "lucide-react";
+import { Home, Users, UserCircle, Shield, Globe, Briefcase, CreditCard, GraduationCap } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -25,9 +25,10 @@ const entrepriseLinks = [
 ];
 
 const adminLinks = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Utilisateurs", url: "/admin/users", icon: Users },
-  { title: "Gestion", url: "/admin/manage", icon: Shield },
+  { title: "Talents", url: "/admin", icon: Users },
+  { title: "Offres", url: "/admin/offres", icon: Briefcase },
+  { title: "Subventions", url: "/admin/subventions", icon: GraduationCap },
+  { title: "Facturation", url: "/admin/facturation", icon: CreditCard },
 ];
 
 export function AppSidebar({ variant }: { variant?: "entreprise" | "talent" | "admin" }) {
