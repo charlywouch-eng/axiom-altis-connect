@@ -1,8 +1,11 @@
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Globe, GraduationCap, Star, TrendingUp, Award } from "lucide-react";
+import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, RadarChart, PolarGrid, PolarAngleAxis,
@@ -57,6 +60,10 @@ function groupBy<T>(arr: T[], fn: (item: T) => string): Record<string, T[]> {
 }
 
 export default function AdminStatistics() {
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedFrenchLevel, setSelectedFrenchLevel] = useState<string | null>(null);
+  const [scoreRange, setScoreRange] = useState<string>("all");
+
   const { data: talents = [], isLoading } = useQuery({
     queryKey: ["admin_talent_stats"],
     queryFn: async () => {
@@ -68,16 +75,55 @@ export default function AdminStatistics() {
     },
   });
 
-  const countryData = Object.entries(groupBy(talents, (t) => t.country || "Inconnu"))
+  // Filtrer les talents selon les sélections
+  const filteredTalents = useMemo(() => {
+    return talents.filter((t) => {
+      const countryMatch = !selectedCountry || t.country === selectedCountry;
+      const frenchMatch = !selectedFrenchLevel || t.french_level === selectedFrenchLevel;
+      const score = t.score ?? 0;
+      let scoreMatch = true;
+      
+      switch (scoreRange) {
+        case "0-50":
+          scoreMatch = score >= 0 && score <= 50;
+          break;
+        case "51-70":
+          scoreMatch = score >= 51 && score <= 70;
+          break;
+        case "71-85":
+          scoreMatch = score >= 71 && score <= 85;
+          break;
+        case "86-100":
+          scoreMatch = score >= 86 && score <= 100;
+          break;
+        default:
+          scoreMatch = true;
+      }
+      
+      return countryMatch && frenchMatch && scoreMatch;
+    });
+  }, [talents, selectedCountry, selectedFrenchLevel, scoreRange]);
+
+  // Obtenir les listes uniques pour les dropdowns
+  const countries = useMemo(() => {
+    return Array.from(new Set(talents.map((t) => t.country).filter(Boolean))).sort();
+  }, [talents]);
+
+  const frenchLevels = useMemo(() => {
+    return Array.from(new Set(talents.map((t) => t.french_level).filter(Boolean))).sort();
+  }, [talents]);
+
+
+  const countryData = Object.entries(groupBy(filteredTalents, (t) => t.country || "Inconnu"))
     .map(([name, items]) => ({ name, value: items.length }))
     .sort((a, b) => b.value - a.value);
 
-  const frenchLevelData = Object.entries(groupBy(talents, (t) => t.french_level || "Non renseigné"))
+  const frenchLevelData = Object.entries(groupBy(filteredTalents, (t) => t.french_level || "Non renseigné"))
     .map(([name, items]) => ({ name, value: items.length }))
     .sort((a, b) => b.value - a.value);
 
   const skillCounts: Record<string, number> = {};
-  talents.forEach((t) => {
+  filteredTalents.forEach((t) => {
     (t.skills || []).forEach((s) => {
       skillCounts[s] = (skillCounts[s] || 0) + 1;
     });
@@ -95,7 +141,7 @@ export default function AdminStatistics() {
   ];
   const expData = expBuckets.map((b) => ({
     name: b.name,
-    count: talents.filter((t) => (t.experience_years ?? 0) >= b.min && (t.experience_years ?? 0) <= b.max).length,
+    count: filteredTalents.filter((t) => (t.experience_years ?? 0) >= b.min && (t.experience_years ?? 0) <= b.max).length,
   }));
 
   const scoreBuckets = [
@@ -106,16 +152,16 @@ export default function AdminStatistics() {
   ];
   const scoreData = scoreBuckets.map((b) => ({
     name: b.name,
-    count: talents.filter((t) => (t.score ?? 0) >= b.min && (t.score ?? 0) <= b.max).length,
+    count: filteredTalents.filter((t) => (t.score ?? 0) >= b.min && (t.score ?? 0) <= b.max).length,
   }));
 
-  const avgScore = talents.length > 0
-    ? Math.round(talents.reduce((s, t) => s + (t.score ?? 0), 0) / talents.length)
+  const avgScore = filteredTalents.length > 0
+    ? Math.round(filteredTalents.reduce((s, t) => s + (t.score ?? 0), 0) / filteredTalents.length)
     : 0;
-  const avgExp = talents.length > 0
-    ? (talents.reduce((s, t) => s + (t.experience_years ?? 0), 0) / talents.length).toFixed(1)
+  const avgExp = filteredTalents.length > 0
+    ? (filteredTalents.reduce((s, t) => s + (t.experience_years ?? 0), 0) / filteredTalents.length).toFixed(1)
     : "0";
-  const availableCount = talents.filter((t) => t.available).length;
+  const availableCount = filteredTalents.filter((t) => t.available).length;
 
   const customTooltipStyle = {
     backgroundColor: "hsl(var(--card))",
@@ -129,6 +175,82 @@ export default function AdminStatistics() {
     <DashboardLayout sidebarVariant="admin">
       <div className="space-y-6">
         <h2 className="font-display text-2xl font-bold">Statistiques des talents</h2>
+
+        {/* Filtres */}
+        <Card className="bg-card/50">
+          <CardContent className="pt-6">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Pays</label>
+                <Select value={selectedCountry || "all-countries"} onValueChange={(val) => setSelectedCountry(val === "all-countries" ? null : val)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tous les pays" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all-countries">Tous les pays</SelectItem>
+                    {countries.map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Niveau de français</label>
+                <Select value={selectedFrenchLevel || "all-levels"} onValueChange={(val) => setSelectedFrenchLevel(val === "all-levels" ? null : val)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tous les niveaux" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all-levels">Tous les niveaux</SelectItem>
+                    {frenchLevels.map((level) => (
+                      <SelectItem key={level} value={level}>
+                        {level}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Plage de score</label>
+                <Select value={scoreRange} onValueChange={setScoreRange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tous les scores" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les scores</SelectItem>
+                    <SelectItem value="0-50">0-50</SelectItem>
+                    <SelectItem value="51-70">51-70</SelectItem>
+                    <SelectItem value="71-85">71-85</SelectItem>
+                    <SelectItem value="86-100">86-100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedCountry(null);
+                    setSelectedFrenchLevel(null);
+                    setScoreRange("all");
+                  }}
+                  className="w-full"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Réinitialiser
+                </Button>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-4">
+              Résultats : <strong>{filteredTalents.length}</strong> talent{filteredTalents.length !== 1 ? "s" : ""} sur {talents.length}
+            </p>
+          </CardContent>
+        </Card>
 
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Chargement…</p>
