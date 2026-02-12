@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      job_offers: {
+        Row: {
+          company_id: string
+          created_at: string
+          description: string
+          id: string
+          location: string
+          required_skills: string[] | null
+          salary_range: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          description: string
+          id?: string
+          location: string
+          required_skills?: string[] | null
+          salary_range?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string
+          required_skills?: string[] | null
+          salary_range?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
