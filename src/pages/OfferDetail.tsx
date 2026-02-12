@@ -151,7 +151,7 @@ export default function OfferDetail() {
 
                    {/* Info */}
                    <div className="flex-1 min-w-0">
-                     <p className="font-semibold">{m.user_id}</p>
+                     <p className="font-semibold">{m.full_name || "Talent anonyme"}</p>
                      <p className="text-sm text-muted-foreground">
                        {m.country} · {m.french_level} · {m.experience_years} ans d'expérience
                      </p>
