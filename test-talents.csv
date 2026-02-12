@@ -1,0 +1,4 @@
+full_name,country,french_level,experience_years,skills,score
+Jean Dupont,France,B2,5,Python;JavaScript;React,85
+Marie Martin,Canada,C1,3,Node.js;PostgreSQL;Docker,78
+Pierre Moreau,Belgium,B1,7,Java;Spring;Kubernetes,92
