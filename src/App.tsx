@@ -16,6 +16,7 @@ import DashboardTalent from "./pages/DashboardTalent";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminOffres from "./pages/AdminOffres";
 import AdminSubventions from "./pages/AdminSubventions";
+import AdminImportTalents from "./pages/AdminImportTalents";
 import Billing from "./pages/Billing";
 import NotFound from "./pages/NotFound";
 
@@ -101,6 +102,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AdminSubventions />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/import-talents"
+              element={
+                <ProtectedRoute>
+                  <AdminImportTalents />
                 </ProtectedRoute>
               }
             />
