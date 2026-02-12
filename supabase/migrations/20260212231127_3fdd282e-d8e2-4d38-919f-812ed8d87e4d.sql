@@ -1,0 +1,1 @@
+ALTER TABLE public.talent_profiles ADD COLUMN full_name text;
