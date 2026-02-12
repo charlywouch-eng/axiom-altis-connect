@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/sidebar";
 
 const talentLinks = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Mon Profil", url: "/profile", icon: UserCircle },
+  { title: "Dashboard", url: "/dashboard-talent", icon: Home },
+  { title: "Mon Profil", url: "/dashboard-talent", icon: UserCircle },
 ];
 
 const entrepriseLinks = [
