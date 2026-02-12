@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminOffres from "./pages/AdminOffres";
 import AdminSubventions from "./pages/AdminSubventions";
 import AdminImportTalents from "./pages/AdminImportTalents";
+import AdminStatistics from "./pages/AdminStatistics";
 import Billing from "./pages/Billing";
 import NotFound from "./pages/NotFound";
 
@@ -110,6 +111,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AdminImportTalents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/statistics"
+              element={
+                <ProtectedRoute>
+                  <AdminStatistics />
                 </ProtectedRoute>
               }
             />

@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Shield, Globe, Briefcase, CreditCard, GraduationCap, FileUp } from "lucide-react";
+import { Home, Users, UserCircle, Shield, Globe, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -27,6 +27,7 @@ const entrepriseLinks = [
 const adminLinks = [
   { title: "Talents", url: "/admin", icon: Users },
   { title: "Import CSV", url: "/admin/import-talents", icon: FileUp },
+  { title: "Statistiques", url: "/admin/statistics", icon: BarChart3 },
   { title: "Offres", url: "/admin/offres", icon: Briefcase },
   { title: "Subventions", url: "/admin/subventions", icon: GraduationCap },
   { title: "Facturation", url: "/admin/facturation", icon: CreditCard },
