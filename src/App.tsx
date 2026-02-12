@@ -16,6 +16,7 @@ import DashboardTalent from "./pages/DashboardTalent";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminOffres from "./pages/AdminOffres";
 import AdminSubventions from "./pages/AdminSubventions";
+import Billing from "./pages/Billing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <OfferDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard-entreprise/billing"
+              element={
+                <ProtectedRoute>
+                  <Billing />
                 </ProtectedRoute>
               }
             />
