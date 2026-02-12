@@ -86,6 +86,45 @@ export type Database = {
         }
         Relationships: []
       }
+      talent_profiles: {
+        Row: {
+          available: boolean | null
+          country: string | null
+          created_at: string
+          experience_years: number | null
+          french_level: string | null
+          id: string
+          score: number | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          available?: boolean | null
+          country?: string | null
+          created_at?: string
+          experience_years?: number | null
+          french_level?: string | null
+          id?: string
+          score?: number | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          available?: boolean | null
+          country?: string | null
+          created_at?: string
+          experience_years?: number | null
+          french_level?: string | null
+          id?: string
+          score?: number | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
