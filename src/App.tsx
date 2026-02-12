@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import OnboardingRole from "./pages/OnboardingRole";
 import Dashboard from "./pages/Dashboard";
 import DashboardEntreprise from "./pages/DashboardEntreprise";
+import OfferDetail from "./pages/OfferDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,10 +44,18 @@ const App = () => (
               }
             />
             <Route
-              path="/dashboard-entreprise/*"
+              path="/dashboard-entreprise"
               element={
                 <ProtectedRoute>
                   <DashboardEntreprise />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard-entreprise/offres/:id"
+              element={
+                <ProtectedRoute>
+                  <OfferDetail />
                 </ProtectedRoute>
               }
             />
