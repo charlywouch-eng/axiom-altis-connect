@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,48 +24,6 @@ const MOCK_CANDIDATES = [
   { name: "Fatou Keita", country: "Côte d'Ivoire", skill: "Python / Django", status: "Nouveau" },
 ];
 
-interface MockMatch {
-  id: string;
-  name: string;
-  country: string;
-  frenchLevel: string;
-  experienceYears: number;
-  skills: string[];
-  score: number;
-  contacted: boolean;
-}
-
-function generateMockMatches(offerSkills: string[]): MockMatch[] {
-  const names = [
-    { name: "Moussa Traoré", country: "Mali" },
-    { name: "Priya Sharma", country: "Inde" },
-    { name: "Jean-Pierre Koffi", country: "Togo" },
-    { name: "Elena Popescu", country: "Roumanie" },
-    { name: "Ahmed Ben Ali", country: "Tunisie" },
-  ];
-  const levels = ["Intermédiaire (B1)", "Avancé (B2)", "Courant (C1)"];
-  const allSkills = ["React", "Node.js", "Python", "Java", "SQL", "TypeScript", "Docker", "AWS", "Go", "PHP"];
-
-  return names.map((n, i) => {
-    const matchedSkills = offerSkills.length > 0
-      ? offerSkills.slice(0, Math.max(1, Math.floor(Math.random() * offerSkills.length + 1)))
-      : [];
-    const extraSkills = allSkills
-      .filter((s) => !matchedSkills.includes(s))
-      .slice(0, Math.floor(Math.random() * 2 + 1));
-
-    return {
-      id: String(i + 1),
-      name: n.name,
-      country: n.country,
-      frenchLevel: levels[Math.floor(Math.random() * levels.length)],
-      experienceYears: Math.floor(Math.random() * 8 + 2),
-      skills: [...matchedSkills, ...extraSkills],
-      score: Math.floor(Math.random() * 18 + 78), // 78-95
-      contacted: false,
-    };
-  }).sort((a, b) => b.score - a.score);
-}
 
 function scoreColor(score: number) {
   if (score >= 90) return "text-accent";
@@ -95,17 +52,21 @@ export default function OfferDetail() {
     enabled: !!id && !!user,
   });
 
-  const [matches, setMatches] = useState<MockMatch[] | null>(null);
-
-  // Generate matches once offer is loaded
-  if (offer && !matches) {
-    setMatches(generateMockMatches(offer.required_skills || []));
-  }
+  const { data: matches = [] } = useQuery({
+    queryKey: ["talent_matches", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("talent_profiles")
+        .select("*")
+        .gte("score", 75)
+        .limit(5);
+      if (error) throw error;
+      return (data || []).map((t) => ({ ...t, contacted: false }));
+    },
+    enabled: !!id,
+  });
 
   const handleContact = (matchId: string) => {
-    setMatches((prev) =>
-      prev?.map((m) => (m.id === matchId ? { ...m, contacted: true } : m)) ?? null
-    );
     toast({ title: "Talent contacté", description: "Une proposition a été envoyée au talent." });
   };
 
@@ -188,12 +149,12 @@ export default function OfferDetail() {
                     <Progress value={m.score} className="h-1.5 w-12" />
                   </div>
 
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold">{m.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {m.country} · {m.frenchLevel} · {m.experienceYears} ans d'expérience
-                    </p>
+                   {/* Info */}
+                   <div className="flex-1 min-w-0">
+                     <p className="font-semibold">{m.user_id}</p>
+                     <p className="text-sm text-muted-foreground">
+                       {m.country} · {m.french_level} · {m.experience_years} ans d'expérience
+                     </p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {m.skills.map((sk) => {
                         const isMatch = offer.required_skills?.includes(sk);
