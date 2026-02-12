@@ -12,6 +12,7 @@ import OnboardingRole from "./pages/OnboardingRole";
 import Dashboard from "./pages/Dashboard";
 import DashboardEntreprise from "./pages/DashboardEntreprise";
 import OfferDetail from "./pages/OfferDetail";
+import DashboardTalent from "./pages/DashboardTalent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <OfferDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard-talent"
+              element={
+                <ProtectedRoute>
+                  <DashboardTalent />
                 </ProtectedRoute>
               }
             />

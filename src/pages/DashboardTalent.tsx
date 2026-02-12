@@ -1,0 +1,277 @@
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { DashboardLayout } from "@/components/DashboardLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  CheckCircle2,
+  Circle,
+  Clock,
+  User,
+  Globe,
+  Briefcase,
+  Plane,
+  Home,
+  GraduationCap,
+  Building2,
+  Save,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+const FRENCH_LEVELS = ["Débutant (A1)", "Élémentaire (A2)", "Intermédiaire (B1)", "Avancé (B2)", "Courant (C1)", "Natif (C2)"];
+
+interface TimelineStep {
+  label: string;
+  icon: any;
+  status: "done" | "active" | "pending";
+}
+
+const MOCK_TIMELINE: TimelineStep[] = [
+  { label: "Offre acceptée", icon: Briefcase, status: "done" },
+  { label: "Visa en cours", icon: Globe, status: "active" },
+  { label: "Billet réservé", icon: Plane, status: "pending" },
+  { label: "Logement trouvé", icon: Home, status: "pending" },
+  { label: "Formation démarrée", icon: GraduationCap, status: "pending" },
+  { label: "En poste", icon: Building2, status: "pending" },
+];
+
+export default function DashboardTalent() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    full_name: "",
+    country: "",
+    french_level: "",
+    skills: "",
+  });
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user!.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (profile) {
+      setForm({
+        full_name: profile.full_name || "",
+        country: (profile as any).country || "",
+        french_level: (profile as any).french_level || "",
+        skills: (profile as any).skills?.join(", ") || "",
+      });
+    }
+  }, [profile]);
+
+  const updateProfile = useMutation({
+    mutationFn: async () => {
+      const skills = form.skills.split(",").map((s) => s.trim()).filter(Boolean);
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          full_name: form.full_name || null,
+          country: form.country || null,
+          french_level: form.french_level || null,
+          skills,
+        } as any)
+        .eq("id", user!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast({ title: "Profil mis à jour" });
+      setEditing(false);
+    },
+    onError: (err: any) => {
+      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const doneSteps = MOCK_TIMELINE.filter((s) => s.status === "done").length;
+  const progressPercent = Math.round((doneSteps / MOCK_TIMELINE.length) * 100);
+
+  return (
+    <DashboardLayout sidebarVariant="talent">
+      <div className="space-y-6">
+        <h2 className="font-display text-2xl font-bold">Mon Espace Talent</h2>
+
+        {/* Profile card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5 text-accent" /> Mon profil
+            </CardTitle>
+            {!editing ? (
+              <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+                Mettre à jour mon profil
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>Annuler</Button>
+                <Button
+                  size="sm"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
+                  onClick={() => updateProfile.mutate()}
+                  disabled={updateProfile.isPending}
+                >
+                  <Save className="mr-1 h-3.5 w-3.5" />
+                  {updateProfile.isPending ? "Enregistrement…" : "Enregistrer"}
+                </Button>
+              </div>
+            )}
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground">Chargement…</p>
+            ) : editing ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="full_name">Nom complet</Label>
+                  <Input id="full_name" value={form.full_name} onChange={(e) => setForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="Jean Dupont" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Email</Label>
+                  <Input value={profile?.email || ""} disabled className="bg-muted" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Pays d'origine</Label>
+                  <Input id="country" value={form.country} onChange={(e) => setForm((p) => ({ ...p, country: e.target.value }))} placeholder="Sénégal" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Niveau de français</Label>
+                  <Select value={form.french_level} onValueChange={(v) => setForm((p) => ({ ...p, french_level: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Sélectionner" /></SelectTrigger>
+                    <SelectContent>
+                      {FRENCH_LEVELS.map((l) => (
+                        <SelectItem key={l} value={l}>{l}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="skills">Compétences (séparées par des virgules)</Label>
+                  <Input id="skills" value={form.skills} onChange={(e) => setForm((p) => ({ ...p, skills: e.target.value }))} placeholder="React, Python, Gestion de projet…" />
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ProfileField label="Nom" value={profile?.full_name} />
+                <ProfileField label="Email" value={profile?.email} />
+                <ProfileField label="Pays d'origine" value={(profile as any)?.country} />
+                <ProfileField label="Niveau de français" value={(profile as any)?.french_level} />
+                <div className="sm:col-span-2">
+                  <p className="text-xs text-muted-foreground mb-1">Compétences</p>
+                  {(profile as any)?.skills?.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {(profile as any).skills.map((s: string) => (
+                        <Badge key={s} variant="secondary">{s}</Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">Non renseigné</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Relocation timeline */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Mon parcours relocation</CardTitle>
+            <div className="mt-2 flex items-center gap-3">
+              <Progress value={progressPercent} className="h-2 flex-1" />
+              <span className="text-sm font-medium text-muted-foreground">{progressPercent}%</span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="relative space-y-0">
+              {MOCK_TIMELINE.map((step, i) => {
+                const Icon = step.icon;
+                const isLast = i === MOCK_TIMELINE.length - 1;
+                return (
+                  <div key={step.label} className="flex gap-4">
+                    {/* Vertical line + dot */}
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                          step.status === "done"
+                            ? "bg-accent text-accent-foreground"
+                            : step.status === "active"
+                            ? "border-2 border-accent bg-accent/10 text-accent"
+                            : "border-2 border-border bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        {step.status === "done" ? (
+                          <CheckCircle2 className="h-4 w-4" />
+                        ) : step.status === "active" ? (
+                          <Clock className="h-4 w-4" />
+                        ) : (
+                          <Circle className="h-4 w-4" />
+                        )}
+                      </div>
+                      {!isLast && (
+                        <div
+                          className={`w-0.5 flex-1 min-h-[2rem] ${
+                            step.status === "done" ? "bg-accent" : "bg-border"
+                          }`}
+                        />
+                      )}
+                    </div>
+                    {/* Content */}
+                    <div className="pb-6">
+                      <p
+                        className={`font-medium leading-9 ${
+                          step.status === "pending" ? "text-muted-foreground" : "text-foreground"
+                        }`}
+                      >
+                        {step.label}
+                      </p>
+                      {step.status === "active" && (
+                        <Badge variant="outline" className="mt-1 text-accent border-accent">
+                          En cours
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
+  );
+}
+
+function ProfileField({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div>
+      <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
+      <p className="text-sm font-medium">{value || <span className="italic text-muted-foreground">Non renseigné</span>}</p>
+    </div>
+  );
+}

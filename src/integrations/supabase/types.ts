@@ -55,24 +55,33 @@ export type Database = {
       }
       profiles: {
         Row: {
+          country: string | null
           created_at: string
           email: string
+          french_level: string | null
           full_name: string | null
           id: string
+          skills: string[] | null
           updated_at: string
         }
         Insert: {
+          country?: string | null
           created_at?: string
           email: string
+          french_level?: string | null
           full_name?: string | null
           id: string
+          skills?: string[] | null
           updated_at?: string
         }
         Update: {
+          country?: string | null
           created_at?: string
           email?: string
+          french_level?: string | null
           full_name?: string | null
           id?: string
+          skills?: string[] | null
           updated_at?: string
         }
         Relationships: []
