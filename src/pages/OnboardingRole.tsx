@@ -21,6 +21,7 @@ export default function OnboardingRole() {
 
   if (loading) return null;
   if (!session) return <Navigate to="/login" replace />;
+  if (role === "entreprise") return <Navigate to="/dashboard-entreprise" replace />;
   if (role) return <Navigate to="/dashboard" replace />;
 
   const selectRole = async (selectedRole: "entreprise" | "talent" | "admin") => {
@@ -39,8 +40,8 @@ export default function OnboardingRole() {
     }
 
     toast({ title: "Bienvenue !", description: "Votre rôle a été défini avec succès." });
-    // Force a page reload to refresh the auth context with the new role
-    window.location.href = "/dashboard";
+    const dest = selectedRole === "entreprise" ? "/dashboard-entreprise" : "/dashboard";
+    window.location.href = dest;
   };
 
   const handleAdminSubmit = () => {

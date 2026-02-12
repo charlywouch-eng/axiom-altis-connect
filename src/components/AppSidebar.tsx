@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Shield, Building2, Globe } from "lucide-react";
+import { Home, Users, UserCircle, Shield, Globe, Briefcase, CreditCard } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -18,9 +18,10 @@ const talentLinks = [
 ];
 
 const entrepriseLinks = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Talents", url: "/talents", icon: Users },
-  { title: "Mon Entreprise", url: "/company", icon: Building2 },
+  { title: "Accueil", url: "/dashboard-entreprise", icon: Home },
+  { title: "Mes offres", url: "/dashboard-entreprise/offres", icon: Briefcase },
+  { title: "Candidats", url: "/dashboard-entreprise/candidats", icon: Users },
+  { title: "Facturation", url: "/dashboard-entreprise/facturation", icon: CreditCard },
 ];
 
 const adminLinks = [
@@ -29,13 +30,14 @@ const adminLinks = [
   { title: "Gestion", url: "/admin/manage", icon: Shield },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ variant }: { variant?: "entreprise" | "talent" | "admin" }) {
   const { role } = useAuth();
+  const effectiveRole = variant || role;
 
   const links =
-    role === "admin"
+    effectiveRole === "admin"
       ? adminLinks
-      : role === "entreprise"
+      : effectiveRole === "entreprise"
       ? entrepriseLinks
       : talentLinks;
 
