@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, CheckCircle2, Zap, Briefcase, GraduationCap, Scale, Banknote } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Zap, Briefcase, GraduationCap, Scale, Banknote, Users, Flame } from "lucide-react";
 import { motion } from "framer-motion";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -27,6 +28,21 @@ export default function MetierDetail() {
         .select("*")
         .eq("rome_code", code!)
         .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!code,
+  });
+
+  const { data: talents, isLoading: talentsLoading } = useQuery({
+    queryKey: ["talents-by-rome", code],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("talent_profiles")
+        .select("*")
+        .eq("rome_code", code!)
+        .eq("available", true)
+        .order("compliance_score", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -136,6 +152,69 @@ export default function MetierDetail() {
                   </ul>
                 </CardContent>
               </Card>
+             </motion.div>
+
+            <motion.div initial="hidden" animate="visible" custom={6} variants={fadeUp}>
+              <Card>
+                <CardContent className="p-8">
+                  <h2 className="flex items-center gap-2 font-display text-xl font-bold mb-6">
+                    <Users className="h-5 w-5 text-accent" /> Talents disponibles ({talents?.length || 0})
+                  </h2>
+                  {talentsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                    </div>
+                  ) : talents && talents.length > 0 ? (
+                    <div className="space-y-4">
+                      {talents.map((talent) => (
+                        <div key={talent.id} className="flex items-start gap-4 p-4 rounded-lg border border-muted bg-muted/30 hover:bg-muted/50 transition-colors">
+                          <Avatar className="h-12 w-12 shrink-0">
+                            <AvatarFallback className="bg-accent/20 text-accent font-semibold">
+                              {talent.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'T'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <h3 className="font-semibold text-foreground">{talent.full_name}</h3>
+                              {talent.compliance_score >= 80 && (
+                                <Badge className="bg-success/20 text-success border-0 text-xs gap-1">
+                                  <Flame className="h-3 w-3" /> Compliant
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-2">
+                              {talent.country} • {talent.experience_years || 0} ans d'expérience
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {talent.french_level && (
+                                <Badge variant="outline" className="text-xs">
+                                  Français: {talent.french_level}
+                                </Badge>
+                              )}
+                              {talent.visa_status === 'en_attente' && (
+                                <Badge variant="outline" className="text-xs">
+                                  Visa: En attente
+                                </Badge>
+                              )}
+                              {talent.visa_status === 'approuve' && (
+                                <Badge className="bg-success/20 text-success border-0 text-xs">
+                                  Visa: Approuvé
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="text-sm font-semibold text-accent">{talent.compliance_score}%</p>
+                            <p className="text-xs text-muted-foreground">Score</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">Aucun talent disponible pour ce métier actuellement.</p>
+                  )}
+                </CardContent>
+              </Card>
             </motion.div>
 
             <motion.div initial="hidden" animate="visible" custom={5} variants={fadeUp}>
@@ -184,9 +263,9 @@ export default function MetierDetail() {
             </motion.div>
 
             <motion.div initial="hidden" animate="visible" custom={4} variants={fadeUp}>
-              <Link to="/signup" className="block">
+              <Link to="/dashboard-entreprise" className="block">
                 <Button className="w-full bg-success text-success-foreground hover:bg-success/90 border-0 py-6 text-base font-semibold rounded-xl shadow-lg shadow-success/20">
-                  <Zap className="mr-2 h-5 w-5" /> Voir talents disponibles
+                  <Zap className="mr-2 h-5 w-5" /> Voir tous les talents
                 </Button>
               </Link>
             </motion.div>
