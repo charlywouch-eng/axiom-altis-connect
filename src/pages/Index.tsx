@@ -84,19 +84,20 @@ export default function Index() {
             initial="hidden" animate="visible" custom={1} variants={fadeUp}
             className="max-w-3xl font-display text-4xl font-bold leading-[1.1] text-primary-foreground md:text-6xl lg:text-7xl"
           >
-            Recrutez l'excellence
+            Le pont vers l'excellence :
             <br />
-            <span className="text-gradient-accent">africaine</span>
+            <span className="text-gradient-accent">Recrutez vos futurs talents</span>
             <br />
-            <span className="text-accent">en France</span>
+            <span className="text-accent">en Afrique</span>
           </motion.h1>
 
           <motion.p
             initial="hidden" animate="visible" custom={2} variants={fadeUp}
             className="mt-8 max-w-xl text-lg text-primary-foreground/70 leading-relaxed md:text-xl"
           >
-            Visa, relocation, logement, formation — nous orchestrons chaque étape
-            pour que vos talents soient opérationnels dès le premier jour.
+            <strong className="text-primary-foreground/90">AXIOM</strong> identifie les meilleurs experts du continent africain.{" "}
+            <strong className="text-primary-foreground/90">ALTIS</strong> sécurise leur mobilité et leur installation en France.
+            Une solution clé en main, de la signature au premier jour de travail.
           </motion.p>
 
           <motion.div
@@ -116,12 +117,12 @@ export default function Index() {
           >
             <Link to="/signup">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-10 py-7 h-auto shadow-xl shadow-accent/30 border-0 rounded-xl text-lg font-semibold">
-                Publier une offre <ArrowRight className="ml-2 h-5 w-5" />
+                Trouver un talent <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/signup">
               <Button size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-white/10 text-base px-10 py-7 h-auto rounded-xl backdrop-blur-sm">
-                Je suis un talent <ChevronRight className="ml-1 h-4 w-4" />
+                Postuler <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
           </motion.div>
