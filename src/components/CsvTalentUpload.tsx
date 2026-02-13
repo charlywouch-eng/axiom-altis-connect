@@ -229,6 +229,23 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
     }
   };
 
+  const downloadTemplate = () => {
+    const headers = EXPECTED_HEADERS.join(",");
+    const sampleRows = [
+      ["Jean Dupont", "France", "Natif", "5", "React;TypeScript;Node.js", "85"].join(","),
+      ["Marie Martin", "Belgique", "Fluent", "3", "Python;PostgreSQL;Docker", "78"].join(","),
+      ["Carlos García", "Espagne", "Avancé", "7", "Java;Spring;Kubernetes", "92"].join(","),
+      ["Sophie Laurent", "Suisse", "Courant", "2", "React;CSS;JavaScript", "72"].join(","),
+    ];
+    const csvContent = [headers, ...sampleRows].join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "modele_talents.csv";
+    link.click();
+  };
+
   const handleUpload = async () => {
     if (!preview || preview.length === 0) return;
     setUploading(true);
@@ -331,6 +348,14 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
             ) : (
               "Choisir un fichier"
             )}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={downloadTemplate}
+          >
+            Télécharger un modèle CSV
           </Button>
           <span className="text-sm text-muted-foreground">
             {extracting
