@@ -6,18 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -26,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Briefcase, Users, Plus, TrendingUp, Eye, Trash2 } from "lucide-react";
+import { Briefcase, Users, Plus, TrendingUp, Eye, Trash2, Pencil } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,6 +29,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { OfferFormDialog, type OfferFormData } from "@/components/OfferFormDialog";
 
 function StatCard({ icon: Icon, title, value }: { icon: any; title: string; value: string }) {
   return (
@@ -68,16 +58,11 @@ export default function DashboardEntreprise() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editOffer, setEditOffer] = useState<{ id: string; data: OfferFormData } | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    salary: "",
-    location: "",
-    skills: "",
-  });
 
   const { data: offers = [], isLoading } = useQuery({
     queryKey: ["job_offers", user?.id],
@@ -93,27 +78,23 @@ export default function DashboardEntreprise() {
     enabled: !!user,
   });
 
-  const createOffer = useMutation({
-    mutationFn: async () => {
-      const skills = form.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+  const createMutation = useMutation({
+    mutationFn: async (form: OfferFormData) => {
+      const skills = form.skills.split(",").map((s) => s.trim()).filter(Boolean);
       const { error } = await supabase.from("job_offers").insert({
-        title: form.title,
-        description: form.description,
-        salary_range: form.salary || null,
-        location: form.location,
+        title: form.title.trim(),
+        description: form.description.trim(),
+        salary_range: form.salary.trim() || null,
+        location: form.location.trim(),
         required_skills: skills,
         company_id: user!.id,
       });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_, form) => {
       queryClient.invalidateQueries({ queryKey: ["job_offers"] });
       toast({ title: "Offre publiée", description: `"${form.title}" est maintenant en ligne.` });
-      setForm({ title: "", description: "", salary: "", location: "", skills: "" });
-      setOpen(false);
+      setCreateOpen(false);
     },
     onError: (error: any) => {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
@@ -121,7 +102,34 @@ export default function DashboardEntreprise() {
     onSettled: () => setSubmitting(false),
   });
 
-  const deleteOffer = useMutation({
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, form }: { id: string; form: OfferFormData }) => {
+      const skills = form.skills.split(",").map((s) => s.trim()).filter(Boolean);
+      const { error } = await supabase
+        .from("job_offers")
+        .update({
+          title: form.title.trim(),
+          description: form.description.trim(),
+          salary_range: form.salary.trim() || null,
+          location: form.location.trim(),
+          required_skills: skills,
+        })
+        .eq("id", id)
+        .eq("company_id", user!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["job_offers"] });
+      toast({ title: "Offre modifiée", description: "Les modifications ont été enregistrées." });
+      setEditOffer(null);
+    },
+    onError: (error: any) => {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    },
+    onSettled: () => setSubmitting(false),
+  });
+
+  const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("job_offers").delete().eq("id", id).eq("company_id", user!.id);
       if (error) throw error;
@@ -135,39 +143,28 @@ export default function DashboardEntreprise() {
     },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
-  const validateForm = (): boolean => {
-    const errors: Record<string, string> = {};
-    const title = form.title.trim();
-    const description = form.description.trim();
-    const location = form.location.trim();
-    const salary = form.salary.trim();
-
-    if (!title) errors.title = "Le titre est requis.";
-    else if (title.length > 200) errors.title = "Le titre ne doit pas dépasser 200 caractères.";
-
-    if (!description) errors.description = "La description est requise.";
-    else if (description.length > 5000) errors.description = "La description ne doit pas dépasser 5000 caractères.";
-
-    if (!location) errors.location = "La localisation est requise.";
-    else if (location.length > 100) errors.location = "La localisation ne doit pas dépasser 100 caractères.";
-
-    if (salary && salary.length > 50) errors.salary = "Le salaire ne doit pas dépasser 50 caractères.";
-
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  const handleCreate = (form: OfferFormData) => {
     setSubmitting(true);
-    createOffer.mutate();
+    createMutation.mutate(form);
+  };
+
+  const handleEdit = (form: OfferFormData) => {
+    if (!editOffer) return;
+    setSubmitting(true);
+    updateMutation.mutate({ id: editOffer.id, form });
+  };
+
+  const openEditDialog = (offer: typeof offers[number]) => {
+    setEditOffer({
+      id: offer.id,
+      data: {
+        title: offer.title,
+        description: offer.description,
+        salary: offer.salary_range ?? "",
+        location: offer.location,
+        skills: (offer.required_skills ?? []).join(", "),
+      },
+    });
   };
 
   const activeCount = offers.filter((o) => o.status === "open").length;
@@ -177,7 +174,7 @@ export default function DashboardEntreprise() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-2xl font-bold">Espace Entreprise</h2>
-          <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setOpen(true)}>
+          <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-2 h-4 w-4" /> Publier une offre
           </Button>
         </div>
@@ -188,7 +185,6 @@ export default function DashboardEntreprise() {
           <StatCard icon={TrendingUp} title="Installés" value="0" />
         </div>
 
-        {/* Offers table */}
         <Card>
           <CardHeader>
             <CardTitle>Mes offres</CardTitle>
@@ -237,6 +233,13 @@ export default function DashboardEntreprise() {
                             <Button
                               variant="ghost"
                               size="icon"
+                              onClick={(e) => { e.stopPropagation(); openEditDialog(offer); }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               className="text-destructive hover:text-destructive"
                               onClick={(e) => { e.stopPropagation(); setDeleteId(offer.id); }}
                             >
@@ -254,49 +257,22 @@ export default function DashboardEntreprise() {
         </Card>
       </div>
 
-      {/* Modal nouvelle offre */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Publier une nouvelle offre</DialogTitle>
-            <DialogDescription>Décrivez le poste que vous souhaitez pourvoir.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Titre du poste</Label>
-              <Input id="title" name="title" value={form.title} onChange={handleChange} placeholder="Ex: Développeur Full-Stack" maxLength={200} />
-              {formErrors.title && <p className="text-sm text-destructive">{formErrors.title}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" value={form.description} onChange={handleChange} placeholder="Missions, contexte…" rows={3} maxLength={5000} />
-              {formErrors.description && <p className="text-sm text-destructive">{formErrors.description}</p>}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="salary">Salaire (€/an)</Label>
-                <Input id="salary" name="salary" value={form.salary} onChange={handleChange} placeholder="45 000" maxLength={50} />
-                {formErrors.salary && <p className="text-sm text-destructive">{formErrors.salary}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Localisation</Label>
-                <Input id="location" name="location" value={form.location} onChange={handleChange} placeholder="Paris" maxLength={100} />
-                {formErrors.location && <p className="text-sm text-destructive">{formErrors.location}</p>}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="skills">Compétences clés (séparées par des virgules)</Label>
-              <Input id="skills" name="skills" value={form.skills} onChange={handleChange} placeholder="React, Node.js, SQL…" />
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Annuler</Button>
-              <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90" disabled={submitting}>
-                {submitting ? "Publication…" : "Publier"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* Create dialog */}
+      <OfferFormDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onSubmit={handleCreate}
+        submitting={submitting}
+      />
+
+      {/* Edit dialog */}
+      <OfferFormDialog
+        open={!!editOffer}
+        onOpenChange={(v) => !v && setEditOffer(null)}
+        onSubmit={handleEdit}
+        submitting={submitting}
+        initialData={editOffer?.data}
+      />
 
       <AlertDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)}>
         <AlertDialogContent>
@@ -308,7 +284,7 @@ export default function DashboardEntreprise() {
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (deleteId) deleteOffer.mutate(deleteId); setDeleteId(null); }}
+              onClick={() => { if (deleteId) deleteMutation.mutate(deleteId); setDeleteId(null); }}
             >
               Supprimer
             </AlertDialogAction>
