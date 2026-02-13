@@ -118,7 +118,9 @@ export type Database = {
       }
       talent_profiles: {
         Row: {
+          apostille_date: string | null
           available: boolean | null
+          compliance_score: number
           country: string | null
           created_at: string
           experience_years: number | null
@@ -126,13 +128,18 @@ export type Database = {
           full_name: string | null
           id: string
           import_id: string | null
+          rome_code: string | null
+          rome_label: string | null
           score: number | null
           skills: string[] | null
           updated_at: string
           user_id: string
+          visa_status: string
         }
         Insert: {
+          apostille_date?: string | null
           available?: boolean | null
+          compliance_score?: number
           country?: string | null
           created_at?: string
           experience_years?: number | null
@@ -140,13 +147,18 @@ export type Database = {
           full_name?: string | null
           id?: string
           import_id?: string | null
+          rome_code?: string | null
+          rome_label?: string | null
           score?: number | null
           skills?: string[] | null
           updated_at?: string
           user_id: string
+          visa_status?: string
         }
         Update: {
+          apostille_date?: string | null
           available?: boolean | null
+          compliance_score?: number
           country?: string | null
           created_at?: string
           experience_years?: number | null
@@ -154,10 +166,13 @@ export type Database = {
           full_name?: string | null
           id?: string
           import_id?: string | null
+          rome_code?: string | null
+          rome_label?: string | null
           score?: number | null
           skills?: string[] | null
           updated_at?: string
           user_id?: string
+          visa_status?: string
         }
         Relationships: [
           {
