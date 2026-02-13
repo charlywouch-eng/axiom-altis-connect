@@ -174,9 +174,30 @@ export default function DashboardTalent() {
 
         {/* KPIs */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <PremiumStatCard icon={Briefcase} title="Offres disponibles" value={String(totalOpenOffers)} accent="blue" />
-          <PremiumStatCard icon={Star} title="Offres compatibles" value={String(matchingOffers.length)} accent="green" />
-          <PremiumStatCard icon={TrendingUp} title="Progression" value={`${progressPercent}%`} />
+          <PremiumStatCard
+            icon={Briefcase}
+            title="Offres disponibles"
+            value={String(totalOpenOffers)}
+            accent="blue"
+            tensionLevel={totalOpenOffers === 0 ? "critical" : totalOpenOffers < 5 ? "medium" : "low"}
+            subtitle="Postes ouverts sur la plateforme"
+          />
+          <PremiumStatCard
+            icon={Star}
+            title="Offres compatibles"
+            value={String(matchingOffers.length)}
+            accent="green"
+            tensionLevel={matchingOffers.length === 0 ? "high" : matchingOffers.length < 3 ? "medium" : "low"}
+            subtitle="Matchées à vos compétences"
+          />
+          <PremiumStatCard
+            icon={TrendingUp}
+            title="Progression"
+            value={`${progressPercent}%`}
+            tensionLevel={progressPercent < 30 ? "medium" : progressPercent < 70 ? "low" : "low"}
+            tensionLabel={progressPercent < 30 ? "À démarrer" : progressPercent < 70 ? "En cours" : "Avancé"}
+            subtitle="Parcours de relocation"
+          />
         </div>
 
         {/* Matching Offers */}
