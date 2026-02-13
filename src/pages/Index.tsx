@@ -120,17 +120,37 @@ export default function Index() {
 
           <motion.div
             initial="hidden" animate="visible" custom={4} variants={fadeUp}
-            className="mt-10 flex flex-wrap gap-4"
+            className="mt-10 grid gap-4 sm:grid-cols-3 w-full max-w-2xl"
           >
-            <Link to="/signup">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-10 py-7 h-auto shadow-xl shadow-accent/30 border-0 rounded-xl text-lg font-semibold">
-                Publier une offre <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+            <Link to="/signup" className="group">
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 text-center transition-all hover:bg-accent/15 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
+                  <Building2 className="h-6 w-6 text-accent" />
+                </div>
+                <p className="font-display text-base font-semibold text-primary-foreground group-hover:text-accent transition-colors">Entreprise</p>
+                <p className="mt-1 text-xs text-primary-foreground/50 leading-relaxed">Publiez vos offres et recrutez</p>
+                <ArrowRight className="mx-auto mt-3 h-4 w-4 text-primary-foreground/20 group-hover:text-accent transition-colors" />
+              </div>
             </Link>
-            <Link to="/signup-talent">
-              <Button size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-white/10 text-base px-10 py-7 h-auto rounded-xl backdrop-blur-sm">
-                Je suis un talent <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
+            <Link to="/signup-talent" className="group">
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 text-center transition-all hover:bg-accent/15 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
+                  <UserCheck className="h-6 w-6 text-accent" />
+                </div>
+                <p className="font-display text-base font-semibold text-primary-foreground group-hover:text-accent transition-colors">Talent</p>
+                <p className="mt-1 text-xs text-primary-foreground/50 leading-relaxed">Postulez et gérez votre mobilité</p>
+                <ArrowRight className="mx-auto mt-3 h-4 w-4 text-primary-foreground/20 group-hover:text-accent transition-colors" />
+              </div>
+            </Link>
+            <Link to="/login" className="group">
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 text-center transition-all hover:bg-white/10 hover:border-white/20 hover:-translate-y-1">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-foreground/5">
+                  <Shield className="h-6 w-6 text-primary-foreground/40" />
+                </div>
+                <p className="font-display text-base font-semibold text-primary-foreground/60 group-hover:text-primary-foreground transition-colors">Admin</p>
+                <p className="mt-1 text-xs text-primary-foreground/30 leading-relaxed">Accès back-office</p>
+                <ArrowRight className="mx-auto mt-3 h-4 w-4 text-primary-foreground/10 group-hover:text-primary-foreground/40 transition-colors" />
+              </div>
             </Link>
           </motion.div>
         </div>
