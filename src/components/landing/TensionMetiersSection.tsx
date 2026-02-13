@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, TrendingUp, Banknote, ShieldCheck } from "lucide-react";
@@ -26,6 +28,8 @@ const tensionColor: Record<string, string> = {
 };
 
 export default function TensionMetiersSection() {
+  const [selectedTensions, setSelectedTensions] = useState<string[]>(["Très haute", "Haute", "Croissante"]);
+  
   const { data: metiers } = useQuery({
     queryKey: ["metiers-tension"],
     queryFn: async () => {
@@ -39,7 +43,9 @@ export default function TensionMetiersSection() {
     },
   });
 
-  if (!metiers?.length) return null;
+  const filteredMetiers = metiers?.filter(m => 
+    selectedTensions.includes(m.niveau_tension ?? "Moyenne")
+  ) ?? [];
 
   return (
     <section className="relative overflow-hidden py-28">
@@ -61,13 +67,43 @@ export default function TensionMetiersSection() {
           </motion.p>
         </motion.div>
 
+        {/* Filtre par tension */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          custom={3}
+          variants={fadeUp}
+          className="mt-12 flex justify-center"
+        >
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-sm font-semibold uppercase tracking-widest text-white/60">Filtrer par niveau de tension</p>
+            <ToggleGroup 
+              type="multiple" 
+              value={selectedTensions}
+              onValueChange={setSelectedTensions}
+              className="bg-white/[0.04] border border-white/10 rounded-lg p-1"
+            >
+              <ToggleGroupItem value="Très haute" className="text-xs font-semibold data-[state=on]:bg-destructive/90 data-[state=on]:text-destructive-foreground">
+                Très haute
+              </ToggleGroupItem>
+              <ToggleGroupItem value="Haute" className="text-xs font-semibold data-[state=on]:bg-accent data-[state=on]:text-accent-foreground">
+                Haute
+              </ToggleGroupItem>
+              <ToggleGroupItem value="Croissante" className="text-xs font-semibold data-[state=on]:bg-success/80 data-[state=on]:text-success-foreground">
+                Croissante
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        </motion.div>
+
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
           className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {metiers.map((m, i) => (
+          {filteredMetiers.map((m, i) => (
             <motion.div key={m.id} custom={i} variants={fadeUp}>
               <Link
                 to={`/metier/${m.rome_code}`}
