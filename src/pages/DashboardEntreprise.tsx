@@ -32,6 +32,7 @@ import { fr } from "date-fns/locale";
 import { OfferFormDialog, type OfferFormData } from "@/components/OfferFormDialog";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import { RecruitmentPipeline } from "@/components/RecruitmentPipeline";
+import { motion } from "framer-motion";
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
   open: { label: "Ouverte", variant: "default" },
@@ -158,7 +159,12 @@ export default function DashboardEntreprise() {
   return (
     <DashboardLayout sidebarVariant="entreprise">
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <motion.div
+          className="flex items-center justify-between"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <div>
             <h2 className="font-display text-2xl font-bold">Espace Entreprise</h2>
             <p className="text-sm text-muted-foreground mt-1">Gérez vos offres et suivez vos recrutements</p>
@@ -166,9 +172,18 @@ export default function DashboardEntreprise() {
           <Button className="bg-gradient-to-r from-gold to-ocre text-white hover:opacity-90 border-0 shadow-lg shadow-ocre/20" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-2 h-4 w-4" /> Publier une offre
           </Button>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+        >
           <PremiumStatCard
             icon={Briefcase}
             title="Offres actives"
@@ -192,79 +207,94 @@ export default function DashboardEntreprise() {
             tensionLevel="none"
             subtitle="Talents recrutés et en poste"
           />
-        </div>
+        </motion.div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Mes offres</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <p className="text-sm text-muted-foreground">Chargement…</p>
-            ) : offers.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Aucune offre publiée. Cliquez sur "Publier une offre" pour commencer.</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Titre</TableHead>
-                    <TableHead>Localisation</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead className="text-right">Candidats</TableHead>
-                    <TableHead />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {offers.map((offer) => {
-                    const s = statusLabels[offer.status] ?? statusLabels.open;
-                    const fakeCandidates = Math.floor(Math.random() * 8);
-                    return (
-                      <TableRow
-                        key={offer.id}
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => navigate(`/dashboard-entreprise/offres/${offer.id}`)}
-                      >
-                        <TableCell className="font-medium">{offer.title}</TableCell>
-                        <TableCell>{offer.location}</TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {format(new Date(offer.created_at), "dd MMM yyyy", { locale: fr })}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={s.variant}>{s.label}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">{fakeCandidates}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-1">
-                            <Button variant="ghost" size="icon">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => { e.stopPropagation(); openEditDialog(offer); }}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive"
-                              onClick={(e) => { e.stopPropagation(); setDeleteId(offer.id); }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-        <RecruitmentPipeline />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Mes offres</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <p className="text-sm text-muted-foreground">Chargement…</p>
+              ) : offers.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Aucune offre publiée. Cliquez sur "Publier une offre" pour commencer.</p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Titre</TableHead>
+                      <TableHead>Localisation</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Statut</TableHead>
+                      <TableHead className="text-right">Candidats</TableHead>
+                      <TableHead />
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {offers.map((offer) => {
+                      const s = statusLabels[offer.status] ?? statusLabels.open;
+                      const fakeCandidates = Math.floor(Math.random() * 8);
+                      return (
+                        <TableRow
+                          key={offer.id}
+                          className="cursor-pointer hover:bg-muted/50"
+                          onClick={() => navigate(`/dashboard-entreprise/offres/${offer.id}`)}
+                        >
+                          <TableCell className="font-medium">{offer.title}</TableCell>
+                          <TableCell>{offer.location}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {format(new Date(offer.created_at), "dd MMM yyyy", { locale: fr })}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={s.variant}>{s.label}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right">{fakeCandidates}</TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button variant="ghost" size="icon">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => { e.stopPropagation(); openEditDialog(offer); }}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-destructive hover:text-destructive"
+                                onClick={(e) => { e.stopPropagation(); setDeleteId(offer.id); }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+        >
+          <RecruitmentPipeline />
+        </motion.div>
       </div>
 
       {/* Create dialog */}
