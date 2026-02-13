@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Send, UserCheck, Plane, Mail, Shield, Building2, GraduationCap, CheckCircle2, ChevronRight, Zap } from "lucide-react";
+import { ArrowRight, Send, UserCheck, Plane, Mail, Shield, Building2, GraduationCap, CheckCircle2, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import heroImage from "@/assets/hero-map-connections.jpg";
+import HeroTalentGallery from "@/components/landing/HeroTalentGallery";
+import RomeCardsSection from "@/components/landing/RomeCardsSection";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -69,97 +70,109 @@ export default function Index() {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Talents africains qualifiés en France"
-            className="h-full w-full object-cover"
-            loading="eager"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-primary/30" />
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,11%)] via-[hsl(222,40%,18%)] to-[hsl(20,84%,25%)]" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
 
-        <div className="relative mx-auto flex max-w-7xl flex-col items-start px-6 pt-32 pb-20 md:px-12 md:pt-40 md:pb-32">
-          <motion.span
-            initial="hidden" animate="visible" custom={0} variants={fadeUp}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-5 py-2 text-sm font-medium text-accent"
-          >
-            <Zap className="h-3.5 w-3.5" /> Talents Afrique → France · Métiers ROME
-          </motion.span>
+        <div className="relative mx-auto flex max-w-7xl items-center gap-12 px-6 pt-32 pb-20 md:px-12 md:pt-40 md:pb-32 lg:gap-20">
+          <div className="flex-1">
+            <motion.span
+              initial="hidden" animate="visible" custom={0} variants={fadeUp}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-5 py-2 text-sm font-medium text-accent"
+            >
+              <Zap className="h-3.5 w-3.5" /> Talents Afrique → France · Métiers ROME
+            </motion.span>
 
-          <motion.h1
-            initial="hidden" animate="visible" custom={1} variants={fadeUp}
-            className="max-w-3xl font-display text-4xl font-bold leading-[1.1] text-primary-foreground md:text-6xl lg:text-7xl"
-          >
-            Des talents africains
-            <br />
-            <span className="text-gradient-accent">certifiés métiers ROME</span>
-            <br />
-            <span className="text-accent">prêts à travailler en France</span>
-          </motion.h1>
+            <motion.h1
+              initial="hidden" animate="visible" custom={1} variants={fadeUp}
+              className="max-w-2xl font-display text-4xl font-bold leading-[1.1] text-primary-foreground md:text-5xl lg:text-6xl"
+            >
+              Des talents africains
+              <br />
+              <span className="text-gradient-accent">certifiés métiers ROME</span>
+              <br />
+              <span className="text-accent">prêts à travailler en France</span>
+            </motion.h1>
 
-          <motion.p
-            initial="hidden" animate="visible" custom={2} variants={fadeUp}
-            className="mt-8 max-w-xl text-lg text-primary-foreground/70 leading-relaxed md:text-xl"
-          >
-            <strong className="text-primary-foreground/90">AXIOM</strong> sélectionne les meilleurs profils du continent africain, qualifiés selon le référentiel <strong className="text-primary-foreground/90">ROME</strong> (Répertoire Opérationnel des Métiers).{" "}
-            <strong className="text-primary-foreground/90">ALTIS</strong> organise leur mobilité et installation en France, clé en main.
-          </motion.p>
+            <motion.p
+              initial="hidden" animate="visible" custom={2} variants={fadeUp}
+              className="mt-8 max-w-xl text-lg text-primary-foreground/70 leading-relaxed"
+            >
+              <strong className="text-primary-foreground/90">AXIOM</strong> sélectionne les meilleurs profils du continent africain, qualifiés selon le référentiel <strong className="text-primary-foreground/90">ROME</strong>.{" "}
+              <strong className="text-primary-foreground/90">ALTIS</strong> organise leur mobilité et installation en France, clé en main.
+            </motion.p>
 
-          <motion.div
-            initial="hidden" animate="visible" custom={3} variants={fadeUp}
-            className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2"
-          >
-            {["Profils certifiés ROME", "Visa & logement inclus", "Opérationnels dès J1", "Conformité garantie"].map((item) => (
-              <span key={item} className="flex items-center gap-1.5 text-sm text-primary-foreground/60">
-                <CheckCircle2 className="h-4 w-4 text-accent" /> {item}
-              </span>
-            ))}
-          </motion.div>
+            <motion.div
+              initial="hidden" animate="visible" custom={3} variants={fadeUp}
+              className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2"
+            >
+              {["Profils certifiés ROME", "Visa & logement inclus", "Opérationnels dès J1", "Conformité garantie"].map((item) => (
+                <span key={item} className="flex items-center gap-1.5 text-sm text-primary-foreground/60">
+                  <CheckCircle2 className="h-4 w-4 text-accent" /> {item}
+                </span>
+              ))}
+            </motion.div>
 
-          <motion.div
-            initial="hidden" animate="visible" custom={4} variants={fadeUp}
-            className="mt-10 grid gap-4 sm:grid-cols-3 w-full max-w-2xl"
-          >
-            <Link to="/signup" className="group">
-              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 text-center transition-all hover:bg-accent/15 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-                  <Building2 className="h-6 w-6 text-accent" />
-                </div>
-                <p className="font-display text-base font-semibold text-primary-foreground group-hover:text-accent transition-colors">Entreprise</p>
-                <p className="mt-1 text-xs text-primary-foreground/50 leading-relaxed">Publiez vos offres et recrutez</p>
-                <ArrowRight className="mx-auto mt-3 h-4 w-4 text-primary-foreground/20 group-hover:text-accent transition-colors" />
-              </div>
-            </Link>
-            <Link to="/signup-talent" className="group">
-              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 text-center transition-all hover:bg-accent/15 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
-                  <UserCheck className="h-6 w-6 text-accent" />
-                </div>
-                <p className="font-display text-base font-semibold text-primary-foreground group-hover:text-accent transition-colors">Talent</p>
-                <p className="mt-1 text-xs text-primary-foreground/50 leading-relaxed">Postulez et gérez votre mobilité</p>
-                <ArrowRight className="mx-auto mt-3 h-4 w-4 text-primary-foreground/20 group-hover:text-accent transition-colors" />
-              </div>
-            </Link>
-            <Link to="/login" className="group">
-              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 text-center transition-all hover:bg-white/10 hover:border-white/20 hover:-translate-y-1">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-foreground/5">
-                  <Shield className="h-6 w-6 text-primary-foreground/40" />
-                </div>
-                <p className="font-display text-base font-semibold text-primary-foreground/60 group-hover:text-primary-foreground transition-colors">Admin</p>
-                <p className="mt-1 text-xs text-primary-foreground/30 leading-relaxed">Accès back-office</p>
-                <ArrowRight className="mx-auto mt-3 h-4 w-4 text-primary-foreground/10 group-hover:text-primary-foreground/40 transition-colors" />
-              </div>
-            </Link>
-          </motion.div>
+            <motion.div
+              initial="hidden" animate="visible" custom={4} variants={fadeUp}
+              className="mt-10 flex flex-wrap gap-4"
+            >
+              <Link to="/signup">
+                <Button size="lg" className="bg-success text-success-foreground hover:bg-success/90 text-lg px-10 py-7 h-auto shadow-xl shadow-success/30 border-0 rounded-xl font-semibold">
+                  Publier une offre <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/signup-talent">
+                <Button size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-white/10 text-base px-8 py-7 h-auto rounded-xl backdrop-blur-sm">
+                  Je suis un talent
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+
+          <div className="hidden lg:flex">
+            <HeroTalentGallery />
+          </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* Stats band */}
+      {/* 3 Role Cards */}
       <section className="relative -mt-16 z-10 px-6 md:px-12">
+        <div className="mx-auto max-w-3xl">
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+            className="grid gap-4 sm:grid-cols-3"
+          >
+            {[
+              { to: "/signup", icon: Building2, label: "Entreprise", desc: "Publiez vos offres", accent: true },
+              { to: "/signup-talent", icon: UserCheck, label: "Talent", desc: "Postulez et gérez votre mobilité", accent: true },
+              { to: "/login", icon: Shield, label: "Admin", desc: "Accès back-office", accent: false },
+            ].map((card, i) => {
+              const Icon = card.icon;
+              return (
+                <motion.div key={card.label} custom={i} variants={scaleIn}>
+                  <Link to={card.to} className="group block">
+                    <div className={`rounded-2xl border bg-card p-6 text-center transition-all hover:shadow-xl hover:-translate-y-1 ${card.accent ? "hover:border-accent/40" : "hover:border-border"}`}>
+                      <div className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl ${card.accent ? "bg-accent/10" : "bg-muted"}`}>
+                        <Icon className={`h-6 w-6 ${card.accent ? "text-accent" : "text-muted-foreground"}`} />
+                      </div>
+                      <p className="font-display text-base font-semibold">{card.label}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{card.desc}</p>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ROME Cards */}
+      <RomeCardsSection />
+
+      {/* Stats band */}
+      <section className="px-6 md:px-12">
         <div className="mx-auto max-w-5xl">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
