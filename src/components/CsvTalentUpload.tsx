@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, FileText, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 interface ParsedRow {
   full_name: string;
@@ -16,6 +16,8 @@ interface ParsedRow {
 }
 
 const EXPECTED_HEADERS = ["full_name", "country", "french_level", "experience_years", "skills", "score"];
+const ACCEPTED_EXTENSIONS = [".csv", ".pdf"];
+const MAX_FILE_SIZE_MB = 10;
 
 function parseCsvLine(line: string): string[] {
   const result: string[] = [];
@@ -85,6 +87,26 @@ function parseCsv(text: string): { rows: ParsedRow[]; errors: string[] } {
   return { rows, errors };
 }
 
+async function extractTextFromPdf(file: File): Promise<string> {
+  const pdfjsLib = await import("pdfjs-dist");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+  
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const textParts: string[] = [];
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items
+      .map((item: any) => item.str)
+      .join(" ");
+    textParts.push(pageText);
+  }
+
+  return textParts.join("\n\n");
+}
+
 export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () => void } = {}) {
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -92,11 +114,15 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
   const [preview, setPreview] = useState<ParsedRow[] | null>(null);
   const [parseErrors, setParseErrors] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [extracting, setExtracting] = useState(false);
   const [done, setDone] = useState(false);
-  
-  const MAX_FILE_SIZE_MB = 5;
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const getFileExtension = (name: string) => {
+    const ext = name.toLowerCase().slice(name.lastIndexOf("."));
+    return ext;
+  };
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setDone(false);
@@ -104,9 +130,11 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
     setParseErrors([]);
     setFileName(file.name);
 
+    const ext = getFileExtension(file.name);
+
     // Validate file extension
-    if (!file.name.toLowerCase().endsWith(".csv")) {
-      setParseErrors(["Format de fichier invalide. Seuls les fichiers .csv sont acceptés."]);
+    if (!ACCEPTED_EXTENSIONS.includes(ext)) {
+      setParseErrors([`Format de fichier invalide. Seuls les fichiers ${ACCEPTED_EXTENSIONS.join(", ")} sont acceptés.`]);
       if (fileRef.current) fileRef.current.value = "";
       return;
     }
@@ -120,35 +148,92 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
 
     // Validate non-empty file
     if (file.size === 0) {
-      setParseErrors(["Le fichier est vide. Veuillez sélectionner un fichier CSV contenant des données."]);
+      setParseErrors(["Le fichier est vide. Veuillez sélectionner un fichier contenant des données."]);
       if (fileRef.current) fileRef.current.value = "";
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const text = ev.target?.result as string;
-      if (!text.trim()) {
-        setParseErrors(["Le fichier ne contient aucune donnée exploitable."]);
+    if (ext === ".csv") {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const text = ev.target?.result as string;
+        if (!text.trim()) {
+          setParseErrors(["Le fichier ne contient aucune donnée exploitable."]);
+          return;
+        }
+        const { rows, errors } = parseCsv(text);
+        setPreview(rows);
+        setParseErrors(errors);
+      };
+      reader.onerror = () => {
+        setParseErrors(["Impossible de lire le fichier. Vérifiez qu'il n'est pas corrompu."]);
+      };
+      reader.readAsText(file);
+    } else if (ext === ".pdf") {
+      await handlePdfFile(file);
+    }
+  };
+
+  const handlePdfFile = async (file: File) => {
+    setExtracting(true);
+    try {
+      // Step 1: Extract text from PDF on client side
+      const pdfText = await extractTextFromPdf(file);
+      
+      if (!pdfText.trim()) {
+        setParseErrors(["Le PDF ne contient aucun texte extractible. Vérifiez que le document n'est pas un scan sans OCR."]);
+        setExtracting(false);
         return;
       }
-      const { rows, errors } = parseCsv(text);
-      setPreview(rows);
-      setParseErrors(errors);
-    };
-    reader.onerror = () => {
-      setParseErrors(["Impossible de lire le fichier. Vérifiez qu'il n'est pas corrompu."]);
-    };
-    reader.readAsText(file);
+
+      // Step 2: Send text to edge function for AI extraction
+      const { data, error } = await supabase.functions.invoke("extract-pdf-talents", {
+        body: { pdfText },
+      });
+
+      if (error) {
+        setParseErrors([`Erreur lors de l'extraction IA : ${error.message}`]);
+        setExtracting(false);
+        return;
+      }
+
+      if (!data.success) {
+        setParseErrors([data.error || "Erreur inconnue lors de l'extraction."]);
+        setExtracting(false);
+        return;
+      }
+
+      const profiles: ParsedRow[] = (data.profiles || []).map((p: any) => ({
+        full_name: p.full_name || "",
+        country: p.country || "",
+        french_level: p.french_level || "",
+        experience_years: Number(p.experience_years) || 0,
+        skills: Array.isArray(p.skills) ? p.skills : [],
+        score: Math.min(100, Math.max(0, Number(p.score) || 50)),
+      }));
+
+      if (profiles.length === 0) {
+        setParseErrors(["Aucun profil de talent n'a pu être extrait du document PDF."]);
+      } else {
+        setPreview(profiles);
+        toast({
+          title: "Extraction PDF réussie",
+          description: `${profiles.length} profil(s) extrait(s) par l'IA. Vérifiez les données avant d'importer.`,
+        });
+      }
+    } catch (err: any) {
+      console.error("PDF extraction error:", err);
+      setParseErrors([`Erreur lors du traitement du PDF : ${err.message || "erreur inconnue"}`]);
+    } finally {
+      setExtracting(false);
+    }
   };
 
   const handleUpload = async () => {
     if (!preview || preview.length === 0) return;
     setUploading(true);
-    let status = "success";
     let importId: string | null = null;
     try {
-      // Create import history record first to get the import_id
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Utilisateur non authentifié");
 
@@ -156,7 +241,7 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
         .from("csv_import_history")
         .insert({
           admin_id: user.id,
-          file_name: fileName || "fichier.csv",
+          file_name: fileName || "fichier",
           profiles_count: preview.length,
           errors_count: parseErrors.length,
           status: "success",
@@ -194,7 +279,6 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
         description: err.message || "Une erreur est survenue lors de l'import.",
         variant: "destructive",
       });
-      // Update import record status to error if it was created
       if (importId) {
         try {
           await supabase.from("csv_import_history").delete().eq("id", importId);
@@ -213,12 +297,14 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Upload className="h-5 w-5 text-accent" />
-          Import CSV de profils talents
+          Import de profils talents
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Format attendu : <code className="rounded bg-muted px-1.5 py-0.5 text-xs">full_name,country,french_level,experience_years,skills,score</code>
+          <strong>CSV</strong> : Format attendu → <code className="rounded bg-muted px-1.5 py-0.5 text-xs">full_name,country,french_level,experience_years,skills,score</code>
           <br />
           Les compétences doivent être séparées par des points-virgules (ex: <code className="rounded bg-muted px-1.5 py-0.5 text-xs">React;Node.js;Python</code>).
+          <br />
+          <strong>PDF</strong> : Le document sera analysé par l'IA pour extraire automatiquement les profils de talents.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -226,7 +312,7 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
           <input
             ref={fileRef}
             type="file"
-            accept=".csv"
+            accept=".csv,.pdf"
             onChange={handleFile}
             className="hidden"
           />
@@ -235,18 +321,28 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
             variant="default"
             className="bg-accent text-accent-foreground hover:bg-accent/90"
             onClick={() => fileRef.current?.click()}
+            disabled={extracting}
           >
-            Choisir un fichier
+            {extracting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Extraction en cours…
+              </>
+            ) : (
+              "Choisir un fichier"
+            )}
           </Button>
           <span className="text-sm text-muted-foreground">
-            {fileName || "Aucun fichier sélectionné"}
+            {extracting
+              ? "Analyse du PDF par l'IA…"
+              : fileName || "Aucun fichier sélectionné"}
           </span>
         </div>
 
         {parseErrors.length > 0 && (
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 space-y-1">
             <p className="text-sm font-medium text-destructive flex items-center gap-1">
-              <AlertCircle className="h-4 w-4" /> Erreurs de parsing
+              <AlertCircle className="h-4 w-4" /> Erreurs de traitement
             </p>
             {parseErrors.slice(0, 5).map((err, i) => (
               <p key={i} className="text-xs text-destructive/80">{err}</p>
@@ -262,6 +358,9 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
             <p className="text-sm font-medium">
               <FileText className="mr-1 inline h-4 w-4" />
               {preview.length} profil(s) prêt(s) à importer
+              {fileName.toLowerCase().endsWith(".pdf") && (
+                <Badge variant="outline" className="ml-2 text-xs">Extrait par IA</Badge>
+              )}
             </p>
             <div className="max-h-60 overflow-auto rounded-lg border">
               <table className="w-full text-sm">
