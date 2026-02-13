@@ -114,8 +114,33 @@ export default function DashboardEntreprise() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    const title = form.title.trim();
+    const description = form.description.trim();
+    const location = form.location.trim();
+    const salary = form.salary.trim();
+
+    if (!title) errors.title = "Le titre est requis.";
+    else if (title.length > 200) errors.title = "Le titre ne doit pas dépasser 200 caractères.";
+
+    if (!description) errors.description = "La description est requise.";
+    else if (description.length > 5000) errors.description = "La description ne doit pas dépasser 5000 caractères.";
+
+    if (!location) errors.location = "La localisation est requise.";
+    else if (location.length > 100) errors.location = "La localisation ne doit pas dépasser 100 caractères.";
+
+    if (salary && salary.length > 50) errors.salary = "Le salaire ne doit pas dépasser 50 caractères.";
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
     setSubmitting(true);
     createOffer.mutate();
   };
@@ -204,20 +229,24 @@ export default function DashboardEntreprise() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Titre du poste</Label>
-              <Input id="title" name="title" value={form.title} onChange={handleChange} required placeholder="Ex: Développeur Full-Stack" />
+              <Input id="title" name="title" value={form.title} onChange={handleChange} placeholder="Ex: Développeur Full-Stack" maxLength={200} />
+              {formErrors.title && <p className="text-sm text-destructive">{formErrors.title}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" value={form.description} onChange={handleChange} required placeholder="Missions, contexte…" rows={3} />
+              <Textarea id="description" name="description" value={form.description} onChange={handleChange} placeholder="Missions, contexte…" rows={3} maxLength={5000} />
+              {formErrors.description && <p className="text-sm text-destructive">{formErrors.description}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="salary">Salaire (€/an)</Label>
-                <Input id="salary" name="salary" value={form.salary} onChange={handleChange} placeholder="45 000" />
+                <Input id="salary" name="salary" value={form.salary} onChange={handleChange} placeholder="45 000" maxLength={50} />
+                {formErrors.salary && <p className="text-sm text-destructive">{formErrors.salary}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Localisation</Label>
-                <Input id="location" name="location" value={form.location} onChange={handleChange} required placeholder="Paris" />
+                <Input id="location" name="location" value={form.location} onChange={handleChange} placeholder="Paris" maxLength={100} />
+                {formErrors.location && <p className="text-sm text-destructive">{formErrors.location}</p>}
               </div>
             </div>
             <div className="space-y-2">
