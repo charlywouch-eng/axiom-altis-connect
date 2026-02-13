@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, MapPin, Banknote, Users, Star, Send, MessageSquare } from "lucide-react";
+import { ArrowLeft, MapPin, Banknote, Star, Send, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -18,11 +18,6 @@ const statusLabels: Record<string, { label: string; variant: "default" | "second
   filled: { label: "Pourvue", variant: "destructive" },
 };
 
-const MOCK_CANDIDATES = [
-  { name: "Amina Diallo", country: "Sénégal", skill: "React / Node.js", status: "En cours d'évaluation" },
-  { name: "Carlos Mendes", country: "Brésil", skill: "Java / Spring", status: "Entretien planifié" },
-  { name: "Fatou Keita", country: "Côte d'Ivoire", skill: "Python / Django", status: "Nouveau" },
-];
 
 
 function scoreColor(score: number) {
@@ -53,20 +48,24 @@ export default function OfferDetail() {
   });
 
   const { data: matches = [] } = useQuery({
-    queryKey: ["talent_matches", id],
+    queryKey: ["talent_matches", id, offer?.required_skills],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("talent_profiles")
-        .select("*")
-        .gte("score", 75)
-        .limit(5);
+      const { data, error } = await supabase.rpc("match_talents_for_offer", {
+        _required_skills: offer?.required_skills ?? [],
+        _min_score: 50,
+        _limit_count: 10,
+      });
       if (error) throw error;
-      return (data || []).map((t) => ({ ...t, contacted: false }));
+      return (data || []).map((t: any) => ({
+        ...t,
+        score: Math.round(t.compatibility_score),
+        contacted: false,
+      }));
     },
-    enabled: !!id,
+    enabled: !!id && !!offer,
   });
 
-  const handleContact = (matchId: string) => {
+  const handleContact = (_matchId: string) => {
     toast({ title: "Talent contacté", description: "Une proposition a été envoyée au talent." });
   };
 
@@ -131,7 +130,7 @@ export default function OfferDetail() {
               <Star className="h-5 w-5 text-accent" /> Talents recommandés
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Talents avec un score de compatibilité supérieur à 75%
+              Talents classés par score de compatibilité (compétences 60%, français 20%, expérience 20%)
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -195,27 +194,7 @@ export default function OfferDetail() {
           </CardContent>
         </Card>
 
-        {/* Candidats existants */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-accent" /> Candidats proposés
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="divide-y">
-              {MOCK_CANDIDATES.map((c) => (
-                <div key={c.name} className="flex items-center justify-between py-3">
-                  <div>
-                    <p className="font-medium">{c.name}</p>
-                    <p className="text-sm text-muted-foreground">{c.country} · {c.skill}</p>
-                  </div>
-                  <Badge variant="outline">{c.status}</Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+
       </div>
     </DashboardLayout>
   );

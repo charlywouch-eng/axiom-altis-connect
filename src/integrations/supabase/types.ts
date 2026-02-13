@@ -203,6 +203,24 @@ export type Database = {
         }
         Returns: boolean
       }
+      match_talents_for_offer: {
+        Args: {
+          _limit_count?: number
+          _min_score?: number
+          _required_skills: string[]
+        }
+        Returns: {
+          available: boolean
+          compatibility_score: number
+          country: string
+          experience_years: number
+          french_level: string
+          full_name: string
+          id: string
+          skills: string[]
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       app_role: "entreprise" | "talent" | "admin"
