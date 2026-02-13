@@ -125,6 +125,7 @@ export type Database = {
           french_level: string | null
           full_name: string | null
           id: string
+          import_id: string | null
           score: number | null
           skills: string[] | null
           updated_at: string
@@ -138,6 +139,7 @@ export type Database = {
           french_level?: string | null
           full_name?: string | null
           id?: string
+          import_id?: string | null
           score?: number | null
           skills?: string[] | null
           updated_at?: string
@@ -151,12 +153,21 @@ export type Database = {
           french_level?: string | null
           full_name?: string | null
           id?: string
+          import_id?: string | null
           score?: number | null
           skills?: string[] | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "talent_profiles_import_id_fkey"
+            columns: ["import_id"]
+            isOneToOne: false
+            referencedRelation: "csv_import_history"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

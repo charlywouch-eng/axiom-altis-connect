@@ -1,8 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { History } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { History, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -16,6 +29,9 @@ interface ImportRecord {
 }
 
 export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const { data: imports = [], isLoading } = useQuery({
     queryKey: ["csv_import_history", refreshKey],
     queryFn: async () => {
@@ -26,6 +42,23 @@ export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
         .limit(20);
       if (error) throw error;
       return (data || []) as ImportRecord[];
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (importId: string) => {
+      const { error } = await supabase
+        .from("csv_import_history")
+        .delete()
+        .eq("id", importId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["csv_import_history"] });
+      toast({ title: "Import supprimé", description: "L'import et les profils associés ont été supprimés." });
+    },
+    onError: (err: any) => {
+      toast({ title: "Erreur", description: err.message || "Impossible de supprimer l'import.", variant: "destructive" });
     },
   });
 
@@ -52,6 +85,7 @@ export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
                   <th className="px-3 py-2 text-left font-medium">Profils</th>
                   <th className="px-3 py-2 text-left font-medium">Erreurs</th>
                   <th className="px-3 py-2 text-left font-medium">Statut</th>
+                  <th className="px-3 py-2 text-left font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -67,6 +101,33 @@ export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
                       <Badge variant={imp.status === "success" ? "default" : "destructive"} className="text-xs">
                         {imp.status === "success" ? "Succès" : "Erreur"}
                       </Badge>
+                    </td>
+                    <td className="px-3 py-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Supprimer cet import ?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Cette action supprimera l'enregistrement d'import <strong>{imp.file_name}</strong> ainsi que
+                              les <strong>{imp.profiles_count} profil(s)</strong> talent associés. Cette action est irréversible.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteMutation.mutate(imp.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Supprimer
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </td>
                   </tr>
                 ))}

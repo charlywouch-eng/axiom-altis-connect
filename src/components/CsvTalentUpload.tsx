@@ -113,7 +113,26 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
     if (!preview || preview.length === 0) return;
     setUploading(true);
     let status = "success";
+    let importId: string | null = null;
     try {
+      // Create import history record first to get the import_id
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Utilisateur non authentifié");
+
+      const { data: importRecord, error: importError } = await supabase
+        .from("csv_import_history")
+        .insert({
+          admin_id: user.id,
+          file_name: fileName || "fichier.csv",
+          profiles_count: preview.length,
+          errors_count: parseErrors.length,
+          status: "success",
+        })
+        .select("id")
+        .single();
+      if (importError) throw importError;
+      importId = importRecord.id;
+
       const inserts = preview.map((r) => ({
         user_id: crypto.randomUUID(),
         full_name: r.full_name,
@@ -123,6 +142,7 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
         skills: r.skills,
         score: r.score,
         available: true,
+        import_id: importId,
       }));
 
       const { error } = await supabase.from("talent_profiles").insert(inserts);
@@ -136,29 +156,21 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
       setPreview(null);
       if (fileRef.current) fileRef.current.value = "";
     } catch (err: any) {
-      status = "error";
       toast({
         title: "Erreur d'import",
         description: err.message || "Une erreur est survenue lors de l'import.",
         variant: "destructive",
       });
-    } finally {
-      // Log import to history
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          await supabase.from("csv_import_history").insert({
-            admin_id: user.id,
-            file_name: fileName || "fichier.csv",
-            profiles_count: preview?.length ?? 0,
-            errors_count: parseErrors.length,
-            status,
-          });
-          onImportComplete?.();
+      // Update import record status to error if it was created
+      if (importId) {
+        try {
+          await supabase.from("csv_import_history").delete().eq("id", importId);
+        } catch {
+          // Silently fail
         }
-      } catch {
-        // Silently fail - don't block the user
       }
+    } finally {
+      onImportComplete?.();
       setUploading(false);
     }
   };
