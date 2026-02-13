@@ -1,11 +1,14 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X } from "lucide-react";
+import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X, Download, FileImage, FileText } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, RadarChart, PolarGrid, PolarAngleAxis,
@@ -63,7 +66,59 @@ export default function AdminStatistics() {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedFrenchLevel, setSelectedFrenchLevel] = useState<string | null>(null);
   const [scoreRange, setScoreRange] = useState<string>("all");
+  const [isExporting, setIsExporting] = useState(false);
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
+  const captureSnapshot = useCallback(async () => {
+    if (!dashboardRef.current) return null;
+    return html2canvas(dashboardRef.current, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: getComputedStyle(document.documentElement).getPropertyValue("--background").trim()
+        ? `hsl(${getComputedStyle(document.documentElement).getPropertyValue("--background").trim()})`
+        : "#ffffff",
+    });
+  }, []);
+
+  const exportAsImage = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      const canvas = await captureSnapshot();
+      if (!canvas) return;
+      const link = document.createElement("a");
+      link.download = `statistiques-talents-${new Date().toISOString().slice(0, 10)}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("Image exportée avec succès");
+    } catch {
+      toast.error("Erreur lors de l'export en image");
+    } finally {
+      setIsExporting(false);
+    }
+  }, [captureSnapshot]);
+
+  const exportAsPdf = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      const canvas = await captureSnapshot();
+      if (!canvas) return;
+      const imgData = canvas.toDataURL("image/png");
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const pdf = new jsPDF({
+        orientation: imgWidth > imgHeight ? "landscape" : "portrait",
+        unit: "px",
+        format: [imgWidth, imgHeight],
+      });
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save(`statistiques-talents-${new Date().toISOString().slice(0, 10)}.pdf`);
+      toast.success("PDF exporté avec succès");
+    } catch {
+      toast.error("Erreur lors de l'export en PDF");
+    } finally {
+      setIsExporting(false);
+    }
+  }, [captureSnapshot]);
   const { data: talents = [], isLoading } = useQuery({
     queryKey: ["admin_talent_stats"],
     queryFn: async () => {
@@ -173,8 +228,20 @@ export default function AdminStatistics() {
 
   return (
     <DashboardLayout sidebarVariant="admin">
-      <div className="space-y-6">
-        <h2 className="font-display text-2xl font-bold">Statistiques des talents</h2>
+      <div className="space-y-6" ref={dashboardRef}>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <h2 className="font-display text-2xl font-bold">Statistiques des talents</h2>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={exportAsImage} disabled={isExporting || talents.length === 0}>
+              <FileImage className="h-4 w-4 mr-2" />
+              Image
+            </Button>
+            <Button variant="outline" size="sm" onClick={exportAsPdf} disabled={isExporting || talents.length === 0}>
+              <FileText className="h-4 w-4 mr-2" />
+              PDF
+            </Button>
+          </div>
+        </div>
 
         {/* Filtres */}
         <Card className="bg-card/50">
