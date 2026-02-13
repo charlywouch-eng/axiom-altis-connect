@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,10 +15,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
-import { History, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { History, Trash2, CalendarIcon, X } from "lucide-react";
+import { format, isAfter, isBefore, startOfDay, endOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 interface ImportRecord {
   id: string;
@@ -31,6 +39,8 @@ interface ImportRecord {
 export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
   const { data: imports = [], isLoading } = useQuery({
     queryKey: ["csv_import_history", refreshKey],
@@ -43,6 +53,13 @@ export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
       if (error) throw error;
       return (data || []) as ImportRecord[];
     },
+  });
+
+  const filteredImports = imports.filter((imp) => {
+    const impDate = new Date(imp.created_at);
+    if (dateFrom && isBefore(impDate, startOfDay(dateFrom))) return false;
+    if (dateTo && isAfter(impDate, endOfDay(dateTo))) return false;
+    return true;
   });
 
   const deleteMutation = useMutation({
@@ -62,6 +79,13 @@ export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
     },
   });
 
+  const clearFilters = () => {
+    setDateFrom(undefined);
+    setDateTo(undefined);
+  };
+
+  const hasFilters = dateFrom || dateTo;
+
   return (
     <Card>
       <CardHeader>
@@ -70,11 +94,76 @@ export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
           Historique des imports
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        {/* Date range filter */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "justify-start text-left font-normal",
+                  !dateFrom && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateFrom ? format(dateFrom, "dd MMM yyyy", { locale: fr }) : "Date début"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={dateFrom}
+                onSelect={setDateFrom}
+                initialFocus
+                locale={fr}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+
+          <span className="text-sm text-muted-foreground">→</span>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "justify-start text-left font-normal",
+                  !dateTo && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateTo ? format(dateTo, "dd MMM yyyy", { locale: fr }) : "Date fin"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={dateTo}
+                onSelect={setDateTo}
+                initialFocus
+                locale={fr}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+
+          {hasFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
+              <X className="mr-1 h-4 w-4" /> Réinitialiser
+            </Button>
+          )}
+        </div>
+
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Chargement…</p>
-        ) : imports.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aucun import enregistré.</p>
+        ) : filteredImports.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {hasFilters ? "Aucun import trouvé pour cette période." : "Aucun import enregistré."}
+          </p>
         ) : (
           <div className="rounded-lg border overflow-auto">
             <table className="w-full text-sm">
@@ -89,7 +178,7 @@ export function ImportHistory({ refreshKey }: { refreshKey?: number }) {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {imports.map((imp) => (
+                {filteredImports.map((imp) => (
                   <tr key={imp.id}>
                     <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
                       {format(new Date(imp.created_at), "dd MMM yyyy HH:mm", { locale: fr })}
