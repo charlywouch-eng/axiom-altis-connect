@@ -156,17 +156,17 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Nos deux piliers */}
+      {/* Double Expertise */}
       <section className="mx-auto max-w-6xl px-6 py-28 md:px-12">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
           <motion.span custom={0} variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-accent">
-            Notre ADN
+            Double Expertise
           </motion.span>
           <motion.h2 custom={1} variants={fadeUp} className="mt-3 font-display text-3xl font-bold md:text-5xl">
-            Nos deux <span className="text-gradient-accent">piliers</span>
+            Deux piliers, <span className="text-gradient-accent">une seule mission</span>
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mx-auto mt-6 max-w-2xl text-muted-foreground text-lg">
-            Une approche intégrée qui allie le sourcing de talents qualifiés et la prise en charge complète de leur mobilité vers la France.
+            La fusion du sourcing intelligent et de la mobilité sécurisée pour un recrutement international sans friction.
           </motion.p>
         </motion.div>
 
@@ -184,18 +184,17 @@ export default function Index() {
                 </div>
                 <div>
                   <h3 className="font-display text-2xl font-bold">AXIOM <span className="text-accent">Talent</span></h3>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Sourcing & Recrutement</p>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Sourcing & Matching IA</p>
                 </div>
               </div>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                Identification et pré-qualification des meilleurs profils en Afrique. Notre catalogue couvre plus de 15 pays et des dizaines de métiers en tension.
+                Nous ne nous contentons pas de trouver des CV. Nous sélectionnons des profils vérifiés, testés et alignés avec la culture de votre entreprise.
               </p>
               <ul className="space-y-3">
                 {[
-                  "Base de 500+ talents qualifiés et vérifiés",
-                  "Évaluation des compétences et soft skills",
-                  "Matching intelligent offre-candidat",
-                  "Entretiens pré-sélection inclus",
+                  "Vivier de talents certifiés",
+                  "Entretiens techniques pré-qualifiés",
+                  "Matching assisté par IA",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/80">
                     <CheckCircle2 className="h-4 w-4 mt-0.5 text-accent shrink-0" />
@@ -216,18 +215,17 @@ export default function Index() {
                 </div>
                 <div>
                   <h3 className="font-display text-2xl font-bold">ALTIS <span className="text-accent">Mobility</span></h3>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Logistique & Administratif</p>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Mobilité & Logistique</p>
                 </div>
               </div>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                Prise en charge intégrale de la mobilité : du visa au logement, du transport à l'intégration sur le territoire français.
+                Le recrutement international ne doit plus être un casse-tête administratif. Nous gérons l'humain et le matériel.
               </p>
               <ul className="space-y-3">
                 {[
                   "Gestion complète des visas et titres de séjour",
-                  "Organisation du transport international",
-                  "Hébergement meublé à l'arrivée",
-                  "Accompagnement administratif et juridique",
+                  "Organisation du transport et aide au logement",
+                  "Accompagnement à l'intégration (Onboarding)",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/80">
                     <CheckCircle2 className="h-4 w-4 mt-0.5 text-accent shrink-0" />
