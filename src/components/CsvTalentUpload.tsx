@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { EditablePreviewTable } from "@/components/EditablePreviewTable";
 
 interface ParsedRow {
@@ -115,6 +116,8 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
   const [parseErrors, setParseErrors] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [extracting, setExtracting] = useState(false);
+  const [extractStep, setExtractStep] = useState(0);
+  const [extractProgress, setExtractProgress] = useState(0);
   const [done, setDone] = useState(false);
 
   const getFileExtension = (name: string) => {
@@ -174,11 +177,23 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
     }
   };
 
+  const EXTRACT_STEPS = [
+    "Lecture du fichier PDF…",
+    "Extraction du texte…",
+    "Analyse par l'IA…",
+    "Structuration des profils…",
+  ];
+
   const handlePdfFile = async (file: File) => {
     setExtracting(true);
+    setExtractStep(0);
+    setExtractProgress(10);
     try {
       // Step 1: Extract text from PDF on client side
+      setExtractStep(1);
+      setExtractProgress(25);
       const pdfText = await extractTextFromPdf(file);
+      setExtractProgress(40);
       
       if (!pdfText.trim()) {
         setParseErrors(["Le PDF ne contient aucun texte extractible. Vérifiez que le document n'est pas un scan sans OCR."]);
@@ -187,9 +202,14 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
       }
 
       // Step 2: Send text to edge function for AI extraction
+      setExtractStep(2);
+      setExtractProgress(55);
+
       const { data, error } = await supabase.functions.invoke("extract-pdf-talents", {
         body: { pdfText },
       });
+
+      setExtractProgress(80);
 
       if (error) {
         setParseErrors([`Erreur lors de l'extraction IA : ${error.message}`]);
@@ -203,6 +223,10 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
         return;
       }
 
+      // Step 3: Structure profiles
+      setExtractStep(3);
+      setExtractProgress(90);
+
       const profiles: ParsedRow[] = (data.profiles || []).map((p: any) => ({
         full_name: p.full_name || "",
         country: p.country || "",
@@ -211,6 +235,8 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
         skills: Array.isArray(p.skills) ? p.skills : [],
         score: Math.min(100, Math.max(0, Number(p.score) || 50)),
       }));
+
+      setExtractProgress(100);
 
       if (profiles.length === 0) {
         setParseErrors(["Aucun profil de talent n'a pu être extrait du document PDF."]);
@@ -226,6 +252,8 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
       setParseErrors([`Erreur lors du traitement du PDF : ${err.message || "erreur inconnue"}`]);
     } finally {
       setExtracting(false);
+      setExtractStep(0);
+      setExtractProgress(0);
     }
   };
 
@@ -358,11 +386,38 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
             Télécharger un modèle CSV
           </Button>
           <span className="text-sm text-muted-foreground">
-            {extracting
-              ? "Analyse du PDF par l'IA…"
-              : fileName || "Aucun fichier sélectionné"}
+            {!extracting && (fileName || "Aucun fichier sélectionné")}
           </span>
         </div>
+
+        {extracting && (
+          <div className="space-y-2 rounded-lg border bg-muted/30 p-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-2 font-medium">
+                <Loader2 className="h-4 w-4 animate-spin text-accent" />
+                {EXTRACT_STEPS[extractStep]}
+              </span>
+              <span className="text-muted-foreground">{extractProgress}%</span>
+            </div>
+            <Progress value={extractProgress} className="h-2" />
+            <div className="flex gap-2">
+              {EXTRACT_STEPS.map((label, i) => (
+                <span
+                  key={i}
+                  className={`text-xs ${
+                    i < extractStep
+                      ? "text-accent"
+                      : i === extractStep
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {i < extractStep ? "✓" : i === extractStep ? "●" : "○"} {label.replace("…", "")}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {parseErrors.length > 0 && (
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 space-y-1">
