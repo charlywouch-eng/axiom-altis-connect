@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
@@ -30,6 +30,9 @@
     --ocre: 20 91% 40%;
     --ocre-foreground: 0 0% 100%;
 
+    --gold: 38 92% 50%;
+    --gold-foreground: 222 47% 11%;
+
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
@@ -50,6 +53,10 @@
 
     --gradient-hero: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(222 40% 18%) 50%, hsl(220 38% 24%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(142 69% 58%) 0%, hsl(152 60% 50%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(28 91% 45%) 100%);
+    --gradient-premium: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 14%) 40%, hsl(220 38% 20%) 100%);
+    --shadow-premium: 0 20px 60px -15px hsla(222, 47%, 11%, 0.3);
+    --shadow-glow: 0 0 40px -10px hsla(38, 92%, 50%, 0.3);
   }
 
   .dark {
@@ -69,6 +76,8 @@
     --accent-foreground: 222 47% 11%;
     --ocre: 20 91% 48%;
     --ocre-foreground: 0 0% 100%;
+    --gold: 38 92% 55%;
+    --gold-foreground: 222 47% 11%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 222 30% 18%;
@@ -96,6 +105,27 @@
   }
 
   h1, h2, h3, h4 {
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-family: 'Playfair Display', 'Georgia', serif;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(38 92% 50%), hsl(28 85% 55%), hsl(38 92% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-card {
+    background: hsla(0, 0%, 100%, 0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsla(0, 0%, 100%, 0.1);
+  }
+
+  .glass-card-light {
+    background: hsla(0, 0%, 100%, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsla(0, 0%, 100%, 0.5);
   }
 }
