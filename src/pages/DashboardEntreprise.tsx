@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Briefcase, Users, Plus, TrendingUp, Eye, Trash2, Pencil } from "lucide-react";
+import { Briefcase, Users, Plus, TrendingUp, Eye, Trash2, Pencil, Star } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,22 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { OfferFormDialog, type OfferFormData } from "@/components/OfferFormDialog";
-
-function StatCard({ icon: Icon, title, value }: { icon: any; title: string; value: string }) {
-  return (
-    <Card className="transition-shadow hover:shadow-md">
-      <CardContent className="flex items-center gap-4 p-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-          <Icon className="h-5 w-5 text-accent" />
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">{title}</p>
-          <p className="text-xl font-bold">{value}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+import { PremiumStatCard } from "@/components/PremiumStatCard";
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
   open: { label: "Ouverte", variant: "default" },
@@ -173,16 +158,19 @@ export default function DashboardEntreprise() {
     <DashboardLayout sidebarVariant="entreprise">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-2xl font-bold">Espace Entreprise</h2>
-          <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setCreateOpen(true)}>
+          <div>
+            <h2 className="font-display text-2xl font-bold">Espace Entreprise</h2>
+            <p className="text-sm text-muted-foreground mt-1">Gérez vos offres et suivez vos recrutements</p>
+          </div>
+          <Button className="bg-gradient-to-r from-gold to-ocre text-white hover:opacity-90 border-0 shadow-lg shadow-ocre/20" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-2 h-4 w-4" /> Publier une offre
           </Button>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard icon={Briefcase} title="Offres actives" value={String(activeCount)} />
-          <StatCard icon={Users} title="Talents en cours" value={String(Math.floor(activeCount * 2.3))} />
-          <StatCard icon={TrendingUp} title="Installés" value="0" />
+          <PremiumStatCard icon={Briefcase} title="Offres actives" value={String(activeCount)} accent="gold" />
+          <PremiumStatCard icon={Users} title="Talents en cours" value={String(Math.floor(activeCount * 2.3))} accent="green" />
+          <PremiumStatCard icon={TrendingUp} title="Installés" value="0" />
         </div>
 
         <Card>

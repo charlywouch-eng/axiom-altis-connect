@@ -115,7 +115,10 @@ export default function DashboardTalent() {
   return (
     <DashboardLayout sidebarVariant="talent">
       <div className="space-y-6">
-        <h2 className="font-display text-2xl font-bold">Mon Espace Talent</h2>
+        <div>
+          <h2 className="font-display text-2xl font-bold">Mon Espace Talent</h2>
+          <p className="text-sm text-muted-foreground mt-1">Suivez votre parcours de mobilité</p>
+        </div>
 
         {/* Profile card */}
         <Card>
