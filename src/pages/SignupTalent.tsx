@@ -1,0 +1,502 @@
+import { useState, useMemo } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  Zap, ArrowRight, GraduationCap, Mail, Lock, User, CheckCircle2, XCircle,
+  Eye, EyeOff, Globe, Languages, Briefcase, X,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
+import { z } from "zod";
+
+const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+const countries = [
+  "Sénégal", "Côte d'Ivoire", "Cameroun", "Mali", "Guinée", "Burkina Faso",
+  "Bénin", "Togo", "Niger", "Congo (RDC)", "Congo (Brazzaville)", "Gabon",
+  "Tchad", "Madagascar", "Tunisie", "Maroc", "Algérie", "Autre",
+];
+
+const frenchLevels = [
+  { value: "A1", label: "A1 — Débutant" },
+  { value: "A2", label: "A2 — Élémentaire" },
+  { value: "B1", label: "B1 — Intermédiaire" },
+  { value: "B2", label: "B2 — Avancé" },
+  { value: "C1", label: "C1 — Autonome" },
+  { value: "C2", label: "C2 — Maîtrise" },
+  { value: "natif", label: "Natif / Bilingue" },
+];
+
+const suggestedSkills = [
+  "Développement Web", "Data Science", "Cybersécurité", "DevOps", "Cloud AWS",
+  "React", "Python", "Java", "Soudure", "Électricité", "Plomberie",
+  "Charpente", "Génie Civil", "Comptabilité", "Logistique", "Santé",
+];
+
+const signupSchema = z.object({
+  fullName: z.string().trim().min(2, "Minimum 2 caractères").max(100, "Maximum 100 caractères"),
+  email: z.string().trim().email("Adresse email invalide").max(255, "Maximum 255 caractères"),
+  password: z.string().min(8, "Minimum 8 caractères").regex(/[A-Z]/, "Au moins une majuscule").regex(/[0-9]/, "Au moins un chiffre"),
+  country: z.string().min(1, "Sélectionnez un pays"),
+  frenchLevel: z.string().min(1, "Sélectionnez un niveau"),
+  experienceYears: z.number().min(0, "Minimum 0").max(50, "Maximum 50 ans"),
+  skills: z.array(z.string()).min(1, "Ajoutez au moins une compétence"),
+});
+
+type FormData = z.infer<typeof signupSchema>;
+type FormErrors = Partial<Record<keyof FormData, string>>;
+type TouchedFields = Partial<Record<keyof FormData, boolean>>;
+
+const passwordRules = [
+  { label: "8 caractères minimum", test: (v: string) => v.length >= 8 },
+  { label: "Une majuscule", test: (v: string) => /[A-Z]/.test(v) },
+  { label: "Un chiffre", test: (v: string) => /[0-9]/.test(v) },
+];
+
+export default function SignupTalent() {
+  const { session, loading } = useAuth();
+  const { toast } = useToast();
+  const [form, setForm] = useState<FormData>({
+    fullName: "",
+    email: "",
+    password: "",
+    country: "",
+    frenchLevel: "",
+    experienceYears: 0,
+    skills: [],
+  });
+  const [touched, setTouched] = useState<TouchedFields>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [skillInput, setSkillInput] = useState("");
+
+  const errors = useMemo<FormErrors>(() => {
+    const result = signupSchema.safeParse(form);
+    if (result.success) return {};
+    const fieldErrors: FormErrors = {};
+    result.error.issues.forEach((issue) => {
+      const key = issue.path[0] as keyof FormData;
+      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+    });
+    return fieldErrors;
+  }, [form]);
+
+  const isValid = Object.keys(errors).length === 0;
+
+  if (loading) return null;
+  if (session) return <Navigate to="/onboarding-role" replace />;
+
+  const updateField = <K extends keyof FormData>(field: K, value: FormData[K]) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const markTouched = (field: keyof FormData) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const addSkill = (skill: string) => {
+    const trimmed = skill.trim();
+    if (trimmed && !form.skills.includes(trimmed) && form.skills.length < 10) {
+      updateField("skills", [...form.skills, trimmed]);
+      setSkillInput("");
+      markTouched("skills");
+    }
+  };
+
+  const removeSkill = (skill: string) => {
+    updateField("skills", form.skills.filter((s) => s !== skill));
+    markTouched("skills");
+  };
+
+  const handleSkillKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addSkill(skillInput);
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const allTouched: TouchedFields = {
+      fullName: true, email: true, password: true,
+      country: true, frenchLevel: true, experienceYears: true, skills: true,
+    };
+    setTouched(allTouched);
+
+    if (!isValid) return;
+
+    setSubmitting(true);
+
+    const { error } = await supabase.auth.signUp({
+      email: form.email.trim(),
+      password: form.password,
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: {
+          full_name: form.fullName.trim(),
+          role: "talent",
+          country: form.country,
+          french_level: form.frenchLevel,
+          experience_years: form.experienceYears,
+          skills: form.skills,
+        },
+      },
+    });
+
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    } else {
+      toast({
+        title: "Inscription réussie 🎉",
+        description: "Vérifiez votre email pour confirmer votre compte.",
+      });
+    }
+    setSubmitting(false);
+  };
+
+  return (
+    <div
+      className="flex min-h-screen items-center justify-center px-4 py-12"
+      style={{ background: "var(--gradient-hero)" }}
+    >
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: easeOut }}
+        className="relative w-full max-w-lg"
+      >
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/15 border border-accent/20">
+            <GraduationCap className="h-8 w-8 text-accent" />
+          </div>
+          <h1 className="font-display text-3xl font-bold text-primary-foreground">
+            Espace Talent
+          </h1>
+          <p className="mt-2 text-primary-foreground/50">
+            Créez votre profil et accédez aux meilleures opportunités en France
+          </p>
+        </div>
+
+        {/* Form Card */}
+        <div className="glass-card rounded-2xl p-8 space-y-6">
+          <form onSubmit={handleSignup} className="space-y-5">
+            {/* Full Name */}
+            <TextFormField
+              id="fullName" label="Nom complet" icon={User}
+              placeholder="Prénom Nom" value={form.fullName}
+              error={touched.fullName ? errors.fullName : undefined}
+              onChange={(v) => updateField("fullName", v)}
+              onBlur={() => markTouched("fullName")}
+              isValid={touched.fullName && !errors.fullName && form.fullName.length > 0}
+            />
+
+            {/* Email */}
+            <TextFormField
+              id="email" label="Email" icon={Mail} type="email"
+              placeholder="vous@email.com" value={form.email}
+              error={touched.email ? errors.email : undefined}
+              onChange={(v) => updateField("email", v)}
+              onBlur={() => markTouched("email")}
+              isValid={touched.email && !errors.email && form.email.length > 0}
+            />
+
+            {/* Country + French Level — side by side */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Country */}
+              <div className="space-y-2">
+                <Label className="text-primary-foreground/70 font-medium flex items-center gap-1.5">
+                  <Globe className="h-3.5 w-3.5" /> Pays d'origine
+                </Label>
+                <Select
+                  value={form.country}
+                  onValueChange={(v) => { updateField("country", v); markTouched("country"); }}
+                >
+                  <SelectTrigger className={`bg-white/5 border-white/10 text-primary-foreground h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20 ${
+                    touched.country && errors.country ? "border-destructive/50" : touched.country && form.country ? "border-emerald-500/50" : ""
+                  }`}>
+                    <SelectValue placeholder="Sélectionner" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {touched.country && errors.country && (
+                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-destructive">{errors.country}</motion.p>
+                )}
+              </div>
+
+              {/* French Level */}
+              <div className="space-y-2">
+                <Label className="text-primary-foreground/70 font-medium flex items-center gap-1.5">
+                  <Languages className="h-3.5 w-3.5" /> Niveau de français
+                </Label>
+                <Select
+                  value={form.frenchLevel}
+                  onValueChange={(v) => { updateField("frenchLevel", v); markTouched("frenchLevel"); }}
+                >
+                  <SelectTrigger className={`bg-white/5 border-white/10 text-primary-foreground h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20 ${
+                    touched.frenchLevel && errors.frenchLevel ? "border-destructive/50" : touched.frenchLevel && form.frenchLevel ? "border-emerald-500/50" : ""
+                  }`}>
+                    <SelectValue placeholder="Niveau" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {frenchLevels.map((l) => (
+                      <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {touched.frenchLevel && errors.frenchLevel && (
+                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-destructive">{errors.frenchLevel}</motion.p>
+                )}
+              </div>
+            </div>
+
+            {/* Experience Years */}
+            <div className="space-y-2">
+              <Label htmlFor="experience" className="text-primary-foreground/70 font-medium flex items-center gap-1.5">
+                <Briefcase className="h-3.5 w-3.5" /> Années d'expérience
+              </Label>
+              <div className="relative">
+                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/30" />
+                <Input
+                  id="experience"
+                  type="number"
+                  min={0}
+                  max={50}
+                  value={form.experienceYears}
+                  onChange={(e) => { updateField("experienceYears", parseInt(e.target.value) || 0); markTouched("experienceYears"); }}
+                  onBlur={() => markTouched("experienceYears")}
+                  className={`bg-white/5 border-white/10 text-primary-foreground h-12 rounded-xl pl-10 focus:border-accent/50 focus:ring-accent/20 ${
+                    touched.experienceYears && errors.experienceYears ? "border-destructive/50" : touched.experienceYears && !errors.experienceYears ? "border-emerald-500/50" : ""
+                  }`}
+                />
+                {touched.experienceYears && !errors.experienceYears && (
+                  <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-400" />
+                )}
+              </div>
+            </div>
+
+            {/* Skills */}
+            <div className="space-y-2">
+              <Label className="text-primary-foreground/70 font-medium">
+                Compétences <span className="text-primary-foreground/30 text-xs font-normal">({form.skills.length}/10)</span>
+              </Label>
+
+              {/* Skill badges */}
+              <AnimatePresence>
+                {form.skills.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+                    className="flex flex-wrap gap-2"
+                  >
+                    {form.skills.map((skill) => (
+                      <motion.div
+                        key={skill}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        layout
+                      >
+                        <Badge
+                          variant="secondary"
+                          className="bg-accent/15 text-accent border-accent/20 hover:bg-accent/25 cursor-pointer gap-1 py-1 px-2.5"
+                          onClick={() => removeSkill(skill)}
+                        >
+                          {skill}
+                          <X className="h-3 w-3" />
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Skill input */}
+              <Input
+                placeholder="Tapez une compétence et appuyez Entrée"
+                value={skillInput}
+                onChange={(e) => setSkillInput(e.target.value)}
+                onKeyDown={handleSkillKeyDown}
+                onBlur={() => { if (skillInput.trim()) addSkill(skillInput); markTouched("skills"); }}
+                className={`bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20 ${
+                  touched.skills && errors.skills ? "border-destructive/50" : touched.skills && form.skills.length > 0 ? "border-emerald-500/50" : ""
+                }`}
+                disabled={form.skills.length >= 10}
+              />
+
+              {/* Suggestions */}
+              {form.skills.length < 10 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {suggestedSkills
+                    .filter((s) => !form.skills.includes(s))
+                    .slice(0, 6)
+                    .map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => addSkill(s)}
+                        className="text-xs px-2.5 py-1 rounded-lg border border-white/10 text-primary-foreground/40 hover:text-accent hover:border-accent/30 transition-colors"
+                      >
+                        + {s}
+                      </button>
+                    ))}
+                </div>
+              )}
+
+              {touched.skills && errors.skills && (
+                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-destructive">{errors.skills}</motion.p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-primary-foreground/70 font-medium">
+                Mot de passe
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/30" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={(e) => updateField("password", e.target.value)}
+                  onBlur={() => markTouched("password")}
+                  placeholder="••••••••"
+                  className="bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl pl-10 pr-10 focus:border-accent/50 focus:ring-accent/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-foreground/30 hover:text-primary-foreground/60 transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+
+              {form.password.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-1.5 pt-1"
+                >
+                  {passwordRules.map((rule) => {
+                    const passes = rule.test(form.password);
+                    return (
+                      <div key={rule.label} className="flex items-center gap-2">
+                        {passes ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                        ) : (
+                          <XCircle className="h-3.5 w-3.5 text-primary-foreground/25 shrink-0" />
+                        )}
+                        <span className={`text-xs transition-colors ${passes ? "text-emerald-400" : "text-primary-foreground/30"}`}>
+                          {rule.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 border-0 rounded-xl text-base font-semibold shadow-lg shadow-accent/20 disabled:opacity-50"
+              disabled={submitting || !isValid}
+            >
+              {submitting ? "Création…" : (
+                <>Créer mon profil <ArrowRight className="ml-2 h-4 w-4" /></>
+              )}
+            </Button>
+          </form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-transparent px-3 text-xs text-primary-foreground/30">ou</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 text-center text-sm">
+            <p className="text-primary-foreground/40">
+              Vous êtes une entreprise ?{" "}
+              <Link to="/signup" className="font-semibold text-accent hover:text-accent/80 transition-colors">
+                Inscription entreprise
+              </Link>
+            </p>
+            <p className="text-primary-foreground/40">
+              Déjà inscrit ?{" "}
+              <Link to="/login" className="font-semibold text-accent hover:text-accent/80 transition-colors">
+                Se connecter
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-8 text-center text-xs text-primary-foreground/30">
+          <Zap className="inline h-3 w-3 mr-1 text-accent/50" />
+          AXIOM • Plateforme RH Tech
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+/* ── Reusable text form field ── */
+interface TextFormFieldProps {
+  id: string;
+  label: string;
+  icon: typeof Mail;
+  type?: string;
+  placeholder: string;
+  value: string;
+  error?: string;
+  isValid: boolean;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+}
+
+function TextFormField({ id, label, icon: Icon, type = "text", placeholder, value, error, isValid, onChange, onBlur }: TextFormFieldProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id} className="text-primary-foreground/70 font-medium">
+        {label}
+      </Label>
+      <div className="relative">
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/30" />
+        <Input
+          id={id}
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          placeholder={placeholder}
+          className={`bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl pl-10 pr-10 focus:border-accent/50 focus:ring-accent/20 transition-colors ${
+            error ? "border-destructive/50" : isValid ? "border-emerald-500/50" : ""
+          }`}
+        />
+        {isValid && <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-400" />}
+        {error && <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-destructive" />}
+      </div>
+      {error && (
+        <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-destructive">{error}</motion.p>
+      )}
+    </div>
+  );
+}
