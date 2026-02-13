@@ -151,6 +151,45 @@ export type Database = {
         }
         Relationships: []
       }
+      metiers_minefop_rome: {
+        Row: {
+          competences: string[]
+          created_at: string
+          description: string
+          id: string
+          legalisation: string
+          minefop_title: string
+          niveau: string
+          rome_code: string
+          rome_title: string
+          salaire_moyen_france: string | null
+        }
+        Insert: {
+          competences?: string[]
+          created_at?: string
+          description: string
+          id?: string
+          legalisation: string
+          minefop_title: string
+          niveau: string
+          rome_code: string
+          rome_title: string
+          salaire_moyen_france?: string | null
+        }
+        Update: {
+          competences?: string[]
+          created_at?: string
+          description?: string
+          id?: string
+          legalisation?: string
+          minefop_title?: string
+          niveau?: string
+          rome_code?: string
+          rome_title?: string
+          salaire_moyen_france?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           country: string | null
