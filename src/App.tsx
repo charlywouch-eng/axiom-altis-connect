@@ -20,6 +20,7 @@ import AdminSubventions from "./pages/AdminSubventions";
 import AdminImportTalents from "./pages/AdminImportTalents";
 import AdminStatistics from "./pages/AdminStatistics";
 import Billing from "./pages/Billing";
+import MetierDetail from "./pages/MetierDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -124,6 +125,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/metier/:code" element={<MetierDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
