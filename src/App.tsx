@@ -21,6 +21,7 @@ import AdminImportTalents from "./pages/AdminImportTalents";
 import AdminStatistics from "./pages/AdminStatistics";
 import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
+import DashboardRecruteur from "./pages/DashboardRecruteur";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -126,6 +127,14 @@ const App = () => (
               }
             />
             <Route path="/metier/:code" element={<MetierDetail />} />
+            <Route
+              path="/dashboard-recruteur"
+              element={
+                <ProtectedRoute>
+                  <DashboardRecruteur />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Zap, Building2, Users, Shield, ArrowRight } from "lucide-react";
+import { Zap, Building2, Users, Shield, ArrowRight, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
@@ -31,9 +31,10 @@ export default function OnboardingRole() {
   if (role === "entreprise") return <Navigate to="/dashboard-entreprise" replace />;
   if (role === "talent") return <Navigate to="/dashboard-talent" replace />;
   if (role === "admin") return <Navigate to="/admin" replace />;
+  if (role === "recruteur") return <Navigate to="/dashboard-recruteur" replace />;
   if (role) return <Navigate to="/dashboard" replace />;
 
-  const selectRole = async (selectedRole: "entreprise" | "talent" | "admin") => {
+  const selectRole = async (selectedRole: "entreprise" | "talent" | "admin" | "recruteur") => {
     if (!user) return;
     setSubmitting(true);
 
@@ -49,7 +50,7 @@ export default function OnboardingRole() {
     }
 
     toast({ title: "Bienvenue !", description: "Votre rôle a été défini avec succès." });
-    const dest = selectedRole === "entreprise" ? "/dashboard-entreprise" : selectedRole === "talent" ? "/dashboard-talent" : selectedRole === "admin" ? "/admin" : "/dashboard";
+    const dest = selectedRole === "entreprise" ? "/dashboard-entreprise" : selectedRole === "talent" ? "/dashboard-talent" : selectedRole === "admin" ? "/admin" : selectedRole === "recruteur" ? "/dashboard-recruteur" : "/dashboard";
     window.location.href = dest;
   };
 
@@ -115,6 +116,26 @@ export default function OnboardingRole() {
               </p>
               <p className="mt-1 text-sm text-primary-foreground/50 leading-relaxed">
                 Recrutez des talents internationaux pour vos projets de mobilité.
+              </p>
+            </div>
+            <ArrowRight className="mt-1 h-5 w-5 text-primary-foreground/20 group-hover:text-accent transition-colors shrink-0" />
+          </motion.button>
+
+          <motion.button
+            custom={2} variants={fadeUp}
+            disabled={submitting}
+            onClick={() => selectRole("recruteur")}
+            className="glass-card group flex w-full items-start gap-5 rounded-2xl p-6 text-left transition-all hover:bg-white/10 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 disabled:opacity-50"
+          >
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/15">
+              <Search className="h-6 w-6 text-accent" />
+            </div>
+            <div className="flex-1">
+              <p className="font-display text-lg font-semibold text-primary-foreground group-hover:text-accent transition-colors">
+                Je suis recruteur
+              </p>
+              <p className="mt-1 text-sm text-primary-foreground/50 leading-relaxed">
+                Recherchez et matchez des talents certifiés pour vos missions.
               </p>
             </div>
             <ArrowRight className="mt-1 h-5 w-5 text-primary-foreground/20 group-hover:text-accent transition-colors shrink-0" />
