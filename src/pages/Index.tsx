@@ -263,17 +263,17 @@ export default function Index() {
         </motion.div>
       </section>
 
-      {/* Avantages */}
+      {/* Pourquoi nous ? */}
       <section className="relative overflow-hidden" style={{ background: "var(--gradient-premium)" }}>
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         <div className="relative mx-auto max-w-6xl px-6 py-28 md:px-12">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
             <motion.span custom={0} variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-accent">
-              Avantages
+              Pourquoi nous ?
             </motion.span>
             <motion.h2 custom={1} variants={fadeUp} className="mt-3 font-display text-3xl font-bold text-primary-foreground md:text-5xl">
-              Pourquoi les leaders nous<br />
-              <span className="text-gradient-accent">font confiance</span>
+              La solution complète pour<br />
+              <span className="text-gradient-accent">recruter l'excellence</span>
             </motion.h2>
           </motion.div>
 
@@ -281,9 +281,9 @@ export default function Index() {
             initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
             className="mt-16 grid gap-6 md:grid-cols-3"
           >
-            <AdvantageCard custom={0} icon={Shield} title="Conformité garantie" desc="Visa, contrat, déclarations — tout est 100% conforme au droit du travail français. Zéro risque juridique." />
-            <AdvantageCard custom={1} icon={Building2} title="Logement clé en main" desc="Hébergement meublé à l'arrivée, proche du lieu de travail, pour une intégration sereine et immédiate." />
-            <AdvantageCard custom={2} icon={GraduationCap} title="Formation subventionnée" desc="FLE, habilitations métiers, certifications ROME — financé par les dispositifs publics. ROI maximal." />
+            <AdvantageCard custom={0} icon={Shield} title="Sécurité Totale" desc="Conformité juridique stricte avec les lois du travail françaises et africaines. Zéro risque, 100% confiance." />
+            <AdvantageCard custom={1} icon={Zap} title="Gain de Temps" desc="Réduisez vos délais de recrutement international de 40%. Un seul interlocuteur pour tout." />
+            <AdvantageCard custom={2} icon={GraduationCap} title="Impact Social" desc="Participez à la circulation des compétences et au développement des talents africains." />
           </motion.div>
         </div>
       </section>
