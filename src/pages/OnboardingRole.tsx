@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Globe, Building2, Users, Shield, ArrowRight, Star } from "lucide-react";
+import { Zap, Building2, Users, Shield, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
@@ -78,10 +78,9 @@ export default function OnboardingRole() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12" style={{ background: "var(--gradient-hero)" }}>
-      {/* Decorative elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-gold/5 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-accent/5 blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl" />
       </div>
 
       <motion.div
@@ -89,14 +88,14 @@ export default function OnboardingRole() {
         className="relative w-full max-w-lg"
       >
         <motion.div custom={0} variants={fadeUp} className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-gold/20 to-ocre/20 border border-gold/20">
-            <Globe className="h-8 w-8 text-gold" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/15 border border-accent/20">
+            <Zap className="h-8 w-8 text-accent" />
           </div>
           <h1 className="font-display text-3xl font-bold text-primary-foreground">
             Choisissez votre profil
           </h1>
           <p className="mt-2 text-primary-foreground/50">
-            Comment souhaitez-vous utiliser Axiom & Altis Mobility ?
+            Comment souhaitez-vous utiliser AXIOM ?
           </p>
         </motion.div>
 
@@ -105,20 +104,20 @@ export default function OnboardingRole() {
             custom={1} variants={fadeUp}
             disabled={submitting}
             onClick={() => selectRole("entreprise")}
-            className="glass-card group flex w-full items-start gap-5 rounded-2xl p-6 text-left transition-all hover:bg-white/10 hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5 disabled:opacity-50"
+            className="glass-card group flex w-full items-start gap-5 rounded-2xl p-6 text-left transition-all hover:bg-white/10 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 disabled:opacity-50"
           >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gold/20 to-ocre/20">
-              <Building2 className="h-6 w-6 text-gold" />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/15">
+              <Building2 className="h-6 w-6 text-accent" />
             </div>
             <div className="flex-1">
-              <p className="font-display text-lg font-semibold text-primary-foreground group-hover:text-gold transition-colors">
+              <p className="font-display text-lg font-semibold text-primary-foreground group-hover:text-accent transition-colors">
                 Je suis une entreprise
               </p>
               <p className="mt-1 text-sm text-primary-foreground/50 leading-relaxed">
                 Recrutez des talents internationaux pour vos projets de mobilité.
               </p>
             </div>
-            <ArrowRight className="mt-1 h-5 w-5 text-primary-foreground/20 group-hover:text-gold transition-colors shrink-0" />
+            <ArrowRight className="mt-1 h-5 w-5 text-primary-foreground/20 group-hover:text-accent transition-colors shrink-0" />
           </motion.button>
 
           <motion.button
@@ -189,7 +188,7 @@ export default function OnboardingRole() {
                   Annuler
                 </Button>
                 <Button
-                  className="flex-1 bg-gradient-to-r from-gold to-ocre text-white hover:opacity-90 border-0"
+                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 border-0"
                   disabled={submitting || !adminCode}
                   onClick={handleAdminSubmit}
                 >
@@ -201,8 +200,8 @@ export default function OnboardingRole() {
         </div>
 
         <motion.p custom={4} variants={fadeUp} className="mt-8 text-center text-xs text-primary-foreground/30">
-          <Star className="inline h-3 w-3 mr-1 text-gold/50" />
-          Service Premium • Axiom & Altis Mobility
+          <Zap className="inline h-3 w-3 mr-1 text-accent/50" />
+          AXIOM • Plateforme RH Tech
         </motion.p>
       </motion.div>
     </div>

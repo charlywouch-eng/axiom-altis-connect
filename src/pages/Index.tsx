@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Globe, ArrowRight, Send, UserCheck, Plane, Mail, Shield, Building2, GraduationCap, CheckCircle2, Star, ChevronRight } from "lucide-react";
+import { ArrowRight, Send, UserCheck, Plane, Mail, Shield, Building2, GraduationCap, CheckCircle2, ChevronRight, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -38,10 +38,10 @@ export default function Index() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-primary/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-12">
-          <div className="flex items-center gap-2.5">
-            <Globe className="h-7 w-7 text-accent" />
+          <div className="flex items-center gap-2">
+            <Zap className="h-6 w-6 text-accent" />
             <span className="font-display text-xl font-bold text-primary-foreground tracking-tight">
-              Axiom<span className="text-gradient-gold">&</span>Altis
+              AXIOM
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -51,7 +51,7 @@ export default function Index() {
               </Button>
             </Link>
             <Link to="/signup">
-              <Button className="bg-gradient-to-r from-gold to-ocre text-white hover:opacity-90 shadow-lg shadow-ocre/20 border-0">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/20 border-0">
                 Commencer
               </Button>
             </Link>
@@ -75,9 +75,9 @@ export default function Index() {
         <div className="relative mx-auto flex max-w-7xl flex-col items-start px-6 pt-32 pb-20 md:px-12 md:pt-40 md:pb-32">
           <motion.span
             initial="hidden" animate="visible" custom={0} variants={fadeUp}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-5 py-2 text-sm font-medium text-gold"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-5 py-2 text-sm font-medium text-accent"
           >
-            <Star className="h-3.5 w-3.5 fill-current" /> Service Premium tout inclus
+            <Zap className="h-3.5 w-3.5" /> Plateforme RH Tech nouvelle génération
           </motion.span>
 
           <motion.h1
@@ -86,7 +86,7 @@ export default function Index() {
           >
             Recrutez l'excellence
             <br />
-            <span className="text-gradient-gold">africaine</span>
+            <span className="text-gradient-accent">africaine</span>
             <br />
             <span className="text-accent">en France</span>
           </motion.h1>
@@ -115,7 +115,7 @@ export default function Index() {
             className="mt-10 flex flex-wrap gap-4"
           >
             <Link to="/signup">
-              <Button size="lg" className="bg-gradient-to-r from-gold to-ocre text-white hover:opacity-90 text-base px-10 py-7 h-auto shadow-xl shadow-ocre/30 border-0 rounded-xl text-lg font-semibold">
+              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-10 py-7 h-auto shadow-xl shadow-accent/30 border-0 rounded-xl text-lg font-semibold">
                 Publier une offre <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -127,7 +127,6 @@ export default function Index() {
           </motion.div>
         </div>
 
-        {/* Decorative bottom gradient */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
       </section>
 
@@ -148,7 +147,7 @@ export default function Index() {
                 key={stat.label} custom={i} variants={scaleIn}
                 className="bg-card px-6 py-8 text-center"
               >
-                <p className="font-display text-3xl font-bold text-gradient-gold md:text-4xl">{stat.value}</p>
+                <p className="font-display text-3xl font-bold text-accent md:text-4xl">{stat.value}</p>
                 <p className="mt-2 text-sm text-muted-foreground font-medium">{stat.label}</p>
               </motion.div>
             ))}
@@ -159,12 +158,12 @@ export default function Index() {
       {/* Comment ça marche */}
       <section className="mx-auto max-w-6xl px-6 py-28 md:px-12">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
-          <motion.span custom={0} variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-ocre">
+          <motion.span custom={0} variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-accent">
             Processus
           </motion.span>
           <motion.h2 custom={1} variants={fadeUp} className="mt-3 font-display text-3xl font-bold md:text-5xl">
             Trois étapes,<br />
-            <span className="text-gradient-gold">un seul interlocuteur</span>
+            <span className="text-gradient-accent">un seul interlocuteur</span>
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mx-auto mt-6 max-w-xl text-muted-foreground text-lg">
             Concentrez-vous sur votre cœur de métier. Nous orchestrons tout le reste.
@@ -186,12 +185,12 @@ export default function Index() {
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         <div className="relative mx-auto max-w-6xl px-6 py-28 md:px-12">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
-            <motion.span custom={0} variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-gold">
+            <motion.span custom={0} variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-accent">
               Avantages
             </motion.span>
             <motion.h2 custom={1} variants={fadeUp} className="mt-3 font-display text-3xl font-bold text-primary-foreground md:text-5xl">
               Pourquoi les leaders nous<br />
-              <span className="text-gradient-gold">font confiance</span>
+              <span className="text-gradient-accent">font confiance</span>
             </motion.h2>
           </motion.div>
 
@@ -206,14 +205,14 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Trusted by / Social proof */}
+      {/* Trusted by */}
       <section className="border-y bg-card/50">
         <div className="mx-auto max-w-5xl px-6 py-16 md:px-12">
           <motion.p
             initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp}
             className="text-center text-sm font-medium uppercase tracking-widest text-muted-foreground"
           >
-            Ils recrutent avec Axiom & Altis
+            Ils recrutent avec Axiom
           </motion.p>
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
@@ -234,13 +233,13 @@ export default function Index() {
       {/* CTA */}
       <section className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gold/5 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-accent/5 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-3xl px-6 py-28 text-center md:px-12">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <motion.h2 custom={0} variants={fadeUp} className="font-display text-3xl font-bold text-primary-foreground md:text-5xl leading-tight">
               Prêt à recruter<br />
-              <span className="text-gradient-gold">vos prochains talents ?</span>
+              <span className="text-gradient-accent">vos prochains talents ?</span>
             </motion.h2>
             <motion.p custom={1} variants={fadeUp} className="mt-6 text-lg text-primary-foreground/60">
               Créez votre compte et publiez votre première offre en 2 minutes.
@@ -248,11 +247,11 @@ export default function Index() {
             </motion.p>
             <motion.div custom={2} variants={fadeUp} className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link to="/signup">
-                <Button size="lg" className="bg-gradient-to-r from-gold to-ocre text-white hover:opacity-90 text-lg px-12 py-7 h-auto shadow-xl shadow-ocre/30 border-0 rounded-xl font-semibold">
+                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-lg px-12 py-7 h-auto shadow-xl shadow-accent/30 border-0 rounded-xl font-semibold">
                   Commencer maintenant <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <a href="mailto:contact@axiom-altis.com">
+              <a href="mailto:contact@axiom.com">
                 <Button size="lg" variant="ghost" className="text-primary-foreground/60 hover:text-primary-foreground hover:bg-white/10 text-base px-8 py-7 h-auto rounded-xl">
                   <Mail className="mr-2 h-4 w-4" /> Nous contacter
                 </Button>
@@ -265,20 +264,20 @@ export default function Index() {
       {/* Footer */}
       <footer className="border-t bg-primary px-6 py-14">
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-8 md:flex-row md:justify-between">
-          <div className="flex items-center gap-2.5">
-            <Globe className="h-5 w-5 text-accent" />
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-accent" />
             <span className="font-display text-sm font-bold text-primary-foreground">
-              Axiom<span className="text-gradient-gold">&</span>Altis
+              AXIOM
             </span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-primary-foreground/40">
             <span className="hover:text-primary-foreground/60 cursor-pointer transition-colors">Mentions légales</span>
             <span className="hover:text-primary-foreground/60 cursor-pointer transition-colors">Confidentialité</span>
-            <a href="mailto:contact@axiom-altis.com" className="flex items-center gap-1.5 hover:text-primary-foreground/60 transition-colors">
-              <Mail className="h-3.5 w-3.5" /> contact@axiom-altis.com
+            <a href="mailto:contact@axiom.com" className="flex items-center gap-1.5 hover:text-primary-foreground/60 transition-colors">
+              <Mail className="h-3.5 w-3.5" /> contact@axiom.com
             </a>
           </div>
-          <p className="text-xs text-primary-foreground/30">© 2026 Axiom & Altis Mobility</p>
+          <p className="text-xs text-primary-foreground/30">© 2026 Axiom</p>
         </div>
       </footer>
     </div>
@@ -289,10 +288,10 @@ function StepCard({ step, icon: Icon, title, desc, custom }: { step: number; ico
   return (
     <motion.div custom={custom} variants={scaleIn} className="group relative rounded-2xl border bg-card p-8 transition-all hover:shadow-xl hover:-translate-y-1">
       <div className="relative mb-6">
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-gold/10 to-ocre/10">
-          <Icon className="h-6 w-6 text-ocre" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent/10">
+          <Icon className="h-6 w-6 text-accent" />
         </div>
-        <span className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-gold to-ocre text-xs font-bold text-white shadow-md">
+        <span className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground shadow-md">
           {step}
         </span>
       </div>
@@ -305,8 +304,8 @@ function StepCard({ step, icon: Icon, title, desc, custom }: { step: number; ico
 function AdvantageCard({ icon: Icon, title, desc, custom }: { icon: any; title: string; desc: string; custom: number }) {
   return (
     <motion.div custom={custom} variants={scaleIn} className="glass-card rounded-2xl p-8 transition-all hover:bg-white/10">
-      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10">
-        <Icon className="h-6 w-6 text-gold" />
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
+        <Icon className="h-6 w-6 text-accent" />
       </div>
       <h3 className="mb-3 font-display text-xl font-semibold text-primary-foreground">{title}</h3>
       <p className="text-sm text-primary-foreground/60 leading-relaxed">{desc}</p>

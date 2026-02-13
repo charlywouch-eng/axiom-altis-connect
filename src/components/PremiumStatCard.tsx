@@ -5,28 +5,28 @@ interface PremiumStatCardProps {
   icon: LucideIcon;
   title: string;
   value: string;
-  accent?: "gold" | "green" | "default";
+  accent?: "blue" | "green" | "default";
 }
 
 export function PremiumStatCard({ icon: Icon, title, value, accent = "default" }: PremiumStatCardProps) {
-  const iconBg = accent === "gold"
-    ? "bg-gradient-to-br from-gold/15 to-ocre/10"
-    : accent === "green"
+  const iconBg = accent === "blue"
     ? "bg-accent/10"
+    : accent === "green"
+    ? "bg-emerald-500/10"
     : "bg-muted";
 
-  const iconColor = accent === "gold"
-    ? "text-gold"
-    : accent === "green"
+  const iconColor = accent === "blue"
     ? "text-accent"
+    : accent === "green"
+    ? "text-emerald-500"
     : "text-muted-foreground";
 
-  const valueClass = accent === "gold"
-    ? "text-gradient-gold"
+  const valueClass = accent === "blue"
+    ? "text-gradient-accent"
     : "";
 
   return (
-    <Card className="group border-border/50 transition-all hover:shadow-xl hover:shadow-gold/5 hover:-translate-y-0.5">
+    <Card className="group border-border/50 transition-all hover:shadow-xl hover:shadow-accent/5 hover:-translate-y-0.5">
       <CardContent className="flex items-center gap-4 p-6">
         <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${iconBg} transition-transform group-hover:scale-110`}>
           <Icon className={`h-5 w-5 ${iconColor}`} />
