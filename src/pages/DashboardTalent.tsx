@@ -28,14 +28,20 @@ import {
   GraduationCap,
   Building2,
   Save,
+  MapPin,
+  Banknote,
+  Star,
+  TrendingUp,
+  Eye,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { PremiumStatCard } from "@/components/PremiumStatCard";
 
 const FRENCH_LEVELS = ["Débutant (A1)", "Élémentaire (A2)", "Intermédiaire (B1)", "Avancé (B2)", "Courant (C1)", "Natif (C2)"];
 
 interface TimelineStep {
   label: string;
-  icon: any;
+  icon: typeof Briefcase;
   status: "done" | "active" | "pending";
 }
 
@@ -74,13 +80,59 @@ export default function DashboardTalent() {
     enabled: !!user,
   });
 
+  // Fetch matching offers for this talent's skills
+  const { data: matchingOffers = [] } = useQuery({
+    queryKey: ["talent_matching_offers", user?.id, profile?.skills],
+    queryFn: async () => {
+      const talentSkills = profile?.skills || [];
+      if (talentSkills.length === 0) return [];
+
+      const { data, error } = await supabase
+        .from("job_offers")
+        .select("*")
+        .eq("status", "open")
+        .order("created_at", { ascending: false })
+        .limit(20);
+      if (error) throw error;
+
+      // Compute compatibility score client-side
+      return (data || [])
+        .map((offer) => {
+          const requiredSkills = offer.required_skills || [];
+          if (requiredSkills.length === 0) return { ...offer, score: 30 };
+          const matchCount = talentSkills.filter((s) =>
+            requiredSkills.some((rs: string) => rs.toLowerCase() === s.toLowerCase())
+          ).length;
+          const score = Math.round((matchCount / requiredSkills.length) * 100);
+          return { ...offer, score };
+        })
+        .filter((o) => o.score >= 30)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5);
+    },
+    enabled: !!user && !!profile,
+  });
+
+  // Count total open offers
+  const { data: totalOpenOffers = 0 } = useQuery({
+    queryKey: ["open_offers_count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("job_offers")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "open");
+      if (error) throw error;
+      return count || 0;
+    },
+  });
+
   useEffect(() => {
     if (profile) {
       setForm({
         full_name: profile.full_name || "",
-        country: (profile as any).country || "",
-        french_level: (profile as any).french_level || "",
-        skills: (profile as any).skills?.join(", ") || "",
+        country: profile.country || "",
+        french_level: profile.french_level || "",
+        skills: profile.skills?.join(", ") || "",
       });
     }
   }, [profile]);
@@ -95,7 +147,7 @@ export default function DashboardTalent() {
           country: form.country || null,
           french_level: form.french_level || null,
           skills,
-        } as any)
+        })
         .eq("id", user!.id);
       if (error) throw error;
     },
@@ -104,7 +156,7 @@ export default function DashboardTalent() {
       toast({ title: "Profil mis à jour" });
       setEditing(false);
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast({ title: "Erreur", description: err.message, variant: "destructive" });
     },
   });
@@ -119,6 +171,80 @@ export default function DashboardTalent() {
           <h2 className="font-display text-2xl font-bold">Mon Espace Talent</h2>
           <p className="text-sm text-muted-foreground mt-1">Suivez votre parcours de mobilité</p>
         </div>
+
+        {/* KPIs */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <PremiumStatCard icon={Briefcase} title="Offres disponibles" value={String(totalOpenOffers)} accent="blue" />
+          <PremiumStatCard icon={Star} title="Offres compatibles" value={String(matchingOffers.length)} accent="green" />
+          <PremiumStatCard icon={TrendingUp} title="Progression" value={`${progressPercent}%`} />
+        </div>
+
+        {/* Matching Offers */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Star className="h-5 w-5 text-accent" /> Offres recommandées pour vous
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Basées sur vos compétences : {profile?.skills?.join(", ") || "Non renseignées"}
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {matchingOffers.length > 0 ? (
+              matchingOffers.map((offer) => (
+                <div
+                  key={offer.id}
+                  className="flex items-center gap-4 rounded-xl border border-border/50 p-4 transition-all hover:bg-muted/30 hover:shadow-sm"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <span className={`text-xl font-bold ${
+                      offer.score >= 80 ? "text-accent" : offer.score >= 50 ? "text-foreground" : "text-muted-foreground"
+                    }`}>
+                      {offer.score}%
+                    </span>
+                    <Progress value={offer.score} className="h-1.5 w-10" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold truncate">{offer.title}</p>
+                    <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{offer.location}</span>
+                      {offer.salary_range && (
+                        <span className="flex items-center gap-1"><Banknote className="h-3 w-3" />{offer.salary_range} €</span>
+                      )}
+                    </div>
+                    {offer.required_skills && offer.required_skills.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {offer.required_skills.map((sk: string) => {
+                          const isMatch = profile?.skills?.some(
+                            (s) => s.toLowerCase() === sk.toLowerCase()
+                          );
+                          return (
+                            <Badge
+                              key={sk}
+                              variant={isMatch ? "default" : "outline"}
+                              className={isMatch ? "bg-accent text-accent-foreground text-xs" : "text-xs"}
+                            >
+                              {sk}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  <Button variant="outline" size="sm" className="shrink-0">
+                    <Eye className="h-3.5 w-3.5 mr-1" /> Voir
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                {profile?.skills && profile.skills.length > 0
+                  ? "Aucune offre compatible pour le moment. De nouvelles offres arrivent régulièrement !"
+                  : "Complétez votre profil avec vos compétences pour voir les offres compatibles."}
+              </p>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Profile card */}
         <Card>
@@ -182,13 +308,13 @@ export default function DashboardTalent() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <ProfileField label="Nom" value={profile?.full_name} />
                 <ProfileField label="Email" value={profile?.email} />
-                <ProfileField label="Pays d'origine" value={(profile as any)?.country} />
-                <ProfileField label="Niveau de français" value={(profile as any)?.french_level} />
+                <ProfileField label="Pays d'origine" value={profile?.country} />
+                <ProfileField label="Niveau de français" value={profile?.french_level} />
                 <div className="sm:col-span-2">
                   <p className="text-xs text-muted-foreground mb-1">Compétences</p>
-                  {(profile as any)?.skills?.length > 0 ? (
+                  {profile?.skills && profile.skills.length > 0 ? (
                     <div className="flex flex-wrap gap-1.5">
-                      {(profile as any).skills.map((s: string) => (
+                      {profile.skills.map((s: string) => (
                         <Badge key={s} variant="secondary">{s}</Badge>
                       ))}
                     </div>
@@ -213,11 +339,9 @@ export default function DashboardTalent() {
           <CardContent>
             <div className="relative space-y-0">
               {MOCK_TIMELINE.map((step, i) => {
-                const Icon = step.icon;
                 const isLast = i === MOCK_TIMELINE.length - 1;
                 return (
                   <div key={step.label} className="flex gap-4">
-                    {/* Vertical line + dot */}
                     <div className="flex flex-col items-center">
                       <div
                         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
@@ -244,7 +368,6 @@ export default function DashboardTalent() {
                         />
                       )}
                     </div>
-                    {/* Content */}
                     <div className="pb-6">
                       <p
                         className={`font-medium leading-9 ${
