@@ -155,6 +155,90 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Nos deux piliers */}
+      <section className="mx-auto max-w-6xl px-6 py-28 md:px-12">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
+          <motion.span custom={0} variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest text-accent">
+            Notre ADN
+          </motion.span>
+          <motion.h2 custom={1} variants={fadeUp} className="mt-3 font-display text-3xl font-bold md:text-5xl">
+            Nos deux <span className="text-gradient-accent">piliers</span>
+          </motion.h2>
+          <motion.p custom={2} variants={fadeUp} className="mx-auto mt-6 max-w-2xl text-muted-foreground text-lg">
+            Une approche intégrée qui allie le sourcing de talents qualifiés et la prise en charge complète de leur mobilité vers la France.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}
+          className="mt-16 grid gap-8 md:grid-cols-2"
+        >
+          {/* AXIOM Talent */}
+          <motion.div custom={0} variants={scaleIn} className="group relative rounded-2xl border bg-card p-10 transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="relative">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
+                  <Zap className="h-6 w-6 text-accent" />
+                </div>
+                <div>
+                  <h3 className="font-display text-2xl font-bold">AXIOM <span className="text-accent">Talent</span></h3>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Sourcing & Recrutement</p>
+                </div>
+              </div>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Identification et pré-qualification des meilleurs profils en Afrique. Notre catalogue couvre plus de 15 pays et des dizaines de métiers en tension.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Base de 500+ talents qualifiés et vérifiés",
+                  "Évaluation des compétences et soft skills",
+                  "Matching intelligent offre-candidat",
+                  "Entretiens pré-sélection inclus",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/80">
+                    <CheckCircle2 className="h-4 w-4 mt-0.5 text-accent shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+
+          {/* ALTIS Mobility */}
+          <motion.div custom={1} variants={scaleIn} className="group relative rounded-2xl border bg-card p-10 transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-accent/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+            <div className="relative">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
+                  <Plane className="h-6 w-6 text-accent" />
+                </div>
+                <div>
+                  <h3 className="font-display text-2xl font-bold">ALTIS <span className="text-accent">Mobility</span></h3>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Logistique & Administratif</p>
+                </div>
+              </div>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Prise en charge intégrale de la mobilité : du visa au logement, du transport à l'intégration sur le territoire français.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Gestion complète des visas et titres de séjour",
+                  "Organisation du transport international",
+                  "Hébergement meublé à l'arrivée",
+                  "Accompagnement administratif et juridique",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-foreground/80">
+                    <CheckCircle2 className="h-4 w-4 mt-0.5 text-accent shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
       {/* Comment ça marche */}
       <section className="mx-auto max-w-6xl px-6 py-28 md:px-12">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center">
