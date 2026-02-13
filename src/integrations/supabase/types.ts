@@ -158,11 +158,14 @@ export type Database = {
           description: string
           id: string
           legalisation: string
+          metier_tension_fr: string | null
           minefop_title: string
           niveau: string
+          niveau_tension: string | null
           rome_code: string
           rome_title: string
           salaire_moyen_france: string | null
+          score_matching: number | null
         }
         Insert: {
           competences?: string[]
@@ -170,11 +173,14 @@ export type Database = {
           description: string
           id?: string
           legalisation: string
+          metier_tension_fr?: string | null
           minefop_title: string
           niveau: string
+          niveau_tension?: string | null
           rome_code: string
           rome_title: string
           salaire_moyen_france?: string | null
+          score_matching?: number | null
         }
         Update: {
           competences?: string[]
@@ -182,11 +188,14 @@ export type Database = {
           description?: string
           id?: string
           legalisation?: string
+          metier_tension_fr?: string | null
           minefop_title?: string
           niveau?: string
+          niveau_tension?: string | null
           rome_code?: string
           rome_title?: string
           salaire_moyen_france?: string | null
+          score_matching?: number | null
         }
         Relationships: []
       }
