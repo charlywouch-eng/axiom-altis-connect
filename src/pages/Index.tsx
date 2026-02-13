@@ -4,7 +4,7 @@ import { ArrowRight, Send, UserCheck, Plane, Mail, Shield, Building2, Graduation
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import heroImage from "@/assets/hero-talents.jpg";
+import heroImage from "@/assets/hero-tech-bg.jpg";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -38,11 +38,19 @@ export default function Index() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-primary/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-12">
-          <div className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-accent" />
-            <span className="font-display text-xl font-bold text-primary-foreground tracking-tight">
-              AXIOM
-            </span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Zap className="h-6 w-6 text-accent" />
+              <span className="font-display text-xl font-bold text-primary-foreground tracking-tight">
+                AXIOM
+              </span>
+            </div>
+            <div className="hidden sm:flex items-center gap-1.5">
+              <Zap className="h-4 w-4 text-accent/70" />
+              <span className="font-display text-sm font-semibold text-primary-foreground/60 tracking-tight">
+                ALTIS Mobility
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login">
@@ -68,8 +76,8 @@ export default function Index() {
             className="h-full w-full object-cover"
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/98 via-primary/90 to-primary/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-primary/30" />
         </div>
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-start px-6 pt-32 pb-20 md:px-12 md:pt-40 md:pb-32">
