@@ -6,10 +6,10 @@ import { Check, Clock, FileText, Plane, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STEPS: { label: string; icon: typeof FileText; sub?: string }[] = [
-  { label: "Entretien", icon: FileText },
-  { label: "Contrat signé", icon: Check },
-  { label: "Visa en cours", icon: Plane, sub: "ALTIS" },
-  { label: "Arrivée prévue", icon: MapPin },
+  { label: "Profil validé", icon: FileText, sub: "AXIOM" },
+  { label: "Promesse d'embauche", icon: Check },
+  { label: "Procédure consulaire", icon: Plane, sub: "ALTIS" },
+  { label: "Arrivée & Accueil", icon: MapPin, sub: "Paris" },
 ];
 
 type StepStatus = "done" | "active" | "pending";
