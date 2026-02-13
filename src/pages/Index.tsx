@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import HeroTalentGallery from "@/components/landing/HeroTalentGallery";
 import RomeCardsSection from "@/components/landing/RomeCardsSection";
 import SecurityComplianceSection from "@/components/landing/SecurityComplianceSection";
+import TensionMetiersSection from "@/components/landing/TensionMetiersSection";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -171,6 +172,9 @@ export default function Index() {
 
       {/* ROME Cards */}
       <RomeCardsSection />
+
+      {/* Métiers en tension France 2026 */}
+      <TensionMetiersSection />
 
       {/* Sécurité & Conformité */}
       <SecurityComplianceSection />
