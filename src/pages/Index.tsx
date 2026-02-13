@@ -4,7 +4,7 @@ import { ArrowRight, Send, UserCheck, Plane, Mail, Shield, Building2, Graduation
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import heroImage from "@/assets/hero-tech-bg.jpg";
+import heroImage from "@/assets/hero-map-connections.jpg";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
