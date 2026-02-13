@@ -30,7 +30,9 @@ serve(async (req) => {
 
     const token = authHeader.replace("Bearer ", "");
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    console.log("Claims result:", { claimsData: claimsData?.claims?.sub, claimsError: claimsError?.message });
     if (claimsError || !claimsData?.claims) {
+      console.log("Auth failed - returning 401");
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -55,6 +57,8 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    console.log("Code comparison:", { codeLength: code.length, secretLength: adminSecret.length, match: code === adminSecret });
 
     if (code !== adminSecret) {
       return new Response(JSON.stringify({ valid: false }), {
