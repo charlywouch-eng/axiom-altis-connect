@@ -1,4 +1,4 @@
-import { LogOut, Menu, Globe } from "lucide-react";
+import { LogOut, Menu, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -14,11 +14,11 @@ export function AppHeader() {
           <Menu className="h-5 w-5" />
         </SidebarTrigger>
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gold to-ocre shadow-md shadow-ocre/20">
-            <Globe className="h-4 w-4 text-white" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent shadow-md shadow-accent/20">
+            <Zap className="h-4 w-4 text-accent-foreground" />
           </div>
           <h1 className="font-display text-lg font-bold tracking-tight hidden sm:block">
-            Axiom<span className="text-gradient-gold">&</span>Altis
+            AXIOM
           </h1>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Globe, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, Star } from "lucide-react";
+import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -47,17 +47,17 @@ export function AppSidebar({ variant }: { variant?: "entreprise" | "talent" | "a
   return (
     <Sidebar className="border-r-0">
       <SidebarContent className="bg-sidebar pt-6">
-        {/* Premium brand block */}
+        {/* Brand block */}
         <div className="mb-8 px-5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-gold to-ocre shadow-lg shadow-ocre/20">
-              <Globe className="h-5 w-5 text-white" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent shadow-lg shadow-accent/20">
+              <Zap className="h-5 w-5 text-accent-foreground" />
             </div>
             <div>
               <span className="font-display text-base font-bold text-sidebar-foreground tracking-tight">
-                Axiom<span className="text-gradient-gold">&</span>Altis
+                AXIOM
               </span>
-              <p className="text-[10px] uppercase tracking-widest text-sidebar-foreground/30 font-medium">Mobility</p>
+              <p className="text-[10px] uppercase tracking-widest text-sidebar-foreground/30 font-medium">RH Tech</p>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@ export function AppSidebar({ variant }: { variant?: "entreprise" | "talent" | "a
                       to={item.url}
                       end
                       className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sidebar-foreground/60 transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                      activeClassName="bg-gradient-to-r from-gold/10 to-ocre/5 text-gold font-medium border-l-2 border-gold"
+                      activeClassName="bg-accent/10 text-accent font-medium border-l-2 border-accent"
                     >
                       <item.icon className="h-4 w-4" />
                       <span className="text-sm">{item.title}</span>
@@ -87,15 +87,15 @@ export function AppSidebar({ variant }: { variant?: "entreprise" | "talent" | "a
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Premium badge */}
+        {/* Info badge */}
         <div className="mt-auto px-5 pb-6">
-          <div className="rounded-xl bg-gradient-to-br from-gold/10 to-ocre/5 border border-gold/10 px-4 py-3">
+          <div className="rounded-xl bg-accent/10 border border-accent/10 px-4 py-3">
             <div className="flex items-center gap-2 mb-1">
-              <Star className="h-3.5 w-3.5 text-gold fill-gold" />
-              <span className="text-xs font-semibold text-gold">Premium</span>
+              <Zap className="h-3.5 w-3.5 text-accent" />
+              <span className="text-xs font-semibold text-accent">AXIOM</span>
             </div>
             <p className="text-[10px] text-sidebar-foreground/40 leading-relaxed">
-              Service tout inclus pour votre mobilité internationale.
+              Plateforme RH Tech pour la mobilité internationale.
             </p>
           </div>
         </div>

@@ -12,7 +12,7 @@ function TalentDashboard() {
         <p className="text-sm text-muted-foreground mt-1">Suivez votre parcours de mobilité internationale</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <PremiumStatCard icon={Globe} title="Statut Relocation" value="En cours" accent="gold" />
+        <PremiumStatCard icon={Globe} title="Statut Relocation" value="En cours" accent="blue" />
         <PremiumStatCard icon={Briefcase} title="Candidatures" value="3" accent="green" />
         <PremiumStatCard icon={TrendingUp} title="Vues profil" value="12" />
       </div>
@@ -36,7 +36,7 @@ function EntrepriseDashboard() {
         <p className="text-sm text-muted-foreground mt-1">Gérez vos offres et suivez vos recrutements</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <PremiumStatCard icon={Users} title="Talents disponibles" value="48" accent="gold" />
+        <PremiumStatCard icon={Users} title="Talents disponibles" value="48" accent="blue" />
         <PremiumStatCard icon={Briefcase} title="Postes ouverts" value="5" accent="green" />
         <PremiumStatCard icon={TrendingUp} title="Entretiens planifiés" value="2" />
       </div>
@@ -60,10 +60,10 @@ function AdminDashboard() {
         <p className="text-sm text-muted-foreground mt-1">Vue d'ensemble de la plateforme</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <PremiumStatCard icon={Users} title="Utilisateurs" value="124" accent="gold" />
+        <PremiumStatCard icon={Users} title="Utilisateurs" value="124" accent="blue" />
         <PremiumStatCard icon={Briefcase} title="Entreprises" value="18" accent="green" />
         <PremiumStatCard icon={Globe} title="Relocations actives" value="32" />
-        <PremiumStatCard icon={TrendingUp} title="Ce mois" value="+15%" accent="gold" />
+        <PremiumStatCard icon={TrendingUp} title="Ce mois" value="+15%" accent="blue" />
       </div>
     </div>
   );
