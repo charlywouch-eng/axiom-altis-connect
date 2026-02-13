@@ -85,18 +85,20 @@ function parseCsv(text: string): { rows: ParsedRow[]; errors: string[] } {
   return { rows, errors };
 }
 
-export function CsvTalentUpload() {
+export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () => void } = {}) {
   const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState<string>("");
   const [preview, setPreview] = useState<ParsedRow[] | null>(null);
   const [parseErrors, setParseErrors] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState(false);
-
+  
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setDone(false);
+    setFileName(file.name);
     const reader = new FileReader();
     reader.onload = (ev) => {
       const text = ev.target?.result as string;
@@ -110,9 +112,8 @@ export function CsvTalentUpload() {
   const handleUpload = async () => {
     if (!preview || preview.length === 0) return;
     setUploading(true);
+    let status = "success";
     try {
-      // We need a dummy user_id for CSV imports (admin-created profiles)
-      // Using a deterministic UUID based on the talent name
       const inserts = preview.map((r) => ({
         user_id: crypto.randomUUID(),
         full_name: r.full_name,
@@ -135,12 +136,29 @@ export function CsvTalentUpload() {
       setPreview(null);
       if (fileRef.current) fileRef.current.value = "";
     } catch (err: any) {
+      status = "error";
       toast({
         title: "Erreur d'import",
         description: err.message || "Une erreur est survenue lors de l'import.",
         variant: "destructive",
       });
     } finally {
+      // Log import to history
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from("csv_import_history").insert({
+            admin_id: user.id,
+            file_name: fileName || "fichier.csv",
+            profiles_count: preview?.length ?? 0,
+            errors_count: parseErrors.length,
+            status,
+          });
+          onImportComplete?.();
+        }
+      } catch {
+        // Silently fail - don't block the user
+      }
       setUploading(false);
     }
   };
