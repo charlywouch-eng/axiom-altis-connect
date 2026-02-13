@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      csv_import_history: {
+        Row: {
+          admin_id: string
+          created_at: string
+          errors_count: number
+          file_name: string
+          id: string
+          profiles_count: number
+          status: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          errors_count?: number
+          file_name: string
+          id?: string
+          profiles_count?: number
+          status?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          errors_count?: number
+          file_name?: string
+          id?: string
+          profiles_count?: number
+          status?: string
+        }
+        Relationships: []
+      }
       job_offers: {
         Row: {
           company_id: string
