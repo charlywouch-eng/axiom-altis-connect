@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import HeroTalentGallery from "@/components/landing/HeroTalentGallery";
 import RomeCardsSection from "@/components/landing/RomeCardsSection";
+import SecurityComplianceSection from "@/components/landing/SecurityComplianceSection";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -170,6 +171,9 @@ export default function Index() {
 
       {/* ROME Cards */}
       <RomeCardsSection />
+
+      {/* Sécurité & Conformité */}
+      <SecurityComplianceSection />
 
       {/* Stats band */}
       <section className="px-6 md:px-12">
