@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Briefcase, Users, Plus, TrendingUp, Eye, Trash2, Pencil, Star } from "lucide-react";
+import { Briefcase, Users, Plus, TrendingUp, Eye, Trash2, Pencil } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +31,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { OfferFormDialog, type OfferFormData } from "@/components/OfferFormDialog";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
+import { RecruitmentPipeline } from "@/components/RecruitmentPipeline";
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
   open: { label: "Ouverte", variant: "default" },
@@ -243,6 +244,7 @@ export default function DashboardEntreprise() {
             )}
           </CardContent>
         </Card>
+        <RecruitmentPipeline />
       </div>
 
       {/* Create dialog */}
