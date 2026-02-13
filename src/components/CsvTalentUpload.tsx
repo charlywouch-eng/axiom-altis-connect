@@ -195,8 +195,19 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
             type="file"
             accept=".csv"
             onChange={handleFile}
-            className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-sm file:font-medium file:text-accent-foreground hover:file:bg-accent/90"
+            className="hidden"
           />
+          <Button
+            type="button"
+            variant="default"
+            className="bg-accent text-accent-foreground hover:bg-accent/90"
+            onClick={() => fileRef.current?.click()}
+          >
+            Choisir un fichier
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            {fileName || "Aucun fichier sélectionné"}
+          </span>
         </div>
 
         {parseErrors.length > 0 && (
