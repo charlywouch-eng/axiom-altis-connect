@@ -169,9 +169,29 @@ export default function DashboardEntreprise() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <PremiumStatCard icon={Briefcase} title="Offres actives" value={String(activeCount)} accent="blue" />
-          <PremiumStatCard icon={Users} title="Talents en cours" value={String(Math.floor(activeCount * 2.3))} accent="green" />
-          <PremiumStatCard icon={TrendingUp} title="Installés" value="0" />
+          <PremiumStatCard
+            icon={Briefcase}
+            title="Offres actives"
+            value={String(activeCount)}
+            accent="blue"
+            tensionLevel={activeCount === 0 ? "critical" : activeCount < 3 ? "high" : "low"}
+            subtitle="Postes ouverts au recrutement"
+          />
+          <PremiumStatCard
+            icon={Users}
+            title="Talents en cours"
+            value={String(Math.floor(activeCount * 2.3))}
+            accent="green"
+            tensionLevel={activeCount * 2.3 < 2 ? "medium" : "low"}
+            subtitle="Candidats dans le pipeline"
+          />
+          <PremiumStatCard
+            icon={TrendingUp}
+            title="Installés"
+            value="0"
+            tensionLevel="none"
+            subtitle="Talents recrutés et en poste"
+          />
         </div>
 
         <Card>

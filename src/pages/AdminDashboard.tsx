@@ -110,10 +110,37 @@ function AdminContent() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <PremiumStatCard icon={Users} title="Talents inscrits" value={String(talentProfiles.length)} accent="blue" />
-        <PremiumStatCard icon={Globe} title="Talents disponibles" value={String(availableTalents.length)} accent="green" />
-        <PremiumStatCard icon={Briefcase} title="Offres ouvertes" value={String(offerStats?.open ?? 0)} />
-        <PremiumStatCard icon={GraduationCap} title="Entreprises" value={String(entrepriseCount)} accent="blue" />
+        <PremiumStatCard
+          icon={Users}
+          title="Talents inscrits"
+          value={String(talentProfiles.length)}
+          accent="blue"
+          tensionLevel={talentProfiles.length < 10 ? "high" : talentProfiles.length < 50 ? "medium" : "low"}
+          subtitle="Profils dans la base"
+        />
+        <PremiumStatCard
+          icon={Globe}
+          title="Talents disponibles"
+          value={String(availableTalents.length)}
+          accent="green"
+          tensionLevel={availableTalents.length === 0 ? "critical" : availableTalents.length < 5 ? "high" : "low"}
+          subtitle="Prêts pour le recrutement"
+        />
+        <PremiumStatCard
+          icon={Briefcase}
+          title="Offres ouvertes"
+          value={String(offerStats?.open ?? 0)}
+          tensionLevel={(offerStats?.open ?? 0) === 0 ? "critical" : (offerStats?.open ?? 0) < 3 ? "medium" : "low"}
+          subtitle="Postes à pourvoir"
+        />
+        <PremiumStatCard
+          icon={GraduationCap}
+          title="Entreprises"
+          value={String(entrepriseCount)}
+          accent="blue"
+          tensionLevel={entrepriseCount < 3 ? "high" : "low"}
+          subtitle="Partenaires actifs"
+        />
       </div>
 
       {/* Secondary stats */}
