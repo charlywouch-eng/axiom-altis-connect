@@ -9,8 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Globe, Building2, Users, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const ADMIN_SECRET = "axiom2026";
-
 export default function OnboardingRole() {
   const { session, role, loading, user } = useAuth();
   const { toast } = useToast();
@@ -46,12 +44,26 @@ export default function OnboardingRole() {
     window.location.href = dest;
   };
 
-  const handleAdminSubmit = () => {
-    if (adminCode === ADMIN_SECRET) {
-      selectRole("admin");
-    } else {
-      toast({ title: "Code invalide", description: "Le code administrateur est incorrect.", variant: "destructive" });
-      setAdminCode("");
+  const handleAdminSubmit = async () => {
+    setSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("validate-admin-code", {
+        body: { code: adminCode },
+      });
+
+      if (error) throw error;
+
+      if (data?.valid) {
+        toast({ title: "Bienvenue !", description: "Votre rôle a été défini avec succès." });
+        window.location.href = "/admin";
+      } else {
+        toast({ title: "Code invalide", description: "Le code administrateur est incorrect.", variant: "destructive" });
+        setAdminCode("");
+        setSubmitting(false);
+      }
+    } catch {
+      toast({ title: "Erreur", description: "Une erreur est survenue.", variant: "destructive" });
+      setSubmitting(false);
     }
   };
 
