@@ -44,6 +44,74 @@ export type Database = {
         }
         Relationships: []
       }
+      diplomas: {
+        Row: {
+          apostille_verified: boolean | null
+          created_at: string
+          extracted_date: string | null
+          extracted_field: string | null
+          extracted_name: string | null
+          file_name: string
+          file_path: string
+          id: string
+          minfop_verified: boolean | null
+          rome_code: string | null
+          rome_label: string | null
+          rome_match_percent: number | null
+          status: string
+          talent_id: string
+          updated_at: string
+          user_id: string
+          verification_details: Json | null
+        }
+        Insert: {
+          apostille_verified?: boolean | null
+          created_at?: string
+          extracted_date?: string | null
+          extracted_field?: string | null
+          extracted_name?: string | null
+          file_name: string
+          file_path: string
+          id?: string
+          minfop_verified?: boolean | null
+          rome_code?: string | null
+          rome_label?: string | null
+          rome_match_percent?: number | null
+          status?: string
+          talent_id: string
+          updated_at?: string
+          user_id: string
+          verification_details?: Json | null
+        }
+        Update: {
+          apostille_verified?: boolean | null
+          created_at?: string
+          extracted_date?: string | null
+          extracted_field?: string | null
+          extracted_name?: string | null
+          file_name?: string
+          file_path?: string
+          id?: string
+          minfop_verified?: boolean | null
+          rome_code?: string | null
+          rome_label?: string | null
+          rome_match_percent?: number | null
+          status?: string
+          talent_id?: string
+          updated_at?: string
+          user_id?: string
+          verification_details?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diplomas_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_offers: {
         Row: {
           company_id: string

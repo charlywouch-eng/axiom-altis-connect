@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
+import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 
 const FRENCH_LEVELS = ["Débutant (A1)", "Élémentaire (A2)", "Intermédiaire (B1)", "Avancé (B2)", "Courant (C1)", "Natif (C2)"];
 
@@ -347,6 +348,9 @@ export default function DashboardTalent() {
             )}
           </CardContent>
         </Card>
+
+        {/* Diploma Upload */}
+        <DiplomaUpload />
 
         {/* Relocation timeline */}
         <Card>
