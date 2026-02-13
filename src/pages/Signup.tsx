@@ -268,15 +268,20 @@ export default function Signup() {
             </div>
           </div>
 
-          <p className="text-center text-sm text-primary-foreground/40">
-            Déjà inscrit ?{" "}
-            <Link
-              to="/login"
-              className="font-semibold text-accent hover:text-accent/80 transition-colors"
-            >
-              Se connecter
-            </Link>
-          </p>
+          <div className="flex flex-col gap-2 text-center text-sm">
+            <p className="text-primary-foreground/40">
+              Vous êtes un talent ?{" "}
+              <Link to="/signup-talent" className="font-semibold text-accent hover:text-accent/80 transition-colors">
+                Inscription talent
+              </Link>
+            </p>
+            <p className="text-primary-foreground/40">
+              Déjà inscrit ?{" "}
+              <Link to="/login" className="font-semibold text-accent hover:text-accent/80 transition-colors">
+                Se connecter
+              </Link>
+            </p>
+          </div>
         </div>
 
         <p className="mt-8 text-center text-xs text-primary-foreground/30">

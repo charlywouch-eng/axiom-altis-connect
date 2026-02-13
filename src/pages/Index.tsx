@@ -128,7 +128,7 @@ export default function Index() {
                 Trouver un talent <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/signup">
+            <Link to="/signup-talent">
               <Button size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-white/10 text-base px-10 py-7 h-auto rounded-xl backdrop-blur-sm">
                 Postuler <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
