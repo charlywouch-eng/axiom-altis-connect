@@ -2,9 +2,9 @@ import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileText, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { EditablePreviewTable } from "@/components/EditablePreviewTable";
 
 interface ParsedRow {
   full_name: string;
@@ -379,55 +379,13 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
         )}
 
         {preview && preview.length > 0 && (
-          <div className="space-y-3">
-            <p className="text-sm font-medium">
-              <FileText className="mr-1 inline h-4 w-4" />
-              {preview.length} profil(s) prêt(s) à importer
-              {fileName.toLowerCase().endsWith(".pdf") && (
-                <Badge variant="outline" className="ml-2 text-xs">Extrait par IA</Badge>
-              )}
-            </p>
-            <div className="max-h-60 overflow-auto rounded-lg border">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/50 sticky top-0">
-                  <tr>
-                    <th className="px-3 py-2 text-left font-medium">Nom</th>
-                    <th className="px-3 py-2 text-left font-medium">Pays</th>
-                    <th className="px-3 py-2 text-left font-medium">Français</th>
-                    <th className="px-3 py-2 text-left font-medium">Exp.</th>
-                    <th className="px-3 py-2 text-left font-medium">Skills</th>
-                    <th className="px-3 py-2 text-left font-medium">Score</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {preview.slice(0, 10).map((r, i) => (
-                    <tr key={i}>
-                      <td className="px-3 py-2">{r.full_name}</td>
-                      <td className="px-3 py-2">{r.country}</td>
-                      <td className="px-3 py-2">{r.french_level}</td>
-                      <td className="px-3 py-2">{r.experience_years} ans</td>
-                      <td className="px-3 py-2">
-                        <div className="flex flex-wrap gap-1">
-                          {r.skills.map((s) => (
-                            <Badge key={s} variant="outline" className="text-xs">{s}</Badge>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-3 py-2 font-semibold">{r.score}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {preview.length > 10 && (
-                <p className="px-3 py-2 text-xs text-muted-foreground">
-                  …et {preview.length - 10} autres lignes
-                </p>
-              )}
-            </div>
-            <Button onClick={handleUpload} disabled={uploading} className="bg-accent text-accent-foreground hover:bg-accent/90">
-              {uploading ? "Import en cours…" : `Importer ${preview.length} profils`}
-            </Button>
-          </div>
+          <EditablePreviewTable
+            preview={preview}
+            setPreview={setPreview}
+            fileName={fileName}
+            uploading={uploading}
+            onUpload={handleUpload}
+          />
         )}
 
         {done && (
