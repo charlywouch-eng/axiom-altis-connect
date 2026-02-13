@@ -85,34 +85,33 @@ export default function Index() {
             initial="hidden" animate="visible" custom={0} variants={fadeUp}
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-5 py-2 text-sm font-medium text-accent"
           >
-            <Zap className="h-3.5 w-3.5" /> Plateforme RH Tech nouvelle génération
+            <Zap className="h-3.5 w-3.5" /> Talents Afrique → France · Métiers ROME
           </motion.span>
 
           <motion.h1
             initial="hidden" animate="visible" custom={1} variants={fadeUp}
             className="max-w-3xl font-display text-4xl font-bold leading-[1.1] text-primary-foreground md:text-6xl lg:text-7xl"
           >
-            Le pont vers l'excellence :
+            Des talents africains
             <br />
-            <span className="text-gradient-accent">Recrutez vos futurs talents</span>
+            <span className="text-gradient-accent">certifiés métiers ROME</span>
             <br />
-            <span className="text-accent">en Afrique</span>
+            <span className="text-accent">prêts à travailler en France</span>
           </motion.h1>
 
           <motion.p
             initial="hidden" animate="visible" custom={2} variants={fadeUp}
             className="mt-8 max-w-xl text-lg text-primary-foreground/70 leading-relaxed md:text-xl"
           >
-            <strong className="text-primary-foreground/90">AXIOM</strong> identifie les meilleurs experts du continent africain.{" "}
-            <strong className="text-primary-foreground/90">ALTIS</strong> sécurise leur mobilité et leur installation en France.
-            Une solution clé en main, de la signature au premier jour de travail.
+            <strong className="text-primary-foreground/90">AXIOM</strong> sélectionne les meilleurs profils du continent africain, qualifiés selon le référentiel <strong className="text-primary-foreground/90">ROME</strong> (Répertoire Opérationnel des Métiers).{" "}
+            <strong className="text-primary-foreground/90">ALTIS</strong> organise leur mobilité et installation en France, clé en main.
           </motion.p>
 
           <motion.div
             initial="hidden" animate="visible" custom={3} variants={fadeUp}
             className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2"
           >
-            {["Visa garanti", "Logement fourni", "Formation ROME", "Zéro paperasse"].map((item) => (
+            {["Profils certifiés ROME", "Visa & logement inclus", "Opérationnels dès J1", "Conformité garantie"].map((item) => (
               <span key={item} className="flex items-center gap-1.5 text-sm text-primary-foreground/60">
                 <CheckCircle2 className="h-4 w-4 text-accent" /> {item}
               </span>
@@ -125,12 +124,12 @@ export default function Index() {
           >
             <Link to="/signup">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-10 py-7 h-auto shadow-xl shadow-accent/30 border-0 rounded-xl text-lg font-semibold">
-                Trouver un talent <ArrowRight className="ml-2 h-5 w-5" />
+                Publier une offre <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/signup-talent">
               <Button size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-white/10 text-base px-10 py-7 h-auto rounded-xl backdrop-blur-sm">
-                Postuler <ChevronRight className="ml-1 h-4 w-4" />
+                Je suis un talent <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
           </motion.div>
