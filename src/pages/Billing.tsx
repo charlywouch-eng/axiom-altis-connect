@@ -46,13 +46,35 @@ export default function Billing() {
   });
 
   useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      toast({ title: "Paiement réussi ✓", description: "Le success fee a été enregistré." });
-    }
-    if (searchParams.get("canceled") === "true") {
-      toast({ title: "Paiement annulé", description: "Le paiement a été annulé.", variant: "destructive" });
-    }
-  }, [searchParams, toast]);
+    const handlePaymentResult = async () => {
+      const offerId = searchParams.get("offer");
+      if (searchParams.get("success") === "true") {
+        toast({ title: "Paiement réussi ✓", description: "Le success fee a été enregistré." });
+
+        // Update offer status to "filled" if an offer ID was provided
+        if (offerId && user) {
+          try {
+            await supabase
+              .from("job_offers")
+              .update({ status: "filled" })
+              .eq("id", offerId)
+              .eq("company_id", user.id);
+
+            toast({
+              title: "Offre mise à jour",
+              description: "Le statut de l'offre est passé à « Pourvue » et le talent est en cours de relocation.",
+            });
+          } catch (err: any) {
+            console.error("Post-payment update error:", err);
+          }
+        }
+      }
+      if (searchParams.get("canceled") === "true") {
+        toast({ title: "Paiement annulé", description: "Le paiement a été annulé.", variant: "destructive" });
+      }
+    };
+    handlePaymentResult();
+  }, [searchParams, toast, user]);
 
   const handlePay = async (offerId?: string) => {
     setPaying(true);

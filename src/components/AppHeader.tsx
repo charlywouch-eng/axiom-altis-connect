@@ -13,8 +13,8 @@ export function AppHeader() {
         <SidebarTrigger className="md:hidden">
           <Menu className="h-5 w-5" />
         </SidebarTrigger>
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xs font-bold">
-          A&A
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-[10px] font-bold leading-none">
+          A&AM
         </div>
         <h1 className="font-display text-xl font-bold tracking-tight text-primary hidden sm:block">
           Axiom<span className="text-accent">&</span>Altis
