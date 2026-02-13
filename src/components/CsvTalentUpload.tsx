@@ -94,17 +94,50 @@ export function CsvTalentUpload({ onImportComplete }: { onImportComplete?: () =>
   const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState(false);
   
+  const MAX_FILE_SIZE_MB = 5;
+
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setDone(false);
+    setPreview(null);
+    setParseErrors([]);
     setFileName(file.name);
+
+    // Validate file extension
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      setParseErrors(["Format de fichier invalide. Seuls les fichiers .csv sont acceptés."]);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setParseErrors([`Le fichier est trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). La taille maximale est de ${MAX_FILE_SIZE_MB} Mo.`]);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+
+    // Validate non-empty file
+    if (file.size === 0) {
+      setParseErrors(["Le fichier est vide. Veuillez sélectionner un fichier CSV contenant des données."]);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (ev) => {
       const text = ev.target?.result as string;
+      if (!text.trim()) {
+        setParseErrors(["Le fichier ne contient aucune donnée exploitable."]);
+        return;
+      }
       const { rows, errors } = parseCsv(text);
       setPreview(rows);
       setParseErrors(errors);
+    };
+    reader.onerror = () => {
+      setParseErrors(["Impossible de lire le fichier. Vérifiez qu'il n'est pas corrompu."]);
     };
     reader.readAsText(file);
   };
