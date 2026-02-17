@@ -7,87 +7,52 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import imgSanteAide from "@/assets/secteur-sante-aide.jpg";
+import imgSupport from "@/assets/secteur-support-entreprise.jpg";
+import imgBatiment from "@/assets/secteur-batiment.jpg";
+import imgCommerce from "@/assets/secteur-commerce.jpg";
+import imgHotellerie from "@/assets/secteur-hotellerie.jpg";
+import imgTransport from "@/assets/secteur-transport.jpg";
+import imgMaintenance from "@/assets/secteur-maintenance.jpg";
+import imgAgriculture from "@/assets/secteur-agriculture.jpg";
+import imgSanteInfirmier from "@/assets/secteur-sante-infirmier.jpg";
+
 const secteurs = [
   {
-    id: 1,
-    secteur: "SERVICE À LA PERSONNE",
-    metier: "Aide-soignant",
-    rome: "J1501",
-    icon: Heart,
-    gradient: "from-pink-500/20 to-rose-500/20",
-    iconColor: "text-pink-500",
+    id: 1, secteur: "SERVICE À LA PERSONNE", metier: "Aide-soignant", rome: "J1501",
+    icon: Heart, gradient: "from-pink-500/20 to-rose-500/20", iconColor: "text-pink-500", image: imgSanteAide,
   },
   {
-    id: 2,
-    secteur: "SUPPORT À L'ENTREPRISE",
-    metier: "Administratif / Gestion",
-    rome: "M1202 / M1805",
-    icon: Briefcase,
-    gradient: "from-blue-500/20 to-indigo-500/20",
-    iconColor: "text-blue-500",
+    id: 2, secteur: "SUPPORT À L'ENTREPRISE", metier: "Administratif / Gestion", rome: "M1202 / M1805",
+    icon: Briefcase, gradient: "from-blue-500/20 to-indigo-500/20", iconColor: "text-blue-500", image: imgSupport,
   },
   {
-    id: 3,
-    secteur: "BÂTIMENT ET CONSTRUCTION",
-    metier: "Maçon / Plombier",
-    rome: "F1703 / F1603",
-    icon: HardHat,
-    gradient: "from-amber-500/20 to-orange-500/20",
-    iconColor: "text-amber-500",
+    id: 3, secteur: "BÂTIMENT ET CONSTRUCTION", metier: "Maçon / Plombier", rome: "F1703 / F1603",
+    icon: HardHat, gradient: "from-amber-500/20 to-orange-500/20", iconColor: "text-amber-500", image: imgBatiment,
   },
   {
-    id: 4,
-    secteur: "COMMERCE & VENTE",
-    metier: "Vendeur / Employé de magasin",
-    rome: "D1211 / D1225",
-    icon: ShoppingCart,
-    gradient: "from-emerald-500/20 to-green-500/20",
-    iconColor: "text-emerald-500",
+    id: 4, secteur: "COMMERCE & VENTE", metier: "Vendeur / Employé de magasin", rome: "D1211 / D1225",
+    icon: ShoppingCart, gradient: "from-emerald-500/20 to-green-500/20", iconColor: "text-emerald-500", image: imgCommerce,
   },
   {
-    id: 5,
-    secteur: "HÔTELLERIE RESTAURATION",
-    metier: "Serveur / Cuisinier",
-    rome: "G1602 / G1802",
-    icon: UtensilsCrossed,
-    gradient: "from-red-500/20 to-rose-500/20",
-    iconColor: "text-red-500",
+    id: 5, secteur: "HÔTELLERIE RESTAURATION", metier: "Serveur / Cuisinier", rome: "G1602 / G1802",
+    icon: UtensilsCrossed, gradient: "from-red-500/20 to-rose-500/20", iconColor: "text-red-500", image: imgHotellerie,
   },
   {
-    id: 6,
-    secteur: "TRANSPORT & LOGISTIQUE",
-    metier: "Chauffeur / Cariste",
-    rome: "N4101 / N1103",
-    icon: Truck,
-    gradient: "from-sky-500/20 to-cyan-500/20",
-    iconColor: "text-sky-500",
+    id: 6, secteur: "TRANSPORT & LOGISTIQUE", metier: "Chauffeur / Cariste", rome: "N4101 / N1103",
+    icon: Truck, gradient: "from-sky-500/20 to-cyan-500/20", iconColor: "text-sky-500", image: imgTransport,
   },
   {
-    id: 7,
-    secteur: "INSTALLATION & MAINTENANCE",
-    metier: "Technicien maintenance",
-    rome: "I1309 / I1604",
-    icon: Wrench,
-    gradient: "from-violet-500/20 to-purple-500/20",
-    iconColor: "text-violet-500",
+    id: 7, secteur: "INSTALLATION & MAINTENANCE", metier: "Technicien maintenance", rome: "I1309 / I1604",
+    icon: Wrench, gradient: "from-violet-500/20 to-purple-500/20", iconColor: "text-violet-500", image: imgMaintenance,
   },
   {
-    id: 8,
-    secteur: "AGRICULTURE ET ÉLEVAGE",
-    metier: "Ouvrier agricole / Viticole",
-    rome: "A1414 / A1418",
-    icon: Leaf,
-    gradient: "from-lime-500/20 to-green-500/20",
-    iconColor: "text-lime-600",
+    id: 8, secteur: "AGRICULTURE ET ÉLEVAGE", metier: "Ouvrier agricole / Viticole", rome: "A1414 / A1418",
+    icon: Leaf, gradient: "from-lime-500/20 to-green-500/20", iconColor: "text-lime-600", image: imgAgriculture,
   },
   {
-    id: 9,
-    secteur: "SANTÉ",
-    metier: "Infirmier / Aide-soignant",
-    rome: "J1501",
-    icon: Stethoscope,
-    gradient: "from-teal-500/20 to-emerald-500/20",
-    iconColor: "text-teal-500",
+    id: 9, secteur: "SANTÉ", metier: "Infirmier / Aide-soignant", rome: "J1501",
+    icon: Stethoscope, gradient: "from-teal-500/20 to-emerald-500/20", iconColor: "text-teal-500", image: imgSanteInfirmier,
   },
 ];
 
@@ -171,11 +136,16 @@ export default function MetiersCarousel() {
                       transition={{ duration: 0.5, delay: (s.id % 3) * 0.1 }}
                       className="group relative h-full"
                     >
-                      <div className="h-full rounded-2xl border bg-card p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 flex flex-col">
-                        {/* Icon area */}
-                        <div className={cn("mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br", s.gradient)}>
-                          <Icon className={cn("h-8 w-8", s.iconColor)} />
+                      <div className="h-full rounded-2xl border bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 flex flex-col">
+                        {/* Image */}
+                        <div className="relative h-40 w-full overflow-hidden">
+                          <img src={s.image} alt={s.secteur} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          <div className={cn("absolute top-3 left-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm shadow-md")}>
+                            <Icon className={cn("h-5 w-5", s.iconColor)} />
+                          </div>
                         </div>
+
+                        <div className="p-5 flex flex-col flex-1">
 
                         {/* Content */}
                         <h3 className="font-display text-sm font-bold uppercase tracking-wide text-foreground mb-1">
@@ -203,6 +173,7 @@ export default function MetiersCarousel() {
                           >
                             Voir les offres
                           </Button>
+                        </div>
                         </div>
                       </div>
                     </motion.div>
