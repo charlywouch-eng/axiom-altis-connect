@@ -85,7 +85,7 @@ export default function Index() {
 
             <motion.h1
               initial="hidden" animate="visible" custom={1} variants={fadeUp}
-              className="font-display text-4xl font-extrabold leading-[1.08] text-white sm:text-5xl md:text-[56px]"
+              className="font-display text-[40px] font-extrabold leading-[1.08] text-white sm:text-[48px] md:text-[56px]"
             >
               AXIOM : La première infrastructure de talents souveraine{" "}
               <span className="text-gradient-accent">France-Afrique</span>
@@ -93,7 +93,7 @@ export default function Index() {
 
             <motion.p
               initial="hidden" animate="visible" custom={2} variants={fadeUp}
-              className="mt-8 max-w-2xl text-lg text-white/70 leading-relaxed md:text-xl"
+              className="mt-6 max-w-2xl text-lg text-white/70 leading-relaxed md:text-xl"
             >
               Matching prédictif IA + conformité ROME + certifications MINEFOP/MINREX →{" "}
               <strong className="text-white/90">opérationnel jour 1</strong>
@@ -101,7 +101,7 @@ export default function Index() {
 
             <motion.div
               initial="hidden" animate="visible" custom={3} variants={fadeUp}
-              className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2"
+              className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2"
             >
               {["Conformité ROME garantie", "Visa & logement inclus", "Opérationnel dès J1", "Certifications MINEFOP"].map((item) => (
                 <span key={item} className="flex items-center gap-1.5 text-sm text-white/50">
