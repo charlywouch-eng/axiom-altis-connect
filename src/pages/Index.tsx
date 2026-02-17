@@ -8,6 +8,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import MetiersCarousel from "@/components/landing/MetiersCarousel";
 import SecurityComplianceSection from "@/components/landing/SecurityComplianceSection";
 
@@ -55,6 +56,7 @@ export default function Index() {
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-foreground/70 hover:text-foreground">
                 Connexion

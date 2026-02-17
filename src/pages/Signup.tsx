@@ -178,9 +178,9 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-background">
       {/* Hero header */}
-      <div className="bg-[#1E3A8A] text-white">
+      <div className="bg-primary text-primary-foreground">
         <div className="container max-w-4xl mx-auto px-4 py-12 md:py-16 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -190,7 +190,7 @@ export default function Signup() {
             <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
               Inscription Candidat – Gratuit et sans engagement
             </h1>
-            <p className="mt-4 text-white/70 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-4 text-primary-foreground/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
               Rejoignez la première plateforme de mobilité professionnelle France-Afrique.
               Matching prédictif + certifications MINEFOP/MINREX.
             </p>
@@ -205,7 +205,7 @@ export default function Signup() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15, ease: easeOut }}
         >
-          <div className="bg-white rounded-2xl shadow-xl shadow-black/5 border border-black/[0.04] p-6 sm:p-8 space-y-6">
+          <div className="bg-card rounded-2xl shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-6">
             <form onSubmit={handleSignup} className="space-y-5">
               {/* Full Name */}
               <FieldWrapper
@@ -221,7 +221,7 @@ export default function Signup() {
                   onChange={(e) => updateField("fullName", e.target.value)}
                   onBlur={() => markTouched("fullName")}
                   placeholder="Prénom Nom"
-                  className="pl-10 pr-10 h-11 rounded-xl border-black/10 focus:border-[#3B82F6] focus:ring-[#3B82F6]/20"
+                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
                 />
               </FieldWrapper>
 
@@ -240,7 +240,7 @@ export default function Signup() {
                   onChange={(e) => updateField("email", e.target.value)}
                   onBlur={() => markTouched("email")}
                   placeholder="vous@email.com"
-                  className="pl-10 pr-10 h-11 rounded-xl border-black/10 focus:border-[#3B82F6] focus:ring-[#3B82F6]/20"
+                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
                 />
               </FieldWrapper>
 
@@ -259,19 +259,19 @@ export default function Signup() {
                   onChange={(e) => updateField("phone", e.target.value)}
                   onBlur={() => markTouched("phone")}
                   placeholder="+237 6XX XX XX XX"
-                  className="pl-10 pr-10 h-11 rounded-xl border-black/10 focus:border-[#3B82F6] focus:ring-[#3B82F6]/20"
+                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
                 />
               </FieldWrapper>
 
               {/* Country */}
               <div className="space-y-2">
-                <Label htmlFor="country" className="text-sm font-medium text-[#1F2937]">
+                <Label htmlFor="country" className="text-sm font-medium text-foreground">
                   Pays d'origine
                 </Label>
                 <div className="relative">
                   <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 z-10 pointer-events-none" />
                   <Select value={form.country} onValueChange={(v) => updateField("country", v)}>
-                    <SelectTrigger className="pl-10 h-11 rounded-xl border-black/10 focus:border-[#3B82F6] focus:ring-[#3B82F6]/20">
+                    <SelectTrigger className="pl-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -285,7 +285,7 @@ export default function Signup() {
 
               {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-[#1F2937]">
+                <Label htmlFor="password" className="text-sm font-medium text-foreground">
                   Mot de passe
                 </Label>
                 <div className="relative">
@@ -297,7 +297,7 @@ export default function Signup() {
                     onChange={(e) => updateField("password", e.target.value)}
                     onBlur={() => markTouched("password")}
                     placeholder="••••••••"
-                    className="pl-10 pr-10 h-11 rounded-xl border-black/10 focus:border-[#3B82F6] focus:ring-[#3B82F6]/20"
+                    className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
                   />
                   <button
                     type="button"
@@ -324,7 +324,7 @@ export default function Signup() {
                           ) : (
                             <XCircle className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0" />
                           )}
-                          <span className={`text-xs ${passes ? "text-emerald-600" : "text-muted-foreground/50"}`}>
+                          <span className={`text-xs ${passes ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/50"}`}>
                             {rule.label}
                           </span>
                         </div>
@@ -354,7 +354,7 @@ export default function Signup() {
                   onChange={(e) => updateField("confirmPassword", e.target.value)}
                   onBlur={() => markTouched("confirmPassword")}
                   placeholder="••••••••"
-                  className="pl-10 pr-10 h-11 rounded-xl border-black/10 focus:border-[#3B82F6] focus:ring-[#3B82F6]/20"
+                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
                 />
               </FieldWrapper>
 
@@ -378,10 +378,10 @@ export default function Signup() {
                     }}
                     className="mt-0.5"
                   />
-                  <Label htmlFor="acceptCgu" className="text-xs text-[#1F2937]/70 leading-relaxed cursor-pointer">
+                  <Label htmlFor="acceptCgu" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
                     J'accepte les{" "}
-                    <span className="text-[#3B82F6] underline">CGU</span> et la{" "}
-                    <span className="text-[#3B82F6] underline">politique de confidentialité</span>{" "}
+                    <span className="text-accent underline">CGU</span> et la{" "}
+                    <span className="text-accent underline">politique de confidentialité</span>{" "}
                     (RGPD compliant)
                   </Label>
                 </div>
@@ -398,7 +398,7 @@ export default function Signup() {
                     className="mt-0.5"
                   />
                   <div className="space-y-1.5">
-                    <Label htmlFor="certifyMinefop" className="text-xs text-[#1F2937]/70 leading-relaxed cursor-pointer">
+                    <Label htmlFor="certifyMinefop" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
                       Je souhaite certifier mes diplômes via MINEFOP/MINREX
                     </Label>
                     <PremiumBadge />
@@ -413,7 +413,7 @@ export default function Signup() {
               <Button
                 type="submit"
                 disabled={submitting || !isValid}
-                className="w-full h-12 rounded-xl text-base font-semibold bg-[#3B82F6] hover:bg-[#2563EB] text-white shadow-lg shadow-[#3B82F6]/20 transition-all duration-200 hover:shadow-[#3B82F6]/30 disabled:opacity-50"
+                className="w-full h-12 rounded-xl text-base font-semibold bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg shadow-accent/20 transition-all duration-200 hover:shadow-accent/30 disabled:opacity-50"
               >
                 {submitting ? (
                   "Création en cours…"
@@ -428,10 +428,10 @@ export default function Signup() {
             {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-black/[0.06]" />
+                <div className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs text-muted-foreground">ou</span>
+                <span className="bg-card px-3 text-xs text-muted-foreground">ou</span>
               </div>
             </div>
 
@@ -439,7 +439,7 @@ export default function Signup() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 rounded-xl border-black/10 hover:bg-black/[0.02] font-medium"
+              className="w-full h-11 rounded-xl border-border hover:bg-muted/50 font-medium"
               disabled={googleLoading}
               onClick={async () => {
                 setGoogleLoading(true);
@@ -465,13 +465,13 @@ export default function Signup() {
             <div className="flex flex-col gap-2 text-center text-sm">
               <p className="text-muted-foreground">
                 Je suis une entreprise →{" "}
-                <Link to="/signup-talent" className="font-semibold text-[#3B82F6] hover:text-[#1E3A8A] transition-colors">
+                <Link to="/signup-talent" className="font-semibold text-accent hover:text-primary transition-colors">
                   Inscription recruteur
                 </Link>
               </p>
               <p className="text-muted-foreground">
                 Déjà inscrit ?{" "}
-                <Link to="/login" className="font-semibold text-[#3B82F6] hover:text-[#1E3A8A] transition-colors">
+                <Link to="/login" className="font-semibold text-accent hover:text-primary transition-colors">
                   Se connecter
                 </Link>
               </p>
@@ -481,7 +481,7 @@ export default function Signup() {
           {/* Footer */}
           <div className="mt-8 text-center space-y-1">
             <p className="text-xs text-muted-foreground/60">
-              <Zap className="inline h-3 w-3 mr-1 text-[#3B82F6]/50" />
+              <Zap className="inline h-3 w-3 mr-1 text-accent/50" />
               AXIOM – TIaaS | ALTIS Mobility – Pack Zéro Stress
             </p>
           </div>
@@ -505,7 +505,7 @@ interface FieldWrapperProps {
 function FieldWrapper({ id, label, icon: Icon, error, isValid, children }: FieldWrapperProps) {
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="text-sm font-medium text-[#1F2937]">
+      <Label htmlFor={id} className="text-sm font-medium text-foreground">
         {label}
       </Label>
       <div className="relative">
