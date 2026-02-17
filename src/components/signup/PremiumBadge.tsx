@@ -10,7 +10,7 @@ export function PremiumBadge() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Badge className="bg-[#1E3A8A] text-white border-[#1E3A8A] hover:bg-[#1E3A8A]/90 cursor-help gap-1.5 px-3 py-1">
+        <Badge className="bg-primary text-primary-foreground border-primary hover:bg-primary/90 cursor-help gap-1.5 px-3 py-1">
           <ShieldCheck className="h-3.5 w-3.5" />
           Premium – Certifié MINEFOP/MINREX
         </Badge>

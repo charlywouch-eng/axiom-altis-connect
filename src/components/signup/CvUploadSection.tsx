@@ -30,7 +30,7 @@ export function CvUploadSection({ file, onFileSelect, analysisState, mockScore }
 
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium text-[#1F2937]">
+      <label className="text-sm font-medium text-foreground">
         CV <span className="text-muted-foreground font-normal">(PDF ou Word, max 5 Mo)</span>
       </label>
 
@@ -40,10 +40,10 @@ export function CvUploadSection({ file, onFileSelect, analysisState, mockScore }
         onDrop={handleDrop}
         className={`relative flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-6 transition-colors cursor-pointer ${
           dragOver
-            ? "border-[#3B82F6] bg-[#3B82F6]/5"
+            ? "border-accent bg-accent/5"
             : file
-            ? "border-emerald-400/50 bg-emerald-50/30"
-            : "border-border hover:border-[#3B82F6]/40 hover:bg-[#3B82F6]/[0.02]"
+            ? "border-emerald-400/50 bg-emerald-50/30 dark:bg-emerald-950/20"
+            : "border-border hover:border-accent/40 hover:bg-accent/[0.02]"
         }`}
         role="button"
         tabIndex={0}
@@ -62,14 +62,14 @@ export function CvUploadSection({ file, onFileSelect, analysisState, mockScore }
         {file ? (
           <div className="flex items-center gap-3">
             <FileText className="h-5 w-5 text-emerald-500" />
-            <span className="text-sm font-medium text-[#1F2937]">{file.name}</span>
+            <span className="text-sm font-medium text-foreground">{file.name}</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
           </div>
         ) : (
           <>
             <Upload className="h-8 w-8 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground text-center">
-              Glissez votre CV ici ou <span className="text-[#3B82F6] font-medium">parcourir</span>
+              Glissez votre CV ici ou <span className="text-accent font-medium">parcourir</span>
             </p>
           </>
         )}
@@ -84,28 +84,28 @@ export function CvUploadSection({ file, onFileSelect, analysisState, mockScore }
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="rounded-xl border border-[#3B82F6]/20 bg-[#3B82F6]/[0.03] p-4 space-y-3">
+            <div className="rounded-xl border border-accent/20 bg-accent/[0.03] p-4 space-y-3">
               {analysisState === "analyzing" ? (
                 <div className="flex items-center gap-3">
-                  <Loader2 className="h-4 w-4 animate-spin text-[#3B82F6]" />
-                  <span className="text-sm text-[#1F2937] font-medium">Analyse en cours…</span>
+                  <Loader2 className="h-4 w-4 animate-spin text-accent" />
+                  <span className="text-sm text-foreground font-medium">Analyse en cours…</span>
                 </div>
               ) : (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#3B82F6]" />
-                    <span className="text-sm font-semibold text-[#1F2937]">Analyse terminée</span>
+                    <Sparkles className="h-4 w-4 text-accent" />
+                    <span className="text-sm font-semibold text-foreground">Analyse terminée</span>
                   </div>
-                  <p className="text-xs text-[#1F2937]/70 leading-relaxed">
+                  <p className="text-xs text-foreground/70 leading-relaxed">
                     Compétences détectées et mappées vers Codes ROME français (exemple : Maçonnerie → F1703).
                   </p>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-[#1F2937]/70">Score de conformité estimé :</span>
-                    <Badge className="bg-[#3B82F6]/10 text-[#3B82F6] border-[#3B82F6]/20 hover:bg-[#3B82F6]/15">
+                    <span className="text-xs text-foreground/70">Score de conformité estimé :</span>
+                    <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/15">
                       {mockScore} %
                     </Badge>
                   </div>
-                  <p className="text-xs text-[#1F2937]/50 italic">
+                  <p className="text-xs text-muted-foreground/60 italic">
                     Améliorez votre profil avec certification MINEFOP pour +20 % de matchs.
                   </p>
                 </div>
