@@ -310,7 +310,7 @@ function TalentDossierDialog({ talent, onClose }: { talent: any; onClose: () => 
                   <p className="text-xs text-white/40">Statut: {talent.visa_status}</p>
                 </div>
                 <Badge className={talent.visa_status === 'approuve' ? 'bg-success/20 text-success border-0 text-xs' : 'bg-accent/20 text-accent border-0 text-xs'}>
-                  {talent.visa_status === 'approuve' ? 'OK' : 'Pending'}
+                  {talent.visa_status === 'approuve' ? 'OK' : 'En attente'}
                 </Badge>
               </div>
               <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
@@ -387,7 +387,7 @@ function MissionsTab() {
                           offer.status === 'filled' ? 'bg-accent/20 text-accent border-0' :
                           'bg-white/10 text-white/50 border-0'
                         }>
-                          {offer.status === 'open' ? 'Active' : offer.status === 'filled' ? 'Pourvue' : offer.status}
+                          {offer.status === 'open' ? 'En cours' : offer.status === 'filled' ? 'Pourvue' : offer.status}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-white/40 text-sm">
@@ -502,7 +502,7 @@ function MatchingTab({ query, setQuery }: { query: string; setQuery: (q: string)
                       <Flame className="h-5 w-5 text-accent" />
                       <span className="font-display text-2xl font-bold text-accent">{Math.round(talent.compatibility_score)}</span>
                     </div>
-                    <p className="text-[10px] text-white/30 mt-0.5">Score match</p>
+                    <p className="text-[10px] text-white/30 mt-0.5">Score compatibilité</p>
                   </div>
                 </CardContent>
               </Card>
