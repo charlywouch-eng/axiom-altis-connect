@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
-  Zap, ArrowRight
+  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp
 } from "lucide-react";
 
 
@@ -217,6 +217,9 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
 
 /* ──────────── TALENT DOSSIER MODAL ──────────── */
 function TalentDossierDialog({ talent, onClose }: { talent: any; onClose: () => void }) {
+  const queryClient = useQueryClient();
+  const [showProofs, setShowProofs] = useState(false);
+
   const { data: diplomas } = useQuery({
     queryKey: ["talent-diplomas", talent?.id],
     queryFn: async () => {
@@ -230,10 +233,32 @@ function TalentDossierDialog({ talent, onClose }: { talent: any; onClose: () => 
     enabled: !!talent?.id,
   });
 
+  // Realtime: listen for diploma status changes
+  useEffect(() => {
+    if (!talent?.id) return;
+    const channel = supabase
+      .channel(`diplomas-${talent.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "diplomas", filter: `talent_id=eq.${talent.id}` },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["talent-diplomas", talent.id] });
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [talent?.id, queryClient]);
+
   if (!talent) return null;
 
+  const hasDiploma = diplomas && diplomas.length > 0;
+  const _diplomaVerified = diplomas?.some((d: any) => d.status === "verifie");
+  const minfopVerified = diplomas?.some((d: any) => d.minfop_verified);
+  const apostilleVerified = !!talent.apostille_date;
+  const visaApproved = talent.visa_status === "approuve";
+
   return (
-    <Dialog open={!!talent} onOpenChange={() => onClose()}>
+    <Dialog open={!!talent} onOpenChange={() => { onClose(); setShowProofs(false); }}>
       <DialogContent className="max-w-2xl bg-[hsl(222,33%,10%)] border-white/10 text-white max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display text-xl flex items-center gap-3">
@@ -267,8 +292,8 @@ function TalentDossierDialog({ talent, onClose }: { talent: any; onClose: () => 
             </div>
             <div className="rounded-lg bg-white/5 p-4">
               <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Visa</p>
-              <Badge className={talent.visa_status === 'approuve' ? 'bg-success/20 text-success border-0' : 'bg-accent/20 text-accent border-0'}>
-                {talent.visa_status === 'approuve' ? 'Approuvé' : talent.visa_status === 'en_attente' ? 'En attente' : talent.visa_status}
+              <Badge className={visaApproved ? 'bg-success/20 text-success border-0' : 'bg-accent/20 text-accent border-0'}>
+                {visaApproved ? 'Approuvé' : talent.visa_status === 'en_attente' ? 'En attente' : talent.visa_status}
               </Badge>
             </div>
           </div>
@@ -285,51 +310,155 @@ function TalentDossierDialog({ talent, onClose }: { talent: any; onClose: () => 
             </div>
           )}
 
-          {/* Documents */}
-          <div>
-            <h3 className="text-sm font-semibold text-white/60 mb-3 uppercase tracking-wider flex items-center gap-2">
-              <FileText className="h-4 w-4" /> Documents du dossier
+          {/* ──── SECTION VÉRIFICATION LÉGALE ──── */}
+          <div className="rounded-2xl bg-white p-5 space-y-4">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-accent" /> Vérification légale
             </h3>
-            <div className="space-y-2">
-              <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-                <GraduationCap className="h-5 w-5 text-accent shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">Diplôme CQP/DQP</p>
-                  <p className="text-xs text-white/40">{diplomas?.length ? `${diplomas.length} document(s)` : 'Non soumis'}</p>
-                </div>
-                {diplomas?.length ? (
-                  <Badge className="bg-success/20 text-success border-0 text-xs">Vérifié</Badge>
-                ) : (
-                  <Badge variant="outline" className="border-white/20 text-white/40 text-xs">En attente</Badge>
-                )}
-              </div>
-              <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-                <FileText className="h-5 w-5 text-accent shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">Visa / Titre de séjour</p>
-                  <p className="text-xs text-white/40">Statut: {talent.visa_status}</p>
-                </div>
-                <Badge className={talent.visa_status === 'approuve' ? 'bg-success/20 text-success border-0 text-xs' : 'bg-accent/20 text-accent border-0 text-xs'}>
-                  {talent.visa_status === 'approuve' ? 'OK' : 'En attente'}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-                <ShieldCheck className="h-5 w-5 text-accent shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">Apostille MINREX</p>
-                  <p className="text-xs text-white/40">{talent.apostille_date ? `Date: ${talent.apostille_date}` : 'Non apostillé'}</p>
-                </div>
-                {talent.apostille_date ? (
-                  <Badge className="bg-success/20 text-success border-0 text-xs">Validé</Badge>
-                ) : (
-                  <Badge variant="outline" className="border-white/20 text-white/40 text-xs">En attente</Badge>
-                )}
-              </div>
+
+            <div className="space-y-3">
+              {/* Badge orange — MINEFOP */}
+              <VerificationBadge
+                icon={GraduationCap}
+                label="Diplôme CQP/DQP MINEFOP authentifié"
+                verified={minfopVerified}
+                colorScheme="orange"
+              />
+              {/* Badge vert — MINREX */}
+              <VerificationBadge
+                icon={Stamp}
+                label="Légalisation MINREX effectuée"
+                verified={apostilleVerified}
+                colorScheme="green"
+              />
+              {/* Badge bleu — Visa & ROME */}
+              <VerificationBadge
+                icon={Globe}
+                label="Visa France & conformité ROME validés"
+                verified={visaApproved && !!talent.rome_code}
+                colorScheme="blue"
+              />
             </div>
+
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Processus complet : authentification MINEFOP → légalisation Ministère Affaires Extérieures → apostille France-ready.{" "}
+              <span className="font-semibold text-gray-700">Garantie zéro fraude.</span>
+            </p>
+
+            <Button
+              size="sm"
+              onClick={() => setShowProofs(!showProofs)}
+              className="bg-accent text-accent-foreground hover:bg-accent/90 border-0 gap-2"
+            >
+              <Eye className="h-4 w-4" /> {showProofs ? "Masquer preuves" : "Voir preuves"}
+            </Button>
+
+            {/* Galerie preuves PDF */}
+            {showProofs && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="space-y-2 pt-2"
+              >
+                {hasDiploma ? diplomas!.map((d: any) => (
+                  <div key={d.id} className="flex items-center gap-3 rounded-lg bg-gray-50 border border-gray-200 p-3">
+                    <FileText className="h-5 w-5 text-accent shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{d.file_name}</p>
+                      <p className="text-xs text-gray-500">
+                        {d.rome_code && `ROME ${d.rome_code}`}
+                        {d.rome_match_percent ? ` • ${d.rome_match_percent}% correspondance` : ""}
+                      </p>
+                    </div>
+                    <Badge className={
+                      d.status === "verifie"
+                        ? "bg-emerald-100 text-emerald-700 border-0 text-[10px]"
+                        : "bg-amber-100 text-amber-700 border-0 text-[10px]"
+                    }>
+                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      {d.status === "verifie" ? "Validé" : "En cours"}
+                    </Badge>
+                  </div>
+                )) : (
+                  <p className="text-xs text-gray-400 italic">Aucun document soumis pour ce talent.</p>
+                )}
+
+                {/* Visa doc placeholder */}
+                <div className="flex items-center gap-3 rounded-lg bg-gray-50 border border-gray-200 p-3">
+                  <Globe className="h-5 w-5 text-blue-500 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Visa / Titre de séjour</p>
+                    <p className="text-xs text-gray-500">Statut : {talent.visa_status === 'approuve' ? 'Approuvé' : 'En attente'}</p>
+                  </div>
+                  <Badge className={visaApproved ? "bg-emerald-100 text-emerald-700 border-0 text-[10px]" : "bg-amber-100 text-amber-700 border-0 text-[10px]"}>
+                    {visaApproved ? "Validé" : "En cours"}
+                  </Badge>
+                </div>
+
+                {/* Apostille MINREX */}
+                <div className="flex items-center gap-3 rounded-lg bg-gray-50 border border-gray-200 p-3">
+                  <Stamp className="h-5 w-5 text-emerald-500 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Tampon MINREX / Apostille</p>
+                    <p className="text-xs text-gray-500">{talent.apostille_date ? `Date : ${talent.apostille_date}` : 'Non apostillé'}</p>
+                  </div>
+                  <Badge className={apostilleVerified ? "bg-emerald-100 text-emerald-700 border-0 text-[10px]" : "bg-amber-100 text-amber-700 border-0 text-[10px]"}>
+                    {apostilleVerified ? "Validé" : "En cours"}
+                  </Badge>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/* ──── Verification Badge Component ──── */
+function VerificationBadge({
+  icon: Icon,
+  label,
+  verified,
+  colorScheme,
+}: {
+  icon: any;
+  label: string;
+  verified?: boolean;
+  colorScheme: "orange" | "green" | "blue";
+}) {
+  const colors = {
+    orange: {
+      bg: verified ? "bg-orange-100" : "bg-orange-50",
+      text: "text-orange-700",
+      icon: "text-orange-500",
+      border: verified ? "border-orange-300" : "border-orange-200",
+    },
+    green: {
+      bg: verified ? "bg-emerald-100" : "bg-emerald-50",
+      text: "text-emerald-700",
+      icon: "text-emerald-500",
+      border: verified ? "border-emerald-300" : "border-emerald-200",
+    },
+    blue: {
+      bg: verified ? "bg-blue-100" : "bg-blue-50",
+      text: "text-blue-700",
+      icon: "text-blue-500",
+      border: verified ? "border-blue-300" : "border-blue-200",
+    },
+  };
+  const c = colors[colorScheme];
+
+  return (
+    <div className={`flex items-center gap-3 rounded-xl border ${c.border} ${c.bg} p-3 transition-all`}>
+      <Icon className={`h-5 w-5 ${c.icon} shrink-0`} />
+      <p className={`text-sm font-medium ${c.text} flex-1`}>{label}</p>
+      {verified ? (
+        <CheckCircle2 className={`h-5 w-5 ${c.icon}`} />
+      ) : (
+        <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">En cours</span>
+      )}
+    </div>
   );
 }
 
