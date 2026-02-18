@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -267,6 +267,16 @@ export default function DashboardEntreprise() {
               <p className="mt-1 text-sm text-muted-foreground">
                 AXIOM TIaaS – Talent Intelligence as a Service · Matching prédictif Afrique ↔ France
               </p>
+              {/* CTA profil incomplet */}
+              {companyProfile !== undefined && (!companyProfile?.company_name || !companyProfile?.logo_url) && (
+                <Link
+                  to="/dashboard-entreprise/profil"
+                  className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-amber-600 hover:text-amber-700 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/25 rounded-full px-3 py-1 transition-colors"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  Compléter votre profil entreprise →
+                </Link>
+              )}
             </div>
           </div>
           <Button
