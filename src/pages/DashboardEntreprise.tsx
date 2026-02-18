@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +16,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Briefcase, Users, Plus, TrendingUp, Eye, Trash2, Pencil, ShieldCheck } from "lucide-react";
+import {
+  Briefcase,
+  Users,
+  Plus,
+  TrendingUp,
+  Eye,
+  Trash2,
+  Pencil,
+  ShieldCheck,
+  Zap,
+  Award,
+  BarChart3,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,11 +47,23 @@ import { PremiumStatCard } from "@/components/PremiumStatCard";
 import { RecruitmentPipeline } from "@/components/RecruitmentPipeline";
 import { motion } from "framer-motion";
 import VerifiedTalentsTab from "@/components/dashboard/VerifiedTalentsTab";
+import { CandidateMatchCard } from "@/components/dashboard/CandidateMatchCard";
+import {
+  MOCK_OFFERS,
+  MOCK_CANDIDATES,
+  computeComplianceScore,
+  type MockOffer,
+} from "@/data/dashboardMockData";
 
 const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
   open: { label: "Ouverte", variant: "default" },
   closed: { label: "Fermée", variant: "secondary" },
   filled: { label: "Pourvue", variant: "destructive" },
+};
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
 };
 
 export default function DashboardEntreprise() {
@@ -52,8 +76,10 @@ export default function DashboardEntreprise() {
   const [editOffer, setEditOffer] = useState<{ id: string; data: OfferFormData } | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
 
-  const { data: offers = [], isLoading } = useQuery({
+  // Real offers from DB
+  const { data: dbOffers = [], isLoading } = useQuery({
     queryKey: ["job_offers", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -67,6 +93,36 @@ export default function DashboardEntreprise() {
     enabled: !!user,
   });
 
+  // Merge real + mock offers for display
+  const allOffers: MockOffer[] = useMemo(() => {
+    const realMapped: MockOffer[] = dbOffers.map((o) => ({
+      id: o.id,
+      title: o.title,
+      secteur: "",
+      codeRome: "",
+      location: o.location,
+      salary: o.salary_range ?? "",
+      description: o.description,
+      skills: o.required_skills ?? [],
+      status: (o.status as "open" | "closed" | "filled") ?? "open",
+      applicantsCount: 0,
+      createdAt: o.created_at,
+    }));
+    return [...realMapped, ...MOCK_OFFERS];
+  }, [dbOffers]);
+
+  // Matched candidates based on selected offer
+  const matchedCandidates = useMemo(() => {
+    const offer = allOffers.find((o) => o.id === selectedOfferId);
+    return MOCK_CANDIDATES.map((c) => ({
+      ...c,
+      score: computeComplianceScore(c, offer?.codeRome),
+    }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8);
+  }, [selectedOfferId, allOffers]);
+
+  // DB mutations
   const createMutation = useMutation({
     mutationFn: async (form: OfferFormData) => {
       const skills = form.skills.split(",").map((s) => s.trim()).filter(Boolean);
@@ -82,7 +138,7 @@ export default function DashboardEntreprise() {
     },
     onSuccess: (_, form) => {
       queryClient.invalidateQueries({ queryKey: ["job_offers"] });
-      toast({ title: "Offre publiée", description: `"${form.title}" est maintenant en ligne.` });
+      toast({ title: "✅ Offre publiée", description: `"${form.title}" est maintenant en ligne.` });
       setCreateOpen(false);
     },
     onError: (error: any) => {
@@ -132,18 +188,14 @@ export default function DashboardEntreprise() {
     },
   });
 
-  const handleCreate = (form: OfferFormData) => {
-    setSubmitting(true);
-    createMutation.mutate(form);
-  };
-
+  const handleCreate = (form: OfferFormData) => { setSubmitting(true); createMutation.mutate(form); };
   const handleEdit = (form: OfferFormData) => {
     if (!editOffer) return;
     setSubmitting(true);
     updateMutation.mutate({ id: editOffer.id, form });
   };
 
-  const openEditDialog = (offer: typeof offers[number]) => {
+  const openEditDialog = (offer: (typeof dbOffers)[number]) => {
     setEditOffer({
       id: offer.id,
       data: {
@@ -152,142 +204,213 @@ export default function DashboardEntreprise() {
         salary: offer.salary_range ?? "",
         location: offer.location,
         skills: (offer.required_skills ?? []).join(", "),
+        secteur: "",
+        codeRome: "",
       },
     });
   };
 
-  const activeCount = offers.filter((o) => o.status === "open").length;
+  const activeCount = allOffers.filter((o) => o.status === "open").length;
+  const certifiedCount = MOCK_CANDIDATES.filter((c) => c.certifiedMinefop || c.certifiedMinrex).length;
+
+  const handleContact = (candidateId: string) => {
+    const c = MOCK_CANDIDATES.find((x) => x.id === candidateId);
+    toast({
+      title: "📩 Demande envoyée",
+      description: `Votre demande de contact pour ${c?.name ?? "ce talent"} a été transmise à l'équipe AXIOM.`,
+    });
+  };
 
   return (
     <DashboardLayout sidebarVariant="entreprise">
-      <div className="space-y-6">
+      <div className="space-y-8 pb-16">
+        {/* ── Header ─────────────────────────────────────────────── */}
         <motion.div
-          className="flex items-center justify-between"
-          initial={{ opacity: 0, y: -10 }}
+          className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.45 }}
         >
           <div>
-            <h2 className="font-display text-2xl font-bold">Espace Entreprise</h2>
-            <p className="text-sm text-muted-foreground mt-1">Gérez vos offres et suivez vos recrutements</p>
+            <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+              Tableau de bord Recruteur
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              AXIOM TIaaS – Talent Intelligence as a Service · Matching prédictif Afrique ↔ France
+            </p>
           </div>
-          <Button className="bg-gradient-to-r from-gold to-ocre text-white hover:opacity-90 border-0 shadow-lg shadow-ocre/20" onClick={() => setCreateOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Publier une offre
+          <Button
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 gap-2"
+            onClick={() => setCreateOpen(true)}
+            aria-label="Publier une nouvelle offre"
+          >
+            <Plus className="h-4 w-4" />
+            Publier une nouvelle offre
           </Button>
         </motion.div>
 
+        {/* ── KPIs ───────────────────────────────────────────────── */}
+        <motion.div
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <PremiumStatCard
+            icon={Briefcase}
+            title="Offres actives"
+            value={String(activeCount)}
+            accent="blue"
+            tensionLevel={activeCount === 0 ? "critical" : activeCount < 3 ? "high" : "low"}
+            subtitle="Postes ouverts au recrutement"
+          />
+          <PremiumStatCard
+            icon={Users}
+            title="Talents disponibles"
+            value={String(MOCK_CANDIDATES.length)}
+            accent="green"
+            tensionLevel="low"
+            subtitle="Cameroun, profils vérifiés"
+          />
+          <PremiumStatCard
+            icon={Award}
+            title="Certifiés MINEFOP/MINREX"
+            value={String(certifiedCount)}
+            accent="blue"
+            tensionLevel="medium"
+            subtitle="Conformité légale garantie"
+          />
+          <PremiumStatCard
+            icon={TrendingUp}
+            title="Talents installés"
+            value="0"
+            tensionLevel="none"
+            subtitle="Recrutés et en poste"
+          />
+        </motion.div>
+
+        {/* ── Tabs ───────────────────────────────────────────────── */}
         <Tabs defaultValue="offres" className="space-y-6">
-          <TabsList className="bg-muted/50 p-1">
-            <TabsTrigger value="offres" className="gap-2 data-[state=active]:bg-card">
+          <TabsList className="bg-muted/50 p-1 h-auto flex-wrap gap-1">
+            <TabsTrigger value="offres" className="gap-2 data-[state=active]:bg-card text-sm">
               <Briefcase className="h-4 w-4" /> Mes offres
             </TabsTrigger>
-            <TabsTrigger value="talents" className="gap-2 data-[state=active]:bg-card">
+            <TabsTrigger value="matching" className="gap-2 data-[state=active]:bg-card text-sm">
+              <Zap className="h-4 w-4" /> Matching IA
+            </TabsTrigger>
+            <TabsTrigger value="pipeline" className="gap-2 data-[state=active]:bg-card text-sm">
+              <BarChart3 className="h-4 w-4" /> Pipeline
+            </TabsTrigger>
+            <TabsTrigger value="talents" className="gap-2 data-[state=active]:bg-card text-sm">
               <ShieldCheck className="h-4 w-4" /> Talents vérifiés
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="offres" className="space-y-6">
-            <motion.div
-              className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              variants={{
-                hidden: {},
-                visible: { transition: { staggerChildren: 0.15 } },
-              }}
-            >
-              <PremiumStatCard
-                icon={Briefcase}
-                title="Offres actives"
-                value={String(activeCount)}
-                accent="blue"
-                tensionLevel={activeCount === 0 ? "critical" : activeCount < 3 ? "high" : "low"}
-                subtitle="Postes ouverts au recrutement"
-              />
-              <PremiumStatCard
-                icon={Users}
-                title="Talents en cours"
-                value={String(Math.floor(activeCount * 2.3))}
-                accent="green"
-                tensionLevel={activeCount * 2.3 < 2 ? "medium" : "low"}
-                subtitle="Candidats dans le pipeline"
-              />
-              <PremiumStatCard
-                icon={TrendingUp}
-                title="Installés"
-                value="0"
-                tensionLevel="none"
-                subtitle="Talents recrutés et en poste"
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle>Mes offres</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {isLoading ? (
-                    <p className="text-sm text-muted-foreground">Chargement…</p>
-                  ) : offers.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Aucune offre publiée. Cliquez sur "Publier une offre" pour commencer.</p>
-                  ) : (
+          {/* ──── Onglet Offres ──────────────────────────────────── */}
+          <TabsContent value="offres" className="space-y-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <CardTitle className="font-display text-lg">Offres actives</CardTitle>
+                <Badge variant="secondary" className="font-semibold">
+                  {allOffers.filter((o) => o.status === "open").length} ouvertes
+                </Badge>
+              </CardHeader>
+              <CardContent className="p-0">
+                {isLoading ? (
+                  <div className="p-6 text-sm text-muted-foreground">Chargement…</div>
+                ) : (
+                  <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
-                        <TableRow>
-                          <TableHead>Titre</TableHead>
-                          <TableHead>Localisation</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Statut</TableHead>
-                          <TableHead className="text-right">Candidats</TableHead>
-                          <TableHead />
+                        <TableRow className="bg-muted/30">
+                          <TableHead className="font-semibold">Poste</TableHead>
+                          <TableHead className="font-semibold hidden sm:table-cell">Localisation</TableHead>
+                          <TableHead className="font-semibold hidden md:table-cell">Salaire</TableHead>
+                          <TableHead className="font-semibold hidden lg:table-cell">Date</TableHead>
+                          <TableHead className="font-semibold">Statut</TableHead>
+                          <TableHead className="font-semibold text-right hidden sm:table-cell">Candidats</TableHead>
+                          <TableHead className="w-[100px]" />
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {offers.map((offer) => {
+                        {allOffers.map((offer, i) => {
                           const s = statusLabels[offer.status] ?? statusLabels.open;
-                          const fakeCandidates = Math.floor(Math.random() * 8);
+                          const isSelected = selectedOfferId === offer.id;
                           return (
                             <TableRow
                               key={offer.id}
-                              className="cursor-pointer hover:bg-muted/50"
-                              onClick={() => navigate(`/dashboard-entreprise/offres/${offer.id}`)}
+                              className={`cursor-pointer transition-colors ${
+                                isSelected
+                                  ? "bg-primary/5 border-l-2 border-primary"
+                                  : "hover:bg-muted/40"
+                              }`}
+                              onClick={() =>
+                                setSelectedOfferId(isSelected ? null : offer.id)
+                              }
                             >
-                              <TableCell className="font-medium">{offer.title}</TableCell>
-                              <TableCell>{offer.location}</TableCell>
-                              <TableCell className="text-muted-foreground">
-                                {format(new Date(offer.created_at), "dd MMM yyyy", { locale: fr })}
+                              <TableCell>
+                                <div>
+                                  <p className="font-medium text-sm">{offer.title}</p>
+                                  {offer.codeRome && (
+                                    <p className="text-xs text-muted-foreground">ROME {offer.codeRome}</p>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground hidden sm:table-cell">
+                                {offer.location}
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground hidden md:table-cell">
+                                {offer.salary ? `${offer.salary} €/an` : "—"}
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">
+                                {format(new Date(offer.createdAt), "dd MMM yyyy", { locale: fr })}
                               </TableCell>
                               <TableCell>
-                                <Badge variant={s.variant}>{s.label}</Badge>
+                                <Badge variant={s.variant} className="text-xs">{s.label}</Badge>
                               </TableCell>
-                              <TableCell className="text-right">{fakeCandidates}</TableCell>
+                              <TableCell className="text-right text-sm font-medium hidden sm:table-cell">
+                                {offer.applicantsCount}
+                              </TableCell>
                               <TableCell>
-                                <div className="flex gap-1">
-                                  <Button variant="ghost" size="icon">
+                                <div
+                                  className="flex gap-1"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    aria-label="Voir l'offre"
+                                    onClick={() => navigate(`/dashboard-entreprise/offres/${offer.id}`)}
+                                  >
                                     <Eye className="h-4 w-4" />
                                   </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={(e) => { e.stopPropagation(); openEditDialog(offer); }}
-                                  >
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-destructive hover:text-destructive"
-                                    onClick={(e) => { e.stopPropagation(); setDeleteId(offer.id); }}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
+                                  {/* Edit/Delete only for real DB offers */}
+                                  {dbOffers.find((o) => o.id === offer.id) && (
+                                    <>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8"
+                                        aria-label="Modifier l'offre"
+                                        onClick={() => {
+                                          const o = dbOffers.find((x) => x.id === offer.id)!;
+                                          openEditDialog(o);
+                                        }}
+                                      >
+                                        <Pencil className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-destructive hover:text-destructive"
+                                        aria-label="Supprimer l'offre"
+                                        onClick={() => setDeleteId(offer.id)}
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </>
+                                  )}
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -295,36 +418,104 @@ export default function DashboardEntreprise() {
                         })}
                       </TableBody>
                     </Table>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
+            {selectedOfferId && (
+              <motion.div
+                key={selectedOfferId}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="font-display text-xl font-bold">Candidats matchés</h2>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      Scoring prédictif AXIOM · Score = ROME×skills (70%) + Origine Afrique (20%) + Certification (10%)
+                    </p>
+                  </div>
+                  <Badge className="bg-accent/15 text-accent border border-accent/30 text-xs font-semibold">
+                    {matchedCandidates.length} profils
+                  </Badge>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {matchedCandidates.map((candidate, i) => (
+                    <CandidateMatchCard
+                      key={candidate.id}
+                      candidate={candidate}
+                      index={i}
+                      onContact={handleContact}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </TabsContent>
+
+          {/* ──── Onglet Matching IA ─────────────────────────────── */}
+          <TabsContent value="matching" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-display text-xl font-bold">Matching IA – Tous les talents</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {MOCK_CANDIDATES.length} talents Cameroun disponibles, triés par score de conformité
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {MOCK_CANDIDATES.sort((a, b) => b.score - a.score).map((candidate, i) => (
+                <CandidateMatchCard
+                  key={candidate.id}
+                  candidate={candidate}
+                  index={i}
+                  onContact={handleContact}
+                />
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* ──── Onglet Pipeline ────────────────────────────────── */}
+          <TabsContent value="pipeline">
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
               <RecruitmentPipeline />
             </motion.div>
           </TabsContent>
 
+          {/* ──── Onglet Talents vérifiés ────────────────────────── */}
           <TabsContent value="talents">
             <VerifiedTalentsTab />
           </TabsContent>
         </Tabs>
+
+        {/* ── Footer dashboard ───────────────────────────────────── */}
+        <motion.footer
+          className="mt-8 border-t border-border/40 pt-6 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <p className="text-xs text-muted-foreground">
+            <span className="font-semibold text-primary">AXIOM</span> – Souveraineté des données & matching prédictif
+            {" · "}
+            <span className="font-semibold text-primary">ALTIS</span> – Excellence logistique hospitality
+          </p>
+        </motion.footer>
       </div>
 
-      {/* Create dialog */}
+      {/* ── Dialogs ──────────────────────────────────────────────── */}
       <OfferFormDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
         onSubmit={handleCreate}
         submitting={submitting}
       />
-
-      {/* Edit dialog */}
       <OfferFormDialog
         open={!!editOffer}
         onOpenChange={(v) => !v && setEditOffer(null)}
@@ -337,13 +528,18 @@ export default function DashboardEntreprise() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Supprimer cette offre ?</AlertDialogTitle>
-            <AlertDialogDescription>Cette action est irréversible. L'offre sera définitivement supprimée.</AlertDialogDescription>
+            <AlertDialogDescription>
+              Cette action est irréversible. L'offre sera définitivement supprimée.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (deleteId) deleteMutation.mutate(deleteId); setDeleteId(null); }}
+              onClick={() => {
+                if (deleteId) deleteMutation.mutate(deleteId);
+                setDeleteId(null);
+              }}
             >
               Supprimer
             </AlertDialogAction>
