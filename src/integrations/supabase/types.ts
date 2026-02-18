@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      company_profiles: {
+        Row: {
+          address: string | null
+          company_name: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          sector: string | null
+          siret: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_name?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          sector?: string | null
+          siret?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          sector?: string | null
+          siret?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       csv_import_history: {
         Row: {
           admin_id: string

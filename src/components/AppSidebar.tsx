@@ -21,6 +21,7 @@ const entrepriseLinks = [
   { title: "Accueil", url: "/dashboard-entreprise", icon: Home },
   { title: "Mes offres", url: "/dashboard-entreprise/offres", icon: Briefcase },
   { title: "Candidats", url: "/dashboard-entreprise/candidats", icon: Users },
+  { title: "Mon profil", url: "/dashboard-entreprise/profil", icon: UserCircle },
   { title: "Facturation", url: "/dashboard-entreprise/billing", icon: CreditCard },
 ];
 

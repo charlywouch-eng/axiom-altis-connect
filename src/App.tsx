@@ -12,6 +12,7 @@ import SignupTalent from "./pages/SignupTalent";
 import OnboardingRole from "./pages/OnboardingRole";
 import Dashboard from "./pages/Dashboard";
 import DashboardEntreprise from "./pages/DashboardEntreprise";
+import EntrepriseProfile from "./pages/EntrepriseProfile";
 import OfferDetail from "./pages/OfferDetail";
 import DashboardTalent from "./pages/DashboardTalent";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -67,6 +68,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <OfferDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard-entreprise/profil"
+              element={
+                <ProtectedRoute>
+                  <EntrepriseProfile />
                 </ProtectedRoute>
               }
             />
