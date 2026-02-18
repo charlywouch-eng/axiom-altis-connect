@@ -78,6 +78,20 @@ export default function DashboardEntreprise() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
 
+  // Company profile
+  const { data: companyProfile } = useQuery({
+    queryKey: ["company_profile", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("company_profiles")
+        .select("company_name, logo_url")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
   // Real offers from DB
   const { data: dbOffers = [], isLoading } = useQuery({
     queryKey: ["job_offers", user?.id],
@@ -231,13 +245,29 @@ export default function DashboardEntreprise() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
         >
-          <div>
-            <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-              Tableau de bord Recruteur
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              AXIOM TIaaS – Talent Intelligence as a Service · Matching prédictif Afrique ↔ France
-            </p>
+          <div className="flex items-center gap-4">
+            {/* Company logo */}
+            {companyProfile?.logo_url ? (
+              <img
+                src={companyProfile.logo_url}
+                alt="Logo entreprise"
+                className="h-12 w-12 rounded-xl object-cover border border-border shadow-sm flex-shrink-0"
+              />
+            ) : (
+              <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                <Briefcase className="h-6 w-6 text-primary/50" />
+              </div>
+            )}
+            <div>
+              <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+                {companyProfile?.company_name
+                  ? companyProfile.company_name
+                  : "Tableau de bord Recruteur"}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                AXIOM TIaaS – Talent Intelligence as a Service · Matching prédictif Afrique ↔ France
+              </p>
+            </div>
           </div>
           <Button
             className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 gap-2"
