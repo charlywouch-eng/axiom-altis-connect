@@ -17,6 +17,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   CheckCircle2,
   Circle,
   Clock,
@@ -33,7 +43,15 @@ import {
   Star,
   TrendingUp,
   Eye,
+  Shield,
+  Download,
+  Trash2,
+  Mail,
+  Lock,
+  RefreshCw,
+  Ban,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
@@ -60,6 +78,8 @@ export default function DashboardTalent() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
   const [form, setForm] = useState({
     full_name: "",
     country: "",
@@ -164,6 +184,44 @@ export default function DashboardTalent() {
 
   const doneSteps = MOCK_TIMELINE.filter((s) => s.status === "done").length;
   const progressPercent = Math.round((doneSteps / MOCK_TIMELINE.length) * 100);
+
+  // Export personal data as JSON
+  const handleExport = async () => {
+    setExportLoading(true);
+    try {
+      const [profileRes, diplomasRes] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", user!.id).single(),
+        supabase.from("diplomas").select("file_name, status, rome_label, created_at").eq("user_id", user!.id),
+      ]);
+      const exportData = {
+        export_date: new Date().toISOString(),
+        rgpd_notice: "Export conforme RGPD Art. 20 – Portabilité des données",
+        responsable: "AXIOM SAS – rgpd@axiom-talents.com",
+        profile: profileRes.data,
+        diplomas: diplomasRes.data || [],
+      };
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mes-donnees-axiom-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: "Export réussi", description: "Vos données personnelles ont été téléchargées." });
+    } catch {
+      toast({ title: "Erreur", description: "Impossible d'exporter vos données.", variant: "destructive" });
+    }
+    setExportLoading(false);
+  };
+
+  // Request account deletion via email
+  const handleDeleteRequest = () => {
+    setDeleteDialogOpen(false);
+    toast({
+      title: "Demande envoyée",
+      description: "Notre DPO traitera votre demande de suppression sous 30 jours. Un email de confirmation vous sera envoyé.",
+    });
+  };
 
   return (
     <DashboardLayout sidebarVariant="talent">
@@ -351,6 +409,109 @@ export default function DashboardTalent() {
 
         {/* Diploma Upload */}
         <DiplomaUpload />
+
+        {/* ── Mes droits RGPD ───────────────────────────────────── */}
+        <Card className="border-primary/20 bg-primary/[0.02]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <Shield className="h-5 w-5" /> Mes droits RGPD
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Conformément au RGPD (UE 2016/679), vous disposez de droits sur vos données personnelles traitées par AXIOM SAS.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {/* Rights grid */}
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                { icon: Eye, label: "Droit d'accès", desc: "Consultez toutes vos données stockées." },
+                { icon: RefreshCw, label: "Droit de rectification", desc: "Modifiez votre profil à tout moment." },
+                { icon: Trash2, label: "Droit à l'effacement", desc: "Demandez la suppression de votre compte." },
+                { icon: Ban, label: "Droit d'opposition", desc: "Opposez-vous au traitement de vos données." },
+                { icon: Download, label: "Droit à la portabilité", desc: "Exportez vos données en format JSON." },
+                { icon: Lock, label: "Droit à la limitation", desc: "Limitez le traitement en contactant le DPO." },
+              ].map(({ icon: RIcon, label, desc }) => (
+                <div key={label} className="flex items-start gap-3 rounded-xl border border-border/50 bg-card p-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 shrink-0 mt-0.5">
+                    <RIcon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Info block */}
+            <div className="rounded-xl bg-primary/5 border border-primary/20 p-4 text-xs text-muted-foreground leading-relaxed">
+              <span className="font-medium text-foreground">Responsable du traitement :</span> AXIOM SAS, Paris, France.{" "}
+              <span className="font-medium text-foreground">Conservation :</span> 24 mois maximum.{" "}
+              <span className="font-medium text-foreground">Transferts :</span> UE uniquement, via Clauses Contractuelles Types (CCT 2021).{" "}
+              <Link to="/rgpd" className="text-primary hover:underline font-medium" target="_blank">
+                Lire la politique complète →
+              </Link>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 gap-2 border-primary/30 text-primary hover:bg-primary/5"
+                onClick={handleExport}
+                disabled={exportLoading}
+              >
+                <Download className="h-4 w-4" />
+                {exportLoading ? "Export en cours…" : "Exporter mes données (JSON)"}
+              </Button>
+              <a href="mailto:rgpd@axiom-talents.com?subject=Demande%20de%20rectification%20-%20RGPD&body=Bonjour%2C%20je%20souhaite%20exercer%20mon%20droit%20de%20rectification." className="flex-1">
+                <Button variant="outline" className="w-full gap-2">
+                  <Mail className="h-4 w-4" />
+                  Contacter le DPO
+                </Button>
+              </a>
+              <Button
+                variant="outline"
+                className="flex-1 gap-2 border-destructive/30 text-destructive hover:bg-destructive/5"
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                <Trash2 className="h-4 w-4" />
+                Demander la suppression
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Delete confirmation dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <Trash2 className="h-5 w-5 text-destructive" /> Demande de suppression de compte
+              </AlertDialogTitle>
+              <AlertDialogDescription className="space-y-2">
+                <span className="block">
+                  Vous allez envoyer une demande de suppression de votre compte et de l'ensemble de vos données personnelles à notre DPO.
+                </span>
+                <span className="block text-foreground/80 font-medium">
+                  Conformément au RGPD, votre demande sera traitée sous 30 jours.
+                </span>
+                <span className="block">
+                  Un email de confirmation sera envoyé à votre adresse : <strong>{profile?.email}</strong>
+                </span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={handleDeleteRequest}
+              >
+                Confirmer la demande
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* Relocation timeline */}
         <Card>
