@@ -222,7 +222,7 @@ export default function Signup() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(220,60%,18%)] flex flex-col">
+      <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(220,60%,18%)] flex flex-col" style={{ minHeight: '-webkit-fill-available' }}>
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 py-4 max-w-lg mx-auto w-full">
           <Link to="/" className="text-primary-foreground/90 font-bold text-lg tracking-tight">
@@ -281,7 +281,7 @@ export default function Signup() {
         </div>
 
         {/* Card container */}
-        <div className="flex-1 flex items-start justify-center px-4 pb-8">
+        <div className="flex-1 flex items-start justify-center px-4 pb-[env(safe-area-inset-bottom,24px)] pb-8">
           <div className="w-full max-w-lg relative overflow-hidden">
             <AnimatePresence custom={direction} mode="wait">
               {step === 1 && (
@@ -484,7 +484,7 @@ export default function Signup() {
                           <TrendingUp className="h-3.5 w-3.5 text-primary" />
                           Années d'expérience
                         </Label>
-                        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                           {EXPERIENCE_TRANCHES.map((t) => (
                             <button
                               key={t}
