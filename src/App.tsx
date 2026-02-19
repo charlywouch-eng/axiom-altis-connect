@@ -23,6 +23,7 @@ import AdminImportTalents from "./pages/AdminImportTalents";
 import AdminStatistics from "./pages/AdminStatistics";
 import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
+import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
 import NotFound from "./pages/NotFound";
 
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup-talent" element={<SignupTalent />} />
+            <Route path="/metiers-en-tension" element={<MetiersEnTension />} />
             <Route
               path="/onboarding-role"
               element={

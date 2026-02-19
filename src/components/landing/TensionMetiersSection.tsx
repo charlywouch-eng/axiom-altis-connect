@@ -155,11 +155,16 @@ export default function TensionMetiersSection() {
           viewport={{ once: true }}
           custom={0}
           variants={fadeUp}
-          className="mt-12 text-center"
+          className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
+          <Link to="/metiers-en-tension">
+            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 px-10 py-6 h-auto text-base font-semibold rounded-xl">
+              Voir tous les métiers en tension <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
           <Link to="/signup">
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 border-0 px-10 py-6 text-base font-semibold rounded-xl shadow-xl shadow-accent/20">
-              Recruter dans ces métiers <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 border-0 px-10 py-6 h-auto text-base font-semibold rounded-xl shadow-xl shadow-accent/20">
+              Recruter des talents certifiés <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
         </motion.div>
