@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Tooltip,
@@ -25,6 +28,15 @@ import {
   X,
   SlidersHorizontal,
   ArrowUpDown,
+  FileText,
+  CheckCircle2,
+  Clock,
+  Globe,
+  Briefcase,
+  Languages,
+  Award,
+  Send,
+  FolderOpen,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { MOCK_CANDIDATES } from "@/data/dashboardMockData";
@@ -44,6 +56,8 @@ type UnifiedCandidate = {
   certifiedMinrex: boolean;
   available: boolean;
   source: "real" | "mock";
+  skills?: string[];
+  visaStatus?: string;
 };
 
 const FRENCH_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2", "Natif"];
@@ -66,15 +80,271 @@ function scoreBarColor(s: number) {
   return "bg-amber-500";
 }
 
+// ── Visa status label ────────────────────────────────────────────────────────
+const VISA_LABELS: Record<string, { label: string; color: string }> = {
+  en_attente: { label: "En attente", color: "bg-amber-400/15 text-amber-700 border-amber-400/30" },
+  apostille:  { label: "Apostille ✓", color: "bg-blue-500/15 text-blue-700 border-blue-500/30" },
+  pret_j1:    { label: "Prêt J-1 ✓", color: "bg-emerald-500/15 text-emerald-700 border-emerald-500/30" },
+  en_cours:   { label: "En cours", color: "bg-secondary text-secondary-foreground border-border/40" },
+};
+
+// ── Dossier Modal ─────────────────────────────────────────────────────────────
+function CandidatDossierModal({
+  candidate,
+  open,
+  onOpenChange,
+  onContact,
+}: {
+  candidate: UnifiedCandidate | null;
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onContact: (c: UnifiedCandidate) => void;
+}) {
+  const { data: diplomas = [], isLoading: diplomasLoading } = useQuery({
+    queryKey: ["candidate-diplomas", candidate?.id],
+    queryFn: async () => {
+      if (!candidate || candidate.source !== "real") return [];
+      const { data, error } = await supabase
+        .from("diplomas")
+        .select("id, file_name, status, minfop_verified, apostille_verified, rome_label, rome_match_percent, extracted_field")
+        .eq("talent_id", candidate.id);
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: open && !!candidate && candidate.source === "real",
+  });
+
+  if (!candidate) return null;
+
+  const initials = candidate.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const isAxiomReady = candidate.score >= 80;
+  const visaInfo = VISA_LABELS[candidate.visaStatus ?? "en_attente"] ?? VISA_LABELS["en_attente"];
+
+  const scoreLabel =
+    candidate.score >= 85 ? "Excellent" :
+    candidate.score >= 70 ? "Bon" :
+    candidate.score >= 50 ? "Moyen" : "Faible";
+
+  const scoreHue =
+    candidate.score >= 85 ? "hsl(var(--success))" :
+    candidate.score >= 70 ? "hsl(var(--accent))" : "hsl(var(--warning))";
+
+  // Mock diplomas for demo candidates
+  const mockDiplomas =
+    candidate.source === "mock"
+      ? [
+          { id: "m1", file_name: "Scan diplôme MINEFOP.pdf", status: "verifie", minfop_verified: candidate.certifiedMinefop, apostille_verified: candidate.certifiedMinrex, rome_label: candidate.secteur, rome_match_percent: candidate.score, extracted_field: candidate.codeRome },
+          { id: "m2", file_name: "Copie passeport.pdf", status: "verifie", minfop_verified: false, apostille_verified: false, rome_label: null, rome_match_percent: null, extracted_field: null },
+        ]
+      : diplomas;
+
+  const displayDiplomas = candidate.source === "mock" ? mockDiplomas : diplomas;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-4">
+            <div className="relative shrink-0">
+              <Avatar className="h-14 w-14 border-2 border-primary/20">
+                <AvatarFallback className="bg-primary text-primary-foreground text-lg font-bold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              {isAxiomReady && (
+                <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-background flex items-center justify-center">
+                  <Star className="h-2.5 w-2.5 text-white" />
+                </div>
+              )}
+            </div>
+            <div>
+              <DialogTitle className="font-display text-xl leading-tight">{candidate.name}</DialogTitle>
+              <DialogDescription className="flex items-center gap-2 mt-0.5 flex-wrap">
+                {candidate.codeRome && (
+                  <span className="font-mono text-accent text-xs">{candidate.codeRome}</span>
+                )}
+                <span>· {candidate.secteur}</span>
+              </DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
+
+        {/* Score global */}
+        <div className="rounded-xl border border-border/50 bg-muted/30 p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
+              <Award className="h-3.5 w-3.5" /> Score de conformité
+            </p>
+            <span className="text-2xl font-display font-bold" style={{ color: scoreHue }}>
+              {candidate.score}<span className="text-muted-foreground text-sm font-normal">/100</span>
+            </span>
+          </div>
+          <Progress value={candidate.score} className="h-2" />
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>{scoreLabel}</span>
+            {isAxiomReady && (
+              <Badge className="bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 text-[10px] gap-1">
+                <Star className="h-2.5 w-2.5" /> AXIOM READY
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Infos clés */}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-xl bg-muted/50 p-3 flex items-start gap-2">
+            <Globe className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Pays</p>
+              <p className="text-sm font-semibold mt-0.5">{candidate.country}</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-muted/50 p-3 flex items-start gap-2">
+            <Languages className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Français</p>
+              <p className="text-sm font-semibold mt-0.5">{candidate.frenchLevel}</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-muted/50 p-3 flex items-start gap-2">
+            <Briefcase className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Expérience</p>
+              <p className="text-sm font-semibold mt-0.5">{candidate.experienceYears} ans</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-muted/50 p-3 flex items-start gap-2">
+            <Clock className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Statut visa</p>
+              <Badge className={cn("text-[10px] border mt-0.5", visaInfo.color)}>
+                {visaInfo.label}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Compétences */}
+        {candidate.skills && candidate.skills.length > 0 && (
+          <>
+            <Separator />
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2 flex items-center gap-1.5">
+                <Star className="h-3.5 w-3.5" /> Compétences
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {candidate.skills.map((skill) => (
+                  <Badge key={skill} variant="secondary" className="text-xs">{skill}</Badge>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Certifications */}
+        {(candidate.certifiedMinefop || candidate.certifiedMinrex) && (
+          <>
+            <Separator />
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2 flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5" /> Certifications légales
+              </p>
+              <div className="flex gap-2">
+                {candidate.certifiedMinefop && (
+                  <div className="flex items-center gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs text-amber-700 font-medium">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> MINEFOP vérifié
+                  </div>
+                )}
+                {candidate.certifiedMinrex && (
+                  <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-700 font-medium">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> MINREX vérifié
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Diplômes */}
+        <Separator />
+        <div>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+            <FileText className="h-3.5 w-3.5" /> Documents du dossier
+          </p>
+          {diplomasLoading ? (
+            <p className="text-xs text-muted-foreground animate-pulse">Chargement des diplômes…</p>
+          ) : displayDiplomas.length === 0 ? (
+            <p className="text-xs text-muted-foreground italic">Aucun document transmis pour ce profil.</p>
+          ) : (
+            <div className="space-y-2">
+              {displayDiplomas.map((d) => (
+                <div
+                  key={d.id}
+                  className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/30 p-3"
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <FileText className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{d.file_name}</p>
+                    {d.rome_label && (
+                      <p className="text-[11px] text-muted-foreground">{d.rome_label} · {d.rome_match_percent ?? 0}% match ROME</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    {d.minfop_verified && (
+                      <Badge className="bg-amber-400/15 text-amber-700 border border-amber-400/30 text-[9px] gap-0.5">
+                        <CheckCircle2 className="h-2.5 w-2.5" /> MINEFOP
+                      </Badge>
+                    )}
+                    {d.apostille_verified && (
+                      <Badge className="bg-blue-500/15 text-blue-700 border border-blue-500/30 text-[9px] gap-0.5">
+                        <CheckCircle2 className="h-2.5 w-2.5" /> Apostille
+                      </Badge>
+                    )}
+                    {!d.minfop_verified && !d.apostille_verified && (
+                      <Badge variant="secondary" className="text-[9px]">
+                        {d.status === "verifie" ? "Vérifié" : "En attente"}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Separator />
+
+        {/* CTA */}
+        <Button
+          onClick={() => { onContact(candidate); onOpenChange(false); }}
+          className="w-full gap-2 py-5 text-sm font-semibold rounded-xl"
+        >
+          <Send className="h-4 w-4" /> Envoyer une demande de contact
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // ── Candidate Card ────────────────────────────────────────────────────────────
 function CandidatCard({
   candidate,
   index,
   onContact,
+  onViewDossier,
 }: {
   candidate: UnifiedCandidate;
   index: number;
   onContact: (c: UnifiedCandidate) => void;
+  onViewDossier: (c: UnifiedCandidate) => void;
 }) {
   const initials = candidate.name
     .split(" ")
@@ -205,7 +475,13 @@ function CandidatCard({
                 <Phone className="h-3.5 w-3.5" />
                 Contacter
               </Button>
-              <Button size="sm" variant="outline" className="text-xs border-border/60">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs border-border/60"
+                onClick={() => onViewDossier(candidate)}
+              >
+                <FolderOpen className="h-3.5 w-3.5 mr-1" />
                 Dossier
               </Button>
             </div>
@@ -252,6 +528,7 @@ export default function EntrepriseCandidats() {
   const [filterAvailable, setFilterAvailable] = useState<boolean | null>(null);
   const [filterCertified, setFilterCertified] = useState(false);
   const [sortBy, setSortBy] = useState("score_desc");
+  const [dossierCandidate, setDossierCandidate] = useState<UnifiedCandidate | null>(null);
 
   // Real talent profiles from DB
   const { data: dbTalents = [] } = useQuery({
@@ -259,7 +536,7 @@ export default function EntrepriseCandidats() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("talent_profiles")
-        .select("id, full_name, country, rome_code, rome_label, french_level, experience_years, available, compliance_score, visa_status")
+        .select("id, full_name, country, rome_code, rome_label, french_level, experience_years, available, compliance_score, visa_status, skills")
         .eq("available", true)
         .order("compliance_score", { ascending: false });
       if (error) throw error;
@@ -283,6 +560,8 @@ export default function EntrepriseCandidats() {
       certifiedMinrex: false,
       available: t.available ?? true,
       source: "real" as const,
+      skills: t.skills ?? [],
+      visaStatus: t.visa_status,
     }));
 
     const mock: UnifiedCandidate[] = MOCK_CANDIDATES.map((c) => ({
@@ -510,12 +789,19 @@ export default function EntrepriseCandidats() {
           <AnimatePresence mode="popLayout">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filtered.map((c, i) => (
-                <CandidatCard key={c.id} candidate={c} index={i} onContact={handleContact} />
+                <CandidatCard key={c.id} candidate={c} index={i} onContact={handleContact} onViewDossier={setDossierCandidate} />
               ))}
             </div>
           </AnimatePresence>
         )}
       </div>
+
+      <CandidatDossierModal
+        candidate={dossierCandidate}
+        open={!!dossierCandidate}
+        onOpenChange={(v) => { if (!v) setDossierCandidate(null); }}
+        onContact={handleContact}
+      />
     </DashboardLayout>
   );
 }
