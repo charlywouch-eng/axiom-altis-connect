@@ -71,6 +71,40 @@ import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 
+// ── Types ────────────────────────────────────────────────────
+interface LBBCompany {
+  siret: string;
+  name: string;
+  sector: string;
+  romeCode: string;
+  romeLabel: string;
+  city: string;
+  zipCode: string;
+  hiringPotential: number; // 0-5
+  nafLabel: string;
+  url: string;
+  headcount: string | null;
+  distance: number | null;
+}
+
+const SECTOR_BADGE_COLORS: Record<string, string> = {
+  BTP: "bg-orange-500/10 text-orange-700 border-orange-300/40 dark:text-orange-400",
+  Santé: "bg-emerald-500/10 text-emerald-700 border-emerald-300/40 dark:text-emerald-400",
+  CHR: "bg-violet-500/10 text-violet-700 border-violet-300/40 dark:text-violet-400",
+  Logistique: "bg-sky-500/10 text-sky-700 border-sky-300/40 dark:text-sky-400",
+  Autre: "bg-muted text-muted-foreground border-border",
+};
+
+// Mock companies fallback for when API isn't subscribed yet
+const MOCK_LBB_COMPANIES: LBBCompany[] = [
+  { siret: "mock-1", name: "BTP Services Rhône-Alpes", sector: "BTP", romeCode: "F1703", romeLabel: "Maçonnerie", city: "Lyon", zipCode: "69001", hiringPotential: 4.8, nafLabel: "Construction", url: "#", headcount: "50-99", distance: 5 },
+  { siret: "mock-2", name: "Clinique Saint-Joseph", sector: "Santé", romeCode: "J1501", romeLabel: "Aide-soignant", city: "Paris", zipCode: "75015", hiringPotential: 4.5, nafLabel: "Activités hospitalières", url: "#", headcount: "100-199", distance: 8 },
+  { siret: "mock-3", name: "Hôtel Le Grand Palais", sector: "CHR", romeCode: "G1602", romeLabel: "Service en salle", city: "Bordeaux", zipCode: "33000", hiringPotential: 4.2, nafLabel: "Hôtels et hébergement", url: "#", headcount: "20-49", distance: 12 },
+  { siret: "mock-4", name: "Plomberie Dupont & Fils", sector: "BTP", romeCode: "F1603", romeLabel: "Plomberie", city: "Marseille", zipCode: "13001", hiringPotential: 4.0, nafLabel: "Construction", url: "#", headcount: "10-19", distance: 15 },
+  { siret: "mock-5", name: "EHPAD Les Oliviers", sector: "Santé", romeCode: "J1501", romeLabel: "Aide-soignant", city: "Toulouse", zipCode: "31000", hiringPotential: 3.8, nafLabel: "Hébergement médicalisé", url: "#", headcount: "50-99", distance: 20 },
+  { siret: "mock-6", name: "Brasserie de la République", sector: "CHR", romeCode: "G1603", romeLabel: "Restauration", city: "Nantes", zipCode: "44000", hiringPotential: 3.5, nafLabel: "Restauration traditionnelle", url: "#", headcount: "10-19", distance: 25 },
+];
+
 const FRENCH_LEVELS = [
   "Débutant (A1)",
   "Élémentaire (A2)",
@@ -267,6 +301,35 @@ export default function DashboardTalent() {
         ...(o as object),
         score: Math.max(75, 95 - i * 5),
       })) as Array<Record<string, unknown> & { score: number }>;
+    },
+    enabled: !!user,
+    retry: false,
+  });
+
+  const { data: lbbCompanies, isLoading: lbbLoading } = useQuery({
+    queryKey: ["lbb_companies"],
+    queryFn: async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+      const fnUrl = `${supabaseUrl}/functions/v1/la-bonne-boite`;
+
+      const res = await fetch(fnUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ sectors: ["BTP", "Santé", "CHR"], count: 9 }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "La Bonne Boite API unavailable");
+      }
+
+      const json = await res.json();
+      return json.companies as LBBCompany[];
     },
     enabled: !!user,
     retry: false,
@@ -911,6 +974,139 @@ export default function DashboardTalent() {
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* ── La Bonne Boite – Entreprises qui recrutent ──────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.28 }}
+          >
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <CardTitle className="flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-primary" />
+                    Entreprises qui recrutent probablement
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1">
+                      <Zap className="h-3 w-3" /> La Bonne Boite · France Travail
+                    </Badge>
+                    {lbbLoading && (
+                      <RefreshCw className="h-3.5 w-3.5 text-muted-foreground animate-spin" />
+                    )}
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Secteurs BTP · Santé · CHR — Entreprises à fort potentiel d'embauche détectées par l'IA France Travail
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {(lbbCompanies || MOCK_LBB_COMPANIES).map((company, idx) => {
+                    const stars = Math.round(company.hiringPotential);
+                    const badgeClass = SECTOR_BADGE_COLORS[company.sector] || SECTOR_BADGE_COLORS["Autre"];
+                    return (
+                      <motion.div
+                        key={company.siret}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 + idx * 0.06 }}
+                        className="rounded-xl border border-border/60 p-4 flex flex-col gap-2.5 transition-all hover:border-primary/30 hover:shadow-sm hover:bg-muted/10"
+                      >
+                        {/* Top row */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-sm text-foreground leading-tight line-clamp-2">
+                              {company.name}
+                            </p>
+                            {company.nafLabel && (
+                              <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                                {company.nafLabel}
+                              </p>
+                            )}
+                          </div>
+                          <Badge className={`shrink-0 text-[10px] border px-2 py-0.5 ${badgeClass}`}>
+                            {company.sector}
+                          </Badge>
+                        </div>
+
+                        {/* Location + headcount */}
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                          {company.city && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              {company.city} {company.zipCode}
+                            </span>
+                          )}
+                          {company.headcount && (
+                            <span className="flex items-center gap-1">
+                              <User className="h-3 w-3" />
+                              {company.headcount} salariés
+                            </span>
+                          )}
+                          {company.distance !== null && (
+                            <span className="text-muted-foreground/70">
+                              ~{company.distance} km
+                            </span>
+                          )}
+                        </div>
+
+                        {/* ROME */}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0.5 text-muted-foreground">
+                            {company.romeCode}
+                          </Badge>
+                          {company.romeLabel && (
+                            <span className="text-[11px] text-muted-foreground truncate">
+                              {company.romeLabel}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Hiring potential stars */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1">
+                            <span className="text-[10px] text-muted-foreground">Probabilité embauche :</span>
+                            <span className="text-[11px] font-semibold text-primary ml-1">
+                              {"★".repeat(Math.max(0, stars))}{"☆".repeat(Math.max(0, 5 - stars))}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* CTA */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full border-primary/30 text-primary hover:bg-primary/5 gap-1.5 text-xs"
+                          onClick={() => {
+                            if (company.url && company.url !== "#") {
+                              window.open(company.url, "_blank", "noopener,noreferrer");
+                            } else {
+                              toast({
+                                title: "Candidature spontanée",
+                                description: `Envoi du profil à ${company.name}…`,
+                              });
+                            }
+                          }}
+                        >
+                          Candidature spontanée
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        </Button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Note API */}
+                {!lbbCompanies && !lbbLoading && (
+                  <p className="mt-3 text-center text-xs text-muted-foreground/60 italic">
+                    Données illustratives — Activez l'API La Bonne Boite sur francetravail.io pour les résultats réels
+                  </p>
+                )}
               </CardContent>
             </Card>
           </motion.div>
