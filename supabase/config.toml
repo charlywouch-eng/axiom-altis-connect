@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.la-bonne-boite]
 verify_jwt = false
+
+[functions.rome-metier]
+verify_jwt = false
