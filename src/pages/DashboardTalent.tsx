@@ -48,25 +48,21 @@ import {
   Banknote,
   Star,
   TrendingUp,
-  Eye,
   Shield,
   Download,
   Trash2,
   Mail,
-  Lock,
   RefreshCw,
-  Ban,
   Award,
   Zap,
   ArrowRight,
-  CheckCheck,
   Package,
   ChevronRight,
   Sparkles,
   ClipboardList,
   Flame,
+  Lock,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
@@ -80,7 +76,7 @@ interface LBBCompany {
   romeLabel: string;
   city: string;
   zipCode: string;
-  hiringPotential: number; // 0-5
+  hiringPotential: number;
   nafLabel: string;
   url: string;
   headcount: string | null;
@@ -95,7 +91,6 @@ const SECTOR_BADGE_COLORS: Record<string, string> = {
   Autre: "bg-muted text-muted-foreground border-border",
 };
 
-// Mock companies fallback for when API isn't subscribed yet
 const MOCK_LBB_COMPANIES: LBBCompany[] = [
   { siret: "mock-1", name: "BTP Services Rhône-Alpes", sector: "BTP", romeCode: "F1703", romeLabel: "Maçonnerie", city: "Lyon", zipCode: "69001", hiringPotential: 4.8, nafLabel: "Construction", url: "#", headcount: "50-99", distance: 5 },
   { siret: "mock-2", name: "Clinique Saint-Joseph", sector: "Santé", romeCode: "J1501", romeLabel: "Aide-soignant", city: "Paris", zipCode: "75015", hiringPotential: 4.5, nafLabel: "Activités hospitalières", url: "#", headcount: "100-199", distance: 8 },
@@ -122,6 +117,7 @@ interface TimelineStep {
   badge?: { label: string; color: "gold" | "blue" | "green" };
   tooltipText?: string;
   upsell?: string;
+  date?: string;
 }
 
 const MOCK_TIMELINE: TimelineStep[] = [
@@ -129,11 +125,13 @@ const MOCK_TIMELINE: TimelineStep[] = [
     label: "Offre acceptée",
     icon: Briefcase,
     status: "done",
+    date: "12 jan. 2026",
   },
   {
     label: "Visa en cours",
     icon: Globe,
     status: "done",
+    date: "28 jan. 2026",
     badge: { label: "CERTIFIÉ MINEFOP", color: "gold" },
     tooltipText:
       "Diplôme CQP/DQP audité + Delta ROME comblé – Garantie opérationnel jour 1. Upsell Premium 30 € pour visibilité prioritaire",
@@ -143,26 +141,29 @@ const MOCK_TIMELINE: TimelineStep[] = [
     label: "Billet réservé",
     icon: Plane,
     status: "done",
+    date: "5 fév. 2026",
   },
   {
     label: "Logement trouvé",
     icon: Home,
     status: "done",
+    date: "14 fév. 2026",
   },
   {
     label: "Formation démarrée",
     icon: GraduationCap,
     status: "active",
     tag: "Classes Miroirs – Module normes FR validé AXIOM",
+    date: "En cours",
   },
   {
     label: "En poste",
     icon: Building2,
     status: "pending",
+    date: "Estimé mars 2026",
   },
 ];
 
-// Enriched mock offers matching the spec (BTP/Santé/CHR)
 const MOCK_RECOMMENDED_OFFERS = [
   {
     id: "mock-r1",
@@ -232,6 +233,8 @@ const MOCK_PROFILE_DATA = {
     { code: "F1603", label: "Plombier" },
   ],
 };
+
+const PROGRESS_PERCENT = 60;
 
 export default function DashboardTalent() {
   const { user } = useAuth();
@@ -380,8 +383,6 @@ export default function DashboardTalent() {
     },
   });
 
-  const PROGRESS_PERCENT = 60;
-
   const handleExport = async () => {
     setExportLoading(true);
     try {
@@ -433,139 +434,206 @@ export default function DashboardTalent() {
 
   const offersToDisplay = ftOffers && ftOffers.length > 0 ? ftOffers : MOCK_RECOMMENDED_OFFERS;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  };
+
   return (
     <TooltipProvider>
       <DashboardLayout sidebarVariant="talent">
-        <div className="space-y-6 pb-8">
-          {/* ── Header ─────────────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-          >
-            <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">
-                Mon Espace Talent
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Bienvenue, {displayName} · Suivez votre parcours de mobilité
-              </p>
+        <motion.div
+          className="space-y-6 pb-10"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* ── Header ─────────────────────────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary via-primary/90 to-accent p-6 text-primary-foreground shadow-lg">
+              {/* Background decorations */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(217_91%_75%_/_0.15),_transparent_60%)]" />
+              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-accent/10 blur-2xl" />
+              <div className="absolute -bottom-4 -left-4 h-20 w-20 rounded-full bg-primary/20 blur-xl" />
+
+              <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-sm">
+                      <User className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                    <span className="text-primary-foreground/70 text-sm font-medium">Mon Espace Talent</span>
+                  </div>
+                  <h1 className="text-2xl font-bold text-primary-foreground tracking-tight">
+                    Bienvenue, {displayName}
+                  </h1>
+                  <p className="text-primary-foreground/70 text-sm mt-1">
+                    {displayCountry} · Français {displayFrench} · Codes ROME : F1703 / F1603
+                  </p>
+                </div>
+                <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
+                  <Badge className="bg-amber-400/20 text-amber-200 border border-amber-400/30 gap-1.5 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
+                    <Award className="h-3.5 w-3.5" />
+                    CERTIFIÉ MINEFOP
+                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <p className="text-primary-foreground/60 text-[10px] uppercase tracking-widest">Progression</p>
+                      <p className="text-primary-foreground font-bold text-lg leading-none">{PROGRESS_PERCENT}%</p>
+                    </div>
+                    <div className="w-20">
+                      <Progress
+                        value={PROGRESS_PERCENT}
+                        className="h-2 bg-primary-foreground/20 [&>div]:bg-primary-foreground"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <Badge className="self-start sm:self-auto bg-amber-500/15 text-amber-700 border border-amber-400/40 gap-1.5 px-3 py-1.5 text-xs dark:text-amber-400">
-              <Award className="h-3.5 w-3.5" />
-              CERTIFIÉ MINEFOP
-            </Badge>
           </motion.div>
 
-          {/* ── KPIs ───────────────────────────────────────────── */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <PremiumStatCard
-              icon={Briefcase}
-              title="Offres disponibles"
-              value={totalOpenOffers > 0 ? String(totalOpenOffers) : "3"}
-              accent="blue"
-              tensionLevel="low"
-              subtitle="Postes ouverts sur la plateforme"
-            />
-            <PremiumStatCard
-              icon={Star}
-              title="Offres recommandées"
-              value="3"
-              accent="green"
-              tensionLevel="low"
-              subtitle="Via France Travail – matchées ROME"
-            />
-            <PremiumStatCard
-              icon={TrendingUp}
-              title="Progression relocation"
-              value="60%"
-              tensionLevel="low"
-              tensionLabel="En cours"
-              subtitle="Parcours ALTIS Pack Zéro Stress"
-            />
-          </div>
+          {/* ── KPIs ────────────────────────────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <PremiumStatCard
+                icon={Briefcase}
+                title="Offres disponibles"
+                value={totalOpenOffers > 0 ? String(totalOpenOffers) : "3"}
+                accent="blue"
+                tensionLevel="low"
+                subtitle="Postes ouverts · Métiers tension"
+              />
+              <PremiumStatCard
+                icon={Star}
+                title="Score de matching"
+                value="92%"
+                accent="green"
+                tensionLevel="low"
+                subtitle="BTP – Maçon F1703 · Grande demande"
+              />
+              <PremiumStatCard
+                icon={TrendingUp}
+                title="Parcours ALTIS"
+                value="60%"
+                tensionLevel="low"
+                tensionLabel="En cours"
+                subtitle="4/6 étapes complétées · Formation active"
+              />
+            </div>
+          </motion.div>
 
-          {/* ── Mon Parcours Relocation ─────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            <Card className="border-primary/20 overflow-hidden">
-              <div className="h-1 w-full bg-gradient-to-r from-primary to-accent" />
-              <CardHeader>
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Plane className="h-5 w-5 text-primary" />
-                    Mon Parcours Relocation
-                    <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-2">
-                      ALTIS Mobility
-                    </Badge>
-                  </CardTitle>
-                  <span className="text-lg font-bold text-primary">
-                    {PROGRESS_PERCENT}%
-                  </span>
+          {/* ── Mon Parcours Relocation (Timeline ALTIS) ────────────── */}
+          <motion.div variants={itemVariants}>
+            <Card className="overflow-hidden border-primary/20 shadow-sm">
+              {/* Premium top bar */}
+              <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary/40" />
+
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between flex-wrap gap-3">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-foreground">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                        <Plane className="h-4 w-4 text-primary" />
+                      </div>
+                      Mon Parcours Relocation
+                      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-2 font-semibold">
+                        ALTIS Mobility
+                      </Badge>
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1.5 ml-10">
+                      4 étapes complétées sur 6 · Formation démarrée en cours
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-3xl font-bold text-primary leading-none">{PROGRESS_PERCENT}%</p>
+                    <p className="text-xs text-muted-foreground mt-1">Progression</p>
+                  </div>
                 </div>
                 <Progress
                   value={PROGRESS_PERCENT}
-                  className="h-2 mt-2 [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:to-accent"
+                  className="h-2.5 mt-3 rounded-full bg-muted [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:to-accent [&>div]:rounded-full"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  4 étapes complétées sur 6 · Formation démarrée en cours
-                </p>
               </CardHeader>
-              <CardContent>
-                <div className="relative space-y-0">
+
+              <CardContent className="pt-0">
+                <div className="space-y-0">
                   {MOCK_TIMELINE.map((step, i) => {
                     const isLast = i === MOCK_TIMELINE.length - 1;
                     const Icon = step.icon;
+                    const isDone = step.status === "done";
+                    const isActive = step.status === "active";
+                    const isPending = step.status === "pending";
+
                     return (
                       <motion.div
                         key={step.label}
-                        initial={{ opacity: 0, x: -12 }}
+                        initial={{ opacity: 0, x: -16 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.08 }}
-                        className="flex gap-4"
+                        transition={{ delay: 0.2 + i * 0.08, duration: 0.35 }}
+                        className="flex gap-4 group"
                       >
-                        {/* Line + dot */}
-                        <div className="flex flex-col items-center">
-                          <div
-                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors shadow-sm ${
-                              step.status === "done"
-                                ? "bg-success text-success-foreground shadow-success/20"
-                                : step.status === "active"
-                                ? "border-2 border-primary bg-primary/10 text-primary shadow-primary/20"
-                                : "border-2 border-border bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {step.status === "done" ? (
-                              <CheckCircle2 className="h-4 w-4" />
-                            ) : step.status === "active" ? (
-                              <Clock className="h-4 w-4 animate-pulse" />
-                            ) : (
-                              <Icon className="h-4 w-4" />
+                        {/* Timeline dot + connector */}
+                        <div className="flex flex-col items-center shrink-0">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div
+                                className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-all cursor-default shadow-sm ${
+                                  isDone
+                                    ? "border-emerald-400 bg-emerald-500 text-white shadow-emerald-500/20"
+                                    : isActive
+                                    ? "border-primary bg-primary/10 text-primary shadow-primary/20 animate-pulse"
+                                    : "border-border bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                {isDone ? (
+                                  <CheckCircle2 className="h-4.5 w-4.5 h-[18px] w-[18px]" />
+                                ) : isActive ? (
+                                  <Clock className="h-4 w-4" />
+                                ) : (
+                                  <Icon className="h-4 w-4" />
+                                )}
+                                {isActive && (
+                                  <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                  </span>
+                                )}
+                              </div>
+                            </TooltipTrigger>
+                            {step.tooltipText && (
+                              <TooltipContent side="right" className="max-w-72 text-xs leading-relaxed space-y-1.5 p-3">
+                                <p className="font-bold text-sm">🏆 Certification AXIOM</p>
+                                <p>{step.tooltipText}</p>
+                                {step.upsell && (
+                                  <div className="border-t border-border/50 pt-1.5 mt-1.5">
+                                    <p className="text-primary font-semibold flex items-center gap-1">
+                                      <Sparkles className="h-3 w-3" />
+                                      {step.upsell}
+                                    </p>
+                                  </div>
+                                )}
+                              </TooltipContent>
                             )}
-                          </div>
+                          </Tooltip>
                           {!isLast && (
                             <div
-                              className={`w-0.5 flex-1 min-h-[2.5rem] transition-colors ${
-                                step.status === "done" ? "bg-success/60" : "bg-border"
+                              className={`w-0.5 flex-1 min-h-[2rem] mt-1 rounded-full transition-all ${
+                                isDone ? "bg-emerald-400/60" : isActive ? "bg-primary/30" : "bg-border/40"
                               }`}
                             />
                           )}
                         </div>
 
-                        {/* Content */}
-                        <div className="pb-5 pt-1 flex flex-col gap-1 flex-1">
+                        {/* Step content */}
+                        <div className={`pb-5 pt-1.5 flex-1 min-w-0 ${isPending ? "opacity-50" : ""}`}>
                           <div className="flex flex-wrap items-center gap-2">
-                            <p
-                              className={`font-semibold text-sm ${
-                                step.status === "pending"
-                                  ? "text-muted-foreground"
-                                  : "text-foreground"
-                              }`}
-                            >
+                            <p className={`font-semibold text-sm ${isPending ? "text-muted-foreground" : "text-foreground"}`}>
                               {step.label}
                             </p>
 
@@ -573,42 +641,55 @@ export default function DashboardTalent() {
                             {step.badge && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Badge className="gap-1 bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-400/40 hover:bg-amber-500/25 cursor-help text-[10px] px-2 py-0.5">
+                                  <Badge className="gap-1 bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400 border border-amber-400/50 hover:bg-amber-100 cursor-help text-[10px] px-2 py-0.5 font-bold">
                                     <Award className="h-3 w-3" />
                                     {step.badge.label}
                                   </Badge>
                                 </TooltipTrigger>
-                                <TooltipContent side="right" className="max-w-xs text-xs leading-relaxed space-y-1">
-                                  <p className="font-semibold">Certification AXIOM</p>
+                                <TooltipContent side="right" className="max-w-72 text-xs leading-relaxed space-y-1.5 p-3">
+                                  <p className="font-bold text-sm">🏆 Certification AXIOM</p>
                                   <p>{step.tooltipText}</p>
                                   {step.upsell && (
-                                    <p className="text-accent font-semibold border-t border-border/50 pt-1 mt-1">
-                                      ✦ {step.upsell}
-                                    </p>
+                                    <div className="border-t border-border/50 pt-1.5 mt-1.5">
+                                      <p className="text-primary font-semibold flex items-center gap-1">
+                                        <Sparkles className="h-3 w-3" />
+                                        {step.upsell}
+                                      </p>
+                                    </div>
                                   )}
                                 </TooltipContent>
                               </Tooltip>
                             )}
 
-                            {step.status === "active" && (
-                              <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px] px-2 py-0.5 animate-pulse">
-                                En cours
+                            {isActive && (
+                              <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px] px-2 py-0.5 font-semibold">
+                                ● En cours
                               </Badge>
                             )}
-                            {step.status === "done" && (
-                              <Badge className="bg-success/10 text-success border-success/30 text-[10px] px-2 py-0.5">
+                            {isDone && (
+                              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-400/30 text-[10px] px-2 py-0.5">
                                 ✓ Complété
                               </Badge>
                             )}
                           </div>
 
+                          {step.date && (
+                            <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                              <Clock className="h-2.5 w-2.5" />
+                              {step.date}
+                            </p>
+                          )}
+
                           {step.tag && (
-                            <div className="flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-3 py-1.5 mt-1 w-fit">
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.5 }}
+                              className="flex items-center gap-2 rounded-lg border border-primary/25 bg-primary/5 px-3 py-2 mt-2 w-fit"
+                            >
                               <GraduationCap className="h-3.5 w-3.5 text-primary shrink-0" />
-                              <p className="text-xs text-primary font-medium">
-                                {step.tag}
-                              </p>
-                            </div>
+                              <p className="text-xs text-primary font-medium">{step.tag}</p>
+                            </motion.div>
                           )}
                         </div>
                       </motion.div>
@@ -618,142 +699,176 @@ export default function DashboardTalent() {
 
                 {/* Teaser unlock */}
                 <motion.div
-                  initial={{ opacity: 0, y: 6 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="mt-2 rounded-xl border border-dashed border-primary/30 bg-primary/[0.03] p-3 flex items-center justify-between gap-3"
+                  transition={{ delay: 0.9 }}
+                  className="mt-2 rounded-xl border border-dashed border-primary/30 bg-gradient-to-r from-primary/[0.04] to-accent/[0.04] p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
                 >
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-primary shrink-0" />
-                    <p className="text-xs text-muted-foreground">
-                      <span className="font-semibold text-foreground">Débloquez la suite</span>{" "}
-                      pour{" "}
-                      <span className="font-semibold text-primary">10 € unique</span>
-                      {" "}(score détaillé + matchs prioritaires) – Pas d'abonnement, valeur immédiate
-                    </p>
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                      <Lock className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        Débloquez la suite pour{" "}
+                        <span className="text-primary">10 € unique</span>
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Score détaillé + matchs prioritaires · Pas d'abonnement, valeur immédiate
+                      </p>
+                    </div>
                   </div>
                   <Button
                     size="sm"
-                    variant="outline"
-                    className="shrink-0 border-primary/40 text-primary hover:bg-primary/10 text-xs"
-                    onClick={() =>
-                      toast({ title: "Offre 10 €", description: "Redirection vers le paiement…" })
-                    }
+                    className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
+                    onClick={() => toast({ title: "Offre 10 €", description: "Redirection vers le paiement…" })}
                   >
                     Débloquer
-                    <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                    <ChevronRight className="h-3.5 w-3.5" />
                   </Button>
                 </motion.div>
               </CardContent>
             </Card>
           </motion.div>
 
-          {/* ── Pack Zéro Stress ALTIS ──────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-          >
-            <Card className="overflow-hidden border-primary/30">
-              <div className="h-1 w-full bg-gradient-to-r from-primary via-primary/60 to-transparent" />
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <CardTitle className="flex items-center gap-2 text-primary text-base">
-                    <Package className="h-5 w-5" />
-                    Pack Zéro Stress — ALTIS Mobility
-                  </CardTitle>
-                  <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1">
-                    <Zap className="h-3 w-3" /> En cours · Score 82%
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { label: "Visa ANEF", status: "active", icon: Globe, sub: "En traitement" },
-                    { label: "Billet d'avion", status: "next", icon: Plane, sub: "Prochaine étape" },
-                    { label: "Logement", status: "pending", icon: Home, sub: "À planifier" },
-                    { label: "Formation", status: "pending", icon: GraduationCap, sub: "Classes Miroirs" },
-                  ].map((item) => {
-                    const ItemIcon = item.icon;
-                    const isActive = item.status === "active";
-                    const isNext = item.status === "next";
-                    return (
-                      <div
-                        key={item.label}
-                        className={`rounded-xl border p-3 text-center transition-colors ${
-                          isActive
-                            ? "border-primary/40 bg-primary/10"
-                            : isNext
-                            ? "border-accent/30 bg-accent/5"
-                            : "border-border/40 bg-muted/30"
-                        }`}
-                      >
-                        <ItemIcon
-                          className={`h-5 w-5 mx-auto mb-1.5 ${
-                            isActive
-                              ? "text-primary"
-                              : isNext
-                              ? "text-accent"
-                              : "text-muted-foreground"
-                          }`}
-                        />
-                        <p
-                          className={`text-xs font-semibold ${
-                            isActive
-                              ? "text-primary"
-                              : isNext
-                              ? "text-accent"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {item.label}
-                        </p>
-                        <p
-                          className={`text-[10px] mt-0.5 ${
-                            isActive ? "text-primary/70 animate-pulse" : "text-muted-foreground/70"
-                          }`}
-                        >
-                          {item.sub}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
+          {/* ── Pack Zéro Stress ALTIS ──────────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <Card className="overflow-hidden border-primary/25 shadow-sm">
+              <div className="h-1 w-full bg-gradient-to-r from-primary to-accent" />
+              <div className="relative overflow-hidden">
+                {/* Background decoration */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent pointer-events-none" />
+                <div className="absolute top-0 right-0 w-48 h-48 bg-accent/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-2xl pointer-events-none" />
 
-                <div className="rounded-xl bg-primary/5 border border-primary/20 p-3 flex items-start gap-3">
-                  <Clock className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-primary">
-                      Visa ANEF en traitement
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Prochaine étape : <span className="font-medium text-foreground">billet réservé</span> · Éligible ALTIS si score &gt;80 %{" "}
-                      <span className="inline-flex items-center gap-0.5 text-success font-semibold">
-                        <CheckCircle2 className="h-3 w-3" /> Éligible (82%)
-                      </span>
-                    </p>
+                <CardHeader className="pb-3 relative">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                      <CardTitle className="flex items-center gap-2 text-foreground">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                          <Package className="h-4 w-4 text-primary" />
+                        </div>
+                        Pack Zéro Stress — ALTIS Mobility
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground mt-1 ml-10">
+                        Suivi logistique complet · Visa · Transport · Logement · Formation
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-400/30 text-xs gap-1 font-semibold">
+                        <CheckCircle2 className="h-3 w-3" /> Éligible · Score 82%
+                      </Badge>
+                      <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px] gap-1">
+                        <Zap className="h-2.5 w-2.5" /> En cours
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
+                </CardHeader>
+
+                <CardContent className="space-y-4 relative">
+                  {/* Status grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {[
+                      { label: "Visa ANEF", status: "active", icon: Globe, sub: "En traitement", color: "primary" },
+                      { label: "Billet d'avion", status: "next", icon: Plane, sub: "Prochaine étape", color: "accent" },
+                      { label: "Logement", status: "done", icon: Home, sub: "Trouvé ✓", color: "success" },
+                      { label: "Formation", status: "active-2", icon: GraduationCap, sub: "Classes Miroirs", color: "primary" },
+                    ].map((item) => {
+                      const ItemIcon = item.icon;
+                      const isActive = item.status === "active";
+                      const isNext = item.status === "next";
+                      const isDone = item.status === "done";
+                      const isActive2 = item.status === "active-2";
+                      return (
+                        <div
+                          key={item.label}
+                          className={`rounded-xl border p-3.5 text-center transition-all hover:scale-[1.02] ${
+                            isActive
+                              ? "border-primary/40 bg-primary/8 shadow-sm"
+                              : isNext
+                              ? "border-accent/30 bg-accent/5"
+                              : isDone
+                              ? "border-emerald-400/30 bg-emerald-50/50 dark:bg-emerald-500/5"
+                              : isActive2
+                              ? "border-primary/30 bg-primary/5"
+                              : "border-border/40 bg-muted/30"
+                          }`}
+                        >
+                          <div className={`flex h-8 w-8 items-center justify-center rounded-full mx-auto mb-2 ${
+                            isActive || isActive2 ? "bg-primary/15" : isNext ? "bg-accent/15" : isDone ? "bg-emerald-100 dark:bg-emerald-500/15" : "bg-muted"
+                          }`}>
+                            <ItemIcon className={`h-4 w-4 ${
+                              isActive || isActive2
+                                ? "text-primary"
+                                : isNext
+                                ? "text-accent"
+                                : isDone
+                                ? "text-emerald-600"
+                                : "text-muted-foreground"
+                            }`} />
+                          </div>
+                          <p className={`text-xs font-semibold ${
+                            isActive || isActive2
+                              ? "text-primary"
+                              : isNext
+                              ? "text-accent"
+                              : isDone
+                              ? "text-emerald-700 dark:text-emerald-400"
+                              : "text-muted-foreground"
+                          }`}>
+                            {item.label}
+                          </p>
+                          <p className={`text-[10px] mt-0.5 ${
+                            isActive ? "text-primary/70 animate-pulse" : "text-muted-foreground/70"
+                          }`}>
+                            {item.sub}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Status message */}
+                  <div className="rounded-xl bg-gradient-to-r from-primary/8 to-accent/5 border border-primary/20 p-4 flex items-start gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15">
+                      <Clock className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-primary">
+                        Visa ANEF en traitement
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                        Prochaine étape :{" "}
+                        <span className="font-semibold text-foreground">billet réservé</span>
+                        {" "}·{" "}
+                        Éligible Pack ALTIS si score &gt;80 %{" "}
+                        <span className="inline-flex items-center gap-1 text-emerald-600 font-semibold ml-1">
+                          <CheckCircle2 className="h-3 w-3" /> Éligible (82 %)
+                        </span>
+                      </p>
+                    </div>
+                    <Badge className="shrink-0 bg-primary/10 text-primary border-primary/20 text-[10px]">
+                      5 % success fee
+                    </Badge>
+                  </div>
+                </CardContent>
+              </div>
             </Card>
           </motion.div>
 
-          {/* ── Offres recommandées ─────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <Card>
+          {/* ── Offres recommandées ─────────────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <Card className="overflow-hidden shadow-sm">
+              <div className="h-1 w-full bg-gradient-to-r from-accent to-primary" />
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-primary" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                      <Star className="h-4 w-4 text-primary" />
+                    </div>
                     Offres recommandées pour vous
                   </CardTitle>
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1">
+                    <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1 font-medium">
                       <Zap className="h-3 w-3" /> France Travail + FNE Cameroun
                     </Badge>
                     {ftLoading && (
@@ -761,7 +876,7 @@ export default function DashboardTalent() {
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground ml-10">
                   Basées sur vos compétences :{" "}
                   <span className="font-medium text-foreground">
                     {displaySkills.join(", ")}
@@ -769,6 +884,7 @@ export default function DashboardTalent() {
                   {" "}· Métiers en tension élevée France
                 </p>
               </CardHeader>
+
               <CardContent className="space-y-3">
                 {offersToDisplay.map((offer, idx) => {
                   const score = (offer as { score?: number }).score ?? 80;
@@ -783,48 +899,36 @@ export default function DashboardTalent() {
                   const company = (offer as { company?: string }).company;
                   const tension = (offer as { tension?: string }).tension;
 
+                  const scoreColor = score >= 90 ? "text-emerald-600 dark:text-emerald-400" : score >= 80 ? "text-primary" : "text-foreground";
+                  const scoreBarClass = score >= 90 ? "[&>div]:bg-emerald-500" : score >= 80 ? "[&>div]:bg-primary" : "[&>div]:bg-foreground/60";
+
                   return (
                     <motion.div
                       key={offerId}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.25 + idx * 0.08 }}
-                      className="rounded-xl border border-border/60 p-4 transition-all hover:border-primary/30 hover:shadow-sm hover:bg-muted/10"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + idx * 0.1 }}
+                      className="group rounded-xl border border-border/60 bg-card p-4 transition-all hover:border-primary/30 hover:shadow-md hover:bg-muted/10"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                        {/* Score */}
-                        <div className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1 min-w-[5rem]">
-                          <div className="text-center">
-                            <span
-                              className={`text-2xl font-bold leading-none ${
-                                score >= 90
-                                  ? "text-success"
-                                  : score >= 80
-                                  ? "text-primary"
-                                  : "text-foreground"
-                              }`}
-                            >
-                              {score}%
+                        {/* Score circle */}
+                        <div className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-2 shrink-0">
+                          <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 ${
+                            score >= 90 ? "border-emerald-400/40 bg-emerald-50/50 dark:bg-emerald-500/10" : score >= 80 ? "border-primary/30 bg-primary/5" : "border-border bg-muted/30"
+                          }`}>
+                            <span className={`text-xl font-bold leading-none ${scoreColor}`}>
+                              {score}
                             </span>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">Match</p>
                           </div>
-                          <Progress
-                            value={score}
-                            className={`h-1.5 w-16 sm:w-full ${
-                              score >= 90
-                                ? "[&>div]:bg-success"
-                                : score >= 80
-                                ? "[&>div]:bg-primary"
-                                : "[&>div]:bg-foreground/60"
-                            }`}
-                          />
+                          <p className="text-[10px] text-muted-foreground text-center font-medium">% Match</p>
+                          <Progress value={score} className={`h-1.5 w-14 ${scoreBarClass}`} />
                         </div>
 
                         {/* Info */}
                         <div className="flex-1 min-w-0 space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-semibold text-foreground text-sm">{title}</p>
-                            <Badge className={`text-[10px] border px-2 py-0.5 ${CONTRACT_COLORS[contract] || "bg-muted text-muted-foreground border-border"}`}>
+                            <p className="font-bold text-foreground text-sm">{title}</p>
+                            <Badge className={`text-[10px] border px-2 py-0.5 font-semibold ${CONTRACT_COLORS[contract] || "bg-muted text-muted-foreground border-border"}`}>
                               {contract}
                             </Badge>
                             {tension && (
@@ -857,8 +961,8 @@ export default function DashboardTalent() {
                               {location}
                             </span>
                             {salary && (
-                              <span className="flex items-center gap-1">
-                                <Banknote className="h-3 w-3" />
+                              <span className="flex items-center gap-1 font-medium text-foreground">
+                                <Banknote className="h-3 w-3 text-muted-foreground" />
                                 {salary}
                               </span>
                             )}
@@ -875,10 +979,10 @@ export default function DashboardTalent() {
                           )}
                         </div>
 
-                        {/* Action */}
+                        {/* CTA */}
                         <Button
                           size="sm"
-                          className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
+                          className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5 shadow-sm"
                           onClick={() => {
                             if (offerUrl) {
                               window.open(offerUrl, "_blank", "noopener,noreferrer");
@@ -902,16 +1006,16 @@ export default function DashboardTalent() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.55 }}
-                  className="mt-3 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5 p-4"
+                  transition={{ delay: 0.7 }}
+                  className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-accent/[0.03] to-primary/5 p-4"
                 >
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-start gap-3">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                        <Sparkles className="h-4 w-4 text-primary" />
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                        <Sparkles className="h-4.5 w-4.5 h-[18px] w-[18px] text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-foreground">
+                        <p className="font-bold text-sm text-foreground">
                           Débloquez plus d'offres pour{" "}
                           <span className="text-primary">10 € unique</span>
                         </p>
@@ -924,7 +1028,7 @@ export default function DashboardTalent() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground text-xs"
+                        className="text-muted-foreground text-xs hover:text-foreground"
                         onClick={() =>
                           toast({ title: "Option gratuite", description: "Vous restez sur l'offre de base (3 matchs)." })
                         }
@@ -933,7 +1037,7 @@ export default function DashboardTalent() {
                       </Button>
                       <Button
                         size="sm"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5 shadow-sm"
                         onClick={() =>
                           toast({ title: "Paiement 10 €", description: "Redirection vers le paiement sécurisé…" })
                         }
@@ -945,50 +1049,51 @@ export default function DashboardTalent() {
                   </div>
                 </motion.div>
 
-                {/* Premium upsell */}
+                {/* Premium upsell banner */}
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.65 }}
-                  className="rounded-xl bg-gradient-to-r from-primary to-primary/80 p-4 text-primary-foreground flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                  transition={{ delay: 0.8 }}
+                  className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary/85 p-4 text-primary-foreground shadow-md"
                 >
-                  <div className="flex items-start gap-3">
-                    <Shield className="h-5 w-5 shrink-0 mt-0.5 text-primary-foreground/80" />
-                    <div>
-                      <p className="font-semibold text-sm">
-                        Passez Premium (30 €) – Badge vérifié MINEFOP/MINREX
-                      </p>
-                      <p className="text-xs text-primary-foreground/70 mt-0.5">
-                        Visibilité ×3 auprès des recruteurs · Garantie opérationnel jour 1
-                      </p>
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(217_91%_75%_/_0.15),_transparent_60%)]" />
+                  <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <Shield className="h-5 w-5 shrink-0 mt-0.5 text-primary-foreground/80" />
+                      <div>
+                        <p className="font-bold text-sm">
+                          Passez Premium (30 €) – Badge vérifié MINEFOP/MINREX
+                        </p>
+                        <p className="text-xs text-primary-foreground/70 mt-0.5">
+                          Visibilité ×3 auprès des recruteurs · Garantie opérationnel jour 1
+                        </p>
+                      </div>
                     </div>
+                    <Button
+                      size="sm"
+                      className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shrink-0 font-bold gap-1.5 shadow-sm"
+                      onClick={() =>
+                        toast({ title: "Offre Premium 30 €", description: "Redirection vers l'espace facturation…" })
+                      }
+                    >
+                      Activer Premium
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shrink-0 font-semibold gap-1.5"
-                    onClick={() =>
-                      toast({ title: "Offre Premium 30 €", description: "Redirection vers l'espace facturation…" })
-                    }
-                  >
-                    Activer Premium
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
                 </motion.div>
               </CardContent>
             </Card>
           </motion.div>
 
-          {/* ── La Bonne Boite – Entreprises qui recrutent ──────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.28 }}
-          >
-            <Card>
+          {/* ── La Bonne Boite – Entreprises qui recrutent ─────────── */}
+          <motion.div variants={itemVariants}>
+            <Card className="shadow-sm">
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-primary" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                      <Building2 className="h-4 w-4 text-primary" />
+                    </div>
                     Entreprises qui recrutent probablement
                   </CardTitle>
                   <div className="flex items-center gap-2">
@@ -1000,8 +1105,8 @@ export default function DashboardTalent() {
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Secteurs BTP · Santé · CHR — Entreprises à fort potentiel d'embauche détectées par l'IA France Travail
+                <p className="text-sm text-muted-foreground ml-10">
+                  Secteurs BTP · Santé · CHR — Fort potentiel d'embauche détecté par IA France Travail
                 </p>
               </CardHeader>
               <CardContent>
@@ -1015,9 +1120,8 @@ export default function DashboardTalent() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 + idx * 0.06 }}
-                        className="rounded-xl border border-border/60 p-4 flex flex-col gap-2.5 transition-all hover:border-primary/30 hover:shadow-sm hover:bg-muted/10"
+                        className="group rounded-xl border border-border/60 bg-card p-4 flex flex-col gap-2.5 transition-all hover:border-primary/30 hover:shadow-md hover:bg-muted/10"
                       >
-                        {/* Top row */}
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-sm text-foreground leading-tight line-clamp-2">
@@ -1034,7 +1138,6 @@ export default function DashboardTalent() {
                           </Badge>
                         </div>
 
-                        {/* Location + headcount */}
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
                           {company.city && (
                             <span className="flex items-center gap-1">
@@ -1045,17 +1148,11 @@ export default function DashboardTalent() {
                           {company.headcount && (
                             <span className="flex items-center gap-1">
                               <User className="h-3 w-3" />
-                              {company.headcount} salariés
-                            </span>
-                          )}
-                          {company.distance !== null && (
-                            <span className="text-muted-foreground/70">
-                              ~{company.distance} km
+                              {company.headcount} sal.
                             </span>
                           )}
                         </div>
 
-                        {/* ROME */}
                         <div className="flex items-center gap-2 flex-wrap">
                           <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0.5 text-muted-foreground">
                             {company.romeCode}
@@ -1067,21 +1164,23 @@ export default function DashboardTalent() {
                           )}
                         </div>
 
-                        {/* Hiring potential stars */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-1">
-                            <span className="text-[10px] text-muted-foreground">Probabilité embauche :</span>
-                            <span className="text-[11px] font-semibold text-primary ml-1">
-                              {"★".repeat(Math.max(0, stars))}{"☆".repeat(Math.max(0, 5 - stars))}
+                            <span className="text-[10px] text-muted-foreground">Probabilité :</span>
+                            <span className="text-xs font-bold text-amber-500 ml-1">
+                              {"★".repeat(Math.max(0, stars))}
+                              <span className="text-muted-foreground/30">{"★".repeat(Math.max(0, 5 - stars))}</span>
                             </span>
                           </div>
+                          <span className="text-[10px] text-muted-foreground font-medium">
+                            {company.hiringPotential.toFixed(1)}/5
+                          </span>
                         </div>
 
-                        {/* CTA */}
                         <Button
                           size="sm"
                           variant="outline"
-                          className="w-full border-primary/30 text-primary hover:bg-primary/5 gap-1.5 text-xs"
+                          className="w-full border-primary/30 text-primary hover:bg-primary/5 gap-1.5 text-xs group-hover:bg-primary/5 transition-colors"
                           onClick={() => {
                             if (company.url && company.url !== "#") {
                               window.open(company.url, "_blank", "noopener,noreferrer");
@@ -1101,7 +1200,6 @@ export default function DashboardTalent() {
                   })}
                 </div>
 
-                {/* Note API */}
                 {!lbbCompanies && !lbbLoading && (
                   <p className="mt-3 text-center text-xs text-muted-foreground/60 italic">
                     Données illustratives — Activez l'API La Bonne Boite sur francetravail.io pour les résultats réels
@@ -1111,31 +1209,32 @@ export default function DashboardTalent() {
             </Card>
           </motion.div>
 
-          {/* ── Mon Profil enrichi (3 fiches) ─────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.25 }}
-          >
-            <Card>
+          {/* ── Mon Profil enrichi (3 fiches) ──────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <Card className="overflow-hidden shadow-sm">
+              <div className="h-1 w-full bg-gradient-to-r from-primary/40 to-accent/40" />
               <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" />
-                  Mon Profil
-                  <Badge variant="outline" className="text-[10px] px-2 text-muted-foreground">
-                    3 fiches infos
-                  </Badge>
-                </CardTitle>
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                      <User className="h-4 w-4 text-primary" />
+                    </div>
+                    Mon Profil
+                    <Badge variant="outline" className="text-[10px] px-2 text-muted-foreground font-medium">
+                      3 fiches infos
+                    </Badge>
+                  </CardTitle>
+                </div>
                 {!editing ? (
                   <div className="flex gap-2 flex-wrap">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setEditing(true)}
-                      className="border-primary/30 text-primary hover:bg-primary/5 gap-1.5"
+                      className="border-primary/30 text-primary hover:bg-primary/5 gap-1.5 font-medium"
                     >
                       <ClipboardList className="h-3.5 w-3.5" />
-                      Mettre à jour mes 3 fiches infos
+                      Mettre à jour mes 3 fiches
                     </Button>
                     <Button
                       variant="outline"
@@ -1161,28 +1260,29 @@ export default function DashboardTalent() {
                     </Button>
                     <Button
                       size="sm"
-                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
                       onClick={() => updateProfile.mutate()}
                       disabled={updateProfile.isPending}
                     >
-                      <Save className="mr-1 h-3.5 w-3.5" />
+                      <Save className="h-3.5 w-3.5" />
                       {updateProfile.isPending ? "Enregistrement…" : "Enregistrer"}
                     </Button>
                   </div>
                 )}
               </CardHeader>
+
               <CardContent>
                 {editing ? (
-                  <div className="space-y-5">
+                  <div className="space-y-6">
                     {/* Fiche 1 – Identité */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">1</div>
-                        <p className="text-sm font-semibold text-foreground">Identité</p>
+                    <div className="rounded-xl border border-border/60 p-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">1</div>
+                        <p className="text-sm font-bold text-foreground">Identité</p>
                       </div>
-                      <div className="grid gap-3 sm:grid-cols-2 pl-8">
+                      <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <Label htmlFor="full_name">Nom complet</Label>
+                          <Label htmlFor="full_name" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Nom complet</Label>
                           <Input
                             id="full_name"
                             value={form.full_name}
@@ -1191,21 +1291,21 @@ export default function DashboardTalent() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Email</Label>
+                          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</Label>
                           <Input value={profile?.email || ""} disabled className="bg-muted" />
                         </div>
                       </div>
                     </div>
 
                     {/* Fiche 2 – Métiers */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">2</div>
-                        <p className="text-sm font-semibold text-foreground">Métiers & Compétences</p>
+                    <div className="rounded-xl border border-border/60 p-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">2</div>
+                        <p className="text-sm font-bold text-foreground">Métiers & Compétences</p>
                       </div>
-                      <div className="space-y-3 pl-8">
+                      <div className="space-y-3">
                         <div className="space-y-2">
-                          <Label>Compétences (séparées par des virgules)</Label>
+                          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Compétences (séparées par des virgules)</Label>
                           <Input
                             value={form.skills}
                             onChange={(e) => setForm((p) => ({ ...p, skills: e.target.value }))}
@@ -1216,14 +1316,14 @@ export default function DashboardTalent() {
                     </div>
 
                     {/* Fiche 3 – Mobilité */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">3</div>
-                        <p className="text-sm font-semibold text-foreground">Mobilité</p>
+                    <div className="rounded-xl border border-border/60 p-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">3</div>
+                        <p className="text-sm font-bold text-foreground">Mobilité</p>
                       </div>
-                      <div className="grid gap-3 sm:grid-cols-2 pl-8">
+                      <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <Label htmlFor="country">Pays d'origine</Label>
+                          <Label htmlFor="country" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Pays d'origine</Label>
                           <Input
                             id="country"
                             value={form.country}
@@ -1232,7 +1332,7 @@ export default function DashboardTalent() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Niveau de français</Label>
+                          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Niveau de français</Label>
                           <Select
                             value={form.french_level}
                             onValueChange={(v) => setForm((p) => ({ ...p, french_level: v }))}
@@ -1251,39 +1351,41 @@ export default function DashboardTalent() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     {/* 3 fiches display */}
                     <div className="grid gap-4 sm:grid-cols-3">
-                      {/* Fiche 1 */}
-                      <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+                      {/* Fiche 1 – Identité */}
+                      <div className="rounded-xl border border-primary/15 bg-primary/[0.02] p-4 space-y-3 hover:border-primary/25 transition-colors">
                         <div className="flex items-center gap-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">1</div>
-                          <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Identité</p>
+                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">1</div>
+                          <p className="text-xs font-bold text-foreground uppercase tracking-wide">Identité</p>
                         </div>
-                        <ProfileField label="Nom" value={displayName} />
-                        <ProfileField label="Email" value={profile?.email} />
-                        <ProfileField label="Pays d'origine" value={displayCountry} />
+                        <div className="space-y-2">
+                          <ProfileField label="Nom" value={displayName} />
+                          <ProfileField label="Email" value={profile?.email} />
+                          <ProfileField label="Pays" value={displayCountry} />
+                        </div>
                       </div>
 
-                      {/* Fiche 2 */}
-                      <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+                      {/* Fiche 2 – Métiers */}
+                      <div className="rounded-xl border border-primary/15 bg-primary/[0.02] p-4 space-y-3 hover:border-primary/25 transition-colors">
                         <div className="flex items-center gap-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">2</div>
-                          <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Métiers</p>
+                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">2</div>
+                          <p className="text-xs font-bold text-foreground uppercase tracking-wide">Métiers</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1.5">Compétences</p>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5 font-semibold">Compétences</p>
                           <div className="flex flex-wrap gap-1">
                             {displaySkills.map((s) => (
-                              <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>
+                              <Badge key={s} variant="secondary" className="text-[10px] font-medium">{s}</Badge>
                             ))}
                           </div>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1.5">Codes ROME</p>
-                          <div className="space-y-1">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5 font-semibold">Codes ROME</p>
+                          <div className="space-y-1.5">
                             {MOCK_PROFILE_DATA.rome.map((r) => (
-                              <div key={r.code} className="flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary/5 px-2 py-1">
+                              <div key={r.code} className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5">
                                 <span className="text-[10px] font-mono font-bold text-primary">{r.code}</span>
                                 <span className="text-[10px] text-muted-foreground">{r.label}</span>
                               </div>
@@ -1292,26 +1394,57 @@ export default function DashboardTalent() {
                         </div>
                       </div>
 
-                      {/* Fiche 3 */}
-                      <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+                      {/* Fiche 3 – Mobilité */}
+                      <div className="rounded-xl border border-primary/15 bg-primary/[0.02] p-4 space-y-3 hover:border-primary/25 transition-colors">
                         <div className="flex items-center gap-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">3</div>
-                          <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Mobilité</p>
+                          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">3</div>
+                          <p className="text-xs font-bold text-foreground uppercase tracking-wide">Mobilité</p>
                         </div>
-                        <ProfileField label="Niveau de français" value={displayFrench} />
+                        <ProfileField label="Niveau français" value={displayFrench} />
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1.5">Certifications</p>
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-1.5 rounded-md border border-amber-400/40 bg-amber-500/10 px-2 py-1">
-                              <Award className="h-3 w-3 text-amber-600 shrink-0" />
-                              <span className="text-[10px] font-medium text-amber-700 dark:text-amber-400">MINEFOP – Certifié</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 rounded-md border border-border/50 bg-muted/30 px-2 py-1">
-                              <CheckCheck className="h-3 w-3 text-muted-foreground shrink-0" />
-                              <span className="text-[10px] font-medium text-muted-foreground">MINREX – En attente</span>
-                            </div>
-                          </div>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5 font-semibold">Statut visa</p>
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1 font-semibold">
+                            <Globe className="h-2.5 w-2.5" /> ANEF en cours
+                          </Badge>
                         </div>
+                        <div>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5 font-semibold">Diplôme</p>
+                          <Badge className="bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400 border border-amber-400/50 text-[10px] gap-1 font-semibold">
+                            <Award className="h-2.5 w-2.5" /> CERTIFIÉ MINEFOP
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* RGPD actions */}
+                    <div className="rounded-xl border border-border/40 bg-muted/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <Shield className="h-5 w-5 text-muted-foreground shrink-0" />
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">Vos droits RGPD</p>
+                          <p className="text-xs text-muted-foreground">Art. 17 & 20 RGPD · AXIOM SAS · rgpd@axiom-talents.com</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 flex-wrap">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleExport}
+                          disabled={exportLoading}
+                          className="gap-1.5 text-xs"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          {exportLoading ? "Export…" : "Export données JSON"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1.5 text-xs text-destructive border-destructive/30 hover:bg-destructive/5"
+                          onClick={() => setDeleteDialogOpen(true)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Supprimer mon compte
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -1320,120 +1453,47 @@ export default function DashboardTalent() {
             </Card>
           </motion.div>
 
-          {/* Diploma Upload */}
-          <DiplomaUpload />
-
-          {/* ── Mes droits RGPD ─────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
-            <Card className="border-primary/20 bg-primary/[0.02]">
+          {/* ── Diplômes & Certifications ──────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <Card className="shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary">
-                  <Shield className="h-5 w-5" /> Mes droits RGPD
+                <CardTitle className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                    <Award className="h-4 w-4 text-primary" />
+                  </div>
+                  Diplômes & Certifications
+                  <Badge className="bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-400/40 text-[10px] px-2 gap-1 font-semibold">
+                    <Award className="h-2.5 w-2.5" /> MINEFOP / MINREX
+                  </Badge>
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Conformément au RGPD (UE 2016/679), vous disposez de droits sur vos données personnelles traitées par AXIOM SAS.
-                </p>
               </CardHeader>
-              <CardContent className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {[
-                    { icon: Eye, label: "Droit d'accès", desc: "Consultez toutes vos données stockées." },
-                    { icon: RefreshCw, label: "Droit de rectification", desc: "Modifiez votre profil à tout moment." },
-                    { icon: Trash2, label: "Droit à l'effacement", desc: "Demandez la suppression de votre compte." },
-                    { icon: Ban, label: "Droit d'opposition", desc: "Opposez-vous au traitement de vos données." },
-                    { icon: Download, label: "Droit à la portabilité", desc: "Exportez vos données en format JSON." },
-                    { icon: Lock, label: "Droit à la limitation", desc: "Limitez le traitement en contactant le DPO." },
-                  ].map(({ icon: RIcon, label, desc }) => (
-                    <div
-                      key={label}
-                      className="flex items-start gap-3 rounded-xl border border-border/50 bg-card p-3"
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 shrink-0 mt-0.5">
-                        <RIcon className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{label}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="rounded-xl bg-primary/5 border border-primary/20 p-4 text-xs text-muted-foreground leading-relaxed">
-                  <span className="font-medium text-foreground">Responsable du traitement :</span>{" "}
-                  AXIOM SAS, Paris, France.{" "}
-                  <span className="font-medium text-foreground">Conservation :</span> 24 mois maximum.{" "}
-                  <span className="font-medium text-foreground">Transferts :</span> UE uniquement, via Clauses Contractuelles Types (CCT 2021).{" "}
-                  <Link to="/rgpd" className="text-primary hover:underline font-medium" target="_blank">
-                    Lire la politique complète →
-                  </Link>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="outline"
-                    className="flex-1 gap-2 border-primary/30 text-primary hover:bg-primary/5"
-                    onClick={handleExport}
-                    disabled={exportLoading}
-                  >
-                    <Download className="h-4 w-4" />
-                    {exportLoading ? "Export en cours…" : "Exporter mes données (JSON)"}
-                  </Button>
-                  <a
-                    href="mailto:rgpd@axiom-talents.com?subject=Demande%20DPO%20-%20RGPD&body=Bonjour%2C%20je%20souhaite%20exercer%20mes%20droits%20RGPD."
-                    className="flex-1"
-                  >
-                    <Button variant="outline" className="w-full gap-2">
-                      <Mail className="h-4 w-4" />
-                      Contacter le DPO
-                    </Button>
-                  </a>
-                  <Button
-                    variant="outline"
-                    className="flex-1 gap-2 border-destructive/30 text-destructive hover:bg-destructive/5"
-                    onClick={() => setDeleteDialogOpen(true)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Demander la suppression
-                  </Button>
-                </div>
+              <CardContent>
+                <DiplomaUpload />
               </CardContent>
             </Card>
           </motion.div>
+        </motion.div>
 
-          {/* Delete confirmation dialog */}
-          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle className="flex items-center gap-2">
-                  <Trash2 className="h-5 w-5 text-destructive" /> Demande de suppression de compte
-                </AlertDialogTitle>
-                <AlertDialogDescription className="space-y-2">
-                  <span className="block">
-                    Vous allez envoyer une demande de suppression de votre compte et de l'ensemble de vos données personnelles à notre DPO.
-                  </span>
-                  <span className="block text-foreground/80 font-medium">
-                    Conformément au RGPD, votre demande sera traitée sous 30 jours.
-                  </span>
-                  <span className="block">
-                    Un email de confirmation sera envoyé à : <strong>{profile?.email}</strong>
-                  </span>
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={handleDeleteRequest}
-                >
-                  Confirmer la demande
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        {/* ── Delete dialog ──────────────────────────────────────── */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Supprimer votre compte ?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Cette action est irréversible. Toutes vos données personnelles seront supprimées conformément à l'article 17 du RGPD dans un délai de 30 jours.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={handleDeleteRequest}
+              >
+                Confirmer la suppression
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DashboardLayout>
     </TooltipProvider>
   );
@@ -1442,10 +1502,8 @@ export default function DashboardTalent() {
 function ProfileField({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
-      <p className="text-sm font-medium">
-        {value || <span className="italic text-muted-foreground">Non renseigné</span>}
-      </p>
+      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-0.5 font-semibold">{label}</p>
+      <p className="text-sm font-medium text-foreground">{value || "—"}</p>
     </div>
   );
 }
