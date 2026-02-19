@@ -250,6 +250,30 @@ export default function DashboardTalent() {
     skills: "",
   });
 
+  // On mount: if a pending profile from signup step 2 exists, save it to talent_profiles
+  useEffect(() => {
+    const pending = localStorage.getItem("axiom_pending_profile");
+    if (pending && user) {
+      try {
+        const data = JSON.parse(pending);
+        supabase.from("talent_profiles").upsert({
+          user_id: user.id,
+          rome_label: data.rome_label,
+          rome_code: data.rome_code,
+          experience_years: data.experience_years,
+          country: data.country ?? "Cameroun",
+        }).then(({ error }) => {
+          if (!error) {
+            localStorage.removeItem("axiom_pending_profile");
+            queryClient.invalidateQueries({ queryKey: ["talent_profile", user.id] });
+          }
+        });
+      } catch {
+        localStorage.removeItem("axiom_pending_profile");
+      }
+    }
+  }, [user, queryClient]);
+
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
