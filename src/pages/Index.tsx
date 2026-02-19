@@ -57,6 +57,9 @@ export default function Index() {
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            <Link to="/metiers-en-tension" className="hidden md:inline text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Métiers en tension
+            </Link>
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-foreground/70 hover:text-foreground">
                 Connexion
