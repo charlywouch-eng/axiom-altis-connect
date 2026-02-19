@@ -101,47 +101,53 @@ const MOCK_TIMELINE: TimelineStep[] = [
   { label: "En poste", icon: Building2, status: "pending" },
 ];
 
-// Mock recommended offers (France Travail intégré)
+// Fallback mock offers (displayed when France Travail API not yet subscribed)
 const MOCK_RECOMMENDED_OFFERS = [
   {
     id: "mock-r1",
     title: "Aide-soignant(e)",
-    secteur: "Santé",
+    company: "Clinique du Parc",
     codeRome: "J1501",
     location: "Paris, Île-de-France",
     contract: "CDI",
     score: 92,
-    salary: "28 000 – 32 000",
+    salary: "28 000 – 32 000 €/an",
     skills: ["Soins", "Aide à la personne", "DEAS"],
+    url: null,
   },
   {
     id: "mock-r2",
     title: "Maçon / Maçonne",
-    secteur: "BTP",
+    company: "BTP Services IDF",
     codeRome: "F1703",
     location: "Lyon, Auvergne-Rhône-Alpes",
     contract: "CDD",
     score: 85,
-    salary: "26 000 – 32 000",
+    salary: "26 000 – 32 000 €/an",
     skills: ["Maçonnerie", "Coffrage", "Sécurité chantier"],
+    url: null,
   },
   {
     id: "mock-r3",
     title: "Cuisinier(ère)",
-    secteur: "CHR",
+    company: "Hôtel Splendide",
     codeRome: "G1802",
     location: "Bordeaux, Nouvelle-Aquitaine",
     contract: "Saisonnier",
     score: 78,
-    salary: "22 000 – 26 000",
+    salary: "22 000 – 26 000 €/an",
     skills: ["Cuisine", "HACCP", "Pâtisserie"],
+    url: null,
   },
 ];
+
 
 const CONTRACT_COLORS: Record<string, string> = {
   CDI: "bg-success/10 text-success border-success/30",
   CDD: "bg-primary/10 text-primary border-primary/30",
   Saisonnier: "bg-accent/10 text-accent border-accent/30",
+  MIS: "bg-accent/10 text-accent border-accent/30",
+  SAI: "bg-accent/10 text-accent border-accent/30",
 };
 
 // Mock profile data
@@ -192,6 +198,42 @@ export default function DashboardTalent() {
       if (error) throw error;
       return count || 0;
     },
+  });
+
+  // Fetch real France Travail offers by ROME code
+  const { data: ftOffers, isLoading: ftLoading } = useQuery({
+    queryKey: ["france_travail_offers", profile?.skills],
+    queryFn: async () => {
+      // Pick the first ROME code from talent's profile or use a default
+      const romeCode = "F1703"; // Will be dynamic once talent_profile has rome_code
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+      const fnUrl = `${supabaseUrl}/functions/v1/france-travail-offers`;
+
+      const res = await fetch(fnUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ romeCode, count: 5 }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "France Travail API unavailable");
+      }
+
+      const json = await res.json();
+      // Assign a mock score based on index for display
+      return (json.offers as Array<Record<string, unknown>>).map((o, i) => ({
+        ...(o as object),
+        score: Math.max(75, 95 - i * 5),
+      })) as Array<Record<string, unknown> & { score: number }>;
+    },
+    enabled: !!user,
+    retry: false, // Don't retry — fallback to mock on failure
   });
 
   useEffect(() => {
@@ -553,9 +595,14 @@ export default function DashboardTalent() {
                     <Star className="h-5 w-5 text-primary" />
                     Offres recommandées pour vous
                   </CardTitle>
-                  <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1">
-                    <Zap className="h-3 w-3" /> Via France Travail
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1">
+                      <Zap className="h-3 w-3" /> Via France Travail
+                    </Badge>
+                    {ftLoading && (
+                      <RefreshCw className="h-3.5 w-3.5 text-muted-foreground animate-spin" />
+                    )}
+                  </div>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Basées sur vos compétences :{" "}
@@ -565,91 +612,111 @@ export default function DashboardTalent() {
                 </p>
               </CardHeader>
               <CardContent className="space-y-3">
-                {MOCK_RECOMMENDED_OFFERS.map((offer, idx) => (
-                  <motion.div
-                    key={offer.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.25 + idx * 0.07 }}
-                    className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-xl border border-border/50 p-4 transition-all hover:bg-muted/20 hover:shadow-sm hover:border-primary/20"
-                  >
-                    {/* Score */}
-                    <div className="flex sm:flex-col items-center gap-3 sm:gap-1 min-w-[4rem]">
-                      <span
-                        className={`text-2xl font-bold ${
-                          offer.score >= 90
-                            ? "text-success"
-                            : offer.score >= 80
-                            ? "text-primary"
-                            : "text-foreground"
-                        }`}
-                      >
-                        {offer.score}%
-                      </span>
-                      <Progress
-                        value={offer.score}
-                        className={`h-1.5 w-16 sm:w-full [&>div]:${
-                          offer.score >= 90
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
-                      />
-                    </div>
+                {(ftOffers && ftOffers.length > 0 ? ftOffers : MOCK_RECOMMENDED_OFFERS).map((offer, idx) => {
+                  const score = (offer as { score?: number }).score ?? 80;
+                  const title = (offer as { title?: string; intitule?: string }).title || (offer as { intitule?: string }).intitule || "";
+                  const location = (offer as { location?: string }).location || "";
+                  const contract = (offer as { contract?: string; typeContratLibelle?: string }).contract || (offer as { typeContratLibelle?: string }).typeContratLibelle || "CDI";
+                  const codeRome = (offer as { codeRome?: string }).codeRome || "";
+                  const salary = (offer as { salary?: string | null }).salary;
+                  const skills = (offer as { skills?: string[] }).skills || [];
+                  const offerId = (offer as { id: string }).id;
+                  const offerUrl = (offer as { url?: string | null }).url;
+                  const company = (offer as { company?: string }).company;
 
-                    {/* Info */}
-                    <div className="flex-1 min-w-0 space-y-1.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-semibold text-foreground">
-                          {offer.title}
-                        </p>
-                        <Badge
-                          className={`text-[10px] border px-2 py-0.5 ${CONTRACT_COLORS[offer.contract] || "bg-muted text-muted-foreground border-border"}`}
-                        >
-                          {offer.contract}
-                        </Badge>
-                        <Badge variant="outline" className="text-[10px] px-2 py-0.5 text-muted-foreground">
-                          {offer.codeRome}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {offer.location}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Banknote className="h-3 w-3" />
-                          {offer.salary} €/an
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {offer.skills.map((sk) => (
-                          <Badge
-                            key={sk}
-                            variant="secondary"
-                            className="text-[10px] px-1.5 py-0.5"
-                          >
-                            {sk}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Action */}
-                    <Button
-                      size="sm"
-                      className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
-                      onClick={() =>
-                        toast({
-                          title: "Candidature envoyée",
-                          description: `Votre profil a été transmis pour "${offer.title}".`,
-                        })
-                      }
+                  return (
+                    <motion.div
+                      key={offerId}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.25 + idx * 0.07 }}
+                      className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-xl border border-border/50 p-4 transition-all hover:bg-muted/20 hover:shadow-sm hover:border-primary/20"
                     >
-                      Postuler
-                      <ChevronRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </motion.div>
-                ))}
+                      {/* Score */}
+                      <div className="flex sm:flex-col items-center gap-3 sm:gap-1 min-w-[4rem]">
+                        <span
+                          className={`text-2xl font-bold ${
+                            score >= 90
+                              ? "text-success"
+                              : score >= 80
+                              ? "text-primary"
+                              : "text-foreground"
+                          }`}
+                        >
+                          {score}%
+                        </span>
+                        <Progress
+                          value={score}
+                          className="h-1.5 w-16 sm:w-full"
+                        />
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="font-semibold text-foreground">{title}</p>
+                          <Badge
+                            className={`text-[10px] border px-2 py-0.5 ${CONTRACT_COLORS[contract] || "bg-muted text-muted-foreground border-border"}`}
+                          >
+                            {contract}
+                          </Badge>
+                          <Badge variant="outline" className="text-[10px] px-2 py-0.5 text-muted-foreground">
+                            {codeRome}
+                          </Badge>
+                        </div>
+                        {company && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Building2 className="h-3 w-3" /> {company}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {location}
+                          </span>
+                          {salary && (
+                            <span className="flex items-center gap-1">
+                              <Banknote className="h-3 w-3" />
+                              {salary}
+                            </span>
+                          )}
+                        </div>
+                        {skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {skills.map((sk) => (
+                              <Badge
+                                key={sk}
+                                variant="secondary"
+                                className="text-[10px] px-1.5 py-0.5"
+                              >
+                                {sk}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Action */}
+                      <Button
+                        size="sm"
+                        className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
+                        onClick={() => {
+                          if (offerUrl) {
+                            window.open(offerUrl, "_blank", "noopener,noreferrer");
+                          } else {
+                            toast({
+                              title: "Candidature envoyée",
+                              description: `Votre profil a été transmis pour "${title}".`,
+                            });
+                          }
+                        }}
+                      >
+                        Postuler
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </motion.div>
+                  );
+                })}
 
                 {/* CTA Premium */}
                 <motion.div
