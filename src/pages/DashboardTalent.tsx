@@ -285,28 +285,33 @@ export default function DashboardTalent() {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
       const fnUrl = `${supabaseUrl}/functions/v1/france-travail-offers`;
 
-      const res = await fetch(fnUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ romeCode, count: 5 }),
-      });
+      try {
+        const res = await fetch(fnUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ romeCode, count: 5 }),
+        });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "France Travail API unavailable");
+        if (!res.ok) {
+          await res.text(); // consume body
+          return null; // fallback to mock
+        }
+
+        const json = await res.json();
+        return (json.offers as Array<Record<string, unknown>>).map((o, i) => ({
+          ...(o as object),
+          score: Math.max(75, 95 - i * 5),
+        })) as Array<Record<string, unknown> & { score: number }>;
+      } catch {
+        return null; // fallback to mock silently
       }
-
-      const json = await res.json();
-      return (json.offers as Array<Record<string, unknown>>).map((o, i) => ({
-        ...(o as object),
-        score: Math.max(75, 95 - i * 5),
-      })) as Array<Record<string, unknown> & { score: number }>;
     },
     enabled: !!user,
     retry: false,
+    throwOnError: false,
   });
 
   const { data: lbbCompanies, isLoading: lbbLoading } = useQuery({
@@ -317,25 +322,30 @@ export default function DashboardTalent() {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
       const fnUrl = `${supabaseUrl}/functions/v1/la-bonne-boite`;
 
-      const res = await fetch(fnUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ sectors: ["BTP", "Santé", "CHR"], count: 9 }),
-      });
+      try {
+        const res = await fetch(fnUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ sectors: ["BTP", "Santé", "CHR"], count: 9 }),
+        });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "La Bonne Boite API unavailable");
+        if (!res.ok) {
+          await res.text(); // consume body
+          return null; // fallback to mock
+        }
+
+        const json = await res.json();
+        return json.companies as LBBCompany[];
+      } catch {
+        return null; // fallback to mock silently
       }
-
-      const json = await res.json();
-      return json.companies as LBBCompany[];
     },
     enabled: !!user,
     retry: false,
+    throwOnError: false,
   });
 
   useEffect(() => {
