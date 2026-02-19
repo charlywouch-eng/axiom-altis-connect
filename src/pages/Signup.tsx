@@ -392,7 +392,7 @@ export default function Signup() {
                         <Label htmlFor="cgu" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
                           J'accepte la{" "}
                           <Link
-                            to="/rgpd"
+                            to="/rgpd-light"
                             className="text-primary underline hover:no-underline"
                             target="_blank"
                           >
