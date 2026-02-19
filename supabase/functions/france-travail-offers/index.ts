@@ -10,26 +10,39 @@ const FT_TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/acces
 const FT_OFFERS_URL = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search";
 
 async function getFranceTravailToken(clientId: string, clientSecret: string): Promise<string> {
-  const body = new URLSearchParams({
-    grant_type: "client_credentials",
-    client_id: clientId,
-    client_secret: clientSecret,
-    scope: "api_offresdemploiv2 o2dsoffre",
-  });
+  // Try the standard scope first, then fallback
+  const scopes = [
+    "api_offresdemploiv2 o2dsoffre",
+    `api_offresdemploiv2 o2dsoffre application_${clientId}`,
+    "api_offresdemploiv2",
+  ];
 
-  const response = await fetch(FT_TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: body.toString(),
-  });
+  for (const scope of scopes) {
+    const body = new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope,
+    });
 
-  if (!response.ok) {
+    const response = await fetch(FT_TOKEN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString(),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.access_token) {
+        console.log(`Auth succeeded with scope: "${scope}"`);
+        return data.access_token;
+      }
+    }
     const text = await response.text();
-    throw new Error(`France Travail auth failed [${response.status}]: ${text}`);
+    console.log(`Scope "${scope}" failed [${response.status}]: ${text}`);
   }
 
-  const data = await response.json();
-  return data.access_token;
+  throw new Error("France Travail: all scope combinations failed. Check your client_id and client_secret in francetravail.io and ensure 'Offres d\\'emploi v2' API is subscribed.");
 }
 
 serve(async (req) => {
@@ -44,7 +57,6 @@ serve(async (req) => {
     const clientSecret = Deno.env.get("FRANCE_TRAVAIL_CLIENT_SECRET");
     if (!clientSecret) throw new Error("FRANCE_TRAVAIL_CLIENT_SECRET is not configured");
 
-    // Parse query params from request body
     const { romeCode, keywords, location, distance = 50, count = 5 } = await req.json();
 
     if (!romeCode) {
@@ -77,7 +89,7 @@ serve(async (req) => {
 
     if (!offersResponse.ok) {
       const text = await offersResponse.text();
-      throw new Error(`France Travail API error [${offersResponse.status}]: ${text}`);
+      throw new Error(`France Travail offers API error [${offersResponse.status}]: ${text}`);
     }
 
     const offersData = await offersResponse.json();
@@ -88,30 +100,30 @@ serve(async (req) => {
       const lieu = o.lieuTravail as Record<string, unknown> | undefined;
       const salaire = o.salaire as Record<string, unknown> | undefined;
       const competences = (o.competences as Array<Record<string, unknown>> | undefined) || [];
-      const qualifications = (o.qualificationLibelle as string | undefined) || "";
-      
+      const entreprise = o.entreprise as Record<string, unknown> | undefined;
+      const origineOffre = o.origineOffre as Record<string, unknown> | undefined;
+
       return {
         id: o.id as string,
         title: o.intitule as string,
-        company: (o.entreprise as Record<string, unknown> | undefined)?.nom || "Entreprise non communiquée",
-        location: lieu?.libelle as string || "",
+        company: entreprise?.nom || "Entreprise non communiquée",
+        location: (lieu?.libelle as string) || "",
         contract: (o.typeContratLibelle as string) || (o.typeContrat as string) || "CDI",
         codeRome: romeCode,
-        salary: salaire?.libelle as string || null,
-        description: (o.description as string || "").slice(0, 300),
+        salary: (salaire?.libelle as string) || null,
+        description: ((o.description as string) || "").slice(0, 300),
         skills: competences.slice(0, 4).map((c) => c.libelle as string),
-        qualification: qualifications,
-        dateCreation: o.dateCreation as string || null,
-        url: o.origineOffre
-          ? (o.origineOffre as Record<string, unknown>).urlOrigine as string
+        dateCreation: (o.dateCreation as string) || null,
+        url: origineOffre
+          ? (origineOffre.urlOrigine as string)
           : `https://candidat.francetravail.fr/offres/recherche/detail/${o.id}`,
       };
     });
 
-    return new Response(JSON.stringify({ offers, total: offersData.totalResults || offers.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({ offers, total: offersData.totalResults || offers.length }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+    );
   } catch (error) {
     console.error("France Travail error:", error);
     return new Response(
