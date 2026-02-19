@@ -125,7 +125,12 @@ export default function Index() {
                 </Button>
               </Link>
               <Link to="/dashboard-entreprise">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 text-base px-8 py-6 h-auto rounded-xl backdrop-blur-sm">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto text-base px-8 py-6 h-auto rounded-xl font-semibold border-2 border-white/60 bg-white/15 text-white hover:bg-white/25 hover:border-white/80 backdrop-blur-sm transition-all shadow-lg"
+                >
+                  <Users className="mr-2 h-5 w-5" />
                   Recrutez des talents certifiés
                 </Button>
               </Link>
