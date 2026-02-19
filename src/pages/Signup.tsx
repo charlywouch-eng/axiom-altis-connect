@@ -163,15 +163,29 @@ export default function Signup() {
       return;
     }
     const selectedSecteur = SECTEURS.find((s) => s.label === secteur);
+
+    // Store profile data in localStorage — will be saved after email confirmation + session active
+    localStorage.setItem("axiom_pending_profile", JSON.stringify({
+      rome_label: secteur,
+      rome_code: selectedSecteur?.rome ?? null,
+      experience_years: experienceToNumber(experience),
+      region,
+      country: "Cameroun",
+    }));
+
+    // Also update auth metadata so trigger/onboarding can pick it up
     if (userId) {
-      await supabase.from("talent_profiles").upsert({
-        user_id: userId,
-        rome_label: secteur,
-        rome_code: selectedSecteur?.rome ?? null,
-        experience_years: experienceToNumber(experience),
-        country: "Cameroun",
+      await supabase.auth.updateUser({
+        data: {
+          rome_label: secteur,
+          rome_code: selectedSecteur?.rome ?? null,
+          experience_years: experienceToNumber(experience),
+          region,
+          country: "Cameroun",
+        },
       });
     }
+
     goTo(3);
   };
 
