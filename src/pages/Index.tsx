@@ -314,12 +314,16 @@ export default function Index() {
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="hover:text-foreground cursor-pointer transition-colors">Mentions légales</span>
               <span className="hover:text-foreground cursor-pointer transition-colors">CGU</span>
+              <Link to="/rgpd" className="hover:text-foreground transition-colors font-medium text-primary/70 hover:text-primary">
+                🔒 Protection des données (RGPD)
+              </Link>
               <a href="mailto:contact@axiom-talents.com" className="hover:text-foreground transition-colors">Contact</a>
               <span className="hover:text-foreground cursor-pointer transition-colors">Partenariats MINEFOP</span>
             </div>
           </div>
           <div className="mt-8 border-t pt-6 text-center text-xs text-muted-foreground/50">
-            © 2026 AXIOM × ALTIS Mobility. Tous droits réservés.
+            © 2026 AXIOM × ALTIS Mobility. Tous droits réservés. –{" "}
+            <Link to="/rgpd" className="hover:text-muted-foreground transition-colors">Politique de confidentialité</Link>
           </div>
         </div>
       </footer>

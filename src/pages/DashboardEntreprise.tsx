@@ -267,6 +267,9 @@ export default function DashboardEntreprise() {
               <p className="mt-1 text-sm text-muted-foreground">
                 AXIOM TIaaS – Talent Intelligence as a Service · Matching prédictif Afrique ↔ France
               </p>
+              <p className="mt-0.5 text-xs text-primary/60 flex items-center gap-1.5">
+                <span>🔒</span> Traitement RGPD compliant – Données candidats protégées (CCT UE 2021)
+              </p>
               {/* CTA profil incomplet */}
               {companyProfile !== undefined && (!companyProfile?.company_name || !companyProfile?.logo_url) && (
                 <Link

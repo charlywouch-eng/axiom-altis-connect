@@ -26,6 +26,7 @@ import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
 import ResetPassword from "./pages/ResetPassword";
+import Rgpd from "./pages/Rgpd";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -157,6 +158,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/rgpd" element={<Rgpd />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
