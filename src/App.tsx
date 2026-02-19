@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import SignupLight from "./pages/SignupLight";
 import SignupTalent from "./pages/SignupTalent";
 import OnboardingRole from "./pages/OnboardingRole";
 import Dashboard from "./pages/Dashboard";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/signup-light" element={<SignupLight />} />
             <Route path="/signup-talent" element={<SignupTalent />} />
             <Route path="/metiers-en-tension" element={<MetiersEnTension />} />
             <Route

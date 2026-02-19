@@ -482,48 +482,65 @@ export default function DashboardTalent() {
     <TooltipProvider>
       <DashboardLayout sidebarVariant="talent">
         <motion.div
-          className="space-y-6 pb-10"
+          className="space-y-5 pb-12"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
+          {/* ── Premium CTA Bar ─────────────────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/8 px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="h-4 w-4 text-accent shrink-0" />
+                <p className="text-sm font-medium text-foreground">
+                  <span className="font-bold text-accent">Premium 30 €</span> — Badge MINEFOP/MINREX officiel + visibilité x3 auprès des recruteurs
+                </p>
+              </div>
+              <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold">
+                Activer <ChevronRight className="ml-1 h-3 w-3" />
+              </Button>
+            </div>
+          </motion.div>
+
           {/* ── Header ─────────────────────────────────────────────── */}
           <motion.div variants={itemVariants}>
-            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary via-primary/90 to-accent p-6 text-primary-foreground shadow-lg">
-              {/* Background decorations */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(217_91%_75%_/_0.15),_transparent_60%)]" />
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-accent/10 blur-2xl" />
-              <div className="absolute -bottom-4 -left-4 h-20 w-20 rounded-full bg-primary/20 blur-xl" />
+            <div
+              className="relative overflow-hidden rounded-2xl p-6 text-white shadow-premium"
+              style={{ background: "var(--gradient-hero)" }}
+            >
+              <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+              <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-accent/15 blur-3xl" />
+              <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-full bg-primary/25 blur-2xl" />
 
               <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-sm">
-                      <User className="h-4 w-4 text-primary-foreground" />
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
+                      <User className="h-4 w-4 text-white" />
                     </div>
-                    <span className="text-primary-foreground/70 text-sm font-medium">Mon Espace Talent</span>
+                    <span className="text-white/65 text-sm font-medium">Mon Espace Talent</span>
                   </div>
-                  <h1 className="text-2xl font-bold text-primary-foreground tracking-tight">
+                  <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight">
                     Bienvenue, {displayName}
                   </h1>
-                  <p className="text-primary-foreground/70 text-sm mt-1">
-                    {displayCountry} · Français {displayFrench} · Codes ROME : F1703 / F1603
+                  <p className="text-white/60 text-sm mt-1.5">
+                    {displayCountry} · Français {displayFrench} · ROME F1703 / F1603
                   </p>
                 </div>
-                <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
-                  <Badge className="bg-amber-400/20 text-amber-200 border border-amber-400/30 gap-1.5 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm">
+                <div className="flex flex-col items-start sm:items-end gap-3 shrink-0">
+                  <Badge className="bg-tension/25 text-white border border-tension/50 gap-1.5 px-3 py-1.5 text-xs font-bold backdrop-blur-sm">
                     <Award className="h-3.5 w-3.5" />
                     CERTIFIÉ MINEFOP
                   </Badge>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <p className="text-primary-foreground/60 text-[10px] uppercase tracking-widest">Progression</p>
-                      <p className="text-primary-foreground font-bold text-lg leading-none">{PROGRESS_PERCENT}%</p>
+                      <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium">Parcours ALTIS</p>
+                      <p className="text-white font-extrabold text-2xl leading-none">{PROGRESS_PERCENT}%</p>
                     </div>
-                    <div className="w-20">
+                    <div className="w-24">
                       <Progress
                         value={PROGRESS_PERCENT}
-                        className="h-2 bg-primary-foreground/20 [&>div]:bg-primary-foreground"
+                        className="h-2.5 bg-white/20 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-accent [&>div]:to-white [&>div]:rounded-full"
                       />
                     </div>
                   </div>
@@ -541,12 +558,12 @@ export default function DashboardTalent() {
                 value={totalOpenOffers > 0 ? String(totalOpenOffers) : "3"}
                 accent="blue"
                 tensionLevel="low"
-                subtitle="Postes ouverts · Métiers tension"
+                subtitle="Postes ouverts · Métiers en tension"
               />
               <PremiumStatCard
                 icon={Star}
                 title="Score de matching"
-                value="92%"
+                value="78%"
                 accent="green"
                 tensionLevel="low"
                 subtitle="BTP – Maçon F1703 · Grande demande"
