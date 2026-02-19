@@ -6,18 +6,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const FT_TOKEN_URL =
-  "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire";
 const LBB_API_URL = "https://api.francetravail.io/partenaire/labonneboite/v1/company/";
+
+const FT_TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire";
 
 async function getFranceTravailToken(
   clientId: string,
   clientSecret: string
 ): Promise<string> {
-  const scopes = [
-    "api_labonneboitev1 o2dsoffre",
-    "api_labonneboitev1",
-  ];
+  const scopes = ["api_labonneboitev1", "api_labonneboitev1 o2dsoffre"];
+
+  console.log(`LBB auth attempt — clientId prefix: ${clientId.substring(0, 8)}...`);
 
   for (const scope of scopes) {
     const body = new URLSearchParams({
@@ -36,16 +35,16 @@ async function getFranceTravailToken(
     if (response.ok) {
       const data = await response.json();
       if (data.access_token) {
-        console.log(`LBB Auth succeeded with scope: "${scope}"`);
+        console.log(`LBB auth OK — scope: "${scope}"`);
         return data.access_token;
       }
     }
     const text = await response.text();
-    console.log(`LBB Scope "${scope}" failed [${response.status}]: ${text}`);
+    console.log(`LBB scope "${scope}" failed [${response.status}]: ${text}`);
   }
 
   throw new Error(
-    "La Bonne Boite: all scope combinations failed. Ensure 'La Bonne Boite v1' API is subscribed on francetravail.io."
+    "La Bonne Boite: all scope combinations failed. Check credentials on francetravail.io."
   );
 }
 
