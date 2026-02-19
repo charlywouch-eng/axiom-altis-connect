@@ -26,6 +26,7 @@ import {
   EyeOff,
   Zap,
   Globe,
+  Shield,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
@@ -100,6 +101,7 @@ export default function Signup() {
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [certifyMinefop, setCertifyMinefop] = useState(false);
+  const [acceptTransfertUE, setAcceptTransfertUE] = useState(false);
 
   // CV upload
   const [cvFile, setCvFile] = useState<File | null>(null);
@@ -366,8 +368,21 @@ export default function Signup() {
                 mockScore={mockScore}
               />
 
-              {/* CGU Checkbox */}
+              {/* RGPD Notice */}
+              <div className="rounded-xl bg-primary/5 border border-primary/20 p-4 space-y-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <Shield className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span className="text-xs font-semibold text-primary">Protection de vos données (RGPD)</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Vos données sont traitées uniquement pour le matching emploi et la mobilité professionnelle. Droits : accès, rectification, effacement, opposition.{" "}
+                  <span className="font-medium text-foreground/70">Contact DPO : rgpd@axiom-talents.com</span>
+                </p>
+              </div>
+
+              {/* Checkboxes RGPD */}
               <div className="space-y-3">
+                {/* CGU + politique de confidentialité */}
                 <div className="flex items-start gap-3">
                   <Checkbox
                     id="acceptCgu"
@@ -379,15 +394,36 @@ export default function Signup() {
                     className="mt-0.5"
                   />
                   <Label htmlFor="acceptCgu" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
-                    J'accepte les{" "}
-                    <span className="text-accent underline">CGU</span> et la{" "}
-                    <span className="text-accent underline">politique de confidentialité</span>{" "}
-                    (RGPD compliant)
+                    J'accepte la{" "}
+                    <Link to="/rgpd" className="text-accent underline hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                      politique de confidentialité
+                    </Link>{" "}
+                    et les{" "}
+                    <Link to="/rgpd" className="text-accent underline hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                      CGU
+                    </Link>{" "}
+                    <span className="text-foreground/50">(RGPD compliant)</span>{" "}
+                    <span className="text-destructive font-semibold">*</span>
                   </Label>
                 </div>
                 {touched.acceptCgu && errors.acceptCgu && (
                   <p className="text-xs text-destructive">{errors.acceptCgu}</p>
                 )}
+
+                {/* Transfert hors UE */}
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="acceptTransfertUE"
+                    checked={acceptTransfertUE}
+                    onCheckedChange={(v) => setAcceptTransfertUE(v === true)}
+                    className="mt-0.5"
+                  />
+                  <Label htmlFor="acceptTransfertUE" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
+                    J'autorise le transfert de mes données vers l'Union Européenne via{" "}
+                    <span className="font-medium text-foreground/80">Clauses Contractuelles Types UE 2021</span>{" "}
+                    pour matching et mobilité professionnelle.
+                  </Label>
+                </div>
 
                 {/* MINEFOP Checkbox + Premium Badge */}
                 <div className="flex items-start gap-3">
