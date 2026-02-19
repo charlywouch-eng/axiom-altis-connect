@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,568 +18,630 @@ import {
   ArrowRight,
   Mail,
   Lock,
-  User,
-  Phone,
-  CheckCircle2,
-  XCircle,
   Eye,
   EyeOff,
-  Zap,
-  Globe,
   Shield,
+  ChevronRight,
+  Star,
+  CheckCircle2,
+  Zap,
+  MapPin,
+  Briefcase,
+  TrendingUp,
+  Info,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
-import { z } from "zod";
-import { CvUploadSection } from "@/components/signup/CvUploadSection";
-import { PremiumBadge } from "@/components/signup/PremiumBadge";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
-/* ── Validation ── */
-
-const signupSchema = z
-  .object({
-    fullName: z.string().trim().min(2, "Minimum 2 caractères").max(100),
-    email: z.string().trim().email("Adresse email invalide").max(255),
-    phone: z.string().trim().min(8, "Numéro invalide").max(20),
-    country: z.string().min(1, "Champ requis"),
-    password: z
-      .string()
-      .min(8, "Minimum 8 caractères")
-      .regex(/[A-Z]/, "Au moins une majuscule")
-      .regex(/[0-9]/, "Au moins un chiffre"),
-    confirmPassword: z.string(),
-    acceptCgu: z.literal(true, { errorMap: () => ({ message: "Vous devez accepter les CGU" }) }),
-  })
-  .refine((d) => d.password === d.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmPassword"],
-  });
-
-type FormData = z.infer<typeof signupSchema>;
-type FormErrors = Partial<Record<keyof FormData, string>>;
-type TouchedFields = Partial<Record<keyof FormData, boolean>>;
-
-const passwordRules = [
-  { label: "8 caractères minimum", test: (v: string) => v.length >= 8 },
-  { label: "Une majuscule", test: (v: string) => /[A-Z]/.test(v) },
-  { label: "Un chiffre", test: (v: string) => /[0-9]/.test(v) },
-];
-
-const countries = [
-  "Cameroun",
-  "Sénégal",
-  "Côte d'Ivoire",
-  "Mali",
-  "Burkina Faso",
-  "Congo (RDC)",
-  "Gabon",
-  "Bénin",
-  "Togo",
-  "Guinée",
-  "Autre",
-];
+/* ── Constants ── */
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 60 : -60,
+    opacity: 0,
+  }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -60 : 60,
+    opacity: 0,
+  }),
+};
+
+const SECTEURS = [
+  { label: "BTP / Construction", rome: "F1701" },
+  { label: "Santé / Aide à la personne", rome: "J1501" },
+  { label: "Hôtellerie / Restauration (CHR)", rome: "G1803" },
+  { label: "Logistique / Transport", rome: "N1101" },
+  { label: "Agriculture / Agroalimentaire", rome: "A1401" },
+  { label: "Commerce / Distribution", rome: "D1211" },
+  { label: "Maintenance industrielle", rome: "I1304" },
+  { label: "Support entreprise / Admin", rome: "M1607" },
+  { label: "Numérique / Informatique", rome: "M1805" },
+];
+
+const EXPERIENCE_TRANCHES = [
+  "Moins d'1 an",
+  "1 à 3 ans",
+  "3 à 5 ans",
+  "5 à 10 ans",
+  "Plus de 10 ans",
+];
+
+const REGIONS_CAMEROUN = [
+  "Yaoundé (Centre)",
+  "Douala (Littoral)",
+  "Bamenda (Nord-Ouest)",
+  "Bafoussam (Ouest)",
+  "Garoua (Nord)",
+  "Maroua (Extrême-Nord)",
+  "Bertoua (Est)",
+  "Ngaoundéré (Adamaoua)",
+  "Ebolowa (Sud)",
+  "Kribi (Sud)",
+  "Autre région",
+];
 
 /* ── Component ── */
 
 export default function Signup() {
   const { session, loading } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "+237 ",
-    country: "Cameroun",
-    password: "",
-    confirmPassword: "",
-    acceptCgu: false as boolean,
-  });
-  const [touched, setTouched] = useState<TouchedFields>({});
+  // Step management
+  const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState(1);
+
+  // Step 1 – Quick signup
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptCgu, setAcceptCgu] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [certifyMinefop, setCertifyMinefop] = useState(false);
-  const [acceptTransfertUE, setAcceptTransfertUE] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // CV upload
-  const [cvFile, setCvFile] = useState<File | null>(null);
-  const [cvAnalysis, setCvAnalysis] = useState<"idle" | "analyzing" | "done">("idle");
-  const [mockScore] = useState(() => Math.floor(Math.random() * 31) + 65); // 65-95
+  // Step 2 – Profile light
+  const [secteur, setSecteur] = useState("");
+  const [experience, setExperience] = useState("");
+  const [region, setRegion] = useState("");
 
-  useEffect(() => {
-    if (cvFile && cvAnalysis === "idle") {
-      setCvAnalysis("analyzing");
-      const timer = setTimeout(() => setCvAnalysis("done"), 2200);
-      return () => clearTimeout(timer);
-    }
-  }, [cvFile, cvAnalysis]);
-
-  const errors = useMemo<FormErrors>(() => {
-    const result = signupSchema.safeParse(form);
-    if (result.success) return {};
-    const fieldErrors: FormErrors = {};
-    result.error.issues.forEach((issue) => {
-      const key = issue.path[0] as keyof FormData;
-      if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-    });
-    return fieldErrors;
-  }, [form]);
-
-  const isValid = Object.keys(errors).length === 0;
+  // Step 3 – Score mock
+  const mockScore = 78;
 
   if (loading) return null;
   if (session) return <Navigate to="/onboarding-role" replace />;
 
-  const updateField = <K extends keyof typeof form>(field: K, value: (typeof form)[K]) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
-
-  const markTouched = (field: keyof FormData) =>
-    setTouched((prev) => ({ ...prev, [field]: true }));
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const allTouched: TouchedFields = {
-      fullName: true,
-      email: true,
-      phone: true,
-      country: true,
-      password: true,
-      confirmPassword: true,
-      acceptCgu: true,
-    };
-    setTouched(allTouched);
-    if (!isValid) return;
-
-    setSubmitting(true);
-    const { error } = await supabase.auth.signUp({
-      email: form.email.trim(),
-      password: form.password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: {
-          full_name: form.fullName.trim(),
-          phone: form.phone.trim(),
-          country: form.country,
-          role: "talent",
-          certify_minefop: certifyMinefop,
-        },
-      },
-    });
-
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      toast({
-        title: "Inscription réussie",
-        description: "Vérifiez votre email pour confirmer votre compte.",
-      });
-    }
-    setSubmitting(false);
+  const goTo = (s: number) => {
+    setDirection(s > step ? 1 : -1);
+    setStep(s);
   };
 
+  /* ── Step 1 submit ── */
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!acceptCgu) {
+      toast({ title: "Requis", description: "Veuillez accepter la politique de confidentialité.", variant: "destructive" });
+      return;
+    }
+    if (password.length < 6) {
+      toast({ title: "Mot de passe trop court", description: "6 caractères minimum.", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: { role: "talent", country: "Cameroun" },
+      },
+    });
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      setSubmitting(false);
+      return;
+    }
+    setUserId(data.user?.id ?? null);
+    setSubmitting(false);
+    goTo(2);
+  };
+
+  /* ── Step 2 submit ── */
+  const handleProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!secteur || !experience || !region) {
+      toast({ title: "Requis", description: "Merci de remplir les 3 champs.", variant: "destructive" });
+      return;
+    }
+    const selectedSecteur = SECTEURS.find((s) => s.label === secteur);
+    if (userId) {
+      await supabase.from("talent_profiles").upsert({
+        user_id: userId,
+        rome_label: secteur,
+        rome_code: selectedSecteur?.rome ?? null,
+        experience_years: experienceToNumber(experience),
+        country: "Cameroun",
+      });
+    }
+    goTo(3);
+  };
+
+  const experienceToNumber = (t: string) => {
+    if (t === "Moins d'1 an") return 0;
+    if (t === "1 à 3 ans") return 2;
+    if (t === "3 à 5 ans") return 4;
+    if (t === "5 à 10 ans") return 7;
+    return 12;
+  };
+
+  const handleUnlock = () => {
+    toast({ title: "Paiement 10 €", description: "Redirection vers la page de paiement…" });
+    navigate("/billing");
+  };
+
+  const handleFreeMode = () => {
+    navigate("/onboarding-role");
+  };
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    try {
+      await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    } catch {
+      toast({ title: "Erreur Google", description: "Connexion impossible.", variant: "destructive" });
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  /* ── Steps progress bar ── */
+  const steps = ["Inscription", "Profil", "Score"];
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero header */}
-      <div className="bg-primary text-primary-foreground">
-        <div className="container max-w-4xl mx-auto px-4 py-12 md:py-16 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: easeOut }}
+    <TooltipProvider>
+      <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(220,60%,18%)] flex flex-col">
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-4 py-4 max-w-lg mx-auto w-full">
+          <Link to="/" className="text-primary-foreground/90 font-bold text-lg tracking-tight">
+            AXIOM
+          </Link>
+          <Link
+            to="/login"
+            className="text-primary-foreground/70 text-sm hover:text-primary-foreground transition-colors"
           >
-            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
-              Inscription Candidat – Gratuit et sans engagement
-            </h1>
-            <p className="mt-4 text-primary-foreground/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              Rejoignez la première plateforme de mobilité professionnelle France-Afrique.
-              Matching prédictif + certifications MINEFOP/MINREX.
-            </p>
-          </motion.div>
+            Déjà inscrit ?{" "}
+            <span className="underline">Se connecter</span>
+          </Link>
         </div>
-      </div>
 
-      {/* Form */}
-      <div className="container max-w-lg mx-auto px-4 -mt-6 pb-16 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15, ease: easeOut }}
-        >
-          <div className="bg-card rounded-2xl shadow-xl shadow-foreground/5 border border-border/50 p-6 sm:p-8 space-y-6">
-            <form onSubmit={handleSignup} className="space-y-5">
-              {/* Full Name */}
-              <FieldWrapper
-                id="fullName"
-                label="Nom complet"
-                icon={User}
-                error={touched.fullName ? errors.fullName : undefined}
-                isValid={touched.fullName && !errors.fullName && form.fullName.length > 0}
-              >
-                <Input
-                  id="fullName"
-                  value={form.fullName}
-                  onChange={(e) => updateField("fullName", e.target.value)}
-                  onBlur={() => markTouched("fullName")}
-                  placeholder="Prénom Nom"
-                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
-                />
-              </FieldWrapper>
-
-              {/* Email */}
-              <FieldWrapper
-                id="email"
-                label="Email"
-                icon={Mail}
-                error={touched.email ? errors.email : undefined}
-                isValid={touched.email && !errors.email && form.email.length > 0}
-              >
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => updateField("email", e.target.value)}
-                  onBlur={() => markTouched("email")}
-                  placeholder="vous@email.com"
-                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
-                />
-              </FieldWrapper>
-
-              {/* Phone */}
-              <FieldWrapper
-                id="phone"
-                label="Téléphone"
-                icon={Phone}
-                error={touched.phone ? errors.phone : undefined}
-                isValid={touched.phone && !errors.phone && form.phone.length > 5}
-              >
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => updateField("phone", e.target.value)}
-                  onBlur={() => markTouched("phone")}
-                  placeholder="+237 6XX XX XX XX"
-                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
-                />
-              </FieldWrapper>
-
-              {/* Country */}
-              <div className="space-y-2">
-                <Label htmlFor="country" className="text-sm font-medium text-foreground">
-                  Pays d'origine
-                </Label>
-                <div className="relative">
-                  <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 z-10 pointer-events-none" />
-                  <Select value={form.country} onValueChange={(v) => updateField("country", v)}>
-                    <SelectTrigger className="pl-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {countries.map((c) => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+        {/* Progress steps */}
+        <div className="max-w-lg mx-auto w-full px-4 pb-4">
+          <div className="flex items-center gap-2">
+            {steps.map((label, i) => {
+              const idx = i + 1;
+              const done = step > idx;
+              const active = step === idx;
+              return (
+                <div key={label} className="flex items-center gap-2 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                        done
+                          ? "bg-emerald-400 text-white"
+                          : active
+                          ? "bg-white text-[hsl(var(--primary))]"
+                          : "bg-white/20 text-white/50"
+                      }`}
+                    >
+                      {done ? <CheckCircle2 className="h-3.5 w-3.5" /> : idx}
+                    </div>
+                    <span
+                      className={`text-xs font-medium transition-all ${
+                        active ? "text-white" : done ? "text-emerald-300" : "text-white/40"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                  {i < steps.length - 1 && (
+                    <div className="flex-1 h-px bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-white/60 transition-all duration-500"
+                        style={{ width: step > idx ? "100%" : "0%" }}
+                      />
+                    </div>
+                  )}
                 </div>
-              </div>
+              );
+            })}
+          </div>
+        </div>
 
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-foreground">
-                  Mot de passe
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={form.password}
-                    onChange={(e) => updateField("password", e.target.value)}
-                    onBlur={() => markTouched("password")}
-                    placeholder="••••••••"
-                    className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-muted-foreground transition-colors"
-                    tabIndex={-1}
-                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                {form.password.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="space-y-1 pt-1"
-                  >
-                    {passwordRules.map((rule) => {
-                      const passes = rule.test(form.password);
-                      return (
-                        <div key={rule.label} className="flex items-center gap-2">
-                          {passes ? (
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                          ) : (
-                            <XCircle className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0" />
-                          )}
-                          <span className={`text-xs ${passes ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground/50"}`}>
-                            {rule.label}
-                          </span>
+        {/* Card container */}
+        <div className="flex-1 flex items-start justify-center px-4 pb-8">
+          <div className="w-full max-w-lg relative overflow-hidden">
+            <AnimatePresence custom={direction} mode="wait">
+              {step === 1 && (
+                <motion.div
+                  key="step1"
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: easeOut }}
+                >
+                  <div className="bg-card rounded-2xl shadow-2xl border border-border/30 p-6 sm:p-8 space-y-6">
+                    {/* Header */}
+                    <div className="text-center space-y-1.5">
+                      <h1 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
+                        Rejoignez AXIOM{" "}
+                        <span className="text-primary">– Gratuit & sans engagement</span>
+                      </h1>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Matching IA + offres France en tension{" "}
+                        <span className="font-medium text-foreground/70">BTP · Santé · CHR · Logistique</span>
+                      </p>
+                    </div>
+
+                    {/* Google OAuth */}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full h-11 rounded-xl font-medium gap-2 border-border hover:border-primary/40 hover:bg-primary/5 transition-all"
+                      onClick={handleGoogle}
+                      disabled={googleLoading}
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                      </svg>
+                      {googleLoading ? "Connexion…" : "Continuer avec Google"}
+                    </Button>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-px bg-border" />
+                      <span className="text-xs text-muted-foreground">ou par email</span>
+                      <div className="flex-1 h-px bg-border" />
+                    </div>
+
+                    {/* Form */}
+                    <form onSubmit={handleSignup} className="space-y-4">
+                      {/* Email */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="email" className="text-sm font-medium">
+                          Email (ou téléphone +237)
+                        </Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
+                          <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="vous@email.com"
+                            required
+                            className="pl-9 h-11 rounded-xl"
+                          />
                         </div>
-                      );
-                    })}
-                  </motion.div>
-                )}
-              </div>
+                      </div>
 
-              {/* Confirm Password */}
-              <FieldWrapper
-                id="confirmPassword"
-                label="Confirmer le mot de passe"
-                icon={Lock}
-                error={touched.confirmPassword ? errors.confirmPassword : undefined}
-                isValid={
-                  touched.confirmPassword &&
-                  !errors.confirmPassword &&
-                  form.confirmPassword.length > 0 &&
-                  form.password === form.confirmPassword
-                }
-              >
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={form.confirmPassword}
-                  onChange={(e) => updateField("confirmPassword", e.target.value)}
-                  onBlur={() => markTouched("confirmPassword")}
-                  placeholder="••••••••"
-                  className="pl-10 pr-10 h-11 rounded-xl border-border focus:border-accent focus:ring-accent/20"
-                />
-              </FieldWrapper>
+                      {/* Password */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="password" className="text-sm font-medium">
+                          Mot de passe
+                        </Label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="6 caractères minimum"
+                            required
+                            className="pl-9 pr-10 h-11 rounded-xl"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                        {password.length > 0 && password.length < 6 && (
+                          <p className="text-xs text-amber-500">6 caractères minimum</p>
+                        )}
+                      </div>
 
-              {/* CV Upload */}
-              <CvUploadSection
-                file={cvFile}
-                onFileSelect={(f) => { setCvFile(f); setCvAnalysis("idle"); }}
-                analysisState={cvAnalysis}
-                mockScore={mockScore}
-              />
+                      {/* RGPD checkbox */}
+                      <div className="flex items-start gap-2.5">
+                        <Checkbox
+                          id="cgu"
+                          checked={acceptCgu}
+                          onCheckedChange={(v) => setAcceptCgu(v === true)}
+                          className="mt-0.5"
+                        />
+                        <Label htmlFor="cgu" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                          J'accepte la{" "}
+                          <Link
+                            to="/rgpd"
+                            className="text-primary underline hover:no-underline"
+                            target="_blank"
+                          >
+                            politique de confidentialité & CGU
+                          </Link>{" "}
+                          (RGPD)
+                        </Label>
+                      </div>
 
-              {/* RGPD Notice */}
-              <div className="rounded-xl bg-primary/5 border border-primary/20 p-4 space-y-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Shield className="h-3.5 w-3.5 text-primary shrink-0" />
-                  <span className="text-xs font-semibold text-primary">Protection de vos données (RGPD)</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Vos données sont traitées uniquement pour le matching emploi et la mobilité professionnelle. Droits : accès, rectification, effacement, opposition.{" "}
-                  <span className="font-medium text-foreground/70">Contact DPO : rgpd@axiom-talents.com</span>
-                </p>
-              </div>
+                      {/* CTA */}
+                      <Button
+                        type="submit"
+                        disabled={submitting || !acceptCgu}
+                        className="w-full h-12 rounded-xl text-base font-semibold gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all"
+                      >
+                        {submitting ? "Création…" : "Continuer gratuitement"}
+                        {!submitting && <ArrowRight className="h-4 w-4" />}
+                      </Button>
+                    </form>
 
-              {/* Checkboxes RGPD */}
-              <div className="space-y-3">
-                {/* CGU + politique de confidentialité */}
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="acceptCgu"
-                    checked={form.acceptCgu}
-                    onCheckedChange={(v) => {
-                      updateField("acceptCgu", v === true);
-                      markTouched("acceptCgu");
-                    }}
-                    className="mt-0.5"
-                  />
-                  <Label htmlFor="acceptCgu" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
-                    J'accepte la{" "}
-                    <Link to="/rgpd" className="text-accent underline hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
-                      politique de confidentialité
-                    </Link>{" "}
-                    et les{" "}
-                    <Link to="/rgpd" className="text-accent underline hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
-                      CGU
-                    </Link>{" "}
-                    <span className="text-foreground/50">(RGPD compliant)</span>{" "}
-                    <span className="text-destructive font-semibold">*</span>
-                  </Label>
-                </div>
-                {touched.acceptCgu && errors.acceptCgu && (
-                  <p className="text-xs text-destructive">{errors.acceptCgu}</p>
-                )}
-
-                {/* Transfert hors UE */}
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="acceptTransfertUE"
-                    checked={acceptTransfertUE}
-                    onCheckedChange={(v) => setAcceptTransfertUE(v === true)}
-                    className="mt-0.5"
-                  />
-                  <Label htmlFor="acceptTransfertUE" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
-                    J'autorise le transfert de mes données vers l'Union Européenne via{" "}
-                    <span className="font-medium text-foreground/80">Clauses Contractuelles Types UE 2021</span>{" "}
-                    pour matching et mobilité professionnelle.
-                  </Label>
-                </div>
-
-                {/* MINEFOP Checkbox + Premium Badge */}
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="certifyMinefop"
-                    checked={certifyMinefop}
-                    onCheckedChange={(v) => setCertifyMinefop(v === true)}
-                    className="mt-0.5"
-                  />
-                  <div className="space-y-1.5">
-                    <Label htmlFor="certifyMinefop" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
-                      Je souhaite certifier mes diplômes via MINEFOP/MINREX
-                    </Label>
-                    <PremiumBadge />
-                    <p className="text-[10px] text-muted-foreground/60 leading-relaxed">
-                      Visibilité prioritaire + badge AXIOM READY
+                    {/* Footer RGPD */}
+                    <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
+                      <Shield className="inline h-3 w-3 mr-1 mb-0.5" />
+                      Vos données sont protégées (RGPD). Contact DPO :{" "}
+                      <a href="mailto:rgpd@axiom-talents.com" className="underline">
+                        rgpd@axiom-talents.com
+                      </a>
                     </p>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              )}
 
-              {/* Submit */}
-              <Button
-                type="submit"
-                disabled={submitting || !isValid}
-                className="w-full h-12 rounded-xl text-base font-semibold bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg shadow-accent/20 transition-all duration-200 hover:shadow-accent/30 disabled:opacity-50"
-              >
-                {submitting ? (
-                  "Création en cours…"
-                ) : (
-                  <>
-                    Créer mon profil gratuitement <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </form>
+              {step === 2 && (
+                <motion.div
+                  key="step2"
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: easeOut }}
+                >
+                  <div className="bg-card rounded-2xl shadow-2xl border border-border/30 p-6 sm:p-8 space-y-6">
+                    <div className="text-center space-y-1.5">
+                      <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold mb-2">
+                        <Zap className="h-3 w-3" />
+                        30 secondes
+                      </div>
+                      <h2 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
+                        Complétez votre profil
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        3 champs pour activer votre matching IA
+                      </p>
+                    </div>
 
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-card px-3 text-xs text-muted-foreground">ou</span>
-              </div>
-            </div>
+                    <form onSubmit={handleProfile} className="space-y-5">
+                      {/* Métier */}
+                      <div className="space-y-1.5">
+                        <Label className="text-sm font-medium flex items-center gap-1.5">
+                          <Briefcase className="h-3.5 w-3.5 text-primary" />
+                          Métier principal
+                        </Label>
+                        <Select value={secteur} onValueChange={setSecteur}>
+                          <SelectTrigger className="h-11 rounded-xl">
+                            <SelectValue placeholder="Choisir un secteur en tension…" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SECTEURS.map((s) => (
+                              <SelectItem key={s.rome} value={s.label}>
+                                <span>{s.label}</span>
+                                <span className="ml-2 text-xs text-muted-foreground font-mono">{s.rome}</span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {secteur && (
+                          <p className="text-xs text-primary flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3" />
+                            Code ROME auto-suggéré :{" "}
+                            <strong>{SECTEURS.find((s) => s.label === secteur)?.rome}</strong>
+                          </p>
+                        )}
+                      </div>
 
-            {/* OAuth buttons */}
-            <div className="flex flex-col gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full h-11 rounded-xl border-border hover:bg-muted/50 font-medium"
-                disabled={googleLoading}
-                onClick={async () => {
-                  setGoogleLoading(true);
-                  const { error } = await lovable.auth.signInWithOAuth("google", {
-                    redirect_uri: window.location.origin,
-                  });
-                  if (error) {
-                    toast({ title: "Erreur", description: String(error), variant: "destructive" });
-                  }
-                  setGoogleLoading(false);
-                }}
-              >
-                <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-                {googleLoading ? "Connexion…" : "Continuer avec Google"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full h-11 rounded-xl border-border hover:bg-muted/50 font-medium"
-                disabled={googleLoading}
-                onClick={async () => {
-                  const { error } = await lovable.auth.signInWithOAuth("apple", {
-                    redirect_uri: window.location.origin,
-                  });
-                  if (error) {
-                    toast({ title: "Erreur", description: String(error), variant: "destructive" });
-                  }
-                }}
-              >
-                <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.32.07 2.23.74 3.01.8.88-.15 1.93-.81 3.13-.69 1.53.14 2.68.8 3.4 2.04-3.1 1.87-2.58 5.9.69 7.04-.68 1.61-1.59 3.2-2.23 3.69zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-                </svg>
-                Continuer avec Apple
-              </Button>
-            </div>
+                      {/* Expérience */}
+                      <div className="space-y-1.5">
+                        <Label className="text-sm font-medium flex items-center gap-1.5">
+                          <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                          Années d'expérience
+                        </Label>
+                        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                          {EXPERIENCE_TRANCHES.map((t) => (
+                            <button
+                              key={t}
+                              type="button"
+                              onClick={() => setExperience(t)}
+                              className={`py-2 px-1 rounded-xl border text-xs font-medium transition-all text-center leading-tight ${
+                                experience === t
+                                  ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                                  : "border-border bg-background hover:border-primary/50 hover:bg-primary/5 text-foreground/70"
+                              }`}
+                            >
+                              {t}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
 
-            {/* Links */}
-            <div className="flex flex-col gap-2 text-center text-sm">
-              <p className="text-muted-foreground">
-                Je suis une entreprise →{" "}
-                <Link to="/signup-talent" className="font-semibold text-accent hover:text-primary transition-colors">
-                  Inscription recruteur
-                </Link>
-              </p>
-              <p className="text-muted-foreground">
-                Déjà inscrit ?{" "}
-                <Link to="/login" className="font-semibold text-accent hover:text-primary transition-colors">
-                  Se connecter
-                </Link>
-              </p>
-            </div>
+                      {/* Région */}
+                      <div className="space-y-1.5">
+                        <Label className="text-sm font-medium flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 text-primary" />
+                          Région (Cameroun)
+                        </Label>
+                        <Select value={region} onValueChange={setRegion}>
+                          <SelectTrigger className="h-11 rounded-xl">
+                            <SelectValue placeholder="Votre ville / région…" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {REGIONS_CAMEROUN.map((r) => (
+                              <SelectItem key={r} value={r}>
+                                {r}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={!secteur || !experience || !region}
+                        className="w-full h-12 rounded-xl text-base font-semibold gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all"
+                      >
+                        Voir mon score de compatibilité
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </form>
+
+                    <p className="text-center text-[11px] text-muted-foreground">
+                      <Shield className="inline h-3 w-3 mr-1 mb-0.5" />
+                      Données protégées RGPD · rgpd@axiom-talents.com
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 3 && (
+                <motion.div
+                  key="step3"
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: easeOut }}
+                >
+                  <div className="bg-card rounded-2xl shadow-2xl border border-border/30 p-6 sm:p-8 space-y-6">
+                    {/* Score display */}
+                    <div className="text-center space-y-3">
+                      <div className="relative inline-flex">
+                        <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--border))" strokeWidth="8" />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="42"
+                            fill="none"
+                            className="stroke-primary transition-all duration-1000"
+                            strokeWidth="8"
+                            strokeLinecap="round"
+                            strokeDasharray={`${2 * Math.PI * 42}`}
+                            strokeDashoffset={`${2 * Math.PI * 42 * (1 - mockScore / 100)}`}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-3xl font-bold text-foreground">{mockScore}%</span>
+                          <span className="text-[10px] text-muted-foreground">Score IA</span>
+                        </div>
+                      </div>
+                      <div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+                          Score estimé :{" "}
+                          <span className="text-primary">{mockScore} % — Très bon potentiel !</span>
+                        </h2>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Basé sur votre métier <strong>{secteur}</strong> et vos{" "}
+                          <strong>{experience}</strong> d'expérience
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Value teaser */}
+                    <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-2">
+                      <p className="text-xs font-semibold text-primary uppercase tracking-wide">
+                        Ce que vous débloquez avec Accès Essentiel 10 €
+                      </p>
+                      {[
+                        "Score détaillé par compétence ROME",
+                        "Offres France Travail matchées en temps réel",
+                        "Parcours ALTIS complet (visa + billet + logement)",
+                        "Priorité dans la file de matching entreprises",
+                      ].map((item) => (
+                        <div key={item} className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                          <span className="text-sm text-foreground/80">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* CTA unlock */}
+                    <div className="space-y-3">
+                      <Button
+                        onClick={handleUnlock}
+                        className="w-full h-12 rounded-xl text-base font-semibold gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all"
+                      >
+                        <Star className="h-4 w-4" />
+                        Débloquer pour 10 €
+                      </Button>
+
+                      <button
+                        onClick={handleFreeMode}
+                        className="w-full text-sm text-muted-foreground hover:text-foreground py-2 transition-colors"
+                      >
+                        Continuer gratuitement{" "}
+                        <span className="text-muted-foreground/60">(version limitée)</span>
+                      </button>
+                    </div>
+
+                    {/* Premium tooltip */}
+                    <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="flex items-center gap-1 hover:text-foreground transition-colors underline decoration-dotted">
+                            <Info className="h-3 w-3" />
+                            Premium 30 € disponible plus tard
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
+                          <p className="font-semibold mb-1">Badge vérifié MINEFOP/MINREX</p>
+                          <p>
+                            Certification officielle camerounaise + légalisation MINREX. Badge visible
+                            par tous les recruteurs. Visibilité ×3 dans les résultats de matching.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+
+                    {/* Footer RGPD */}
+                    <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
+                      <Shield className="inline h-3 w-3 mr-1 mb-0.5" />
+                      Vos données sont protégées (RGPD). Contact DPO :{" "}
+                      <a href="mailto:rgpd@axiom-talents.com" className="underline">
+                        rgpd@axiom-talents.com
+                      </a>
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-
-          {/* Footer */}
-          <div className="mt-8 text-center space-y-1">
-            <p className="text-xs text-muted-foreground/60">
-              <Zap className="inline h-3 w-3 mr-1 text-accent/50" />
-              AXIOM – TIaaS | ALTIS Mobility – Pack Zéro Stress
-            </p>
-          </div>
-        </motion.div>
+        </div>
       </div>
-    </div>
-  );
-}
-
-/* ── Reusable field wrapper ── */
-
-interface FieldWrapperProps {
-  id: string;
-  label: string;
-  icon: typeof Mail;
-  error?: string;
-  isValid: boolean;
-  children: React.ReactNode;
-}
-
-function FieldWrapper({ id, label, icon: Icon, error, isValid, children }: FieldWrapperProps) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id} className="text-sm font-medium text-foreground">
-        {label}
-      </Label>
-      <div className="relative">
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
-        {children}
-        {isValid && (
-          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500 pointer-events-none" />
-        )}
-        {error && (
-          <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-destructive pointer-events-none" />
-        )}
-      </div>
-      {error && (
-        <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-destructive">
-          {error}
-        </motion.p>
-      )}
-    </div>
+    </TooltipProvider>
   );
 }
