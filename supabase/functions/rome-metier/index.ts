@@ -6,15 +6,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const FT_TOKEN_URL =
-  "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire";
 const ROME_BASE_URL = "https://api.francetravail.io/partenaire/rome/v1";
 
+const FT_TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire";
+
 async function getToken(clientId: string, clientSecret: string): Promise<string> {
-  const scopes = [
-    "api_romev1 o2dsoffre",
-    "api_romev1",
-  ];
+  const scopes = ["api_romev1", "api_romev1 o2dsoffre"];
+
+  console.log(`ROME auth attempt — clientId prefix: ${clientId.substring(0, 8)}...`);
+
   for (const scope of scopes) {
     const body = new URLSearchParams({
       grant_type: "client_credentials",
@@ -30,7 +30,7 @@ async function getToken(clientId: string, clientSecret: string): Promise<string>
     if (res.ok) {
       const data = await res.json();
       if (data.access_token) {
-        console.log(`ROME auth OK with scope: "${scope}"`);
+        console.log(`ROME auth OK — scope: "${scope}"`);
         return data.access_token;
       }
     }
@@ -38,7 +38,7 @@ async function getToken(clientId: string, clientSecret: string): Promise<string>
     console.warn(`ROME scope "${scope}" failed [${res.status}]: ${text}`);
   }
   throw new Error(
-    "Code ROME API: auth failed. Ensure 'Référentiel ROME v1' is subscribed on francetravail.io."
+    "Code ROME API: auth failed. Check client credentials on francetravail.io."
   );
 }
 
