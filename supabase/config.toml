@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.france-travail-offers]
 verify_jwt = false
+
+[functions.la-bonne-boite]
+verify_jwt = false
