@@ -196,6 +196,57 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          created_at: string
+          email_or_phone: string
+          experience_bracket: string
+          id: string
+          metier: string
+          notes: string | null
+          rgpd_consent: boolean
+          rome_code: string
+          score_mock: number
+          status: string
+          updated_at: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_or_phone: string
+          experience_bracket?: string
+          id?: string
+          metier: string
+          notes?: string | null
+          rgpd_consent?: boolean
+          rome_code?: string
+          score_mock?: number
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_or_phone?: string
+          experience_bracket?: string
+          id?: string
+          metier?: string
+          notes?: string | null
+          rgpd_consent?: boolean
+          rome_code?: string
+          score_mock?: number
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
       metiers_minefop_rome: {
         Row: {
           competences: string[]

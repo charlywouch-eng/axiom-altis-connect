@@ -383,6 +383,10 @@ export default function Index() {
               <span className="font-bold text-sm text-accent">ALTIS Mobility</span>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+              <Link to="/leads" className="hover:text-foreground transition-colors flex items-center gap-1.5 font-medium text-accent/80 hover:text-accent">
+                <Zap className="h-3 w-3" /> Tester mon profil
+              </Link>
+              <span className="text-muted-foreground/30">·</span>
               <span className="hover:text-foreground cursor-pointer transition-colors">Mentions légales</span>
               <span className="hover:text-foreground cursor-pointer transition-colors">CGU</span>
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors flex items-center gap-1">
