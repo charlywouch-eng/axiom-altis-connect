@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import dashboardHero from "@/assets/dashboard-hero.jpg";
+import heroFranceAfrique from "@/assets/hero-france-afrique.png";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,6 @@ import {
 import { motion } from "framer-motion";
 import {
   CheckCircle2,
-  Clock,
   User,
   Globe,
   Briefcase,
@@ -393,7 +392,6 @@ export default function DashboardTalent() {
   const displayName = profile?.full_name || MOCK_PROFILE_DATA.full_name;
   const displayCountry = profile?.country || MOCK_PROFILE_DATA.country;
   const displayFrench = profile?.french_level || MOCK_PROFILE_DATA.french_level;
-  const displaySkills = profile?.skills && profile.skills.length > 0 ? profile.skills : MOCK_PROFILE_DATA.skills;
   const offersToDisplay = ftOffers && ftOffers.length > 0 ? ftOffers : MOCK_RECOMMENDED_OFFERS;
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
@@ -452,10 +450,10 @@ export default function DashboardTalent() {
                     </div>
                   </div>
                 </div>
-                <div className="relative w-full sm:w-56 h-32 sm:h-auto overflow-hidden">
-                  <img src={dashboardHero} alt="Dashboard hero" className="h-full w-full object-cover opacity-60" />
-                  <div className="absolute inset-0 bg-gradient-to-l from-transparent to-primary/80 sm:bg-gradient-to-r" />
-                  <div className="absolute bottom-2 right-2 text-[8px] font-semibold text-white/50 uppercase tracking-widest">Plateforme RH Tech France-Afrique</div>
+                <div className="relative w-full sm:w-52 h-32 sm:h-auto overflow-hidden bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center p-4">
+                  <img src={heroFranceAfrique} alt="France-Afrique" className="h-full w-full object-contain opacity-80" style={{ filter: "drop-shadow(0 8px 16px rgba(6,182,212,0.25))" }} />
+                  <div className="absolute inset-0 bg-gradient-to-l from-transparent to-primary/70 sm:bg-gradient-to-r" />
+                  <div className="absolute bottom-2 right-2 text-[8px] font-bold text-white/50 uppercase tracking-widest">Plateforme RH Tech France-Afrique</div>
                 </div>
               </div>
             </div>
@@ -685,7 +683,7 @@ export default function DashboardTalent() {
                               </div>
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1.5">
-                                  <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                                  <Star className="h-3 w-3 text-tension fill-tension" />
                                   <span className="text-xs font-semibold">{company.hiringPotential.toFixed(1)}</span>
                                   <span className="text-xs text-muted-foreground">potentiel</span>
                                 </div>
