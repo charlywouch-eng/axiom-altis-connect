@@ -1376,6 +1376,91 @@ export default function DashboardTalent() {
               {/* ══════════════════════════════════════════════════════════ */}
               <TabsContent value="profil" className="space-y-5 mt-0">
 
+          {/* ── Carte de visite premium ──────────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 shadow-premium">
+              {/* Gradient top bar */}
+              <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary/40" />
+              {/* Background pattern */}
+              <div
+                className="absolute inset-0 opacity-[0.025]"
+                style={{ backgroundImage: "radial-gradient(circle at 2px 2px, hsl(var(--primary)) 1px, transparent 0)", backgroundSize: "24px 24px" }}
+              />
+              <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+
+              <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-7">
+                {/* Avatar */}
+                <div className="relative shrink-0">
+                  <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center shadow-md">
+                    <span className="text-3xl font-extrabold text-primary">
+                      {displayName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                    </span>
+                  </div>
+                  {/* Online dot */}
+                  <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-background bg-success flex items-center justify-center">
+                    <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+                  </div>
+                </div>
+
+                {/* Infos */}
+                <div className="flex-1 text-center sm:text-left space-y-2 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-wrap justify-center sm:justify-start">
+                    <h2 className="text-xl font-extrabold text-foreground tracking-tight truncate">{displayName}</h2>
+                    <Badge className="bg-accent/10 text-accent border-accent/30 text-[10px] px-2.5 py-0.5 font-bold self-center">
+                      <Award className="h-3 w-3 mr-1" />
+                      CERTIFIÉ MINEFOP
+                    </Badge>
+                  </div>
+
+                  <p className="text-sm text-muted-foreground font-medium">
+                    {displayCountry} · Français {displayFrench}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start">
+                    {MOCK_PROFILE_DATA.rome.map((r) => (
+                      <Badge key={r.code} variant="outline" className="text-[11px] px-2.5 py-0.5 font-semibold border-primary/30 text-primary/80">
+                        {r.code} · {r.label}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2 justify-center sm:justify-start pt-1">
+                    <span className="text-xs text-muted-foreground font-medium">Score compatibilité</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-20 h-2 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full w-[78%] rounded-full bg-gradient-to-r from-primary to-accent" />
+                      </div>
+                      <span className="text-sm font-extrabold text-primary">78%</span>
+                    </div>
+                    <Badge className="bg-success/10 text-success border-success/30 text-[10px] px-2 font-semibold">Excellent</Badge>
+                  </div>
+                </div>
+
+                {/* CTA modifier */}
+                <div className="shrink-0 flex flex-col gap-2 self-center">
+                  <Button
+                    size="sm"
+                    onClick={() => setEditing(true)}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5 font-semibold shadow-sm"
+                  >
+                    <ClipboardList className="h-3.5 w-3.5" />
+                    Modifier mon profil
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExport}
+                    disabled={exportLoading}
+                    className="gap-1.5 border-primary/20 text-muted-foreground hover:text-foreground"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    {exportLoading ? "Export…" : "Exporter (RGPD)"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
           {/* ── Mon Profil enrichi (3 fiches) ──────────────────────── */}
           <motion.div variants={itemVariants}>
             <Card className="overflow-hidden shadow-sm">
