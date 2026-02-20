@@ -40,7 +40,7 @@ serve(async (req) => {
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: [{ price: PRICE_ID, quantity: 1 }],
       mode: "payment",
-      success_url: `${origin}/signup-light?${successParams.toString()}`,
+      success_url: `${origin}/payment-success?${successParams.toString()}`,
       cancel_url: `${origin}/leads?canceled=true`,
       metadata: {
         payment_type: "analyse_complete_lead",

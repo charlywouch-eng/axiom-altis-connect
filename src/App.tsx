@@ -31,6 +31,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
 import Leads from "./pages/Leads";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -166,6 +167,7 @@ const App = () => (
             <Route path="/rgpd" element={<Rgpd />} />
             <Route path="/rgpd-light" element={<RgpdLight />} />
             <Route path="/leads" element={<Leads />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route
               path="/admin/leads"
               element={
