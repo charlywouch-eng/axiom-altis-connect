@@ -292,10 +292,19 @@ export default function SignupLight() {
 
                     {/* Password */}
                     <div className="space-y-1.5">
-                      <Label htmlFor="password" className="text-sm font-semibold text-foreground">
-                        Mot de passe
-                        <span className="text-muted-foreground font-normal ml-1 text-xs">6 caractères min.</span>
-                      </Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="password" className="text-sm font-semibold text-foreground">
+                          Mot de passe
+                          <span className="text-muted-foreground font-normal ml-1 text-xs">6 caractères min.</span>
+                        </Label>
+                        <Link
+                          to="/login"
+                          state={{ forgotMode: true }}
+                          className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+                        >
+                          Mot de passe oublié ?
+                        </Link>
+                      </div>
                       <Input
                         id="password"
                         type="password"
