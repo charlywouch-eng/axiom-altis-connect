@@ -10,6 +10,7 @@ import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import dashboardHero from "@/assets/dashboard-hero.jpg";
+import heroFranceAfrique from "@/assets/hero-france-afrique.png";
 
 // ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -186,20 +187,20 @@ export default function Index() {
             >
               {/* Glow ring behind image */}
               <div className="absolute inset-0 rounded-3xl bg-accent/20 blur-2xl scale-110" />
-              <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-white/15">
+              <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-white/15 bg-white/5 backdrop-blur-sm">
                 <img
-                  src={dashboardHero}
-                  alt="Plateforme RH Tech France-Afrique — AXIOM ALTIS"
-                  className="w-full h-[520px] object-cover"
-                  style={{ mixBlendMode: "luminosity", filter: "brightness(0.88) contrast(1.08)" }}
+                  src={heroFranceAfrique}
+                  alt="Mixte de RH Tech Inovant — France Afrique AXIOM ALTIS"
+                  className="w-full h-[520px] object-contain p-6"
+                  style={{ filter: "drop-shadow(0 20px 40px rgba(6,182,212,0.25))" }}
                 />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/25 to-transparent" />
+                {/* Subtle overlay gradient at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent" />
                 {/* Brand label */}
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent mb-1.5">AXIOM × ALTIS Mobility</p>
                   <h2 className="text-white font-extrabold text-[22px] leading-tight tracking-tight">
-                    Plateforme RH Tech<br />France-Afrique
+                    Mixte de RH Tech Inovant<br />France-Afrique
                   </h2>
                   <div className="mt-3 flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />

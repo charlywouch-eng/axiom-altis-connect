@@ -481,9 +481,9 @@ export default function DashboardTalent() {
               <TabsContent value="dashboard" className="space-y-5 mt-0">
                 <motion.div variants={itemVariants}>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    <PremiumStatCard title="Offres disponibles" value={String(Math.max(totalOpenOffers, MOCK_RECOMMENDED_OFFERS.length))} subtitle="Postes actifs · Secteurs en forte tension" badge={{ label: "STABLE", variant: "success" }} icon={Briefcase} />
-                    <PremiumStatCard title="Score de compatibilité" value="78%" subtitle="BTP – Maçonnerie F1703 · Demande élevée" badge={{ label: "STABLE", variant: "success" }} icon={Star} />
-                    <PremiumStatCard title="Progression ALTIS" value={`${PROGRESS_PERCENT}%`} subtitle="4 étapes sur 6 · Formation en cours" badge={{ label: "EN COURS", variant: "warning" }} icon={TrendingUp} />
+                    <PremiumStatCard title="Offres disponibles" value={String(Math.max(totalOpenOffers, MOCK_RECOMMENDED_OFFERS.length))} subtitle="Postes actifs · Secteurs en forte tension" tensionLevel="low" tensionLabel="STABLE" icon={Briefcase} />
+                    <PremiumStatCard title="Score de compatibilité" value="78%" subtitle="BTP – Maçonnerie F1703 · Demande élevée" tensionLevel="low" tensionLabel="STABLE" icon={Star} />
+                    <PremiumStatCard title="Progression ALTIS" value={`${PROGRESS_PERCENT}%`} subtitle="4 étapes sur 6 · Formation en cours" tensionLevel="medium" tensionLabel="EN COURS" icon={TrendingUp} />
                   </div>
                 </motion.div>
               </TabsContent>
@@ -625,7 +625,7 @@ export default function DashboardTalent() {
                               <div className="flex items-start justify-between gap-2 flex-wrap">
                                 <div>
                                   <p className="text-sm font-semibold text-foreground">{String(offer.title ?? offer.intitule ?? "Offre")}</p>
-                                  <p className="text-xs text-muted-foreground">{String(offer.company ?? offer.entreprise?.nom ?? "Entreprise")} · {String(offer.location ?? offer.lieuTravail?.libelle ?? "France")}</p>
+                                  <p className="text-xs text-muted-foreground">{String((offer as any).company ?? (offer as any).entreprise?.nom ?? "Entreprise")} · {String((offer as any).location ?? (offer as any).lieuTravail?.libelle ?? "France")}</p>
                                 </div>
                                 <div className="flex flex-wrap gap-1 shrink-0">
                                   <Badge className={`text-[9px] px-1.5 py-0 border ${CONTRACT_COLORS[contract] ?? "bg-muted text-muted-foreground"}`}>{contract}</Badge>
