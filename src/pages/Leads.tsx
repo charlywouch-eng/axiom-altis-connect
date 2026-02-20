@@ -108,10 +108,35 @@ export default function Leads() {
     setStep("score");
   };
 
-  const handlePayment = () => {
-    const p = new URLSearchParams({ rome: form.metier, exp: form.experience, plan: "10" });
-    if (form.emailOrPhone.includes("@")) p.set("email", form.emailOrPhone);
-    window.location.href = `/signup-light?${p.toString()}`;
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const handlePayment = async () => {
+    setPaymentLoading(true);
+    try {
+      const email = form.emailOrPhone.includes("@") ? form.emailOrPhone : undefined;
+      const { data, error } = await supabase.functions.invoke("create-payment-lead", {
+        body: {
+          email,
+          metier: selectedSecteur?.label ?? form.metier,
+          rome_code: form.metier,
+          experience: form.experience,
+        },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("Aucune URL Stripe reçue");
+      }
+    } catch (err: any) {
+      toast({
+        title: "Erreur de paiement",
+        description: err.message ?? "Impossible d'initier le paiement. Réessayez.",
+        variant: "destructive",
+      });
+    } finally {
+      setPaymentLoading(false);
+    }
   };
 
   const { label: scoreLabel, color: scoreColor } = getScoreLabel(score);
@@ -450,10 +475,24 @@ export default function Leads() {
                 className="w-full h-12 font-bold text-sm rounded-xl mb-2"
                 style={{ background: "hsl(221,83%,53%)", color: "white" }}
                 onClick={handlePayment}
+                disabled={paymentLoading}
               >
-                <Zap className="mr-2 h-4 w-4" />
-                Débloquer pour 10 €
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {paymentLoading ? (
+                  <span className="flex items-center gap-2">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
+                      className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
+                    />
+                    Redirection Stripe…
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Zap className="h-4 w-4" />
+                    Débloquer pour 10 €
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                )}
               </Button>
 
               <Button
