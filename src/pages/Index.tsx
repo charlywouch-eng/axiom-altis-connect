@@ -298,8 +298,22 @@ export default function Index() {
       </section>
 
       {/* ── Trust Cards ──────────────────────────────────────── */}
-      <section className="bg-muted/40 py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-5 md:px-10">
+      <section className="relative overflow-hidden bg-muted/40 py-20 md:py-28">
+        {/* Brand image — decorative background */}
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <img
+            src={dashboardHero}
+            alt=""
+            aria-hidden="true"
+            className="absolute right-0 top-1/2 -translate-y-1/2 h-full w-auto max-w-[55%] object-cover opacity-[0.06] dark:opacity-[0.04]"
+            style={{ filter: "grayscale(100%) contrast(1.1)" }}
+          />
+          {/* Fade edges so it blends into section */}
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-muted/40 to-transparent" />
+          <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-muted/40 to-transparent" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-5 md:px-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
             <motion.h2 custom={0} variants={fadeUp} className="font-display text-3xl font-bold md:text-[40px]">
               Pourquoi choisir <span className="text-gradient-primary">AXIOM × ALTIS</span> ?
@@ -317,7 +331,7 @@ export default function Index() {
                   key={card.title}
                   custom={i}
                   variants={scaleIn}
-                  className="rounded-2xl border bg-card p-7 shadow-card transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+                  className="rounded-2xl border bg-card/90 backdrop-blur-sm p-7 shadow-card transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
                 >
                   <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/8 ${card.accent}`}>
                     <Icon className="h-6 w-6" />
