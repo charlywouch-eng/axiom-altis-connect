@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,10 +49,30 @@ const fadeUp = {
   visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.5, ease } }),
 };
 
+// ── Score map for ROME codes ───────────────────────────────────
+const ROME_BASE_SCORES: Record<string, number> = {
+  F1703: 88, J1501: 86, N1101: 81, G1602: 79,
+  I1304: 77, G1703: 76, D1212: 71, A1401: 73, M1607: 74,
+  N4101: 81, A1414: 73, M1805: 72, D1502: 71,
+};
+const EXP_BONUS: Record<string, number> = {
+  "0-1": 0, "0-2": 0, "1-3": 2, "2-5": 4, "3-5": 5, "5-10": 7, "10+": 10,
+};
+
 // ── Main Component ─────────────────────────────────────────────
 export default function SignupLight() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+
+  // ── Premium context from /payment-success redirect ─────────
+  const isPremium  = searchParams.get("premium") === "true";
+  const premiumRome = searchParams.get("rome") ?? "";
+  const premiumExp  = searchParams.get("exp")  ?? "";
+  const premiumSecteur = SECTEURS.find((s) => s.value === premiumRome || s.rome === premiumRome);
+  const premiumScore = Math.min(95,
+    (ROME_BASE_SCORES[premiumRome] ?? 75) + (EXP_BONUS[premiumExp] ?? 0)
+  );
 
   const [loading, setLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -62,8 +82,8 @@ export default function SignupLight() {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    secteur: "",
-    experience: "",
+    secteur: premiumRome || "",
+    experience: premiumExp || "",
   });
 
   const selectedSecteur = SECTEURS.find((s) => s.value === form.secteur);
@@ -175,14 +195,70 @@ export default function SignupLight() {
                 <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-success" />
 
                 <div className="p-7 sm:p-8">
+
+                  {/* ── Premium banner (visible only after Stripe payment) ── */}
+                  <AnimatePresence>
+                    {isPremium && premiumSecteur && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        className="mb-5 rounded-2xl overflow-hidden"
+                        style={{
+                          background: "linear-gradient(135deg, hsl(158 64% 10%) 0%, hsl(158 64% 7%) 100%)",
+                          border: "1px solid hsl(158 64% 38% / 0.45)",
+                          boxShadow: "0 4px 24px hsl(158 64% 38% / 0.12)",
+                        }}
+                      >
+                        {/* Green top bar */}
+                        <div className="h-0.5 w-full bg-gradient-to-r from-emerald-500 to-teal-400" />
+                        <div className="px-4 py-3.5 flex items-center gap-3">
+                          {/* Icon */}
+                          <div
+                            className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center"
+                            style={{ background: "hsl(158 64% 38% / 0.18)", border: "1px solid hsl(158 64% 38% / 0.35)" }}
+                          >
+                            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400" strokeWidth={2} />
+                          </div>
+                          {/* Text */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-emerald-400 leading-tight">
+                              ✓ Accès premium inclus — Analyse Complète débloquée
+                            </p>
+                            <p className="text-xs mt-0.5 text-emerald-200/60 truncate">
+                              {premiumSecteur.label}&nbsp;·&nbsp;Code ROME&nbsp;
+                              <span className="font-mono font-semibold text-emerald-300/80">{premiumRome}</span>
+                            </p>
+                          </div>
+                          {/* Score badge */}
+                          <div
+                            className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-xl"
+                            style={{ background: "hsl(158 64% 38% / 0.14)", border: "1px solid hsl(158 64% 38% / 0.3)" }}
+                          >
+                            <span className="text-base font-extrabold text-emerald-400 leading-none">{premiumScore}%</span>
+                            <span className="text-[9px] font-semibold text-emerald-400/60 uppercase tracking-wide leading-tight">match</span>
+                          </div>
+                        </div>
+                        {/* Footer hint */}
+                        <div className="px-4 pb-2.5">
+                          <p className="text-[10px] text-emerald-300/40">
+                            Créez votre compte pour accéder à votre analyse complète · Gratuit
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Header */}
                   <div className="text-center mb-7">
                     <div className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/20 rounded-full px-3 py-1 mb-4">
                       <Zap className="h-3 w-3 text-accent" />
-                      <span className="text-xs font-bold text-accent">Inscription gratuite · 45 secondes</span>
+                      <span className="text-xs font-bold text-accent">
+                        {isPremium ? "Complétez votre inscription · 30 secondes" : "Inscription gratuite · 45 secondes"}
+                      </span>
                     </div>
                     <h1 className="font-black text-2xl text-foreground tracking-tight">
-                      Votre score en France
+                      {isPremium ? "Activez votre compte premium" : "Votre score en France"}
                     </h1>
                     <p className="text-muted-foreground text-sm mt-1.5">
                       Score immédiat · Matching IA ROME certifié
