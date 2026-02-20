@@ -66,12 +66,19 @@ export default function SignupLight() {
   const [searchParams] = useSearchParams();
 
   // ── Premium context from /payment-success redirect ─────────
-  const isPremium  = searchParams.get("premium") === "true";
+  const isPremium   = searchParams.get("premium") === "true";
   const premiumRome = searchParams.get("rome") ?? "";
-  const premiumExp  = searchParams.get("exp")  ?? "";
+  const rawExp      = searchParams.get("exp")  ?? "";
+
+  // Map /leads exp brackets → /signup-light EXPERIENCE_OPTIONS values
+  const EXP_MAP: Record<string, string> = {
+    "0-2": "0-1", "2-5": "3-5", "5-10": "5-10", "10+": "10+",
+    "0-1": "0-1", "1-3": "1-3", "3-5": "3-5",
+  };
+  const premiumExp     = EXP_MAP[rawExp] ?? rawExp;
   const premiumSecteur = SECTEURS.find((s) => s.value === premiumRome || s.rome === premiumRome);
-  const premiumScore = Math.min(95,
-    (ROME_BASE_SCORES[premiumRome] ?? 75) + (EXP_BONUS[premiumExp] ?? 0)
+  const premiumScore   = Math.min(95,
+    (ROME_BASE_SCORES[premiumRome] ?? 75) + (EXP_BONUS[rawExp] ?? EXP_BONUS[premiumExp] ?? 0)
   );
 
   const [loading, setLoading] = useState(false);
