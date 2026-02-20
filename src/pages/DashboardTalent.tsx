@@ -248,6 +248,8 @@ export default function DashboardTalent() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const handleUnlockPayment = async () => {
     setPaymentLoading(true);
@@ -416,6 +418,10 @@ export default function DashboardTalent() {
         french_level: profile.french_level || MOCK_PROFILE_DATA.french_level,
         skills: profile.skills?.join(", ") || MOCK_PROFILE_DATA.skills.join(", "),
       });
+      // Initialise l'avatar depuis le profil (sans écraser une prévisualisation locale)
+      if (profile.avatar_url && !avatarPreview) {
+        setAvatarPreview(profile.avatar_url);
+      }
     } else if (!isLoading) {
       setForm({
         full_name: MOCK_PROFILE_DATA.full_name,
@@ -424,7 +430,7 @@ export default function DashboardTalent() {
         skills: MOCK_PROFILE_DATA.skills.join(", "),
       });
     }
-  }, [profile, isLoading]);
+  }, [profile, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateProfile = useMutation({
     mutationFn: async () => {
@@ -492,6 +498,47 @@ export default function DashboardTalent() {
       title: "Demande envoyée",
       description: "Notre DPO traitera votre demande de suppression sous 30 jours.",
     });
+  };
+
+  // ── Avatar upload ─────────────────────────────────────────
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Immediate local preview
+    const localUrl = URL.createObjectURL(file);
+    setAvatarPreview(localUrl);
+    setAvatarUploading(true);
+
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const filePath = `${user.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true, contentType: file.type });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      setAvatarPreview(publicUrl);
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast({ title: "Photo de profil mise à jour ✓" });
+    } catch (err: unknown) {
+      setAvatarPreview(null);
+      const msg = err instanceof Error ? err.message : "Erreur inattendue";
+      toast({ title: "Erreur upload", description: msg, variant: "destructive" });
+    } finally {
+      setAvatarUploading(false);
+    }
   };
 
   const displayName = profile?.full_name || MOCK_PROFILE_DATA.full_name;
@@ -1389,13 +1436,50 @@ export default function DashboardTalent() {
               <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
 
               <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-7">
-                {/* Avatar */}
-                <div className="relative shrink-0">
-                  <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center shadow-md">
-                    <span className="text-3xl font-extrabold text-primary">
-                      {displayName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
-                    </span>
-                  </div>
+                {/* Avatar uploadable */}
+                <div className="relative shrink-0 group">
+                  <label htmlFor="avatar-upload" className="cursor-pointer block">
+                    <div className="relative h-24 w-24 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-md">
+                      {/* Photo ou initiales */}
+                      {(avatarPreview || profile?.avatar_url || user?.user_metadata?.picture) ? (
+                        <img
+                          src={avatarPreview || profile?.avatar_url || user?.user_metadata?.picture}
+                          alt={displayName}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                          <span className="text-3xl font-extrabold text-primary">
+                            {displayName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      {/* Overlay caméra au survol */}
+                      <div className="absolute inset-0 bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
+                        {avatarUploading ? (
+                          <RefreshCw className="h-6 w-6 text-white animate-spin" />
+                        ) : (
+                          <div className="flex flex-col items-center gap-1">
+                            <div className="h-8 w-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                            </div>
+                            <span className="text-white text-[9px] font-semibold">Modifier</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </label>
+                  <input
+                    id="avatar-upload"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleAvatarUpload}
+                    disabled={avatarUploading}
+                  />
                   {/* Online dot */}
                   <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-background bg-success flex items-center justify-center">
                     <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
