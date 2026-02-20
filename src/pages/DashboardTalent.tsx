@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import dashboardHero from "@/assets/dashboard-hero.jpg";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -508,7 +509,7 @@ export default function DashboardTalent() {
               <div className="flex items-center gap-2.5">
                 <Sparkles className="h-4 w-4 text-accent shrink-0" />
                 <p className="text-sm font-medium text-foreground">
-                  <span className="font-bold text-accent">Premium 30 €</span> — Badge MINEFOP/MINREX officiel + visibilité x3 auprès des recruteurs
+                  <span className="font-bold text-accent">Certification Premium — 30 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
                 </p>
               </div>
               <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold">
@@ -517,47 +518,65 @@ export default function DashboardTalent() {
             </div>
           </motion.div>
 
-          {/* ── Header ─────────────────────────────────────────────── */}
+          {/* ── Header principal ────────────────────────────────────── */}
           <motion.div variants={itemVariants}>
             <div
-              className="relative overflow-hidden rounded-2xl p-6 text-white shadow-premium"
+              className="relative overflow-hidden rounded-2xl text-white shadow-premium"
               style={{ background: "var(--gradient-hero)" }}
             >
               <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
               <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-accent/15 blur-3xl" />
               <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-full bg-primary/25 blur-2xl" />
 
-              <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
+              <div className="relative flex flex-col sm:flex-row gap-0">
+                {/* Left: texte */}
+                <div className="flex-1 p-6 sm:p-7">
+                  <div className="flex items-center gap-2 mb-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
                       <User className="h-4 w-4 text-white" />
                     </div>
-                    <span className="text-white/65 text-sm font-medium">Mon Espace Talent</span>
+                    <span className="text-white/65 text-sm font-medium tracking-wide uppercase text-xs">Espace Candidat</span>
                   </div>
-                  <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight">
-                    Bienvenue, {displayName}
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight mb-1">
+                    Bonjour, {displayName}
                   </h1>
-                  <p className="text-white/60 text-sm mt-1.5">
-                    {displayCountry} · Français {displayFrench} · ROME F1703 / F1603
+                  <p className="text-white/60 text-sm mb-5">
+                    {displayCountry} · Français {displayFrench} · Code ROME F1703 / F1603
                   </p>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Badge className="bg-tension/25 text-white border border-tension/50 gap-1.5 px-3 py-1.5 text-xs font-bold backdrop-blur-sm">
+                      <Award className="h-3.5 w-3.5" />
+                      CERTIFIÉ MINEFOP
+                    </Badge>
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium">Parcours ALTIS</p>
+                        <p className="text-white font-extrabold text-xl leading-none">{PROGRESS_PERCENT}%</p>
+                      </div>
+                      <div className="w-20">
+                        <Progress
+                          value={PROGRESS_PERCENT}
+                          className="h-2 bg-white/20 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-accent [&>div]:to-white [&>div]:rounded-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col items-start sm:items-end gap-3 shrink-0">
-                  <Badge className="bg-tension/25 text-white border border-tension/50 gap-1.5 px-3 py-1.5 text-xs font-bold backdrop-blur-sm">
-                    <Award className="h-3.5 w-3.5" />
-                    CERTIFIÉ MINEFOP
-                  </Badge>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium">Parcours ALTIS</p>
-                      <p className="text-white font-extrabold text-2xl leading-none">{PROGRESS_PERCENT}%</p>
-                    </div>
-                    <div className="w-24">
-                      <Progress
-                        value={PROGRESS_PERCENT}
-                        className="h-2.5 bg-white/20 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-accent [&>div]:to-white [&>div]:rounded-full"
-                      />
-                    </div>
+
+                {/* Right: illustration brand */}
+                <div className="hidden sm:flex items-end justify-center w-56 shrink-0 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-l from-transparent to-primary/30" />
+                  <img
+                    src={dashboardHero}
+                    alt="Plateforme RH Tech innovante France-Afrique — AXIOM"
+                    className="w-full h-full object-cover object-center opacity-90 mix-blend-luminosity"
+                    style={{ maxHeight: "180px" }}
+                  />
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                    <span className="text-white/80 text-[9px] uppercase tracking-widest font-bold bg-black/30 rounded px-2 py-0.5 backdrop-blur-sm">
+                      Plateforme RH Tech France-Afrique
+                    </span>
                   </div>
                 </div>
               </div>
@@ -573,23 +592,23 @@ export default function DashboardTalent() {
                 value={totalOpenOffers > 0 ? String(totalOpenOffers) : "3"}
                 accent="blue"
                 tensionLevel="low"
-                subtitle="Postes ouverts · Métiers en tension"
+                subtitle="Postes actifs · Secteurs en forte tension"
               />
               <PremiumStatCard
                 icon={Star}
-                title="Score de matching"
+                title="Score de compatibilité"
                 value="78%"
                 accent="green"
                 tensionLevel="low"
-                subtitle="BTP – Maçon F1703 · Grande demande"
+                subtitle="BTP – Maçonnerie F1703 · Demande élevée"
               />
               <PremiumStatCard
                 icon={TrendingUp}
-                title="Parcours ALTIS"
+                title="Progression ALTIS"
                 value="60%"
                 tensionLevel="low"
                 tensionLabel="En cours"
-                subtitle="4/6 étapes complétées · Formation active"
+                subtitle="4 étapes sur 6 · Formation en cours"
               />
             </div>
           </motion.div>
@@ -607,13 +626,13 @@ export default function DashboardTalent() {
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                         <Plane className="h-4 w-4 text-primary" />
                       </div>
-                      Mon Parcours Relocation
+                      Mon Parcours de Relocation
                       <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-2 font-semibold">
                         ALTIS Mobility
                       </Badge>
                     </CardTitle>
                     <p className="text-sm text-muted-foreground mt-1.5 ml-10">
-                      4 étapes complétées sur 6 · Formation démarrée en cours
+                      4 étapes complétées sur 6 · Modèle intégré Visa · Transport · Logement · Intégration
                     </p>
                   </div>
                   <div className="text-right shrink-0">
@@ -776,11 +795,11 @@ export default function DashboardTalent() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        Débloquez la suite pour{" "}
-                        <span className="text-primary">10 € unique</span>
+                        Accédez à votre analyse complète pour{" "}
+                        <span className="text-primary">10 € — paiement unique</span>
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Score détaillé + matchs prioritaires · Pas d'abonnement, valeur immédiate
+                        Score approfondi · Matchs prioritaires · Parcours ALTIS complet · Sans abonnement
                       </p>
                     </div>
                   </div>
@@ -813,10 +832,10 @@ export default function DashboardTalent() {
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                           <Package className="h-4 w-4 text-primary" />
                         </div>
-                        Pack Zéro Stress — ALTIS Mobility
+                        Pack Zéro Stress · ALTIS Mobility
                       </CardTitle>
                       <p className="text-sm text-muted-foreground mt-1 ml-10">
-                        Suivi logistique complet · Visa · Transport · Logement · Formation
+                        Accompagnement logistique intégral · Visa ANEF · Transport · Hébergement · Dispositif de formation
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
@@ -900,15 +919,15 @@ export default function DashboardTalent() {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-bold text-primary">
-                        Visa ANEF en traitement
+                        Procédure ANEF en cours de traitement
                       </p>
                       <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                         Prochaine étape :{" "}
-                        <span className="font-semibold text-foreground">billet réservé</span>
+                        <span className="font-semibold text-foreground">réservation du billet d'avion</span>
                         {" "}·{" "}
-                        Éligible Pack ALTIS si score &gt;80 %{" "}
-                        <span className="inline-flex items-center gap-1 text-emerald-600 font-semibold ml-1">
-                          <CheckCircle2 className="h-3 w-3" /> Éligible (82 %)
+                        Éligibilité Pack ALTIS conditionnée à un score &gt; 80 %{" "}
+                        <span className="inline-flex items-center gap-1 text-success font-semibold ml-1">
+                          <CheckCircle2 className="h-3 w-3" /> Éligible — 82 %
                         </span>
                       </p>
                     </div>
@@ -927,15 +946,15 @@ export default function DashboardTalent() {
               <div className="h-1 w-full bg-gradient-to-r from-accent to-primary" />
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <CardTitle className="flex items-center gap-2">
+               <CardTitle className="flex items-center gap-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                       <Star className="h-4 w-4 text-primary" />
                     </div>
-                    Offres recommandées pour vous
+                    Opportunités sélectionnées pour votre profil
                   </CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1 font-medium">
-                      <Zap className="h-3 w-3" /> France Travail + FNE Cameroun
+                      <Zap className="h-3 w-3" /> France Travail · Partenaires AXIOM
                     </Badge>
                     {ftLoading && (
                       <RefreshCw className="h-3.5 w-3.5 text-muted-foreground animate-spin" />
@@ -943,11 +962,11 @@ export default function DashboardTalent() {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground ml-10">
-                  Basées sur vos compétences :{" "}
+                  Sélection basée sur vos compétences :{" "}
                   <span className="font-medium text-foreground">
                     {displaySkills.join(", ")}
                   </span>
-                  {" "}· Métiers en tension élevée France
+                  {" "}· Secteurs à forte tension en France métropolitaine
                 </p>
               </CardHeader>
 
@@ -1080,13 +1099,13 @@ export default function DashboardTalent() {
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                         <Sparkles className="h-4.5 w-4.5 h-[18px] w-[18px] text-primary" />
                       </div>
-                      <div>
+                       <div>
                         <p className="font-bold text-sm text-foreground">
-                          Débloquez plus d'offres pour{" "}
-                          <span className="text-primary">10 € unique</span>
+                          Accédez à l'intégralité de vos opportunités pour{" "}
+                          <span className="text-primary">10 € — paiement unique</span>
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          Accédez à vos matchs personnalisés & parcours ALTIS complet · Pas d'abonnement
+                          Score approfondi · Matchs personnalisés prioritaires · Parcours ALTIS complet · Sans abonnement
                         </p>
                       </div>
                     </div>
@@ -1096,19 +1115,19 @@ export default function DashboardTalent() {
                         size="sm"
                         className="text-muted-foreground text-xs hover:text-foreground"
                         onClick={() =>
-                          toast({ title: "Option gratuite", description: "Vous restez sur l'offre de base (3 matchs)." })
+                          toast({ title: "Accès gratuit maintenu", description: "Vous conservez l'accès limité à 3 correspondances." })
                         }
                       >
-                        Pas maintenant
+                        Continuer gratuitement
                       </Button>
                       <Button
                         size="sm"
                         className="bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5 shadow-sm"
                         onClick={() =>
-                          toast({ title: "Paiement 10 €", description: "Redirection vers le paiement sécurisé…" })
+                          toast({ title: "Paiement sécurisé — 10 €", description: "Redirection vers notre interface de paiement…" })
                         }
                       >
-                        Débloquer 10 €
+                        Débloquer l'accès complet
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Button>
                     </div>
@@ -1128,10 +1147,10 @@ export default function DashboardTalent() {
                       <Shield className="h-5 w-5 shrink-0 mt-0.5 text-primary-foreground/80" />
                       <div>
                         <p className="font-bold text-sm">
-                          Passez Premium (30 €) – Badge vérifié MINEFOP/MINREX
+                          Obtenez votre Badge Certifié MINEFOP/MINREX — 30 €
                         </p>
                         <p className="text-xs text-primary-foreground/70 mt-0.5">
-                          Visibilité ×3 auprès des recruteurs · Garantie opérationnel jour 1
+                          Visibilité prioritaire ×3 auprès des recruteurs partenaires · Garantie opérationnel dès le premier jour
                         </p>
                       </div>
                     </div>
@@ -1139,10 +1158,10 @@ export default function DashboardTalent() {
                       size="sm"
                       className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shrink-0 font-bold gap-1.5 shadow-sm"
                       onClick={() =>
-                        toast({ title: "Offre Premium 30 €", description: "Redirection vers l'espace facturation…" })
+                        toast({ title: "Certification Premium — 30 €", description: "Redirection vers l'espace de certification…" })
                       }
                     >
-                      Activer Premium
+                      Activer la Certification
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -1160,7 +1179,7 @@ export default function DashboardTalent() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                       <Building2 className="h-4 w-4 text-primary" />
                     </div>
-                    Entreprises qui recrutent probablement
+                    Entreprises partenaires à fort potentiel d'embauche
                   </CardTitle>
                   <div className="flex items-center gap-2">
                     <Badge className="bg-primary/10 text-primary border-primary/30 text-xs gap-1">
@@ -1172,7 +1191,7 @@ export default function DashboardTalent() {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground ml-10">
-                  Secteurs BTP · Santé · CHR — Fort potentiel d'embauche détecté par IA France Travail
+                  Secteurs BTP · Santé · CHR — Potentiel d'embauche analysé par l'IA France Travail
                 </p>
               </CardHeader>
               <CardContent>
