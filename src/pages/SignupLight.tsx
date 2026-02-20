@@ -56,6 +56,7 @@ export default function SignupLight() {
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const [step, setStep] = useState<"form" | "score">("form");
   const [rgpd, setRgpd] = useState(false);
 
@@ -106,6 +107,26 @@ export default function SignupLight() {
       toast({ title: "Erreur", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePremiumPayment = async () => {
+    setPaymentLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({ title: "Connexion requise", description: "Vérifiez votre email pour activer votre compte avant de payer.", variant: "destructive" });
+        setPaymentLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke("create-payment-talent", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (error || !data?.url) throw new Error(error?.message || "Erreur de paiement");
+      window.location.href = data.url;
+    } catch (err: any) {
+      toast({ title: "Erreur paiement", description: err.message, variant: "destructive" });
+      setPaymentLoading(false);
     }
   };
 
@@ -410,10 +431,17 @@ export default function SignupLight() {
                   <Button
                     size="lg"
                     className="w-full h-12 text-base rounded-xl font-bold shadow-md"
-                    onClick={() => navigate("/dashboard-talent")}
+                    onClick={handlePremiumPayment}
+                    disabled={paymentLoading}
                   >
-                    Débloquer pour 10 €
-                    <ChevronRight className="ml-1 h-4 w-4" />
+                    {paymentLoading ? (
+                      <span className="flex items-center gap-2">
+                        <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                        Redirection Stripe…
+                      </span>
+                    ) : (
+                      <>Débloquer pour 10 € <ChevronRight className="ml-1 h-4 w-4" /></>
+                    )}
                   </Button>
                   <p className="text-center text-xs text-muted-foreground mt-3">
                     <button

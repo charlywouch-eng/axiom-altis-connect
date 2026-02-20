@@ -29,23 +29,58 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Verify webhook signature
     const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
 
-    // Handle checkout.session.completed event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as any;
+      const { offer_id, user_id, payment_type } = session.metadata || {};
 
-      // Get metadata from the session
-      const { offer_id, user_id } = session.metadata || {};
+      const supabaseClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      );
 
-      if (offer_id && user_id) {
-        const supabaseClient = createClient(
-          Deno.env.get("SUPABASE_URL") ?? "",
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-        );
+      // ── Paiement "Analyse Complète" 10€ talent ──────────────────
+      if (payment_type === "analyse_complete" && user_id) {
+        // Upsert talent_profile with premium flag
+        const { data: existingProfile } = await supabaseClient
+          .from("talent_profiles")
+          .select("id")
+          .eq("user_id", user_id)
+          .maybeSingle();
 
-        // Update offer status to "filled"
+        if (existingProfile) {
+          const { error } = await supabaseClient
+            .from("talent_profiles")
+            .update({ is_premium: true, premium_unlocked_at: new Date().toISOString() })
+            .eq("user_id", user_id);
+
+          if (error) {
+            console.error("Error updating premium flag:", error);
+            throw error;
+          }
+        } else {
+          // Create profile if it doesn't exist yet
+          const { error } = await supabaseClient
+            .from("talent_profiles")
+            .insert({
+              user_id,
+              is_premium: true,
+              premium_unlocked_at: new Date().toISOString(),
+              visa_status: "en_attente",
+            });
+
+          if (error) {
+            console.error("Error inserting premium talent profile:", error);
+            throw error;
+          }
+        }
+
+        console.log(`Premium unlocked for user ${user_id}`);
+      }
+
+      // ── Paiement success fee entreprise (offre) ──────────────────
+      if (offer_id && user_id && payment_type !== "analyse_complete") {
         const { error: updateError } = await supabaseClient
           .from("job_offers")
           .update({ status: "filled" })

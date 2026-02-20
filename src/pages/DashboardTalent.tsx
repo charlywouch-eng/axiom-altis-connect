@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -240,6 +241,7 @@ export default function DashboardTalent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const location = useLocation();
   const [editing, setEditing] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
@@ -249,6 +251,19 @@ export default function DashboardTalent() {
     french_level: "",
     skills: "",
   });
+
+  // Detect premium=true redirect from Stripe
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("premium") === "true") {
+      toast({
+        title: "🎉 Analyse Complète débloquée !",
+        description: "Score détaillé, offres France Travail et parcours ALTIS maintenant accessibles.",
+      });
+      // Clean URL
+      window.history.replaceState({}, "", "/dashboard-talent");
+    }
+  }, [location.search, toast]);
 
   // On mount: if a pending profile from signup step 2 exists, save it to talent_profiles
   useEffect(() => {
