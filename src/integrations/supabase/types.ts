@@ -289,6 +289,8 @@ export type Database = {
           full_name: string | null
           id: string
           import_id: string | null
+          is_premium: boolean
+          premium_unlocked_at: string | null
           rome_code: string | null
           rome_label: string | null
           score: number | null
@@ -308,6 +310,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           import_id?: string | null
+          is_premium?: boolean
+          premium_unlocked_at?: string | null
           rome_code?: string | null
           rome_label?: string | null
           score?: number | null
@@ -327,6 +331,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           import_id?: string | null
+          is_premium?: boolean
+          premium_unlocked_at?: string | null
           rome_code?: string | null
           rome_label?: string | null
           score?: number | null

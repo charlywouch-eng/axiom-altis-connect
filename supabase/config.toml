@@ -3,6 +3,9 @@ project_id = "wfolueffkdzknuowwecf"
 [functions.create-payment]
 verify_jwt = false
 
+[functions.create-payment-talent]
+verify_jwt = false
+
 [functions.verify-diploma]
 verify_jwt = false
 
@@ -13,4 +16,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.rome-metier]
+verify_jwt = false
+
+[functions.stripe-webhook]
 verify_jwt = false
