@@ -62,6 +62,94 @@ const ROLES = [
   },
 ];
 
+function WelcomeScreen({ name }: { name?: string | null }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+      style={{ background: "linear-gradient(135deg, hsl(222,47%,7%) 0%, hsl(221,83%,14%) 100%)" }}
+    >
+      {/* Glow blobs */}
+      <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{ background: "hsl(189,94%,43%,0.10)" }} />
+      <div className="absolute bottom-1/4 right-1/3 w-64 h-64 rounded-full blur-3xl pointer-events-none" style={{ background: "hsl(221,83%,60%,0.10)" }} />
+
+      <motion.div
+        initial={{ scale: 0.85, opacity: 0, y: 24 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 flex flex-col items-center text-center px-8"
+      >
+        {/* Animated checkmark circle */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.15, duration: 0.5, type: "spring", stiffness: 200, damping: 14 }}
+          className="mb-6 flex h-20 w-20 items-center justify-center rounded-full"
+          style={{ background: "hsl(189,94%,43%,0.15)", border: "2px solid hsl(189,94%,43%,0.4)" }}
+        >
+          <motion.div
+            initial={{ scale: 0, rotate: -45 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.3, duration: 0.4, type: "spring" }}
+          >
+            <CheckCircle2 className="h-10 w-10" style={{ color: "hsl(189,94%,43%)" }} />
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, duration: 0.45 }}
+        >
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Zap className="h-4 w-4" style={{ color: "hsl(189,94%,43%)" }} />
+            <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: "hsl(189,94%,43%)" }}>
+              AXIOM × ALTIS
+            </span>
+          </div>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: "hsl(0,0%,100%)" }}>
+            Bienvenue{name ? `, ${name.split(" ")[0]}` : ""} !
+          </h1>
+          <p className="text-base mb-1" style={{ color: "hsl(215,25%,65%)" }}>
+            Votre espace Talent est prêt.
+          </p>
+          <p className="text-sm" style={{ color: "hsl(215,25%,45%)" }}>
+            Matching IA · Visa · Relocation ALTIS
+          </p>
+        </motion.div>
+
+        {/* Progress bar */}
+        <motion.div
+          className="mt-8 w-48 h-1 rounded-full overflow-hidden"
+          style={{ background: "hsl(0,0%,100%,0.08)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: "linear-gradient(90deg, hsl(189,94%,43%), hsl(221,83%,60%))" }}
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ delay: 0.55, duration: 0.9, ease: "easeInOut" }}
+          />
+        </motion.div>
+        <motion.p
+          className="mt-2 text-xs"
+          style={{ color: "hsl(215,25%,35%)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          Chargement de votre dashboard…
+        </motion.p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function OnboardingRole() {
   const { session, role, loading, user } = useAuth();
   const { toast } = useToast();
@@ -69,6 +157,8 @@ export default function OnboardingRole() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [showAdminInput, setShowAdminInput] = useState(false);
   const [adminCode, setAdminCode] = useState("");
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
 
   /* ─── guards ─── */
   if (loading) return null;
@@ -93,8 +183,22 @@ export default function OnboardingRole() {
       setSubmitting(false);
       return;
     }
+
     const dest = ROLES.find((r) => r.id === selectedRole)?.dest ?? "/dashboard";
-    window.location.href = dest;
+
+    if (selectedRole === "talent") {
+      // Fetch user display name if available
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      setUserName(profile?.full_name ?? user.email ?? null);
+      setShowWelcome(true);
+      setTimeout(() => { window.location.href = dest; }, 1600);
+    } else {
+      window.location.href = dest;
+    }
   };
 
   const handleAdminSubmit = async () => {
@@ -118,6 +222,10 @@ export default function OnboardingRole() {
   };
 
   return (
+    <>
+    <AnimatePresence>
+      {showWelcome && <WelcomeScreen name={userName} />}
+    </AnimatePresence>
     <div className="min-h-screen flex flex-col lg:flex-row" style={{ background: "linear-gradient(135deg, hsl(222,47%,7%) 0%, hsl(221,83%,14%) 100%)" }}>
 
       {/* ── Left panel: branding ── */}
@@ -360,5 +468,6 @@ export default function OnboardingRole() {
         </motion.div>
       </div>
     </div>
+    </>
   );
 }
