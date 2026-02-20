@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,13 +15,14 @@ const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 export default function Login() {
   const { session, loading } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
 
-  // Forgot password state
-  const [forgotMode, setForgotMode] = useState(false);
+  // Forgot password state — can be pre-activated via navigation state from /signup-light
+  const [forgotMode, setForgotMode] = useState((location.state as any)?.forgotMode === true);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
