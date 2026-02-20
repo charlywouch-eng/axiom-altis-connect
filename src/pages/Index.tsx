@@ -2,13 +2,14 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowRight, Mail, Shield, GraduationCap, CheckCircle2,
+  ArrowRight, Mail, Shield, CheckCircle2,
   Zap, Globe, Users, Clock, BarChart3, Plane, Star, Lock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import dashboardHero from "@/assets/dashboard-hero.jpg";
 
 // ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -95,83 +96,120 @@ export default function Index() {
           style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}
         />
         {/* Glow blobs */}
-        <div className="absolute top-1/4 right-0 w-[500px] h-[500px] rounded-full bg-accent/15 blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute top-1/4 right-0 w-[500px] h-[500px] rounded-full bg-accent/15 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-primary/20 blur-3xl pointer-events-none" />
 
-        <div className="relative mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-32">
-          <motion.div initial="hidden" animate="visible" className="max-w-3xl">
-            <motion.div custom={0} variants={fadeUp}>
-              <Badge className="mb-8 border-white/20 text-white/80 bg-white/8 px-4 py-2 text-xs font-semibold tracking-wider gap-2">
-                <Globe className="h-3.5 w-3.5" />
-                Infrastructure souveraine France — Cameroun
-              </Badge>
-            </motion.div>
+        <div className="relative mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-32 w-full">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
-            <motion.h1
-              custom={1} variants={fadeUp}
-              className="text-[38px] font-extrabold leading-[1.06] text-white sm:text-[50px] md:text-[60px] tracking-tight"
-            >
-              9 métiers en{" "}
-              <span className="relative">
-                <span className="text-gradient-accent">pénurie en France</span>
-              </span>{" "}
-              vous attendent
-            </motion.h1>
+            {/* ── Left: Copy ───────────────────────────────────── */}
+            <motion.div initial="hidden" animate="visible" className="flex-1 max-w-2xl">
+              <motion.div custom={0} variants={fadeUp}>
+                <Badge className="mb-8 border-white/20 text-white/80 bg-white/8 px-4 py-2 text-xs font-semibold tracking-wider gap-2">
+                  <Globe className="h-3.5 w-3.5" />
+                  Infrastructure souveraine France — Cameroun
+                </Badge>
+              </motion.div>
 
-            <motion.p
-              custom={2} variants={fadeUp}
-              className="mt-6 max-w-2xl text-lg text-white/70 leading-relaxed md:text-xl"
-            >
-              Matching IA + visa + billet d'avion + logement pris en charge.{" "}
-              <strong className="text-white/90">Opérationnel dès le Jour 1.</strong>
-            </motion.p>
+              <motion.h1
+                custom={1} variants={fadeUp}
+                className="text-[36px] font-extrabold leading-[1.06] text-white sm:text-[46px] md:text-[54px] tracking-tight"
+              >
+                9 métiers en{" "}
+                <span className="relative">
+                  <span className="text-gradient-accent">pénurie en France</span>
+                </span>{" "}
+                vous attendent
+              </motion.h1>
 
-            {/* Proof points */}
-            <motion.div custom={3} variants={fadeUp} className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
-              {["Gratuit depuis le Cameroun", "Certifications MINEFOP reconnues", "Scores vérifiés en 30 sec", "Visa & logement inclus"].map((item) => (
-                <span key={item} className="flex items-center gap-1.5 text-sm text-white/55">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
-                  {item}
-                </span>
-              ))}
-            </motion.div>
+              <motion.p
+                custom={2} variants={fadeUp}
+                className="mt-6 max-w-xl text-lg text-white/70 leading-relaxed md:text-xl"
+              >
+                Matching IA + visa + billet d'avion + logement pris en charge.{" "}
+                <strong className="text-white/90">Opérationnel dès le Jour 1.</strong>
+              </motion.p>
 
-            {/* CTAs */}
-            <motion.div custom={4} variants={fadeUp} className="mt-12 flex flex-col gap-4 sm:flex-row">
-              <Link to="/signup-light">
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto text-base px-8 py-6 h-auto rounded-2xl font-bold shadow-xl shadow-primary/30 bg-primary hover:bg-primary/90 border-0"
-                >
-                  Commencer gratuitement (Cameroun) <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto text-base px-8 py-6 h-auto rounded-2xl font-semibold border-2 border-white/50 bg-white/10 text-white hover:bg-white/20 hover:border-white/70 backdrop-blur-sm transition-all"
-                >
-                  <Users className="mr-2 h-5 w-5" />
-                  Recrutez des talents certifiés
-                </Button>
-              </Link>
-            </motion.div>
-
-            {/* Social proof micro */}
-            <motion.div custom={5} variants={fadeUp} className="mt-10 flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {["🇨🇲", "🇸🇳", "🇨🇮", "🇬🇳"].map((flag, i) => (
-                  <div key={i} className="h-8 w-8 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-base backdrop-blur-sm">
-                    {flag}
-                  </div>
+              {/* Proof points */}
+              <motion.div custom={3} variants={fadeUp} className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+                {["Gratuit depuis le Cameroun", "Certifications MINEFOP reconnues", "Scores vérifiés en 30 sec", "Visa & logement inclus"].map((item) => (
+                  <span key={item} className="flex items-center gap-1.5 text-sm text-white/55">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
+                    {item}
+                  </span>
                 ))}
-              </div>
-              <p className="text-sm text-white/55">
-                <span className="text-white/80 font-semibold">500+ talents</span> inscrits · 98 % de rétention
-              </p>
+              </motion.div>
+
+              {/* CTAs */}
+              <motion.div custom={4} variants={fadeUp} className="mt-12 flex flex-col gap-4 sm:flex-row">
+                <Link to="/signup-light">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto text-base px-8 py-6 h-auto rounded-2xl font-bold shadow-xl shadow-primary/30 bg-primary hover:bg-primary/90 border-0"
+                  >
+                    Commencer gratuitement (Cameroun) <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto text-base px-8 py-6 h-auto rounded-2xl font-semibold border-2 border-white/50 bg-white/10 text-white hover:bg-white/20 hover:border-white/70 backdrop-blur-sm transition-all"
+                  >
+                    <Users className="mr-2 h-5 w-5" />
+                    Recrutez des talents certifiés
+                  </Button>
+                </Link>
+              </motion.div>
+
+              {/* Social proof micro */}
+              <motion.div custom={5} variants={fadeUp} className="mt-10 flex items-center gap-4">
+                <div className="flex -space-x-2">
+                  {["🇨🇲", "🇸🇳", "🇨🇮", "🇬🇳"].map((flag, i) => (
+                    <div key={i} className="h-8 w-8 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-base backdrop-blur-sm">
+                      {flag}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-white/55">
+                  <span className="text-white/80 font-semibold">500+ talents</span> inscrits · 98 % de rétention
+                </p>
+              </motion.div>
             </motion.div>
-          </motion.div>
+
+            {/* ── Right: Brand Image ───────────────────────────── */}
+            <motion.div
+              initial={{ opacity: 0, x: 40, scale: 0.96 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="hidden lg:flex flex-shrink-0 w-[420px] xl:w-[480px] items-center justify-center relative"
+            >
+              {/* Glow ring behind image */}
+              <div className="absolute inset-0 rounded-3xl bg-accent/20 blur-2xl scale-110" />
+              <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-white/15">
+                <img
+                  src={dashboardHero}
+                  alt="Plateforme RH Tech France-Afrique — AXIOM ALTIS"
+                  className="w-full h-[520px] object-cover"
+                  style={{ mixBlendMode: "luminosity", filter: "brightness(0.88) contrast(1.08)" }}
+                />
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/25 to-transparent" />
+                {/* Brand label */}
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent mb-1.5">AXIOM × ALTIS Mobility</p>
+                  <h2 className="text-white font-extrabold text-[22px] leading-tight tracking-tight">
+                    Plateforme RH Tech<br />France-Afrique
+                  </h2>
+                  <div className="mt-3 flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                    <span className="text-xs text-white/70 font-medium">Infrastructure souveraine · Certifiée MINEFOP</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
         </div>
 
         {/* Bottom fade */}
