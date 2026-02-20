@@ -22,6 +22,7 @@ import AdminOffres from "./pages/AdminOffres";
 import AdminSubventions from "./pages/AdminSubventions";
 import AdminImportTalents from "./pages/AdminImportTalents";
 import AdminStatistics from "./pages/AdminStatistics";
+import AdminLeads from "./pages/AdminLeads";
 import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
@@ -29,6 +30,7 @@ import DashboardRecruteur from "./pages/DashboardRecruteur";
 import ResetPassword from "./pages/ResetPassword";
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
+import Leads from "./pages/Leads";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -163,6 +165,15 @@ const App = () => (
             />
             <Route path="/rgpd" element={<Rgpd />} />
             <Route path="/rgpd-light" element={<RgpdLight />} />
+            <Route path="/leads" element={<Leads />} />
+            <Route
+              path="/admin/leads"
+              element={
+                <ProtectedRoute>
+                  <AdminLeads />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
