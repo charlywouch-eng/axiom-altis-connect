@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -602,6 +603,48 @@ export default function DashboardTalent() {
             </div>
           </motion.div>
 
+          {/* ── Navigation par rubriques ─────────────────────────────── */}
+          <motion.div variants={itemVariants}>
+            <Tabs defaultValue="dashboard" className="w-full">
+              <TabsList className="w-full sm:w-auto grid grid-cols-4 sm:flex h-auto gap-1 bg-muted/60 p-1 rounded-xl mb-6">
+                <TabsTrigger
+                  value="dashboard"
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+                >
+                  <Zap className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                  <span className="sm:hidden">Accueil</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="parcours"
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+                >
+                  <Plane className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Mon Parcours</span>
+                  <span className="sm:hidden">Parcours</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="opportunites"
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+                >
+                  <Star className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Opportunités</span>
+                  <span className="sm:hidden">Offres</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="profil"
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+                >
+                  <User className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Mon Profil</span>
+                  <span className="sm:hidden">Profil</span>
+                </TabsTrigger>
+              </TabsList>
+
+              {/* ══════════════════════════════════════════════════════════ */}
+              {/* TAB 1 — DASHBOARD                                         */}
+              {/* ══════════════════════════════════════════════════════════ */}
+              <TabsContent value="dashboard" className="space-y-5 mt-0">
           {/* ── KPIs ────────────────────────────────────────────────── */}
           <motion.div variants={itemVariants}>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -631,6 +674,13 @@ export default function DashboardTalent() {
               />
             </div>
           </motion.div>
+
+              </TabsContent>
+
+              {/* ══════════════════════════════════════════════════════════ */}
+              {/* TAB 2 — MON PARCOURS DE RELOCATION                        */}
+              {/* ══════════════════════════════════════════════════════════ */}
+              <TabsContent value="parcours" className="space-y-5 mt-0">
 
           {/* ── Mon Parcours Relocation (Timeline ALTIS) ────────────── */}
           <motion.div variants={itemVariants}>
@@ -958,6 +1008,13 @@ export default function DashboardTalent() {
               </div>
             </Card>
           </motion.div>
+
+              </TabsContent>
+
+              {/* ══════════════════════════════════════════════════════════ */}
+              {/* TAB 3 — OPPORTUNITÉS                                       */}
+              {/* ══════════════════════════════════════════════════════════ */}
+              <TabsContent value="opportunites" className="space-y-5 mt-0">
 
           {/* ── Offres recommandées ─────────────────────────────────── */}
           <motion.div variants={itemVariants}>
@@ -1312,6 +1369,13 @@ export default function DashboardTalent() {
             </Card>
           </motion.div>
 
+              </TabsContent>
+
+              {/* ══════════════════════════════════════════════════════════ */}
+              {/* TAB 4 — MON PROFIL                                         */}
+              {/* ══════════════════════════════════════════════════════════ */}
+              <TabsContent value="profil" className="space-y-5 mt-0">
+
           {/* ── Mon Profil enrichi (3 fiches) ──────────────────────── */}
           <motion.div variants={itemVariants}>
             <Card className="overflow-hidden shadow-sm">
@@ -1575,6 +1639,12 @@ export default function DashboardTalent() {
               </CardContent>
             </Card>
           </motion.div>
+
+              </TabsContent>
+
+            </Tabs>
+          </motion.div>
+
         </motion.div>
 
         {/* ── Delete dialog ──────────────────────────────────────── */}
