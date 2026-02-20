@@ -246,6 +246,25 @@ export default function DashboardTalent() {
   const [editing, setEditing] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const handleUnlockPayment = async () => {
+    setPaymentLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment-talent");
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("URL de paiement introuvable");
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erreur inattendue";
+      toast({ title: "Erreur de paiement", description: message, variant: "destructive" });
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
   const [form, setForm] = useState({
     full_name: "",
     country: "",
@@ -1123,12 +1142,11 @@ export default function DashboardTalent() {
                       <Button
                         size="sm"
                         className="bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5 shadow-sm"
-                        onClick={() =>
-                          toast({ title: "Paiement sécurisé — 10 €", description: "Redirection vers notre interface de paiement…" })
-                        }
+                        onClick={handleUnlockPayment}
+                        disabled={paymentLoading}
                       >
-                        Débloquer l'accès complet
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        {paymentLoading ? "Redirection…" : "Débloquer l'accès complet"}
+                        {!paymentLoading && <ArrowRight className="h-3.5 w-3.5" />}
                       </Button>
                     </div>
                   </div>
