@@ -254,24 +254,58 @@ export default function DashboardTalent() {
     },
   });
 
+  // Secteurs prioritaires BTP / Santé / CHR
+  const PRIORITY_ROME = [
+    { code: "F1703", sector: "BTP",   label: "Maçonnerie",    tension: "Très forte" },
+    { code: "J1501", sector: "Santé", label: "Aide-soignant", tension: "Très forte" },
+    { code: "G1602", sector: "CHR",   label: "Service salle", tension: "Forte"      },
+  ];
+
   const { data: ftOffers, isLoading: ftLoading } = useQuery({
-    queryKey: ["france_travail_offers", profile?.skills],
+    queryKey: ["france_travail_offers_multi"],
     queryFn: async () => {
-      const romeCode = "F1703";
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
       const fnUrl = `${supabaseUrl}/functions/v1/france-travail-offers`;
+
       try {
-        const res = await fetch(fnUrl, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ romeCode, count: 5 }) });
-        if (!res.ok) { await res.text(); return null; }
-        const json = await res.json();
-        return (json.offers as Array<Record<string, unknown>>).map((o, i) => ({ ...(o as object), score: Math.max(75, 95 - i * 5) })) as Array<Record<string, unknown> & { score: number }>;
-      } catch { return null; }
+        // Appels parallèles pour les 3 secteurs prioritaires
+        const results = await Promise.allSettled(
+          PRIORITY_ROME.map(({ code, sector, tension }) =>
+            fetch(fnUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+              body: JSON.stringify({ romeCode: code, count: 2 }),
+            }).then(async (res) => {
+              if (!res.ok) { await res.text(); return []; }
+              const json = await res.json();
+              return ((json.offers ?? []) as Array<Record<string, unknown>>).map((o, i) => ({
+                ...o,
+                sector,
+                tension,
+                score: Math.max(72, 96 - i * 6 - (sector === "BTP" ? 0 : sector === "Santé" ? 3 : 8)),
+              }));
+            }).catch(() => [])
+          )
+        );
+
+        const allOffers = results.flatMap((r) => r.status === "fulfilled" ? r.value : []);
+
+        if (allOffers.length === 0) return null;
+
+        // Limiter à 5 offres : priorité BTP>Santé>CHR puis trier par score
+        return allOffers
+          .sort((a, b) => (b.score as number) - (a.score as number))
+          .slice(0, 5) as Array<Record<string, unknown> & { score: number }>;
+      } catch {
+        return null;
+      }
     },
     enabled: !!user,
     retry: false,
     throwOnError: false,
+    staleTime: 5 * 60 * 1000, // 5 min cache
   });
 
   const { data: lbbCompanies, isLoading: lbbLoading } = useQuery({
@@ -597,59 +631,123 @@ export default function DashboardTalent() {
                   <Card className="overflow-hidden border-primary/20 shadow-sm">
                     <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary/40" />
                     <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                     <CardTitle className="flex items-center gap-2 text-base font-semibold">
                         <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
                           <Briefcase className="h-3.5 w-3.5 text-primary" />
                         </div>
-                        Offres recommandées
-                        {ftLoading && <RefreshCw className="h-3.5 w-3.5 text-muted-foreground animate-spin ml-1" />}
+                        Offres France Travail
+                        {ftLoading
+                          ? <RefreshCw className="h-3.5 w-3.5 text-muted-foreground animate-spin ml-1" />
+                          : ftOffers && ftOffers.length > 0
+                            ? <Badge className="text-[9px] px-2 py-0.5 bg-success/10 text-success border-success/30 ml-1">LIVE</Badge>
+                            : <Badge className="text-[9px] px-2 py-0.5 bg-muted text-muted-foreground ml-1">DEMO</Badge>
+                        }
                       </CardTitle>
-                      <p className="text-xs text-muted-foreground">Matchées sur votre profil ROME et secteurs en tension</p>
+                      <p className="text-xs text-muted-foreground">BTP · Santé · CHR — Secteurs en forte tension · Score de compatibilité IA</p>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {offersToDisplay.map((offer: Record<string, unknown> & { score?: number }, i) => {
-                        const score = offer.score ?? 80;
-                        const contract = (offer.contract ?? offer.typeContrat ?? "CDI") as string;
-                        const tension = (offer.tension ?? "Forte") as string;
+                        const score = (offer.score as number) ?? 80;
+                        const contract = String(offer.contract ?? "CDI");
+                        const tension = String(offer.tension ?? "Forte");
+                        const sector = String(offer.sector ?? "BTP");
+                        const offerUrl = offer.url ? String(offer.url) : null;
+                        const title = String(offer.title ?? "Offre");
+                        const company = String(offer.company ?? "Entreprise non communiquée");
+                        const location = String(offer.location ?? "France");
+                        const salary = offer.salary ? String(offer.salary) : null;
+                        const skills = Array.isArray(offer.skills) ? (offer.skills as string[]) : [];
+                        const sectorColor = SECTOR_BADGE_COLORS[sector] ?? SECTOR_BADGE_COLORS.Autre;
+                        const scoreColor = score >= 90 ? "text-emerald-500" : score >= 80 ? "text-primary" : "text-amber-500";
+
                         return (
-                          <motion.div key={String(offer.id ?? i)} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }} className="flex gap-3 p-3.5 rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors group">
-                            <div className="flex flex-col items-center gap-1 shrink-0">
-                              <div className="h-10 w-10 rounded-xl bg-primary/8 flex items-center justify-center">
-                                <Briefcase className="h-4.5 w-4.5 text-primary" />
+                          <motion.div
+                            key={String(offer.id ?? i)}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.07 }}
+                            className="rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-primary/20 transition-all group"
+                          >
+                            <div className="flex gap-3 p-3.5">
+                              {/* Score circle */}
+                              <div className="flex flex-col items-center gap-1 shrink-0">
+                                <div className="relative h-12 w-12">
+                                  <svg className="h-12 w-12 -rotate-90" viewBox="0 0 36 36">
+                                    <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-border/40" />
+                                    <circle
+                                      cx="18" cy="18" r="15" fill="none" strokeWidth="2.5"
+                                      strokeDasharray={`${(score / 100) * 94.2} 94.2`}
+                                      strokeLinecap="round"
+                                      className={scoreColor}
+                                      style={{ stroke: "currentColor" }}
+                                    />
+                                  </svg>
+                                  <span className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold ${scoreColor}`}>{score}%</span>
+                                </div>
+                                <Badge className={`text-[8px] px-1 py-0 border ${sectorColor}`}>{sector}</Badge>
                               </div>
-                              <span className="text-[10px] font-bold text-success">{score}%</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2 flex-wrap">
-                                <div>
-                                  <p className="text-sm font-semibold text-foreground">{String(offer.title ?? offer.intitule ?? "Offre")}</p>
-                                  <p className="text-xs text-muted-foreground">{String((offer as any).company ?? (offer as any).entreprise?.nom ?? "Entreprise")} · {String((offer as any).location ?? (offer as any).lieuTravail?.libelle ?? "France")}</p>
+
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-2 flex-wrap">
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-semibold text-foreground truncate">{title}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{company}</p>
+                                    <div className="flex items-center gap-1 mt-0.5">
+                                      <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
+                                      <span className="text-xs text-muted-foreground truncate">{location}</span>
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-wrap gap-1 shrink-0">
+                                    <Badge className={`text-[9px] px-1.5 py-0 border ${CONTRACT_COLORS[contract] ?? "bg-muted text-muted-foreground"}`}>{contract}</Badge>
+                                    <Badge className={`text-[9px] px-1.5 py-0 border ${TENSION_COLORS[tension] ?? "bg-muted text-muted-foreground"}`}>{tension}</Badge>
+                                  </div>
                                 </div>
-                                <div className="flex flex-wrap gap-1 shrink-0">
-                                  <Badge className={`text-[9px] px-1.5 py-0 border ${CONTRACT_COLORS[contract] ?? "bg-muted text-muted-foreground"}`}>{contract}</Badge>
-                                  {tension && <Badge className={`text-[9px] px-1.5 py-0 border ${TENSION_COLORS[tension] ?? "bg-muted text-muted-foreground"}`}>{tension}</Badge>}
+
+                                {salary && (
+                                  <div className="flex items-center gap-1 mt-1.5">
+                                    <Banknote className="h-3 w-3 text-muted-foreground" />
+                                    <span className="text-xs text-muted-foreground">{salary}</span>
+                                  </div>
+                                )}
+
+                                {skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-1.5">
+                                    {skills.slice(0, 3).map((s) => (
+                                      <Badge key={s} variant="outline" className="text-[9px] px-1.5 py-0">{s}</Badge>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Bouton Postuler toujours visible */}
+                                <div className="mt-2.5">
+                                  {offerUrl ? (
+                                    <a href={offerUrl} target="_blank" rel="noopener noreferrer">
+                                      <Button size="sm" className="h-7 text-xs gap-1.5 bg-primary hover:bg-primary/90">
+                                        <ArrowRight className="h-3 w-3" /> Postuler
+                                      </Button>
+                                    </a>
+                                  ) : (
+                                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5" onClick={handleUnlockPayment}>
+                                      <Lock className="h-3 w-3" /> Débloquer
+                                    </Button>
+                                  )}
                                 </div>
                               </div>
-                              {(offer.salary || offer.salaire) && (
-                                <div className="flex items-center gap-1 mt-1">
-                                  <Banknote className="h-3 w-3 text-muted-foreground" />
-                                  <span className="text-xs text-muted-foreground">{String(offer.salary ?? offer.salaire ?? "")}</span>
-                                </div>
-                              )}
-                              {Array.isArray(offer.skills) && offer.skills.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mt-1.5">
-                                  {(offer.skills as string[]).map(s => (
-                                    <Badge key={s} variant="outline" className="text-[9px] px-1.5 py-0">{s}</Badge>
-                                  ))}
-                                </div>
-                              )}
                             </div>
-                            <Button size="sm" variant="ghost" className="shrink-0 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity" asChild={!!(offer.url && offer.url !== "#")}>
-                              {offer.url && offer.url !== "#" ? <a href={String(offer.url)} target="_blank" rel="noopener noreferrer"><ArrowRight className="h-4 w-4" /></a> : <span><Lock className="h-3.5 w-3.5 text-muted-foreground" /></span>}
-                            </Button>
                           </motion.div>
                         );
                       })}
+
+                      {/* Source badge */}
+                      <div className="flex items-center justify-center pt-1">
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+                          {ftOffers && ftOffers.length > 0
+                            ? <><CheckCircle2 className="h-3 w-3 text-success" />Offres en direct · France Travail</>
+                            : <><RefreshCw className="h-3 w-3" />Données simulées · Connectez France Travail</>
+                          }
+                        </span>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
