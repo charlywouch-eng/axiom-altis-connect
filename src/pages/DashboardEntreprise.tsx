@@ -578,7 +578,7 @@ export default function DashboardEntreprise() {
                       <TableBody>
                         {[
                           { name: "Découverte", price: "Gratuit", profiles: "3 profils", features: "Accès matching IA · Score compatibilité · Aperçu CV", cta: "Actif", highlight: false, badge: null },
-                          { name: "Premium", price: "699 €/mois", profiles: "Illimité", features: "Matching avancé · Filtres ROME · Contacts directs · Support prioritaire", cta: "Souscrire", highlight: true, badge: "Recommandé" },
+                          { name: "Premium", price: "399 €/mois", profiles: "Illimité", features: "Matching avancé · Filtres ROME · Contacts directs · Support prioritaire", cta: "Souscrire", highlight: true, badge: "Recommandé" },
                           { name: "Success Fee", price: "25 % du brut annuel", profiles: "À la demande", features: "Paiement au résultat · Garantie remplacement 3 mois", cta: "Contacter", highlight: false, badge: null },
                           { name: "ALTIS Intégral", price: "1 200 €/talent", profiles: "Par talent", features: "Visa + billet + logement meublé 3 mois · Formation normes FR incluse", cta: "En savoir +", highlight: false, badge: "Pack complet" },
                         ].map(({ name, price, profiles, features, cta, highlight, badge }) => (
