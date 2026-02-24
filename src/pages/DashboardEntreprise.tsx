@@ -55,6 +55,7 @@ import { OfferFormDialog, type OfferFormData } from "@/components/OfferFormDialo
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import { RecruitmentPipeline } from "@/components/RecruitmentPipeline";
 import { motion } from "framer-motion";
+import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 import VerifiedTalentsTab from "@/components/dashboard/VerifiedTalentsTab";
 import { CandidateMatchCard } from "@/components/dashboard/CandidateMatchCard";
 import {
@@ -317,7 +318,12 @@ export default function DashboardEntreprise() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="relative overflow-hidden rounded-2xl text-white shadow-premium bg-hero-gradient">
+          <div className="relative overflow-hidden rounded-2xl text-white shadow-premium">
+            {/* Tech network background */}
+            <div className="absolute inset-0">
+              <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-[hsl(222,47%,6%)]/80" />
+            </div>
             <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
             <div className="absolute -right-12 -top-12 h-52 w-52 rounded-full bg-accent/15 blur-3xl" />
             <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-primary/25 blur-2xl" />
