@@ -69,13 +69,13 @@ export default function Index() {
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/8 bg-[hsl(222,47%,8%)]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 md:px-10">
           <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+            <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
               <span className="text-white font-black text-xs">A</span>
             </div>
             <span className="font-black text-xl tracking-tight text-white">AXIOM</span>
             <span className="hidden sm:inline text-xs font-medium text-white/40 border-l border-white/15 pl-2.5 ml-0.5">× ALTIS Mobility</span>
           </div>
-          <nav className="flex items-center gap-1.5">
+          <nav className="flex items-center gap-2">
             <ThemeToggle />
             <Link to="/metiers-en-tension" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               Métiers en tension
@@ -84,7 +84,7 @@ export default function Index() {
               <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/8 border border-white/10">Se connecter</Button>
             </Link>
             <Link to="/signup-light">
-              <Button size="sm" className="bg-accent hover:bg-accent/90 text-white font-semibold shadow-lg shadow-accent/25 border-0">
+              <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg shadow-accent/25 border-0">
                 Commencer
               </Button>
             </Link>
@@ -93,11 +93,9 @@ export default function Index() {
       </header>
 
       {/* ── Hero Full-Screen ─────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
-        {/* Background */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, hsl(222,47%,6%) 0%, hsl(221,83%,18%) 55%, hsl(189,94%,22%) 100%)" }} />
+      <section className="relative min-h-screen flex items-center overflow-hidden pt-16 bg-hero-gradient">
         {/* Dot grid */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+        <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
         {/* Glow orbs */}
         <div className="absolute top-1/3 right-10 w-[380px] h-[380px] rounded-full bg-accent/12 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-20 left-1/3 w-[320px] h-[320px] rounded-full bg-primary/18 blur-3xl pointer-events-none" />
@@ -133,7 +131,7 @@ export default function Index() {
               </motion.p>
 
               {/* Proof points */}
-              <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2">
+              <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
                 {["Gratuit depuis le Cameroun", "Certifications MINEFOP", "Score vérifié en 30 sec", "Visa & logement inclus"].map((item) => (
                   <span key={item} className="flex items-center gap-2 text-sm text-white/50">
                     <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
@@ -147,7 +145,7 @@ export default function Index() {
                 <Link to="/signup-light">
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto text-base px-8 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-primary/30 bg-primary hover:bg-primary/90 border-0 group"
+                    className="w-full sm:w-auto text-base px-8 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-primary/30 bg-gradient-cta hover:opacity-90 border-0 group text-white"
                   >
                     Commencer gratuitement (Cameroun)
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -198,8 +196,7 @@ export default function Index() {
                   <img
                     src={heroFranceAfrique}
                     alt="Mixte RH Tech Inovant France-Afrique — AXIOM ALTIS"
-                    className="w-full object-contain"
-                    style={{ filter: "drop-shadow(0 16px 32px rgba(6,182,212,0.30))" }}
+                    className="w-full object-contain drop-shadow-[0_16px_32px_rgba(6,182,212,0.30)]"
                   />
                   {/* Badge overlay */}
                   <div className="absolute bottom-5 left-5 right-5">
@@ -339,8 +336,8 @@ export default function Index() {
       </section>
 
       {/* ── CTA Final ────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(222,47%,6%) 0%, hsl(221,83%,18%) 55%, hsl(189,94%,22%) 100%)" }}>
-        <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: "radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+      <section className="relative overflow-hidden bg-hero-gradient">
+        <div className="absolute inset-0 opacity-[0.035] bg-hero-dots" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl" />
 
         <div className="relative mx-auto max-w-2xl px-5 py-24 text-center md:px-10 md:py-28">
@@ -357,7 +354,7 @@ export default function Index() {
             </motion.p>
             <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link to="/signup-light">
-                <Button size="lg" className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-primary hover:bg-primary/90 border-0 group">
+                <Button size="lg" className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white">
                   Commencer gratuitement <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Button>
               </Link>
