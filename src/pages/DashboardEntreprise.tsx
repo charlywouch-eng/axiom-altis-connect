@@ -87,6 +87,7 @@ export default function DashboardEntreprise() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
   const [searchParams] = useSearchParams();
 
   // Show toast on subscription success/cancel
@@ -128,6 +129,25 @@ export default function DashboardEntreprise() {
       toast({ title: "Erreur", description: err.message || "Impossible de démarrer le paiement.", variant: "destructive" });
     } finally {
       setCheckoutLoading(false);
+    }
+  };
+
+  const handlePortal = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.error) {
+        toast({ title: "Info", description: data.error });
+        return;
+      }
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Erreur", description: err.message || "Impossible d'ouvrir le portail.", variant: "destructive" });
+    } finally {
+      setPortalLoading(false);
     }
   };
 
@@ -683,6 +703,31 @@ export default function DashboardEntreprise() {
                       Contacter <ArrowRight className="ml-1 h-3 w-3" />
                     </Button>
                   </div>
+
+                  {/* ── Gestion abonnement ── */}
+                  {isPremium && (
+                    <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4 text-primary" /> Abonnement Premium actif
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {subscriptionData?.subscription_end
+                            ? `Renouvellement le ${format(new Date(subscriptionData.subscription_end), "dd MMM yyyy", { locale: fr })}`
+                            : "Gérez votre abonnement, moyen de paiement ou annulation"}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-primary/30 text-primary hover:bg-primary/10 font-semibold shrink-0"
+                        onClick={handlePortal}
+                        disabled={portalLoading}
+                      >
+                        {portalLoading ? "Ouverture…" : "Gérer mon abonnement"} <ArrowRight className="ml-1 h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
