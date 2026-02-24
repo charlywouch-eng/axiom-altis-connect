@@ -553,6 +553,16 @@ export default function SignupLight() {
                     <h2 className="font-black text-xl text-white mb-1">
                       Excellent profil {selectedSecteur?.metier?.split(" ")[0] ?? selectedSecteur?.label.split(" ")[1] ?? ""}
                     </h2>
+                    {selectedExp && (
+                      <motion.p
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.2 }}
+                        className="text-xs font-semibold mb-2 text-tension"
+                      >
+                        ⚡ {selectedExp.teaser}
+                      </motion.p>
+                    )}
                     <p className="text-sm leading-relaxed mb-2 text-white/50">
                       Votre profil <span className="font-semibold text-white">{selectedSecteur?.metier ?? selectedSecteur?.label ?? ""}</span>
                       {form.experience && ` · ${selectedExp?.label}`} match{" "}
@@ -634,9 +644,9 @@ export default function SignupLight() {
                       <Sparkles className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="font-black text-sm text-white">Débloquez votre analyse complète</p>
+                      <p className="font-black text-sm text-white">Débloquez score détaillé + offres + parcours ALTIS</p>
                       <p className="text-xs mt-0.5 leading-relaxed text-white/45">
-                        Score détaillé · Toutes les offres France Travail matchées · Parcours ALTIS personnalisé (visa ANEF + billet + logement)
+                        Analyse ROME approfondie · Offres France Travail en temps réel · Parcours ALTIS personnalisé (visa ANEF + billet + logement) — <span className="font-semibold text-accent">10 € unique</span>
                       </p>
                     </div>
                   </div>

@@ -163,7 +163,17 @@ const MOCK_PROFILE_DATA = {
   ],
 };
 
-const PROGRESS_PERCENT = 60;
+// Dynamic ALTIS progress: 60-80% based on profile completeness
+function computeAltisProgress(profile: Record<string, unknown> | null | undefined): number {
+  if (!profile) return 60;
+  let p = 60;
+  if (profile.full_name) p += 5;
+  if (profile.country) p += 3;
+  if (profile.french_level) p += 4;
+  if (profile.skills && (profile.skills as string[]).length > 0) p += 4;
+  if (profile.avatar_url) p += 4;
+  return Math.min(80, p);
+}
 
 export default function DashboardTalent() {
   const { user } = useAuth();
@@ -428,6 +438,7 @@ export default function DashboardTalent() {
   const displayCountry = profile?.country || MOCK_PROFILE_DATA.country;
   const displayFrench = profile?.french_level || MOCK_PROFILE_DATA.french_level;
   const offersToDisplay = ftOffers && ftOffers.length > 0 ? ftOffers : MOCK_RECOMMENDED_OFFERS;
+  const PROGRESS_PERCENT = computeAltisProgress(profile);
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const itemVariants = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
