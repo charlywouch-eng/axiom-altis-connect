@@ -1,16 +1,22 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import {
   ArrowRight, Mail, Shield, CheckCircle2,
   Zap, Globe, Users, Clock, BarChart3, Plane, Star, Lock,
+  Sparkles, BellRing, MapPin, Briefcase,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { FullPageLoader } from "@/components/FullPageLoader";
 import { Navigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import heroFranceAfrique from "@/assets/logo-rh-tech.png";
+import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 
 // ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -51,9 +57,39 @@ const TRUST_CARDS = [
   { icon: Star, title: "Inscription gratuite", desc: "Commencez sans engagement, débloquez le premium après", accent: "text-tension", bg: "bg-tension/10" },
 ];
 
+const LIVE_OFFERS = [
+  { poste: "Maçon qualifié", ville: "Lyon", secteur: "BTP", delay: 0 },
+  { poste: "Aide-soignant(e)", ville: "Paris", secteur: "Santé", delay: 4000 },
+  { poste: "Chauffeur PL", ville: "Bordeaux", secteur: "Transport", delay: 8000 },
+  { poste: "Serveur / Serveuse", ville: "Marseille", secteur: "CHR", delay: 12000 },
+  { poste: "Technicien maintenance", ville: "Toulouse", secteur: "Industrie", delay: 16000 },
+];
+
+const METIER_OPTIONS = [
+  { label: "Maçonnerie / BTP", value: "F1703", icon: "🏗️" },
+  { label: "Aide-soignant / Santé", value: "J1501", icon: "🏥" },
+  { label: "Transport / Logistique", value: "N1101", icon: "🚛" },
+  { label: "Service salle / CHR", value: "G1602", icon: "🍽️" },
+  { label: "Maintenance industrielle", value: "I1304", icon: "⚙️" },
+  { label: "Commerce / Distribution", value: "D1212", icon: "🛒" },
+  { label: "Agriculture / Agroalim.", value: "A1401", icon: "🌱" },
+];
+
 // ── Component ─────────────────────────────────────────────────
 export default function Index() {
   const { session, role, loading } = useAuth();
+  const navigate = useNavigate();
+  const [teaserEmail, setTeaserEmail] = useState("");
+  const [teaserMetier, setTeaserMetier] = useState("");
+  const [currentAlert, setCurrentAlert] = useState(0);
+
+  // Rotate live alerts
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentAlert((prev) => (prev + 1) % LIVE_OFFERS.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (loading) return <FullPageLoader />;
   if (session && role === "entreprise") return <Navigate to="/dashboard-entreprise" replace />;
@@ -61,6 +97,16 @@ export default function Index() {
   if (session && role === "admin") return <Navigate to="/admin" replace />;
   if (session && role === "recruteur") return <Navigate to="/dashboard-recruteur" replace />;
   if (session) return <Navigate to="/dashboard" replace />;
+
+  const handleTeaserSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (teaserEmail) params.set("email", teaserEmail);
+    if (teaserMetier) params.set("metier", teaserMetier);
+    navigate(`/leads?${params.toString()}`);
+  };
+
+  const currentOffer = LIVE_OFFERS[currentAlert];
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,12 +139,18 @@ export default function Index() {
       </header>
 
       {/* ── Hero Full-Screen ─────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden pt-16 bg-hero-gradient">
+      <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
+        {/* Tech network background */}
+        <div className="absolute inset-0">
+          <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(222,47%,6%)]/95 via-[hsl(222,47%,8%)]/80 to-[hsl(222,47%,8%)]/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,6%)] via-transparent to-[hsl(222,47%,6%)]/40" />
+        </div>
         {/* Dot grid */}
-        <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
+        <div className="absolute inset-0 opacity-[0.03] bg-hero-dots" />
         {/* Glow orbs */}
-        <div className="absolute top-1/3 right-10 w-[380px] h-[380px] rounded-full bg-accent/12 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 left-1/3 w-[320px] h-[320px] rounded-full bg-primary/18 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 right-10 w-[380px] h-[380px] rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 left-1/3 w-[320px] h-[320px] rounded-full bg-primary/15 blur-3xl pointer-events-none" />
 
         <div className="relative mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
@@ -117,9 +169,9 @@ export default function Index() {
                 custom={1} variants={fadeUp}
                 className="text-[38px] font-black leading-[1.04] text-white sm:text-[50px] md:text-[58px] tracking-tight"
               >
-                9 métiers en{" "}
-                <span className="text-gradient-accent">pénurie</span>{" "}
-                vous attendent<br className="hidden sm:block" /> en France
+                Recrutez en{" "}
+                <span className="text-gradient-accent">30 secondes</span>{" "}
+                les talents qui manquent à la France
               </motion.h1>
 
               <motion.p
@@ -140,25 +192,15 @@ export default function Index() {
                 ))}
               </motion.div>
 
-              {/* CTAs */}
-              <motion.div custom={4} variants={fadeUp} className="mt-10 flex flex-col gap-3 sm:flex-row">
+              {/* Single CTA */}
+              <motion.div custom={4} variants={fadeUp} className="mt-10">
                 <Link to="/signup-light">
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto text-base px-8 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-primary/30 bg-gradient-cta hover:opacity-90 border-0 group text-white"
+                    className="w-full sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 border-0 group text-white"
                   >
-                    Commencer gratuitement (Cameroun)
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </Button>
-                </Link>
-                <Link to="/signup">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto text-base px-7 py-5 h-auto rounded-2xl font-semibold border border-white/20 bg-white/6 text-white hover:bg-white/12 hover:border-white/35 backdrop-blur-sm transition-all"
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Recruteurs & Entreprises
+                    Commencer gratuitement
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
               </motion.div>
@@ -178,39 +220,80 @@ export default function Index() {
               </motion.div>
             </motion.div>
 
-            {/* ── Right: Hero Image ────────────────────────────── */}
+            {/* ── Right: Live Alerts + Teaser Form ──────────────── */}
             <motion.div
               initial={{ opacity: 0, x: 50, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               transition={{ delay: 0.45, duration: 0.8, ease }}
-              className="hidden lg:flex flex-shrink-0 w-[400px] xl:w-[460px] items-center justify-center relative"
+              className="hidden lg:flex flex-col w-[420px] xl:w-[460px] gap-5"
             >
-              {/* Glow ring */}
-              <div className="absolute inset-0 rounded-3xl bg-accent/15 blur-3xl scale-105" />
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="relative w-full"
-              >
-                <div className="relative w-full max-w-md mx-auto rounded-3xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl shadow-black/40 p-8">
-                  <img
-                    src={heroFranceAfrique}
-                    alt="Mixte RH Tech Inovant France-Afrique — AXIOM ALTIS"
-                    className="w-full max-h-80 object-contain drop-shadow-[0_16px_32px_rgba(6,182,212,0.30)]"
-                  />
-                  {/* Badge overlay */}
-                  <div className="absolute bottom-5 left-5 right-5">
-                    <div className="rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 px-4 py-3">
-                      <p className="text-[9px] font-black uppercase tracking-[0.25em] text-accent mb-0.5">AXIOM × ALTIS Mobility</p>
-                      <p className="text-white font-bold text-sm leading-tight">Plateforme RH Tech<br />France-Afrique</p>
-                      <div className="mt-2 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-                        <span className="text-[10px] text-white/55">Infrastructure souveraine · MINEFOP</span>
-                      </div>
-                    </div>
-                  </div>
+              {/* Live offer alert */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 overflow-hidden">
+                <div className="flex items-center gap-2 mb-3">
+                  <BellRing className="h-4 w-4 text-accent animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Offres live</span>
+                  <span className="ml-auto h-2 w-2 rounded-full bg-success animate-pulse" />
                 </div>
-              </motion.div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentAlert}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.35 }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="h-10 w-10 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
+                      <Briefcase className="h-5 w-5 text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-white truncate">{currentOffer.poste}</p>
+                      <p className="text-xs text-white/50 flex items-center gap-1.5">
+                        <MapPin className="h-3 w-3" /> {currentOffer.ville}
+                        <span className="text-accent">·</span> {currentOffer.secteur}
+                      </p>
+                    </div>
+                    <Badge className="bg-success/15 text-success border-success/25 text-[10px] shrink-0">CDI</Badge>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Teaser leads form */}
+              <form onSubmit={handleTeaserSubmit} className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="h-4 w-4 text-accent" />
+                  <span className="text-sm font-bold text-white">Testez votre éligibilité</span>
+                  <Badge className="ml-auto bg-accent/15 text-accent border-accent/25 text-[9px]">Gratuit</Badge>
+                </div>
+                <div className="space-y-3">
+                  <Input
+                    placeholder="Email ou téléphone +237"
+                    value={teaserEmail}
+                    onChange={(e) => setTeaserEmail(e.target.value)}
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-11 text-sm"
+                  />
+                  <Select value={teaserMetier} onValueChange={setTeaserMetier}>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white h-11 text-sm">
+                      <SelectValue placeholder="Votre métier…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {METIER_OPTIONS.map((m) => (
+                        <SelectItem key={m.value} value={m.value}>
+                          <span className="flex items-center gap-2">
+                            <span>{m.icon}</span> {m.label}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button type="submit" className="w-full h-11 bg-gradient-cta text-white font-bold border-0 hover:opacity-90">
+                    Voir mon score IA <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-[10px] text-white/30 mt-3 text-center">
+                  Score calculé en 30 sec · Aucun engagement
+                </p>
+              </form>
             </motion.div>
 
           </div>
@@ -336,7 +419,12 @@ export default function Index() {
       </section>
 
       {/* ── CTA Final ────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-hero-gradient">
+      <section className="relative overflow-hidden">
+        {/* Tech background */}
+        <div className="absolute inset-0">
+          <img src={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-40" />
+          <div className="absolute inset-0 bg-[hsl(222,47%,6%)]/85" />
+        </div>
         <div className="absolute inset-0 opacity-[0.035] bg-hero-dots" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl" />
 
