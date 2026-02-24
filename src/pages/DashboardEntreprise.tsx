@@ -388,7 +388,7 @@ export default function DashboardEntreprise() {
                     <span className="text-gradient-accent">Opérationnels jour 1</span>
                   </h1>
                   <p className="text-sm text-white/60 max-w-lg">
-                    Matching IA prédictif · Diplômes apostillés MINEFOP/MINREX · Visa + logement ALTIS inclus
+                    Matching IA + conformité ROME + Pack ALTIS Zéro Stress (visa + billet + logement)
                   </p>
                   <div className="flex flex-wrap gap-2 mt-4">
                     <Button
@@ -710,32 +710,34 @@ export default function DashboardEntreprise() {
                     <TrendingUp className="h-4 w-4 text-primary" />
                     Parcours recrutement AXIOM × ALTIS
                   </CardTitle>
-                  <p className="text-xs text-muted-foreground">4 étapes clés de la publication à l'intégration</p>
+                  <p className="text-xs text-muted-foreground">6 étapes clés de la publication à l'intégration</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
                     {[
-                      { step: 1, icon: FileText, label: "Poste & Offre", desc: "Publiez votre besoin avec code ROME et compétences requises", color: "text-primary", bg: "bg-primary/10 border-primary/25" },
-                      { step: 2, icon: Zap, label: "Matching IA", desc: "Algorithme AXIOM identifie les talents Cameroun compatibles (score >70 %)", color: "text-accent", bg: "bg-accent/10 border-accent/25" },
-                      { step: 3, icon: Handshake, label: "Signature", desc: "Promesse d'embauche + validation MINEFOP/MINREX", color: "text-success", bg: "bg-success/10 border-success/25" },
-                      { step: 4, icon: Plane, label: "ALTIS Activation", desc: "Visa ANEF + billet + logement meublé — Talent opérationnel J+1", color: "text-[hsl(189,94%,43%)]", bg: "bg-accent/10 border-accent/25" },
+                      { step: 1, icon: FileText, label: "Poste offre", desc: "Publiez votre besoin avec code ROME", color: "text-primary", bg: "bg-primary/10 border-primary/25" },
+                      { step: 2, icon: Zap, label: "Matching IA", desc: "Algorithme AXIOM identifie les talents compatibles", color: "text-accent", bg: "bg-accent/10 border-accent/25" },
+                      { step: 3, icon: Users, label: "Entretien", desc: "Shortlist de candidats · Entretiens vidéo", color: "text-[hsl(45,93%,47%)]", bg: "bg-[hsl(45,93%,47%)]/10 border-[hsl(45,93%,47%)]/25" },
+                      { step: 4, icon: Handshake, label: "Signature", desc: "Promesse d'embauche + validation MINEFOP", color: "text-success", bg: "bg-success/10 border-success/25" },
+                      { step: 5, icon: Plane, label: "ALTIS activation", desc: "Visa ANEF + billet + logement meublé", color: "text-[hsl(189,94%,43%)]", bg: "bg-accent/10 border-accent/25" },
+                      { step: 6, icon: CheckCircle2, label: "Talent en poste", desc: "Opérationnel J+1 — suivi 3 mois", color: "text-primary", bg: "bg-primary/10 border-primary/25" },
                     ].map(({ step, icon: Icon, label, desc, color, bg }, i) => (
                       <motion.div
                         key={step}
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1, duration: 0.4 }}
-                        className={`relative rounded-xl border p-4 ${bg} hover:shadow-md transition-shadow`}
+                        transition={{ delay: i * 0.08, duration: 0.4 }}
+                        className={`relative rounded-xl border p-3 ${bg} hover:shadow-md transition-shadow`}
                       >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className={`h-7 w-7 rounded-lg flex items-center justify-center ${bg}`}>
-                            <Icon className={`h-3.5 w-3.5 ${color}`} />
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <div className={`h-6 w-6 rounded-lg flex items-center justify-center ${bg}`}>
+                            <Icon className={`h-3 w-3 ${color}`} />
                           </div>
-                          <span className="text-[10px] font-bold text-muted-foreground">ÉTAPE {step}</span>
+                          <span className="text-[9px] font-bold text-muted-foreground">ÉTAPE {step}</span>
                         </div>
-                        <p className="text-sm font-bold text-foreground mb-1">{label}</p>
-                        <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
-                        {i < 3 && <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30 z-10" />}
+                        <p className="text-xs font-bold text-foreground mb-0.5">{label}</p>
+                        <p className="text-[10px] text-muted-foreground leading-relaxed">{desc}</p>
+                        {i < 5 && <ArrowRight className="hidden xl:block absolute -right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30 z-10" />}
                       </motion.div>
                     ))}
                   </div>
