@@ -192,11 +192,11 @@ export default function Index() {
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 className="relative w-full"
               >
-                <div className="relative w-full rounded-3xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl shadow-black/40 p-8">
+                <div className="relative w-full max-w-md mx-auto rounded-3xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl shadow-black/40 p-8">
                   <img
                     src={heroFranceAfrique}
                     alt="Mixte RH Tech Inovant France-Afrique — AXIOM ALTIS"
-                    className="w-full object-contain drop-shadow-[0_16px_32px_rgba(6,182,212,0.30)]"
+                    className="w-full max-h-80 object-contain drop-shadow-[0_16px_32px_rgba(6,182,212,0.30)]"
                   />
                   {/* Badge overlay */}
                   <div className="absolute bottom-5 left-5 right-5">
