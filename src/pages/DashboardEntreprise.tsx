@@ -28,6 +28,15 @@ import {
   Zap,
   Award,
   BarChart3,
+  CheckCircle2,
+  ArrowRight,
+  Globe,
+  FileText,
+  Handshake,
+  Plane,
+  DollarSign,
+  Crown,
+  Sparkles,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -238,98 +247,70 @@ export default function DashboardEntreprise() {
   return (
     <DashboardLayout sidebarVariant="entreprise">
       <div className="space-y-8 pb-16">
-        {/* ── Header ─────────────────────────────────────────────── */}
+        {/* ── Hero B2B Banner ─────────────────────────────────── */}
         <motion.div
-          className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
+          transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center gap-4">
-            {/* Company logo */}
-            {companyProfile?.logo_url ? (
-              <img
-                src={companyProfile.logo_url}
-                alt="Logo entreprise"
-                className="h-12 w-12 rounded-xl object-cover border border-border shadow-sm flex-shrink-0"
-              />
-            ) : (
-              <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-                <Briefcase className="h-6 w-6 text-primary/50" />
+          <div className="relative overflow-hidden rounded-2xl text-white shadow-premium" style={{ background: "linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(221 83% 25%) 55%, hsl(189 94% 28%) 100%)" }}>
+            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+            <div className="absolute -right-12 -top-12 h-52 w-52 rounded-full bg-[hsl(189,94%,43%)]/15 blur-3xl" />
+            <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-[hsl(221,83%,38%)]/25 blur-2xl" />
+            <div className="relative p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-4">
+                    {companyProfile?.logo_url ? (
+                      <img src={companyProfile.logo_url} alt="Logo" className="h-10 w-10 rounded-xl object-cover border border-white/20" />
+                    ) : (
+                      <div className="h-10 w-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center">
+                        <Briefcase className="h-5 w-5 text-white/70" />
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">AXIOM TIaaS · Espace Entreprise</span>
+                      {companyProfile?.company_name && (
+                        <p className="text-sm font-semibold text-white/90">{companyProfile.company_name}</p>
+                      )}
+                    </div>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight mb-2">
+                    Recrutez des talents certifiés Cameroun —{" "}
+                    <span className="text-gradient-accent">Opérationnels jour 1</span>
+                  </h1>
+                  <p className="text-sm text-white/60 max-w-lg">
+                    Matching IA prédictif · Diplômes apostillés MINEFOP/MINREX · Visa + logement ALTIS inclus
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    <Button
+                      size="sm"
+                      className="bg-white text-[hsl(222,47%,11%)] hover:bg-white/90 font-bold gap-1.5 shadow-lg"
+                      onClick={() => setCreateOpen(true)}
+                    >
+                      <Zap className="h-3.5 w-3.5" /> Tester 3 profils gratuits
+                    </Button>
+                    <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold gap-1.5" onClick={() => setCreateOpen(true)}>
+                      <Plus className="h-3.5 w-3.5" /> Publier une offre
+                    </Button>
+                  </div>
+                </div>
+                {/* Right: quick stats */}
+                <div className="flex flex-row sm:flex-col gap-3 sm:gap-2 shrink-0">
+                  {[
+                    { val: String(activeCount), lbl: "Offres actives", color: "text-[hsl(189,94%,43%)]" },
+                    { val: String(MOCK_CANDIDATES.length), lbl: "Talents dispo", color: "text-white" },
+                    { val: String(certifiedCount), lbl: "Certifiés", color: "text-[hsl(158,64%,42%)]" },
+                  ].map(({ val, lbl, color }) => (
+                    <div key={lbl} className="text-center sm:text-right px-3 py-2 rounded-xl bg-white/5 border border-white/8">
+                      <p className={`text-xl font-extrabold ${color}`}>{val}</p>
+                      <p className="text-[10px] text-white/45 font-medium">{lbl}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
-            <div>
-              <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-                {companyProfile?.company_name
-                  ? companyProfile.company_name
-                  : "Tableau de bord Recruteur"}
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                AXIOM TIaaS – Talent Intelligence as a Service · Matching prédictif Afrique ↔ France
-              </p>
-              <p className="mt-0.5 text-xs text-primary/60 flex items-center gap-1.5">
-                <span>🔒</span> Traitement RGPD compliant – Données candidats protégées (CCT UE 2021)
-              </p>
-              {/* CTA profil incomplet */}
-              {companyProfile !== undefined && (!companyProfile?.company_name || !companyProfile?.logo_url) && (
-                <Link
-                  to="/dashboard-entreprise/profil"
-                  className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-amber-600 hover:text-amber-700 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/25 rounded-full px-3 py-1 transition-colors"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                  Compléter votre profil entreprise →
-                </Link>
-              )}
             </div>
           </div>
-          <Button
-            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 gap-2"
-            onClick={() => setCreateOpen(true)}
-            aria-label="Publier une nouvelle offre"
-          >
-            <Plus className="h-4 w-4" />
-            Publier une nouvelle offre
-          </Button>
-        </motion.div>
-
-        {/* ── KPIs ───────────────────────────────────────────────── */}
-        <motion.div
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <PremiumStatCard
-            icon={Briefcase}
-            title="Offres actives"
-            value={String(activeCount)}
-            accent="blue"
-            tensionLevel={activeCount === 0 ? "critical" : activeCount < 3 ? "high" : "low"}
-            subtitle="Postes ouverts au recrutement"
-          />
-          <PremiumStatCard
-            icon={Users}
-            title="Talents disponibles"
-            value={String(MOCK_CANDIDATES.length)}
-            accent="green"
-            tensionLevel="low"
-            subtitle="Cameroun, profils vérifiés"
-          />
-          <PremiumStatCard
-            icon={Award}
-            title="Certifiés MINEFOP/MINREX"
-            value={String(certifiedCount)}
-            accent="blue"
-            tensionLevel="medium"
-            subtitle="Conformité légale garantie"
-          />
-          <PremiumStatCard
-            icon={TrendingUp}
-            title="Talents installés"
-            value="0"
-            tensionLevel="none"
-            subtitle="Recrutés et en poste"
-          />
         </motion.div>
 
         {/* ── Tabs ───────────────────────────────────────────────── */}
@@ -343,6 +324,9 @@ export default function DashboardEntreprise() {
             </TabsTrigger>
             <TabsTrigger value="pipeline" className="gap-2 data-[state=active]:bg-card text-sm">
               <BarChart3 className="h-4 w-4" /> Pipeline
+            </TabsTrigger>
+            <TabsTrigger value="pricing" className="gap-2 data-[state=active]:bg-card text-sm">
+              <DollarSign className="h-4 w-4" /> Tarification
             </TabsTrigger>
             <TabsTrigger value="talents" className="gap-2 data-[state=active]:bg-card text-sm">
               <ShieldCheck className="h-4 w-4" /> Talents vérifiés
@@ -522,12 +506,125 @@ export default function DashboardEntreprise() {
 
           {/* ──── Onglet Pipeline ────────────────────────────────── */}
           <TabsContent value="pipeline">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <RecruitmentPipeline />
+
+              {/* Recruitment Timeline */}
+              <Card className="mt-6 overflow-hidden border-primary/20">
+                <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, hsl(221 83% 38%), hsl(189 94% 43%))" }} />
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    Parcours recrutement AXIOM × ALTIS
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground">4 étapes clés de la publication à l'intégration</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {[
+                      { step: 1, icon: FileText, label: "Poste & Offre", desc: "Publiez votre besoin avec code ROME et compétences requises", color: "text-primary", bg: "bg-primary/10 border-primary/25" },
+                      { step: 2, icon: Zap, label: "Matching IA", desc: "Algorithme AXIOM identifie les talents Cameroun compatibles (score >70 %)", color: "text-accent", bg: "bg-accent/10 border-accent/25" },
+                      { step: 3, icon: Handshake, label: "Signature", desc: "Promesse d'embauche + validation MINEFOP/MINREX", color: "text-success", bg: "bg-success/10 border-success/25" },
+                      { step: 4, icon: Plane, label: "ALTIS Activation", desc: "Visa ANEF + billet + logement meublé — Talent opérationnel J+1", color: "text-[hsl(189,94%,43%)]", bg: "bg-accent/10 border-accent/25" },
+                    ].map(({ step, icon: Icon, label, desc, color, bg }, i) => (
+                      <motion.div
+                        key={step}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1, duration: 0.4 }}
+                        className={`relative rounded-xl border p-4 ${bg} hover:shadow-md transition-shadow`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className={`h-7 w-7 rounded-lg flex items-center justify-center ${bg}`}>
+                            <Icon className={`h-3.5 w-3.5 ${color}`} />
+                          </div>
+                          <span className="text-[10px] font-bold text-muted-foreground">ÉTAPE {step}</span>
+                        </div>
+                        <p className="text-sm font-bold text-foreground mb-1">{label}</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                        {i < 3 && <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30 z-10" />}
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* ──── Onglet Tarification ─────────────────────────────── */}
+          <TabsContent value="pricing">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+              <Card className="overflow-hidden border-primary/20">
+                <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, hsl(221 83% 38%), hsl(189 94% 43%))" }} />
+                <CardHeader>
+                  <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-primary" />
+                    Tarification transparente
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">Choisissez la formule adaptée à vos besoins de recrutement</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-muted/30">
+                          <TableHead className="font-bold text-foreground">Formule</TableHead>
+                          <TableHead className="font-bold text-foreground">Prix</TableHead>
+                          <TableHead className="font-bold text-foreground hidden sm:table-cell">Profils inclus</TableHead>
+                          <TableHead className="font-bold text-foreground hidden md:table-cell">Avantages</TableHead>
+                          <TableHead className="font-bold text-foreground text-right">Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {[
+                          { name: "Découverte", price: "Gratuit", profiles: "3 profils", features: "Accès matching IA · Score compatibilité · Aperçu CV", cta: "Actif", highlight: false, badge: null },
+                          { name: "Premium", price: "699 €/mois", profiles: "Illimité", features: "Matching avancé · Filtres ROME · Contacts directs · Support prioritaire", cta: "Souscrire", highlight: true, badge: "Recommandé" },
+                          { name: "Success Fee", price: "25 % du brut annuel", profiles: "À la demande", features: "Paiement au résultat · Garantie remplacement 3 mois", cta: "Contacter", highlight: false, badge: null },
+                          { name: "ALTIS Intégral", price: "1 200 €/talent", profiles: "Par talent", features: "Visa + billet + logement meublé 3 mois · Formation normes FR incluse", cta: "En savoir +", highlight: false, badge: "Pack complet" },
+                        ].map(({ name, price, profiles, features, cta, highlight, badge }) => (
+                          <TableRow key={name} className={highlight ? "bg-primary/5 border-l-2 border-primary" : ""}>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-sm text-foreground">{name}</span>
+                                {badge && <Badge className="text-[9px] px-1.5 py-0 bg-accent/10 text-accent border-accent/30 font-bold">{badge}</Badge>}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-bold text-foreground text-sm">{price}</TableCell>
+                            <TableCell className="text-sm text-muted-foreground hidden sm:table-cell">{profiles}</TableCell>
+                            <TableCell className="text-xs text-muted-foreground hidden md:table-cell max-w-xs">{features}</TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                size="sm"
+                                variant={highlight ? "default" : "outline"}
+                                className={highlight ? "bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-md shadow-primary/20" : "text-xs font-semibold"}
+                                onClick={() => {
+                                  if (cta === "Actif") return;
+                                  toast({ title: "📩 Demande envoyée", description: `Notre équipe commerciale vous contactera pour la formule ${name}.` });
+                                }}
+                                disabled={cta === "Actif"}
+                              >
+                                {cta === "Actif" ? <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</> : cta}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  <div className="mt-6 rounded-xl border border-accent/20 bg-accent/5 p-4 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                        <Crown className="h-4 w-4 text-accent" /> Besoin d'un devis sur mesure ?
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Contactez notre équipe pour les recrutements en volume (&gt;10 talents)</p>
+                    </div>
+                    <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 font-semibold shrink-0">
+                      Contacter <ArrowRight className="ml-1 h-3 w-3" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           </TabsContent>
 
