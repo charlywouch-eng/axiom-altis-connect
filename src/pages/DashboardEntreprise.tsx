@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -86,6 +86,50 @@ export default function DashboardEntreprise() {
   const [submitting, setSubmitting] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  // Show toast on subscription success/cancel
+  useEffect(() => {
+    if (searchParams.get("subscription") === "success") {
+      toast({ title: "🎉 Abonnement Premium activé !", description: "Vous avez désormais accès à toutes les fonctionnalités Premium." });
+    } else if (searchParams.get("subscription") === "canceled") {
+      toast({ title: "Abonnement annulé", description: "Vous pouvez souscrire à tout moment.", variant: "destructive" });
+    }
+  }, [searchParams, toast]);
+
+  // Check subscription status
+  const { data: subscriptionData } = useQuery({
+    queryKey: ["enterprise_subscription", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("check-subscription");
+      if (error) throw error;
+      return data as { subscribed: boolean; product_id: string | null; subscription_end: string | null };
+    },
+    enabled: !!user,
+    refetchInterval: 60000,
+  });
+
+  const isPremium = subscriptionData?.subscribed ?? false;
+
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout-entreprise");
+      if (error) throw error;
+      if (data?.error) {
+        toast({ title: "Info", description: data.error });
+        return;
+      }
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Erreur", description: err.message || "Impossible de démarrer le paiement.", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
 
   // Company profile
   const { data: companyProfile } = useQuery({
@@ -599,11 +643,27 @@ export default function DashboardEntreprise() {
                                 className={highlight ? "bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-md shadow-primary/20" : "text-xs font-semibold"}
                                 onClick={() => {
                                   if (cta === "Actif") return;
+                                  if (name === "Premium") {
+                                    if (isPremium) {
+                                      toast({ title: "✅ Déjà abonné", description: "Votre abonnement Premium est actif." });
+                                    } else {
+                                      handleCheckout();
+                                    }
+                                    return;
+                                  }
                                   toast({ title: "📩 Demande envoyée", description: `Notre équipe commerciale vous contactera pour la formule ${name}.` });
                                 }}
-                                disabled={cta === "Actif"}
+                                disabled={cta === "Actif" || (name === "Premium" && checkoutLoading)}
                               >
-                                {cta === "Actif" ? <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</> : cta}
+                                {name === "Premium" && isPremium ? (
+                                  <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</>
+                                ) : name === "Premium" && checkoutLoading ? (
+                                  "Redirection…"
+                                ) : cta === "Actif" ? (
+                                  <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</>
+                                ) : (
+                                  cta
+                                )}
                               </Button>
                             </TableCell>
                           </TableRow>
