@@ -11,7 +11,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { FullPageLoader } from "@/components/FullPageLoader";
-import heroImg from "@/assets/hero-france-afrique.png";
+import heroImg from "@/assets/logo-rh-tech.png";
 
 /* ─── animation variants ─── */
 const container = {

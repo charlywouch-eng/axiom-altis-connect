@@ -14,7 +14,7 @@ import {
   Zap, CheckCircle2, ArrowRight, Lock, Globe, Briefcase,
   Star, Shield, ChevronRight, Sparkles, Users, MapPin,
 } from "lucide-react";
-import heroImg from "@/assets/hero-france-afrique.png";
+import heroImg from "@/assets/logo-rh-tech.png";
 
 /* ─── Config ──────────────────────────────────────────────────── */
 const SECTEURS = [
