@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,6 +62,17 @@ export default function Leads() {
   const utmSource   = searchParams.get("utm_source");
   const utmMedium   = searchParams.get("utm_medium");
   const utmCampaign = searchParams.get("utm_campaign");
+
+  // Pre-fill from teaser query params
+  useEffect(() => {
+    const email = searchParams.get("email");
+    const metier = searchParams.get("metier");
+    if (email) setForm(f => ({ ...f, emailOrPhone: email }));
+    if (metier) {
+      setForm(f => ({ ...f, metier }));
+      setSelectedSecteur(SECTEURS.find(s => s.rome === metier) ?? null);
+    }
+  }, [searchParams]);
 
   const handleMetierChange = (value: string) => {
     setSelectedSecteur(SECTEURS.find(s => s.rome === value) ?? null);
