@@ -171,6 +171,7 @@ export default function DashboardTalent() {
   const queryClient = useQueryClient();
   const location = useLocation();
   const [editing, setEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -477,10 +478,15 @@ export default function DashboardTalent() {
                     </Badge>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-white/60">PARCOURS ALTIS</span>
-                      <div className="flex items-center gap-1.5">
-                        <Progress value={PROGRESS_PERCENT} className="h-1.5 w-20 bg-white/20" />
-                        <span className="text-sm font-bold">{PROGRESS_PERCENT}%</span>
-                      </div>
+                      <button
+                        onClick={() => setActiveTab("parcours")}
+                        className="flex items-center gap-1.5 cursor-pointer group/progress hover:opacity-90 transition-opacity"
+                        title="Voir mon parcours"
+                      >
+                        <Progress value={PROGRESS_PERCENT} className="h-1.5 w-20 bg-white/20 group-hover/progress:ring-2 group-hover/progress:ring-white/30 rounded-full transition-all" />
+                        <span className="text-sm font-bold group-hover/progress:underline">{PROGRESS_PERCENT}%</span>
+                        <ChevronRight className="h-3 w-3 text-white/40 group-hover/progress:text-white/80 transition-colors" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -495,7 +501,7 @@ export default function DashboardTalent() {
 
           {/* ── Navigation par rubriques */}
           <motion.div variants={itemVariants}>
-            <Tabs defaultValue="dashboard" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="w-full sm:w-auto grid grid-cols-4 sm:flex h-auto gap-1 bg-muted/60 p-1 rounded-xl mb-6">
                 {[
                   { value: "dashboard", label: "Dashboard", icon: TrendingUp },
