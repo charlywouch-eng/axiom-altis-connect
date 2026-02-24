@@ -221,6 +221,10 @@ export default function DashboardTalent() {
       toast({ title: "🎉 Analyse Complète débloquée !", description: "Score détaillé, offres France Travail et parcours ALTIS maintenant accessibles." });
       window.history.replaceState({}, "", "/dashboard-talent");
     }
+    const tab = params.get("tab");
+    if (tab && ["dashboard", "parcours", "opportunites", "profil"].includes(tab)) {
+      setActiveTab(tab);
+    }
   }, [location.search, toast]);
 
   useEffect(() => {
