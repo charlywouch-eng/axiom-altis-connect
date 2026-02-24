@@ -534,27 +534,96 @@ export default function DashboardTalent() {
                       </CardTitle>
                       <p className="text-xs text-muted-foreground mt-0.5">6 étapes clés de votre intégration professionnelle et sociale</p>
                     </CardHeader>
-                    <CardContent className="space-y-3">
+                    <CardContent className="space-y-0 relative">
+                      {/* Animated progress line behind steps */}
+                      <div className="absolute left-[2.15rem] top-6 bottom-6 w-0.5 bg-border/20 rounded-full" />
+                      <motion.div
+                        className="absolute left-[2.15rem] top-6 w-0.5 rounded-full origin-top"
+                        style={{ background: "linear-gradient(180deg, hsl(var(--success)), hsl(var(--primary)), hsl(var(--border)))" }}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${(MOCK_TIMELINE.filter(s => s.status === "done").length / MOCK_TIMELINE.length) * 100}%` }}
+                        transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      />
+
                       {MOCK_TIMELINE.map((step, i) => {
                         const Icon = step.icon;
+                        const isDone = step.status === "done";
+                        const isActive = step.status === "active";
+                        const isPending = step.status === "pending";
+
                         return (
-                          <motion.div key={step.label} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }} className={`relative flex gap-4 pb-4 ${i < MOCK_TIMELINE.length - 1 ? "border-b border-border/30" : ""}`}>
-                            <div className="flex flex-col items-center">
-                              <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${step.status === "done" ? "bg-success/10 border border-success/30" : step.status === "active" ? "bg-primary/10 border border-primary/30 shadow-sm" : "bg-muted border border-border/50"}`}>
-                                {step.status === "done" ? <CheckCircle2 className="h-4 w-4 text-success" /> : step.status === "active" ? <Icon className="h-4 w-4 text-primary animate-pulse" /> : <Icon className="h-4 w-4 text-muted-foreground" />}
-                              </div>
-                              {i < MOCK_TIMELINE.length - 1 && <div className={`w-0.5 flex-1 mt-2 rounded-full ${step.status === "done" ? "bg-success/30" : "bg-border/30"}`} />}
+                          <motion.div
+                            key={step.label}
+                            initial={{ opacity: 0, x: -24 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.15 + i * 0.12, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                            whileHover={{ x: 4, transition: { duration: 0.2 } }}
+                            className={`relative flex gap-4 py-3.5 cursor-default group ${i < MOCK_TIMELINE.length - 1 ? "" : ""}`}
+                          >
+                            {/* Step icon with micro-interactions */}
+                            <div className="flex flex-col items-center z-10">
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.3 + i * 0.12, type: "spring", stiffness: 260, damping: 20 }}
+                                whileHover={{ scale: 1.15, transition: { type: "spring", stiffness: 400, damping: 15 } }}
+                                className={`relative h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-shadow duration-300 ${
+                                  isDone
+                                    ? "bg-success/15 border-2 border-success/40 shadow-[0_0_12px_-2px_hsl(var(--success)/0.4)] group-hover:shadow-[0_0_20px_-2px_hsl(var(--success)/0.6)]"
+                                    : isActive
+                                    ? "bg-primary/15 border-2 border-primary/40 shadow-[0_0_16px_-2px_hsl(var(--primary)/0.5)]"
+                                    : "bg-muted/80 border border-border/50 group-hover:border-border"
+                                }`}
+                              >
+                                {isDone ? (
+                                  <motion.div initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} transition={{ delay: 0.5 + i * 0.12, type: "spring", stiffness: 300 }}>
+                                    <CheckCircle2 className="h-4.5 w-4.5 text-success" />
+                                  </motion.div>
+                                ) : isActive ? (
+                                  <>
+                                    <motion.div
+                                      className="absolute inset-0 rounded-xl border-2 border-primary/30"
+                                      animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0, 0.6] }}
+                                      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                                    />
+                                    <Icon className="h-4.5 w-4.5 text-primary" />
+                                  </>
+                                ) : (
+                                  <Icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground/60 transition-colors" />
+                                )}
+                              </motion.div>
                             </div>
-                            <div className="flex-1 pt-1 space-y-1.5">
+
+                            {/* Content */}
+                            <div className="flex-1 pt-1 space-y-1.5 min-w-0">
                               <div className="flex items-center justify-between gap-2 flex-wrap">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <span className={`text-sm font-semibold ${step.status === "pending" ? "text-muted-foreground" : "text-foreground"}`}>{step.label}</span>
-                                  {step.badge && <Badge className="text-[9px] px-1.5 py-0 bg-accent/10 text-accent border-accent/30 font-bold">{step.badge.label}</Badge>}
+                                  <span className={`text-sm font-semibold transition-colors ${isPending ? "text-muted-foreground group-hover:text-foreground/70" : "text-foreground"}`}>
+                                    {step.label}
+                                  </span>
+                                  {step.badge && (
+                                    <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 + i * 0.1 }}>
+                                      <Badge className="text-[9px] px-1.5 py-0 bg-accent/10 text-accent border-accent/30 font-bold">{step.badge.label}</Badge>
+                                    </motion.div>
+                                  )}
                                 </div>
-                                <span className={`text-xs font-mono ${step.status === "done" ? "text-success" : step.status === "active" ? "text-primary" : "text-muted-foreground"}`}>{step.date}</span>
+                                <motion.span
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  transition={{ delay: 0.4 + i * 0.1 }}
+                                  className={`text-xs font-mono ${isDone ? "text-success" : isActive ? "text-primary" : "text-muted-foreground"}`}
+                                >
+                                  {step.date}
+                                </motion.span>
                               </div>
                               {step.tag && (
-                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-1.5 border border-primary/15">
+                                <motion.div
+                                  initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  transition={{ delay: 0.6 + i * 0.1, duration: 0.4 }}
+                                  whileHover={{ scale: 1.02, transition: { duration: 0.15 } }}
+                                  className="flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-1.5 border border-primary/15 group-hover:border-primary/25 transition-colors"
+                                >
                                   <GraduationCap className="h-3.5 w-3.5 text-primary shrink-0" />
                                   <p className="text-xs text-primary font-medium">{step.tag}</p>
                                 </motion.div>
@@ -563,7 +632,7 @@ export default function DashboardTalent() {
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <p className="text-xs text-muted-foreground cursor-help underline decoration-dotted">Voir détails certification</p>
+                                      <p className="text-xs text-muted-foreground cursor-help underline decoration-dotted hover:text-foreground transition-colors">Voir détails certification</p>
                                     </TooltipTrigger>
                                     <TooltipContent className="max-w-xs text-xs">{step.tooltipText}</TooltipContent>
                                   </Tooltip>
