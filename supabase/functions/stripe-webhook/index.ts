@@ -31,18 +31,24 @@ serve(async (req) => {
 
     const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
 
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as any;
       const { offer_id, user_id, payment_type } = session.metadata || {};
 
-      const supabaseClient = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-      );
+      // ── Abonnement Premium Entreprise ───────────────────────
+      if (payment_type === "entreprise_premium" && user_id) {
+        console.log(`[WEBHOOK] Premium entreprise subscription activated for user ${user_id}`);
+        // Subscription is managed in Stripe — no DB changes needed beyond logging.
+        // The check-subscription function queries Stripe directly for active status.
+      }
 
-      // ── Paiement "Analyse Complète" 10€ talent ──────────────────
+      // ── Paiement "Analyse Complète" 10€ talent ──────────────
       if (payment_type === "analyse_complete" && user_id) {
-        // Upsert talent_profile with premium flag
         const { data: existingProfile } = await supabaseClient
           .from("talent_profiles")
           .select("id")
@@ -54,13 +60,8 @@ serve(async (req) => {
             .from("talent_profiles")
             .update({ is_premium: true, premium_unlocked_at: new Date().toISOString() })
             .eq("user_id", user_id);
-
-          if (error) {
-            console.error("Error updating premium flag:", error);
-            throw error;
-          }
+          if (error) { console.error("Error updating premium flag:", error); throw error; }
         } else {
-          // Create profile if it doesn't exist yet
           const { error } = await supabaseClient
             .from("talent_profiles")
             .insert({
@@ -69,31 +70,27 @@ serve(async (req) => {
               premium_unlocked_at: new Date().toISOString(),
               visa_status: "en_attente",
             });
-
-          if (error) {
-            console.error("Error inserting premium talent profile:", error);
-            throw error;
-          }
+          if (error) { console.error("Error inserting premium talent profile:", error); throw error; }
         }
-
         console.log(`Premium unlocked for user ${user_id}`);
       }
 
-      // ── Paiement success fee entreprise (offre) ──────────────────
-      if (offer_id && user_id && payment_type !== "analyse_complete") {
+      // ── Paiement success fee entreprise (offre) ─────────────
+      if (offer_id && user_id && payment_type !== "analyse_complete" && payment_type !== "entreprise_premium") {
         const { error: updateError } = await supabaseClient
           .from("job_offers")
           .update({ status: "filled" })
           .eq("id", offer_id)
           .eq("company_id", user_id);
-
-        if (updateError) {
-          console.error("Error updating offer status:", updateError);
-          throw updateError;
-        }
-
+        if (updateError) { console.error("Error updating offer status:", updateError); throw updateError; }
         console.log(`Offer ${offer_id} marked as filled after payment`);
       }
+    }
+
+    // ── Handle subscription cancellation ──────────────────────
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as any;
+      console.log(`[WEBHOOK] Subscription ${subscription.id} canceled`);
     }
 
     return new Response(JSON.stringify({ received: true }), {
