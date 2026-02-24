@@ -6,6 +6,7 @@ import {
   Zap, Globe, Users, Clock, BarChart3, Plane, Star, Lock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { FullPageLoader } from "@/components/FullPageLoader";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -54,7 +55,7 @@ const TRUST_CARDS = [
 export default function Index() {
   const { session, role, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) return <FullPageLoader />;
   if (session && role === "entreprise") return <Navigate to="/dashboard-entreprise" replace />;
   if (session && role === "talent") return <Navigate to="/dashboard-talent" replace />;
   if (session && role === "admin") return <Navigate to="/admin" replace />;

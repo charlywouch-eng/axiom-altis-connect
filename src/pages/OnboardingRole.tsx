@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { FullPageLoader } from "@/components/FullPageLoader";
 import heroImg from "@/assets/hero-france-afrique.png";
 
 /* ─── animation variants ─── */
@@ -153,6 +154,7 @@ function WelcomeScreen({ name }: { name?: string | null }) {
 export default function OnboardingRole() {
   const { session, role, loading, user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   const [showAdminInput, setShowAdminInput] = useState(false);
@@ -161,7 +163,7 @@ export default function OnboardingRole() {
   const [userName, setUserName] = useState<string | null>(null);
 
   /* ─── guards ─── */
-  if (loading) return null;
+  if (loading) return <FullPageLoader />;
   if (!session) return <Navigate to="/login" replace />;
   if (role === "entreprise") return <Navigate to="/dashboard-entreprise" replace />;
   if (role === "talent") return <Navigate to="/dashboard-talent" replace />;
@@ -195,9 +197,9 @@ export default function OnboardingRole() {
         .maybeSingle();
       setUserName(profile?.full_name ?? user.email ?? null);
       setShowWelcome(true);
-      setTimeout(() => { window.location.href = dest; }, 1600);
+      setTimeout(() => { navigate(dest); }, 1600);
     } else {
-      window.location.href = dest;
+      navigate(dest);
     }
   };
 
@@ -209,7 +211,7 @@ export default function OnboardingRole() {
       });
       if (error) throw error;
       if (data?.valid) {
-        window.location.href = "/admin";
+        navigate("/admin");
       } else {
         toast({ title: "Code invalide", description: "Le code administrateur est incorrect.", variant: "destructive" });
         setAdminCode("");
