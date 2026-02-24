@@ -8,8 +8,8 @@
 
 @layer base {
   :root {
-    /* AXIOM Sovereign Design System */
-    --background: 210 40% 97%;
+    /* AXIOM Sovereign Design System — #0F172A / #1E40AF / #06B6D4 */
+    --background: 222 47% 97%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -18,26 +18,26 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Primary: Bleu Souverain AXIOM */
-    --primary: 221 83% 38%;
+    /* Primary: Bleu Souverain #1E40AF */
+    --primary: 221 83% 40%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary */
-    --secondary: 215 24% 26%;
+    /* Secondary: Bleu Fond #0F172A */
+    --secondary: 222 47% 11%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 210 20% 92%;
+    --muted: 215 20% 92%;
     --muted-foreground: 215 16% 46%;
 
-    /* Accent: Turquoise ALTIS — fixed! */
+    /* Accent: Turquoise ALTIS #06B6D4 */
     --accent: 187 94% 43%;
     --accent-foreground: 0 0% 100%;
 
-    /* Success: Vert */
+    /* Success */
     --success: 158 64% 38%;
     --success-foreground: 0 0% 100%;
 
-    /* Tension: Orange */
+    /* Tension: Orange #F59E0B */
     --tension: 37 91% 55%;
     --tension-foreground: 222 47% 11%;
 
@@ -46,9 +46,9 @@
 
     --border: 214 20% 88%;
     --input: 214 20% 88%;
-    --ring: 221 83% 38%;
+    --ring: 221 83% 40%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Sidebar */
     --sidebar-background: 222 47% 8%;
@@ -60,12 +60,12 @@
     --sidebar-border: 222 30% 18%;
     --sidebar-ring: 187 94% 43%;
 
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(221 83% 25%) 50%, hsl(187 94% 30%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(221 83% 38%) 0%, hsl(187 94% 43%) 100%);
-    --gradient-premium: linear-gradient(135deg, hsl(222 47% 6%) 0%, hsl(221 83% 18%) 50%, hsl(222 47% 12%) 100%);
-    --shadow-premium: 0 20px 60px -15px hsla(221, 83%, 38%, 0.35);
-    --shadow-card: 0 4px 24px -4px hsla(222, 47%, 11%, 0.08);
+    /* Gradients — hero uses bleu fond → bleu souverain → turquoise */
+    --gradient-hero: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(221 83% 28%) 50%, hsl(187 94% 30%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(221 83% 40%) 0%, hsl(187 94% 43%) 100%);
+    --gradient-premium: linear-gradient(135deg, hsl(222 47% 6%) 0%, hsl(221 83% 20%) 50%, hsl(222 47% 12%) 100%);
+    --shadow-premium: 0 20px 60px -15px hsla(221, 83%, 40%, 0.4);
+    --shadow-card: 0 4px 24px -4px hsla(222, 47%, 11%, 0.1);
     --chart-1: 187 94% 43%;
     --chart-2: 221 83% 38%;
     --chart-3: 158 64% 38%;
@@ -184,20 +184,20 @@
   }
 
   .bg-hero-gradient {
-    background: linear-gradient(135deg, hsl(222 47% 6%) 0%, hsl(221 83% 18%) 55%, hsl(187 94% 22%) 100%);
+    background: linear-gradient(135deg, hsl(222 47% 6%) 0%, hsl(221 83% 22%) 55%, hsl(187 94% 22%) 100%);
   }
 
   .bg-hero-dots {
-    background-image: radial-gradient(circle at 1.5px 1.5px, white 1px, transparent 0);
-    background-size: 28px 28px;
+    background-image: radial-gradient(circle at 1.5px 1.5px, hsla(187, 94%, 43%, 0.15) 1px, transparent 0);
+    background-size: 32px 32px;
   }
 
   .bg-gradient-cta {
-    background: linear-gradient(135deg, hsl(221 83% 38%) 0%, hsl(187 94% 38%) 100%);
+    background: linear-gradient(135deg, hsl(221 83% 40%) 0%, hsl(187 94% 38%) 100%);
   }
 
   .bg-gradient-cta-hover {
-    background: linear-gradient(135deg, hsl(221 83% 43%) 0%, hsl(187 94% 33%) 100%);
+    background: linear-gradient(135deg, hsl(221 83% 45%) 0%, hsl(187 94% 33%) 100%);
   }
 
   .dark-surface {
@@ -207,6 +207,27 @@
 
   .animate-fade-in {
     animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .bg-dashboard-network {
+    background-image: url('/hero-tech-network.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  @keyframes float-orb {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(15px, -20px) scale(1.05); }
+    66% { transform: translate(-10px, 10px) scale(0.97); }
+  }
+
+  .animate-float-orb {
+    animation: float-orb 8s ease-in-out infinite;
+  }
+
+  .animate-float-orb-slow {
+    animation: float-orb 12s ease-in-out infinite reverse;
   }
 }
 

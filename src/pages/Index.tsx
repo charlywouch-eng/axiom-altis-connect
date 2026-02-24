@@ -143,14 +143,15 @@ export default function Index() {
         {/* Tech network background */}
         <div className="absolute inset-0">
           <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(222,47%,6%)]/95 via-[hsl(222,47%,8%)]/80 to-[hsl(222,47%,8%)]/60" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,6%)]/95 via-[hsl(221,83%,18%)]/80 to-[hsl(187,94%,22%)]/50" />
           <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,6%)] via-transparent to-[hsl(222,47%,6%)]/40" />
         </div>
-        {/* Dot grid */}
-        <div className="absolute inset-0 opacity-[0.03] bg-hero-dots" />
-        {/* Glow orbs */}
-        <div className="absolute top-1/3 right-10 w-[380px] h-[380px] rounded-full bg-accent/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 left-1/3 w-[320px] h-[320px] rounded-full bg-primary/15 blur-3xl pointer-events-none" />
+        {/* Dot grid with turquoise tint */}
+        <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
+        {/* Floating orbs */}
+        <div className="absolute top-1/4 right-[15%] w-[280px] h-[280px] rounded-full bg-accent/12 blur-[100px] pointer-events-none animate-float-orb" />
+        <div className="absolute bottom-1/4 left-[10%] w-[350px] h-[350px] rounded-full bg-primary/15 blur-[120px] pointer-events-none animate-float-orb-slow" />
+        <div className="absolute top-[60%] right-[40%] w-[200px] h-[200px] rounded-full bg-accent/8 blur-[80px] pointer-events-none animate-float-orb" />
 
         <div className="relative mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
@@ -169,9 +170,8 @@ export default function Index() {
                 custom={1} variants={fadeUp}
                 className="text-[38px] font-black leading-[1.04] text-white sm:text-[50px] md:text-[58px] tracking-tight"
               >
-                Recrutez en{" "}
-                <span className="text-gradient-accent">30 secondes</span>{" "}
-                les talents qui manquent à la France
+                <span className="text-gradient-accent">9 métiers</span> en pénurie France{" "}
+                vous attendent
               </motion.h1>
 
               <motion.p
@@ -199,7 +199,7 @@ export default function Index() {
                     size="lg"
                     className="w-full sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 border-0 group text-white"
                   >
-                    Commencer gratuitement
+                    Commencer
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
@@ -225,10 +225,10 @@ export default function Index() {
               initial={{ opacity: 0, x: 50, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               transition={{ delay: 0.45, duration: 0.8, ease }}
-              className="hidden lg:flex flex-col w-[420px] xl:w-[460px] gap-5"
+              className="flex flex-col w-full lg:w-[420px] xl:w-[460px] gap-5"
             >
               {/* Live offer alert */}
-              <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-4 overflow-hidden">
+              <div className="rounded-2xl border border-accent/15 bg-white/5 backdrop-blur-md p-4 overflow-hidden shadow-lg shadow-accent/5">
                 <div className="flex items-center gap-2 mb-3">
                   <BellRing className="h-4 w-4 text-accent animate-pulse" />
                   <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Offres live</span>
@@ -259,7 +259,7 @@ export default function Index() {
               </div>
 
               {/* Teaser leads form */}
-              <form onSubmit={handleTeaserSubmit} className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5">
+              <form onSubmit={handleTeaserSubmit} className="rounded-2xl border border-accent/15 bg-white/5 backdrop-blur-md p-5 shadow-lg shadow-primary/5">
                 <div className="flex items-center gap-2 mb-4">
                   <Sparkles className="h-4 w-4 text-accent" />
                   <span className="text-sm font-bold text-white">Testez votre éligibilité</span>
@@ -270,7 +270,7 @@ export default function Index() {
                     placeholder="Email ou téléphone +237"
                     value={teaserEmail}
                     onChange={(e) => setTeaserEmail(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-11 text-sm"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-11 text-sm focus:border-accent/40 focus:ring-accent/20"
                   />
                   <Select value={teaserMetier} onValueChange={setTeaserMetier}>
                     <SelectTrigger className="bg-white/5 border-white/10 text-white h-11 text-sm">
@@ -286,7 +286,7 @@ export default function Index() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button type="submit" className="w-full h-11 bg-gradient-cta text-white font-bold border-0 hover:opacity-90">
+                  <Button type="submit" className="w-full h-11 bg-gradient-cta text-white font-bold border-0 hover:opacity-90 shadow-lg shadow-accent/20">
                     Voir mon score IA <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
@@ -333,7 +333,7 @@ export default function Index() {
       <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-            Opportunités 2025–2026
+            Opportunités 2026
           </motion.p>
           <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[42px] leading-tight tracking-tight">
             Les <span className="text-gradient-primary">9 secteurs</span> les plus demandés
