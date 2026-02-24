@@ -199,7 +199,7 @@ export default function Index() {
                     size="lg"
                     className="w-full sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 border-0 group text-white"
                   >
-                    Commencer
+                    Commencer gratuitement
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
@@ -255,6 +255,14 @@ export default function Index() {
                     </div>
                     <Badge className="bg-success/15 text-success border-success/25 text-[10px] shrink-0">CDI</Badge>
                   </motion.div>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="mt-2.5 text-[11px] text-accent/80 font-semibold flex items-center gap-1.5"
+                  >
+                    <Sparkles className="h-3 w-3 text-accent" /> Votre profil match 85 % – Éligible visa ?
+                  </motion.p>
                 </AnimatePresence>
               </div>
 
