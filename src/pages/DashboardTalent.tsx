@@ -133,9 +133,11 @@ const MOCK_TIMELINE: TimelineStep[] = [
 ];
 
 const MOCK_RECOMMENDED_OFFERS = [
-  { id: "mock-r1", title: "Maçon / Maçonne", company: "BTP Services IDF", codeRome: "F1703", sector: "BTP", location: "Lyon, Auvergne-Rhône-Alpes", contract: "CDI", score: 92, salary: "26 000 – 32 000 €/an", skills: ["Maçonnerie", "Coffrage", "Sécurité chantier"], tension: "Très forte", url: null },
-  { id: "mock-r2", title: "Aide-soignant(e)", company: "Clinique du Parc", codeRome: "J1501", sector: "Santé", location: "Paris, Île-de-France", contract: "CDD", score: 85, salary: "28 000 – 32 000 €/an", skills: ["Soins", "Aide à la personne", "DEAS"], tension: "Forte", url: null },
-  { id: "mock-r3", title: "Serveur / Serveuse", company: "Hôtel Splendide", codeRome: "G1602", sector: "CHR", location: "Bordeaux, Nouvelle-Aquitaine", contract: "Saisonnier", score: 78, salary: "22 000 – 26 000 €/an", skills: ["Service en salle", "HACCP", "Anglais professionnel"], tension: "Modérée", url: null },
+  { id: "mock-r1", title: "Maçon qualifié H/F", company: "BTP Services IDF", codeRome: "F1703", sector: "BTP", location: "Lyon, Auvergne-Rhône-Alpes", contract: "CDI", score: 92, salary: "26 000 – 32 000 €/an", skills: ["Maçonnerie", "Coffrage", "Sécurité chantier"], tension: "Très forte", url: null },
+  { id: "mock-r2", title: "Maçon / Coffreur", company: "Eiffage Construction", codeRome: "F1703", sector: "BTP", location: "Paris, Île-de-France", contract: "CDI", score: 89, salary: "28 000 – 34 000 €/an", skills: ["Coffrage", "Maçonnerie", "Ferraillage"], tension: "Très forte", url: null },
+  { id: "mock-r3", title: "Ouvrier maçon BTP", company: "Bouygues Bâtiment", codeRome: "F1703", sector: "BTP", location: "Bordeaux, Nouvelle-Aquitaine", contract: "CDI", score: 87, salary: "24 000 – 30 000 €/an", skills: ["Maçonnerie traditionnelle", "Lecture de plans", "Enduits"], tension: "Très forte", url: null },
+  { id: "mock-r4", title: "Aide-soignant(e)", company: "Clinique du Parc", codeRome: "J1501", sector: "Santé", location: "Paris, Île-de-France", contract: "CDD", score: 85, salary: "28 000 – 32 000 €/an", skills: ["Soins", "Aide à la personne", "DEAS"], tension: "Forte", url: null },
+  { id: "mock-r5", title: "Serveur / Serveuse", company: "Hôtel Splendide", codeRome: "G1602", sector: "CHR", location: "Bordeaux, Nouvelle-Aquitaine", contract: "Saisonnier", score: 78, salary: "22 000 – 26 000 €/an", skills: ["Service en salle", "HACCP", "Anglais professionnel"], tension: "Modérée", url: null },
 ];
 
 const CONTRACT_COLORS: Record<string, string> = {
@@ -457,9 +459,16 @@ export default function DashboardTalent() {
             <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/8 px-4 py-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <Sparkles className="h-4 w-4 text-accent shrink-0" />
-                <p className="text-sm font-medium text-foreground">
-                  <span className="font-bold text-accent">Certification Premium — 30 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
-                </p>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p className="text-sm font-medium text-foreground cursor-help">
+                      <span className="font-bold text-accent">Certification Premium — 30 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-xs text-xs">
+                    Badge vérifié MINEFOP/MINREX + visibilité ×3 recruteurs partenaires. Votre profil apparaît en priorité dans les résultats de matching des entreprises premium.
+                  </TooltipContent>
+                </Tooltip>
               </div>
               <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={handleUnlockPayment} disabled={paymentLoading}>
                 {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Activer <ChevronRight className="ml-1 h-3 w-3" /></>}
@@ -534,8 +543,8 @@ export default function DashboardTalent() {
               <TabsContent value="dashboard" className="space-y-5 mt-0">
                 <motion.div variants={itemVariants}>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    <PremiumStatCard title="Offres disponibles" value={String(Math.max(totalOpenOffers, MOCK_RECOMMENDED_OFFERS.length))} subtitle="Postes actifs · Secteurs en forte tension" tensionLevel="low" tensionLabel="STABLE" icon={Briefcase} />
-                    <PremiumStatCard title="Score de compatibilité" value="78%" subtitle="BTP – Maçonnerie F1703 · Demande élevée" tensionLevel="low" tensionLabel="STABLE" icon={Star} />
+                    <PremiumStatCard title="Offres disponibles" value={String(Math.max(totalOpenOffers, offersToDisplay.length))} subtitle="Postes actifs · Secteurs en forte tension" tensionLevel="low" tensionLabel="STABLE" icon={Briefcase} />
+                    <PremiumStatCard title="Score de compatibilité" value={`${offersToDisplay[0]?.score ?? 85}%`} subtitle="BTP – Maçonnerie F1703 · Demande élevée" tensionLevel="low" tensionLabel="STABLE" icon={Star} />
                     <PremiumStatCard title="Progression ALTIS" value={`${PROGRESS_PERCENT}%`} subtitle="4 étapes sur 6 · Formation en cours" tensionLevel="medium" tensionLabel="EN COURS" icon={TrendingUp} />
                   </div>
                 </motion.div>
