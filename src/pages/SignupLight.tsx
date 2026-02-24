@@ -93,6 +93,7 @@ export default function SignupLight() {
     contact:    "",           // email or phone
     secteur:    premiumRome || "",
     experience: premiumExp  || "",
+    pays:       "Cameroun",
   });
 
   const selectedSecteur  = SECTEURS.find((s) => s.value === form.secteur);
@@ -122,6 +123,7 @@ export default function SignupLight() {
         rome_code: form.secteur,
         rome_label: selectedSecteur?.label ?? "",
         experience: form.experience,
+        country: form.pays,
         role: "talent",
       };
 
@@ -450,6 +452,27 @@ export default function SignupLight() {
                           </motion.div>
                         )}
                       </AnimatePresence>
+                    </div>
+
+                    {/* Pays */}
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-semibold text-white/70 flex items-center gap-2">
+                        <MapPin className="h-3.5 w-3.5" style={{ color: "#06B6D4" }} />
+                        Pays de résidence
+                      </Label>
+                      <Select value={form.pays} onValueChange={(v) => handleChange("pays", v)}>
+                        <SelectTrigger
+                          className="h-12 rounded-xl text-base text-white"
+                          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+                        >
+                          <SelectValue placeholder="Sélectionnez votre pays…" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl">
+                          {["Cameroun", "Sénégal", "Côte d'Ivoire", "Guinée", "Mali", "Bénin", "Togo", "Burkina Faso", "Congo (RDC)", "Autre"].map((p) => (
+                            <SelectItem key={p} value={p} className="text-sm py-3">{p}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     {/* RGPD */}
