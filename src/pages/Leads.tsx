@@ -232,7 +232,7 @@ export default function Leads() {
                   <motion.img
                     src={heroImg}
                     alt="Talents France-Afrique"
-                    className="w-80 rounded-2xl"
+                    className="w-full max-w-xs max-h-72 object-contain mx-auto rounded-2xl drop-shadow-[0_12px_24px_rgba(6,182,212,0.25)]"
                     style={{ filter: "drop-shadow(0 24px 48px hsl(189,94%,43%,0.22))" }}
                     animate={{ y: [0, -10, 0] }}
                     transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}

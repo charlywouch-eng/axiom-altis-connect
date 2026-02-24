@@ -491,7 +491,7 @@ export default function DashboardTalent() {
                   </div>
                 </div>
                 <div className="relative w-full sm:w-52 h-32 sm:h-auto overflow-hidden bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center p-4">
-                  <img src={heroFranceAfrique} alt="France-Afrique" className="h-full w-full object-contain opacity-80" style={{ filter: "drop-shadow(0 8px 16px rgba(6,182,212,0.25))" }} />
+                  <img src={heroFranceAfrique} alt="France-Afrique" className="h-full max-h-32 w-auto object-contain opacity-80 drop-shadow-[0_8px_16px_rgba(6,182,212,0.25)]" />
                   <div className="absolute inset-0 bg-gradient-to-l from-transparent to-primary/70 sm:bg-gradient-to-r" />
                   <div className="absolute bottom-2 right-2 text-[8px] font-bold text-white/50 uppercase tracking-widest">Plateforme RH Tech France-Afrique</div>
                 </div>

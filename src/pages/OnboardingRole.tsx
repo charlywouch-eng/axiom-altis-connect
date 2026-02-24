@@ -256,7 +256,7 @@ export default function OnboardingRole() {
           <motion.img
             src={heroImg}
             alt="France-Afrique RH"
-            className="w-72 mx-auto mb-8 rounded-2xl"
+            className="w-full max-w-xs max-h-64 object-contain mx-auto mb-8 rounded-2xl drop-shadow-[0_12px_24px_rgba(6,182,212,0.25)]"
             style={{ filter: "drop-shadow(0 20px 40px hsl(189,94%,43%,0.25))" }}
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
