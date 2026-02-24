@@ -33,10 +33,22 @@ const SECTEURS = [
 
 const EXPERIENCE_OPTIONS = [
   { value: "0-2",  label: "Moins de 2 ans",  teaser: "Profil junior – forte demande pour formations ALTIS" },
-  { value: "2-5",  label: "2 à 5 ans",       teaser: "Profil intermédiaire très demandé en France 🔥" },
+  { value: "2-5",  label: "2 à 5 ans",       teaser: "Profil intermédiaire très demandé en France" },
   { value: "5-10", label: "5 à 10 ans",      teaser: "Profil expérimenté – priorité recruteurs partenaires" },
   { value: "10+",  label: "Plus de 10 ans",  teaser: "Expert confirmé – accès direct entreprises premium" },
 ];
+
+const SECTOR_TENSION: Record<string, string> = {
+  F1703: "grande tension BTP",
+  J1501: "pénurie critique Santé",
+  G1602: "grande tension CHR",
+  N4101: "forte tension Transport",
+  I1304: "grande tension Industrie",
+  A1414: "demande saisonnière Agriculture",
+  M1805: "grande tension Tech",
+  D1502: "flux constant Commerce",
+  M1607: "demande stable Support",
+};
 
 // ── Score calculation ────────────────────────────────────────────
 const ROME_BASE_SCORES: Record<string, number> = {
@@ -415,7 +427,7 @@ export default function SignupLight() {
                           >
                             <span className="text-xs text-tension/80">⚡</span>
                             <p className="text-xs font-medium text-tension/80">
-                              {selectedExp.teaser}
+                              {selectedExp.teaser}{form.secteur ? ` (${SECTOR_TENSION[form.secteur] ?? ""})` : ""}
                             </p>
                           </motion.div>
                         )}
@@ -551,7 +563,7 @@ export default function SignupLight() {
                     </div>
 
                     <h2 className="font-black text-xl text-white mb-1">
-                      Excellent profil {selectedSecteur?.metier?.split(" ")[0] ?? selectedSecteur?.label.split(" ")[1] ?? ""}
+                      Excellent profil {selectedSecteur?.metier?.split("/")[0]?.trim() ?? ""}
                     </h2>
                     {selectedExp && (
                       <motion.p
@@ -560,11 +572,12 @@ export default function SignupLight() {
                         transition={{ delay: 1.2 }}
                         className="text-xs font-semibold mb-2 text-tension"
                       >
-                        ⚡ {selectedExp.teaser}
+                        ⚡ {selectedExp.teaser}{form.secteur ? ` (${SECTOR_TENSION[form.secteur] ?? ""})` : ""}
                       </motion.p>
                     )}
                     <p className="text-sm leading-relaxed mb-2 text-white/50">
                       Votre profil <span className="font-semibold text-white">{selectedSecteur?.metier ?? selectedSecteur?.label ?? ""}</span>
+                      {form.secteur && <span className="font-mono text-accent"> ({form.secteur})</span>}
                       {form.experience && ` · ${selectedExp?.label}`} match{" "}
                       <span className="font-bold text-accent">
                         {Math.max(score - 7, 60)}–{score}%
@@ -644,9 +657,9 @@ export default function SignupLight() {
                       <Sparkles className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="font-black text-sm text-white">Débloquez score détaillé + offres + parcours ALTIS</p>
+                      <p className="font-black text-sm text-white">Débloquez maintenant</p>
                       <p className="text-xs mt-0.5 leading-relaxed text-white/45">
-                        Analyse ROME approfondie · Offres France Travail en temps réel · Parcours ALTIS personnalisé (visa ANEF + billet + logement) — <span className="font-semibold text-accent">10 € unique</span>
+                        Score détaillé + offres France Travail matchées + parcours ALTIS personnalisé (visa ANEF + billet + logement) — <span className="font-semibold text-accent">10 € unique</span> (analyse approfondie & priorité)
                       </p>
                     </div>
                   </div>
