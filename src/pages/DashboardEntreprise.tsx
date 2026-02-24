@@ -37,7 +37,22 @@ import {
   DollarSign,
   Crown,
   Sparkles,
+  Info,
+  Filter,
+  Building2,
+  Mail,
+  Hash,
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,6 +91,24 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
+// 5 mock certified talents for matching display
+const CERTIFIED_TALENTS = [
+  { id: "ct1", name: "Jean-Pierre Mbarga", rome: "F1703", romeLabel: "Maçon", score: 92, salary: "28 000 €/an", country: "Cameroun", minefop: true, skills: ["Coffrage", "Béton armé", "Normes DTU"] },
+  { id: "ct2", name: "Yvette Nkoulou", rome: "J1301", romeLabel: "Aide-soignante", score: 88, salary: "24 500 €/an", country: "Cameroun", minefop: true, skills: ["Soins", "Hygiène", "Accompagnement"] },
+  { id: "ct3", name: "Paul Essomba", rome: "N1103", romeLabel: "Chauffeur PL", score: 85, salary: "26 000 €/an", country: "Cameroun", minefop: true, skills: ["Permis C", "FIMO", "ADR"] },
+  { id: "ct4", name: "Marie-Claire Atangana", rome: "G1603", romeLabel: "Réceptionniste", score: 79, salary: "23 000 €/an", country: "Cameroun", minefop: true, skills: ["Accueil", "Anglais B2", "PMS Opera"] },
+  { id: "ct5", name: "Samuel Fotso", rome: "I1304", romeLabel: "Technicien maintenance", score: 91, salary: "30 000 €/an", country: "Cameroun", minefop: true, skills: ["Électromécanique", "GMAO", "Habilitation BR"] },
+];
+
+const ROME_FILTER_OPTIONS = [
+  { value: "all", label: "Tous les métiers" },
+  { value: "F1703", label: "Maçon (F1703)" },
+  { value: "J1301", label: "Aide-soignante (J1301)" },
+  { value: "N1103", label: "Chauffeur PL (N1103)" },
+  { value: "G1603", label: "Réceptionniste (G1603)" },
+  { value: "I1304", label: "Tech. maintenance (I1304)" },
+];
+
 export default function DashboardEntreprise() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -90,6 +123,11 @@ export default function DashboardEntreprise() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  const [romeFilter, setRomeFilter] = useState("all");
+  const [minScoreFilter, setMinScoreFilter] = useState(true);
+  const [minefopFilter, setMinefopFilter] = useState(false);
+  const [recruitFormOpen, setRecruitFormOpen] = useState(false);
+  const [recruitForm, setRecruitForm] = useState({ company: "", email: "", sector: "", volume: "" });
 
   // Show toast on subscription success/cancel
   useEffect(() => {
@@ -554,22 +592,107 @@ export default function DashboardEntreprise() {
 
           {/* ──── Onglet Matching IA ─────────────────────────────── */}
           <TabsContent value="matching" className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <h2 className="font-display text-xl font-bold">Matching IA – Tous les talents</h2>
+                <h2 className="font-display text-xl font-bold">Matching IA – Talents certifiés</h2>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  {MOCK_CANDIDATES.length} talents Cameroun disponibles, triés par score de conformité
+                  Filtrez par code ROME, score et certification MINEFOP
                 </p>
               </div>
+              <Badge className="bg-accent/15 text-accent border border-accent/30 text-xs font-semibold shrink-0">
+                <Filter className="h-3 w-3 mr-1" /> {CERTIFIED_TALENTS.filter(t => {
+                  if (romeFilter !== "all" && t.rome !== romeFilter) return false;
+                  if (minScoreFilter && t.score < 70) return false;
+                  if (minefopFilter && !t.minefop) return false;
+                  return true;
+                }).length} profils
+              </Badge>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {MOCK_CANDIDATES.sort((a, b) => b.score - a.score).map((candidate, i) => (
-                <CandidateMatchCard
-                  key={candidate.id}
-                  candidate={candidate}
-                  index={i}
-                  onContact={handleContact}
-                />
+
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3 items-center">
+              <Select value={romeFilter} onValueChange={setRomeFilter}>
+                <SelectTrigger className="w-[200px] h-9 text-sm">
+                  <SelectValue placeholder="Filtrer par ROME" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROME_FILTER_OPTIONS.map(o => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" checked={minScoreFilter} onChange={e => setMinScoreFilter(e.target.checked)} className="rounded border-input" />
+                Score &gt; 70 %
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" checked={minefopFilter} onChange={e => setMinefopFilter(e.target.checked)} className="rounded border-input" />
+                MINEFOP certifié
+              </label>
+            </div>
+
+            {/* Certified talent cards */}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              {CERTIFIED_TALENTS
+                .filter(t => {
+                  if (romeFilter !== "all" && t.rome !== romeFilter) return false;
+                  if (minScoreFilter && t.score < 70) return false;
+                  if (minefopFilter && !t.minefop) return false;
+                  return true;
+                })
+                .map((t, i) => (
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                >
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow border-border/60 group">
+                    <div className="h-1 bg-gradient-cta" />
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                            {t.name.split(" ").map(n => n[0]).join("")}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-foreground">{t.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{t.country}</p>
+                          </div>
+                        </div>
+                        <Badge className="bg-success/15 text-success border-success/30 text-[9px] font-bold px-1.5">
+                          <ShieldCheck className="h-2.5 w-2.5 mr-0.5" /> CERTIFIÉ
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-semibold text-foreground">{t.romeLabel}</p>
+                          <p className="text-[10px] text-muted-foreground">ROME {t.rome}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-lg font-black ${t.score >= 85 ? "text-success" : t.score >= 70 ? "text-accent" : "text-muted-foreground"}`}>{t.score}%</p>
+                        </div>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                        <motion.div
+                          className={`h-full rounded-full ${t.score >= 85 ? "bg-success" : "bg-accent"}`}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${t.score}%` }}
+                          transition={{ delay: 0.3 + i * 0.08, duration: 0.6 }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">{t.salary}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {t.skills.map(s => (
+                          <span key={s} className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">{s}</span>
+                        ))}
+                      </div>
+                      <Button size="sm" className="w-full text-xs font-semibold" onClick={() => handleContact(t.id)}>
+                        Contacter
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               ))}
             </div>
           </TabsContent>
@@ -645,56 +768,67 @@ export default function DashboardEntreprise() {
                           <TableHead className="font-bold text-foreground text-right">Action</TableHead>
                         </TableRow>
                       </TableHeader>
-                      <TableBody>
-                        {[
-                          { name: "Découverte", price: "Gratuit", profiles: "3 profils", features: "Accès matching IA · Score compatibilité · Aperçu CV", cta: "Actif", highlight: false, badge: null },
-                          { name: "Premium", price: "399 €/mois", profiles: "Illimité", features: "Matching avancé · Filtres ROME · Contacts directs · Support prioritaire", cta: "Souscrire", highlight: true, badge: "Recommandé" },
-                          { name: "Success Fee", price: "25 % du brut annuel", profiles: "À la demande", features: "Paiement au résultat · Garantie remplacement 3 mois", cta: "Contacter", highlight: false, badge: null },
-                          { name: "ALTIS Intégral", price: "1 200 €/talent", profiles: "Par talent", features: "Visa + billet + logement meublé 3 mois · Formation normes FR incluse", cta: "En savoir +", highlight: false, badge: "Pack complet" },
-                        ].map(({ name, price, profiles, features, cta, highlight, badge }) => (
-                          <TableRow key={name} className={highlight ? "bg-primary/5 border-l-2 border-primary" : ""}>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-sm text-foreground">{name}</span>
-                                {badge && <Badge className="text-[9px] px-1.5 py-0 bg-accent/10 text-accent border-accent/30 font-bold">{badge}</Badge>}
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-bold text-foreground text-sm">{price}</TableCell>
-                            <TableCell className="text-sm text-muted-foreground hidden sm:table-cell">{profiles}</TableCell>
-                            <TableCell className="text-xs text-muted-foreground hidden md:table-cell max-w-xs">{features}</TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                size="sm"
-                                variant={highlight ? "default" : "outline"}
-                                className={highlight ? "bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-md shadow-primary/20" : "text-xs font-semibold"}
-                                onClick={() => {
-                                  if (cta === "Actif") return;
-                                  if (name === "Premium") {
-                                    if (isPremium) {
-                                      toast({ title: "✅ Déjà abonné", description: "Votre abonnement Premium est actif." });
-                                    } else {
-                                      handleCheckout();
+                      <TooltipProvider>
+                        <TableBody>
+                          {[
+                            { name: "Découverte", price: "Gratuit", profiles: "3 profils", features: "Accès matching IA · Score compatibilité · Aperçu CV", cta: "Actif", highlight: false, badge: null, tooltip: "Idéal pour tester la plateforme sans engagement" },
+                            { name: "Premium", price: "699 €/mois", profiles: "Illimité", features: "Accès illimité · Filtres ROME avancés · Contacts directs · Support prioritaire · Portail gestion Stripe", cta: "Souscrire", highlight: true, badge: "Recommandé", tooltip: "ROI moyen : 3 recrutements/mois = 233 €/recrutement" },
+                            { name: "Success Fee", price: "25 % du brut annuel", profiles: "À la demande", features: "Paiement au résultat · Garantie remplacement 3 mois", cta: "Contacter", highlight: false, badge: null, tooltip: "Zéro risque : vous ne payez que si le talent est embauché" },
+                            { name: "ALTIS Intégral", price: "1 200 €/talent", profiles: "Par talent", features: "Visa ANEF + billet A/R + logement meublé 3 mois · Formation normes FR incluse", cta: "En savoir +", highlight: false, badge: "Pack complet", tooltip: "Tout-inclus : le talent arrive opérationnel J+1 à Paris" },
+                          ].map(({ name, price, profiles, features, cta, highlight, badge, tooltip }) => (
+                            <TableRow key={name} className={highlight ? "bg-primary/5 border-l-2 border-primary" : ""}>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-sm text-foreground">{name}</span>
+                                  {badge && <Badge className="text-[9px] px-1.5 py-0 bg-accent/10 text-accent border-accent/30 font-bold">{badge}</Badge>}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="font-bold text-foreground text-sm cursor-help border-b border-dashed border-muted-foreground/30">{price}</span>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-[200px]">
+                                    <p className="text-xs">{tooltip}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground hidden sm:table-cell">{profiles}</TableCell>
+                              <TableCell className="text-xs text-muted-foreground hidden md:table-cell max-w-xs">{features}</TableCell>
+                              <TableCell className="text-right">
+                                <Button
+                                  size="sm"
+                                  variant={highlight ? "default" : "outline"}
+                                  className={highlight ? "bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-md shadow-primary/20" : "text-xs font-semibold"}
+                                  onClick={() => {
+                                    if (cta === "Actif") return;
+                                    if (name === "Premium") {
+                                      if (isPremium) {
+                                        toast({ title: "✅ Déjà abonné", description: "Votre abonnement Premium est actif." });
+                                      } else {
+                                        handleCheckout();
+                                      }
+                                      return;
                                     }
-                                    return;
-                                  }
-                                  toast({ title: "📩 Demande envoyée", description: `Notre équipe commerciale vous contactera pour la formule ${name}.` });
-                                }}
-                                disabled={cta === "Actif" || (name === "Premium" && checkoutLoading)}
-                              >
-                                {name === "Premium" && isPremium ? (
-                                  <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</>
-                                ) : name === "Premium" && checkoutLoading ? (
-                                  "Redirection…"
-                                ) : cta === "Actif" ? (
-                                  <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</>
-                                ) : (
-                                  cta
-                                )}
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
+                                    toast({ title: "📩 Demande envoyée", description: `Notre équipe commerciale vous contactera pour la formule ${name}.` });
+                                  }}
+                                  disabled={cta === "Actif" || (name === "Premium" && checkoutLoading)}
+                                >
+                                  {name === "Premium" && isPremium ? (
+                                    <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</>
+                                  ) : name === "Premium" && checkoutLoading ? (
+                                    "Redirection…"
+                                  ) : cta === "Actif" ? (
+                                    <><CheckCircle2 className="h-3 w-3 mr-1" /> Actif</>
+                                  ) : (
+                                    cta
+                                  )}
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </TooltipProvider>
                     </Table>
                   </div>
 
@@ -744,6 +878,30 @@ export default function DashboardEntreprise() {
             <VerifiedTalentsTab />
           </TabsContent>
         </Tabs>
+
+        {/* ── CTA Commencer à recruter ─────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          <Card className="overflow-hidden border-primary/30 bg-gradient-to-r from-primary/5 to-accent/5">
+            <div className="h-1 bg-gradient-cta" />
+            <CardContent className="p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-extrabold text-foreground mb-1">Prêt à recruter vos premiers talents ?</h2>
+                <p className="text-sm text-muted-foreground">Remplissez le formulaire et notre équipe vous contacte sous 24h avec des profils matchés.</p>
+              </div>
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20 shrink-0 gap-2"
+                onClick={() => setRecruitFormOpen(true)}
+              >
+                <Briefcase className="h-4 w-4" /> Commencer à recruter
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* ── Footer dashboard ───────────────────────────────────── */}
         <motion.footer
@@ -797,6 +955,70 @@ export default function DashboardEntreprise() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ── Formulaire entreprise ── */}
+      <Dialog open={recruitFormOpen} onOpenChange={setRecruitFormOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-primary" /> Commencer à recruter
+            </DialogTitle>
+            <DialogDescription>
+              Décrivez votre besoin et recevez des profils matchés sous 24h.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              toast({ title: "✅ Demande envoyée", description: "Notre équipe vous contacte sous 24h avec des profils matchés." });
+              setRecruitFormOpen(false);
+              setRecruitForm({ company: "", email: "", sector: "", volume: "" });
+            }}
+          >
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Nom de la société</label>
+              <Input placeholder="Ex : BTP France SAS" value={recruitForm.company} onChange={e => setRecruitForm(f => ({ ...f, company: e.target.value }))} required />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Email professionnel</label>
+              <Input type="email" placeholder="rh@entreprise.fr" value={recruitForm.email} onChange={e => setRecruitForm(f => ({ ...f, email: e.target.value }))} required />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Secteur d'activité</label>
+              <Select value={recruitForm.sector} onValueChange={v => setRecruitForm(f => ({ ...f, sector: v }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez un secteur" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="btp">BTP / Construction</SelectItem>
+                  <SelectItem value="sante">Santé / Aide à la personne</SelectItem>
+                  <SelectItem value="transport">Transport / Logistique</SelectItem>
+                  <SelectItem value="hotellerie">Hôtellerie / Restauration</SelectItem>
+                  <SelectItem value="industrie">Industrie / Maintenance</SelectItem>
+                  <SelectItem value="autre">Autre</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Volume de talents recherchés</label>
+              <Select value={recruitForm.volume} onValueChange={v => setRecruitForm(f => ({ ...f, volume: v }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Combien de talents ?" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1-3">1 à 3 talents</SelectItem>
+                  <SelectItem value="4-10">4 à 10 talents</SelectItem>
+                  <SelectItem value="10+">Plus de 10 talents</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button type="submit" className="w-full font-bold gap-2">
+              <ArrowRight className="h-4 w-4" /> Envoyer ma demande
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
