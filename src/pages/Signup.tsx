@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { FullPageLoader } from "@/components/FullPageLoader";
 import {
   Tooltip,
   TooltipContent,
@@ -117,7 +118,7 @@ export default function Signup() {
   // Step 3 – Score mock
   const mockScore = 78;
 
-  if (loading) return null;
+  if (loading) return <FullPageLoader />;
   if (session) return <Navigate to="/onboarding-role" replace />;
 
   const goTo = (s: number) => {
