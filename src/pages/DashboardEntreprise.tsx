@@ -317,10 +317,10 @@ export default function DashboardEntreprise() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="relative overflow-hidden rounded-2xl text-white shadow-premium" style={{ background: "linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(221 83% 25%) 55%, hsl(189 94% 28%) 100%)" }}>
-            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "28px 28px" }} />
-            <div className="absolute -right-12 -top-12 h-52 w-52 rounded-full bg-[hsl(189,94%,43%)]/15 blur-3xl" />
-            <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-[hsl(221,83%,38%)]/25 blur-2xl" />
+          <div className="relative overflow-hidden rounded-2xl text-white shadow-premium bg-hero-gradient">
+            <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
+            <div className="absolute -right-12 -top-12 h-52 w-52 rounded-full bg-accent/15 blur-3xl" />
+            <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-primary/25 blur-2xl" />
             <div className="relative p-6 sm:p-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
                 <div className="flex-1">
@@ -575,7 +575,7 @@ export default function DashboardEntreprise() {
 
               {/* Recruitment Timeline */}
               <Card className="mt-6 overflow-hidden border-primary/20">
-                <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, hsl(221 83% 38%), hsl(189 94% 43%))" }} />
+                <div className="h-1 w-full bg-gradient-cta" />
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base font-semibold flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-primary" />
@@ -619,7 +619,7 @@ export default function DashboardEntreprise() {
           <TabsContent value="pricing">
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <Card className="overflow-hidden border-primary/20">
-                <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, hsl(221 83% 38%), hsl(189 94% 43%))" }} />
+                <div className="h-1 w-full bg-gradient-cta" />
                 <CardHeader>
                   <CardTitle className="text-lg font-bold flex items-center gap-2">
                     <DollarSign className="h-5 w-5 text-primary" />
