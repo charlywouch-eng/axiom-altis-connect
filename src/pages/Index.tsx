@@ -10,7 +10,7 @@ import { FullPageLoader } from "@/components/FullPageLoader";
 import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import heroFranceAfrique from "@/assets/hero-france-afrique.png";
+import heroFranceAfrique from "@/assets/logo-rh-tech.png";
 
 // ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
