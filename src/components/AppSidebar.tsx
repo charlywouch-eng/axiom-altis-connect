@@ -14,7 +14,9 @@ import {
 
 const talentLinks = [
   { title: "Dashboard", url: "/dashboard-talent", icon: Home },
-  { title: "Mon Profil", url: "/dashboard-talent", icon: UserCircle },
+  { title: "Mon Parcours", url: "/dashboard-talent?tab=parcours", icon: GraduationCap },
+  { title: "Opportunités", url: "/dashboard-talent?tab=opportunites", icon: Briefcase },
+  { title: "Mon Profil", url: "/dashboard-talent?tab=profil", icon: UserCircle },
 ];
 
 const entrepriseLinks = [
