@@ -12,7 +12,7 @@ import jsPDF from "jspdf";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, RadarChart, PolarGrid, PolarAngleAxis,
-  PolarRadiusAxis, Radar,
+  PolarRadiusAxis, Radar, AreaChart, Area,
 } from "recharts";
 
 const CHART_COLORS = [
@@ -137,6 +137,45 @@ export default function AdminStatistics() {
       return data as { event_name: string; rome_code: string | null; created_at: string }[];
     },
   });
+
+  // Daily leads over last 30 days
+  const { data: dailyLeads = [] } = useQuery({
+    queryKey: ["admin_daily_leads"],
+    queryFn: async () => {
+      const since = new Date();
+      since.setDate(since.getDate() - 30);
+      const { data, error } = await supabase
+        .from("leads")
+        .select("created_at, status")
+        .gte("created_at", since.toISOString())
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data as { created_at: string; status: string }[];
+    },
+  });
+
+  const dailyLeadsChart = useMemo(() => {
+    const map: Record<string, { total: number; premium: number }> = {};
+    // Pre-fill 30 days
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      map[key] = { total: 0, premium: 0 };
+    }
+    dailyLeads.forEach((l) => {
+      const key = l.created_at.slice(0, 10);
+      if (map[key]) {
+        map[key].total++;
+        if (l.status === "premium_paid") map[key].premium++;
+      }
+    });
+    return Object.entries(map).map(([date, v]) => ({
+      date: date.slice(5), // MM-DD
+      total: v.total,
+      premium: v.premium,
+    }));
+  }, [dailyLeads]);
 
   const funnelCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -414,6 +453,39 @@ export default function AdminStatistics() {
                 </ResponsiveContainer>
               </>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Daily Leads Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <TrendingUp className="h-4 w-4 text-accent" />
+              Leads par jour (30 derniers jours)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart data={dailyLeadsChart}>
+                <defs>
+                  <linearGradient id="gradTotal" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradPremium" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="date" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} interval={2} />
+                <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                <Tooltip contentStyle={customTooltipStyle} />
+                <Legend />
+                <Area type="monotone" dataKey="total" name="Total leads" stroke="hsl(var(--accent))" fill="url(#gradTotal)" strokeWidth={2} />
+                <Area type="monotone" dataKey="premium" name="Premium payés" stroke="hsl(160, 60%, 45%)" fill="url(#gradPremium)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
