@@ -20,11 +20,12 @@ serve(async (req) => {
     });
 
     const body = await req.json().catch(() => ({}));
-    const { email, metier, rome_code, experience } = body as {
+    const { email, metier, rome_code, experience, source } = body as {
       email?: string;
       metier?: string;
       rome_code?: string;
       experience?: string;
+      source?: string; // "leads" or "signup-light"
     };
 
     const origin = req.headers.get("origin") || "https://axiom-altis-connect.lovable.app";
@@ -37,11 +38,13 @@ serve(async (req) => {
       ...(experience ? { exp: experience } : {}),
     });
 
+    const cancelPage = source === "signup-light" ? "/signup-light" : "/leads";
+
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: [{ price: PRICE_ID, quantity: 1 }],
       mode: "payment",
       success_url: `${origin}/payment-success?${successParams.toString()}`,
-      cancel_url: `${origin}/leads?canceled=true`,
+      cancel_url: `${origin}${cancelPage}?canceled=true`,
       metadata: {
         payment_type: "analyse_complete_lead",
         metier: metier ?? "",

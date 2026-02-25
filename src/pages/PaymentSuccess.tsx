@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 const SECTEURS: Record<string, { label: string; icon: string; demand: string }> = {
   F1703: { label: "Maçonnerie / BTP",         icon: "🏗️", demand: "Très forte" },
   J1501: { label: "Aide-soignant / Santé",    icon: "🏥", demand: "Très forte" },
-  N1101: { label: "Transport / Logistique",   icon: "🚛", demand: "Forte"      },
+  N4101: { label: "Transport / Logistique",   icon: "🚛", demand: "Forte"      },
   G1602: { label: "Service salle / CHR",      icon: "🍽️", demand: "Forte"      },
   I1304: { label: "Maintenance industrielle", icon: "⚙️", demand: "Forte"      },
   G1703: { label: "Hôtellerie / Accueil",     icon: "🏨", demand: "Modérée"    },
@@ -85,7 +85,7 @@ export default function PaymentSuccess() {
 
   /* score: from URL param OR derive from rome */
   const BASE_SCORES: Record<string, number> = {
-    F1703: 88, J1501: 86, N1101: 81, G1602: 79,
+    F1703: 88, J1501: 86, N4101: 81, G1602: 79,
     I1304: 77, G1703: 76, D1212: 71, A1401: 73, M1607: 74,
   };
   const EXP_BONUS: Record<string, number> = {
