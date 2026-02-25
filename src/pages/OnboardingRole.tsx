@@ -275,7 +275,7 @@ export default function OnboardingRole() {
           {/* trust badges */}
           <div className="flex flex-wrap justify-center gap-3 mt-8">
             {[
-              { icon: Globe, label: "Cameroun → France" },
+              { icon: Globe, label: "Afrique → France" },
               { icon: Star, label: "MINEFOP certifié" },
               { icon: Briefcase, label: "9 métiers en tension" },
             ].map(({ icon: Icon, label }) => (

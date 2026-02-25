@@ -525,7 +525,7 @@ export default function Leads() {
             <div className="flex justify-center gap-5">
               {[
                 { icon: Shield, label: "RGPD compliant"   },
-                { icon: Globe,  label: "Cameroun → France" },
+                { icon: Globe,  label: "Afrique → France" },
                 { icon: Star,   label: "MINEFOP certifié"  },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-1.5 text-xs" style={{ color: "hsl(215,25%,38%)" }}>
