@@ -139,29 +139,40 @@ export default function NetworkCanvas({
         }
       }
 
-      // Draw nodes (spherical glow)
+      // Draw nodes (enhanced spherical glow)
       for (const n of nodes) {
-        const pulse = Math.sin(t * 1.5 + n.pulsePhase) * 0.15 + 0.85;
+        const pulse = Math.sin(t * 1.5 + n.pulsePhase) * 0.18 + 0.82;
         const r = n.radius * pulse;
         const alpha = n.opacity * pulse;
 
-        // Outer glow
-        const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 4);
-        glow.addColorStop(0, `hsla(${color}, ${alpha * 0.5})`);
-        glow.addColorStop(1, `hsla(${color}, 0)`);
-        ctx.fillStyle = glow;
+        // Outer ambient glow (larger, softer)
+        const ambient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 6);
+        ambient.addColorStop(0, `hsla(${color}, ${alpha * 0.3})`);
+        ambient.addColorStop(0.5, `hsla(${color2}, ${alpha * 0.1})`);
+        ambient.addColorStop(1, `hsla(${color}, 0)`);
+        ctx.fillStyle = ambient;
         ctx.beginPath();
-        ctx.arc(n.x, n.y, r * 4, 0, Math.PI * 2);
+        ctx.arc(n.x, n.y, r * 6, 0, Math.PI * 2);
         ctx.fill();
 
-        // Core sphere
-        const grad = ctx.createRadialGradient(n.x - r * 0.3, n.y - r * 0.3, 0, n.x, n.y, r);
-        grad.addColorStop(0, `hsla(${color}, ${alpha})`);
-        grad.addColorStop(0.7, `hsla(${color2}, ${alpha * 0.7})`);
+        // Mid glow ring
+        const midGlow = ctx.createRadialGradient(n.x, n.y, r * 0.5, n.x, n.y, r * 3);
+        midGlow.addColorStop(0, `hsla(${color}, ${alpha * 0.6})`);
+        midGlow.addColorStop(1, `hsla(${color}, 0)`);
+        ctx.fillStyle = midGlow;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r * 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Core sphere with specular highlight
+        const grad = ctx.createRadialGradient(n.x - r * 0.35, n.y - r * 0.35, 0, n.x, n.y, r * 1.2);
+        grad.addColorStop(0, `hsla(0, 0%, 100%, ${alpha * 0.9})`);
+        grad.addColorStop(0.2, `hsla(${color}, ${alpha})`);
+        grad.addColorStop(0.6, `hsla(${color2}, ${alpha * 0.8})`);
         grad.addColorStop(1, `hsla(${color}, 0)`);
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+        ctx.arc(n.x, n.y, r * 1.2, 0, Math.PI * 2);
         ctx.fill();
       }
 

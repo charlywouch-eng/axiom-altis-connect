@@ -188,8 +188,8 @@
   }
 
   .bg-hero-dots {
-    background-image: radial-gradient(circle at 1.5px 1.5px, hsla(187, 94%, 43%, 0.15) 1px, transparent 0);
-    background-size: 32px 32px;
+    background-image: radial-gradient(circle at 1px 1px, hsla(187, 94%, 43%, 0.12) 1px, transparent 0);
+    background-size: 28px 28px;
   }
 
   .bg-gradient-cta {
