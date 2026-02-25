@@ -189,7 +189,6 @@ export default function OnboardingRole() {
     const dest = ROLES.find((r) => r.id === selectedRole)?.dest ?? "/dashboard";
 
     if (selectedRole === "talent") {
-      // Fetch user display name if available
       const { data: profile } = await supabase
         .from("profiles")
         .select("full_name")
@@ -199,6 +198,10 @@ export default function OnboardingRole() {
       setShowWelcome(true);
       setTimeout(() => { navigate(dest); }, 1600);
     } else {
+      if (selectedRole === "entreprise") {
+        // Fire-and-forget welcome email
+        supabase.functions.invoke("send-welcome-entreprise").catch(console.error);
+      }
       navigate(dest);
     }
   };
