@@ -18,6 +18,7 @@ import {
   Star, Mail, Phone, Info,
 } from "lucide-react";
 import { lazy, Suspense } from "react";
+import { PhoneInput } from "@/components/PhoneInput";
 
 const NetworkCanvas = lazy(() => import("@/components/landing/NetworkCanvas"));
 
@@ -350,26 +351,41 @@ export default function SignupLight() {
                           {isPhone(form.contact) ? <Phone className="h-3.5 w-3.5 text-accent" /> : <Mail className="h-3.5 w-3.5 text-accent" />}
                           Email ou Téléphone
                         </span>
-                        <span className="text-white/35 font-normal text-xs">(+237 accepté)</span>
                       </Label>
-                      <div className="relative">
-                        <Input
-                          type="text"
-                          placeholder="+237 6XX XXX XXX ou votre@email.com"
-                          value={form.contact}
-                          onChange={(e) => handleChange("contact", e.target.value)}
-                          autoComplete="email tel"
-                          inputMode="email"
-                          className="h-12 rounded-xl text-base pl-4 pr-4 bg-white/5 border-white/10 text-white placeholder:text-white/25"
-                        />
-                        {form.contact && (
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <span className="text-[10px] font-semibold rounded-full px-1.5 py-0.5 bg-accent/15 text-accent">
-                              {isPhone(form.contact) ? "Tél" : "Email"}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      {isPhone(form.contact) || (!form.contact && !form.contact.includes("@")) ? (
+                        <div className="space-y-2">
+                          <PhoneInput
+                            value={form.contact}
+                            onChange={(fullValue) => handleChange("contact", fullValue)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleChange("contact", "")}
+                            className="text-xs text-accent/70 hover:text-accent transition-colors"
+                          >
+                            Utiliser un email à la place
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <Input
+                            type="email"
+                            placeholder="votre@email.com"
+                            value={form.contact}
+                            onChange={(e) => handleChange("contact", e.target.value)}
+                            autoComplete="email"
+                            inputMode="email"
+                            className="h-12 rounded-xl text-base pl-4 pr-4 bg-white/5 border-white/10 text-white placeholder:text-white/25"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleChange("contact", "+237 ")}
+                            className="text-xs text-accent/70 hover:text-accent transition-colors"
+                          >
+                            Utiliser un numéro de téléphone
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     {/* Secteur ROME */}

@@ -124,7 +124,7 @@ export default function MetiersEnTension() {
               </span>
             </motion.h1>
             <motion.p custom={2} variants={fadeUp} className="mx-auto mt-6 max-w-2xl text-white/60 text-lg">
-              Croisement officiel formations CQP/DQP MINEFOP Cameroun × métiers en pénurie France.
+              Croisement officiel formations CQP/DQP MINEFOP Afrique francophone × métiers en pénurie France.
               Chaque fiche affiche le vivier de talents AXIOM disponibles et certifiés.
             </motion.p>
 
@@ -261,7 +261,7 @@ export default function MetiersEnTension() {
             Recrutez dans ces métiers en pénurie
           </h2>
           <p className="mt-3 text-white/60 max-w-xl mx-auto">
-            Accédez en 48h à des talents camerounais certifiés MINEFOP, visa-ready et opérationnels dès J1.
+            Accédez en 48h à des talents d'Afrique certifiés MINEFOP, visa-ready et opérationnels dès J1.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/signup">

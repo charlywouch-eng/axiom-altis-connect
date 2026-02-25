@@ -164,7 +164,7 @@ export default function APropos() {
             </motion.h1>
 
             <motion.p custom={2} variants={fadeUp} className="mt-6 text-base md:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
-              Nous ne recrutons pas. Nous <strong className="text-white/85">connectons durablement</strong> le vivier camerounais aux métiers en tension français.
+              Nous ne recrutons pas. Nous <strong className="text-white/85">connectons durablement</strong> les talents d'Afrique francophone aux métiers en tension français.
             </motion.p>
 
             {/* Sectors badges */}
