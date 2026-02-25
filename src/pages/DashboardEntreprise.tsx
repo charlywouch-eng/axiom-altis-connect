@@ -359,7 +359,7 @@ export default function DashboardEntreprise() {
           <div className="relative overflow-hidden rounded-2xl text-white shadow-premium">
             {/* Tech network background */}
             <div className="absolute inset-0">
-              <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" />
+              <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-[hsl(222,47%,6%)]/80" />
             </div>
             <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
