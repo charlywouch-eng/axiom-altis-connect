@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3 } from "lucide-react";
+import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, FileText } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -33,6 +33,7 @@ const adminLinks = [
   { title: "Statistiques", url: "/admin/statistics", icon: BarChart3 },
   { title: "Offres", url: "/admin/offres", icon: Briefcase },
   { title: "Subventions", url: "/admin/subventions", icon: GraduationCap },
+  { title: "Devis", url: "/admin/quotes", icon: FileText },
   { title: "Facturation", url: "/admin/facturation", icon: CreditCard },
 ];
 
