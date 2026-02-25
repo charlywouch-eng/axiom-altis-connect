@@ -112,6 +112,9 @@ export default function APropos() {
           </Link>
           <nav className="flex items-center gap-2">
             <ThemeToggle />
+            <Link to="/a-propos" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
+              À propos
+            </Link>
             <Link to="/pricing" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               Tarifs
             </Link>
@@ -327,6 +330,7 @@ export default function APropos() {
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
               <Link to="/" className="hover:text-foreground transition-colors">Accueil</Link>
               <Link to="/pricing" className="hover:text-foreground transition-colors">Tarifs</Link>
+              <Link to="/a-propos" className="hover:text-foreground transition-colors">À propos</Link>
               <Link to="/metiers-en-tension" className="hover:text-foreground transition-colors">Métiers</Link>
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors flex items-center gap-1">
                 <Lock className="h-3 w-3" /> RGPD
