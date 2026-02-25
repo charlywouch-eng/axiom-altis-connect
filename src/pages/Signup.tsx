@@ -147,7 +147,27 @@ export default function Signup() {
       },
     });
     if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      if (error.message.toLowerCase().includes("already registered") || error.message.toLowerCase().includes("already been registered")) {
+        toast({
+          title: "Compte déjà existant",
+          description: (
+            <div className="flex flex-col gap-2">
+              <span>Un compte avec cet email existe déjà.</span>
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-fit"
+                onClick={() => navigate("/login", { state: { forgotMode: true } })}
+              >
+                Se connecter / Réinitialiser mot de passe
+              </Button>
+            </div>
+          ),
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      }
       setSubmitting(false);
       return;
     }
