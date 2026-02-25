@@ -45,6 +45,8 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
@@ -130,6 +132,9 @@ export default function DashboardEntreprise() {
   const [minefopFilter, setMinefopFilter] = useState(false);
   const [recruitFormOpen, setRecruitFormOpen] = useState(false);
   const [recruitForm, setRecruitForm] = useState({ company: "", email: "", sector: "", volume: "" });
+  const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
+  const [quoteForm, setQuoteForm] = useState({ company: "", sector: "", volume: "", message: "" });
+  const [quoteSubmitting, setQuoteSubmitting] = useState(false);
 
   // Show toast on subscription success/cancel
   useEffect(() => {
@@ -189,6 +194,28 @@ export default function DashboardEntreprise() {
       toast({ title: "Erreur", description: err.message || "Impossible d'ouvrir le portail.", variant: "destructive" });
     } finally {
       setPortalLoading(false);
+    }
+  };
+
+  const handleQuoteSubmit = async () => {
+    if (!quoteForm.company || !quoteForm.sector) {
+      toast({ title: "Champs requis", description: "Veuillez remplir le nom d'entreprise et le secteur.", variant: "destructive" });
+      return;
+    }
+    setQuoteSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-quote-request", {
+        body: quoteForm,
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "✅ Demande envoyée", description: "Notre équipe commerciale vous contactera sous 24h avec un devis personnalisé." });
+      setQuoteDialogOpen(false);
+      setQuoteForm({ company: "", sector: "", volume: "", message: "" });
+    } catch (err: any) {
+      toast({ title: "Erreur", description: err.message || "Impossible d'envoyer la demande.", variant: "destructive" });
+    } finally {
+      setQuoteSubmitting(false);
     }
   };
 
@@ -806,12 +833,16 @@ export default function DashboardEntreprise() {
                                   className={highlight ? "bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-md shadow-primary/20" : "text-xs font-semibold"}
                                   onClick={() => {
                                     if (cta === "Actif") return;
-                                    if (name === "Premium") {
+                                    if (name === "Abonnement SaaS Premium") {
                                       if (isPremium) {
                                         toast({ title: "✅ Déjà abonné", description: "Votre abonnement Premium est actif." });
                                       } else {
                                         handleCheckout();
                                       }
+                                      return;
+                                    }
+                                    if (name === "Success Fee" || name === "Pack ALTIS") {
+                                      setQuoteDialogOpen(true);
                                       return;
                                     }
                                     toast({ title: "📩 Demande envoyée", description: `Notre équipe commerciale vous contactera pour la formule ${name}.` });
@@ -843,7 +874,7 @@ export default function DashboardEntreprise() {
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">Contactez notre équipe pour les recrutements en volume (&gt;10 talents)</p>
                     </div>
-                    <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 font-semibold shrink-0">
+                    <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 font-semibold shrink-0" onClick={() => setQuoteDialogOpen(true)}>
                       Contacter <ArrowRight className="ml-1 h-3 w-3" />
                     </Button>
                   </div>
@@ -1019,6 +1050,87 @@ export default function DashboardEntreprise() {
             </div>
             <Button type="submit" className="w-full font-bold gap-2">
               <ArrowRight className="h-4 w-4" /> Envoyer ma demande
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Quote Request Dialog ── */}
+      <Dialog open={quoteDialogOpen} onOpenChange={setQuoteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Handshake className="h-5 w-5 text-accent" /> Demander un devis
+            </DialogTitle>
+            <DialogDescription>
+              Recevez une proposition personnalisée sous 24h pour le recrutement de talents certifiés.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleQuoteSubmit();
+            }}
+            className="space-y-4 mt-2"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="quote-company">Entreprise *</Label>
+              <Input
+                id="quote-company"
+                placeholder="Nom de votre entreprise"
+                value={quoteForm.company}
+                onChange={(e) => setQuoteForm((f) => ({ ...f, company: e.target.value }))}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="quote-sector">Secteur d'activité *</Label>
+              <Select value={quoteForm.sector} onValueChange={(v) => setQuoteForm((f) => ({ ...f, sector: v }))}>
+                <SelectTrigger id="quote-sector">
+                  <SelectValue placeholder="Choisir un secteur" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="batiment">Bâtiment & Construction</SelectItem>
+                  <SelectItem value="sante">Santé</SelectItem>
+                  <SelectItem value="hotellerie">Hôtellerie & Restauration</SelectItem>
+                  <SelectItem value="transport">Transport & Logistique</SelectItem>
+                  <SelectItem value="maintenance">Maintenance Industrielle</SelectItem>
+                  <SelectItem value="commerce">Commerce & Distribution</SelectItem>
+                  <SelectItem value="agriculture">Agriculture & Agroalimentaire</SelectItem>
+                  <SelectItem value="support">Support Entreprise</SelectItem>
+                  <SelectItem value="autre">Autre</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="quote-volume">Nombre de talents souhaités</Label>
+              <Select value={quoteForm.volume} onValueChange={(v) => setQuoteForm((f) => ({ ...f, volume: v }))}>
+                <SelectTrigger id="quote-volume">
+                  <SelectValue placeholder="Combien de talents ?" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1-3">1 à 3 talents</SelectItem>
+                  <SelectItem value="4-10">4 à 10 talents</SelectItem>
+                  <SelectItem value="10+">Plus de 10 talents</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="quote-message">Message (optionnel)</Label>
+              <Textarea
+                id="quote-message"
+                placeholder="Décrivez vos besoins spécifiques…"
+                value={quoteForm.message}
+                onChange={(e) => setQuoteForm((f) => ({ ...f, message: e.target.value }))}
+                rows={3}
+              />
+            </div>
+            <Button type="submit" className="w-full font-bold gap-2" disabled={quoteSubmitting}>
+              {quoteSubmitting ? "Envoi en cours…" : (
+                <>
+                  <Mail className="h-4 w-4" /> Envoyer ma demande de devis
+                </>
+              )}
             </Button>
           </form>
         </DialogContent>
