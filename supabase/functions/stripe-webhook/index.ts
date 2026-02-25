@@ -48,7 +48,7 @@ serve(async (req) => {
       }
 
       // ── Paiement "Analyse Complète" 10€ talent ──────────────
-      if (payment_type === "analyse_complete" && user_id) {
+      if ((payment_type === "analyse_complete" || payment_type === "analyse_complete_lead") && user_id) {
         const { data: existingProfile } = await supabaseClient
           .from("talent_profiles")
           .select("id")
@@ -73,6 +73,19 @@ serve(async (req) => {
           if (error) { console.error("Error inserting premium talent profile:", error); throw error; }
         }
         console.log(`Premium unlocked for user ${user_id}`);
+      }
+
+      // ── Paiement lead (pas de user_id) — stocker le flag par email ──
+      if (payment_type === "analyse_complete_lead" && !user_id) {
+        const customerEmail = session.customer_details?.email || session.customer_email;
+        if (customerEmail) {
+          // Update lead status to "premium_paid"
+          await supabaseClient
+            .from("leads")
+            .update({ status: "premium_paid" })
+            .eq("email_or_phone", customerEmail);
+          console.log(`Lead ${customerEmail} marked as premium_paid`);
+        }
       }
 
       // ── Paiement success fee entreprise (offre) ─────────────
