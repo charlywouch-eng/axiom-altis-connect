@@ -400,9 +400,9 @@ export default function DashboardEntreprise() {
                     >
                       <Zap className="h-3.5 w-3.5" /> Tester 3 profils gratuits
                     </Button>
-                    <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold gap-1.5" onClick={() => setCreateOpen(true)}>
-                      <Plus className="h-3.5 w-3.5" /> Publier une offre
-                    </Button>
+                    <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10 font-semibold gap-1.5" onClick={() => setRecruitFormOpen(true)}>
+                       <Sparkles className="h-3.5 w-3.5" /> Demander démo
+                     </Button>
                   </div>
                 </div>
                 {/* Right: quick stats */}
@@ -775,10 +775,10 @@ export default function DashboardEntreprise() {
                       <TooltipProvider>
                         <TableBody>
                           {[
-                            { name: "Découverte", price: "Gratuit", profiles: "3 profils", features: "Accès matching IA · Score compatibilité · Aperçu CV", cta: "Actif", highlight: false, badge: null, tooltip: "Idéal pour tester la plateforme sans engagement" },
-                            { name: "Premium", price: "499 €/mois", profiles: "Illimité", features: "Accès illimité base talents certifiés MINEFOP/MINREX · Priorité matching · Dashboard complet · Support prioritaire", cta: "Souscrire", highlight: true, badge: "Recommandé", tooltip: "Accès illimité à des talents vérifiés et certifiés MINEFOP/MINREX – opérationnels jour 1" },
-                            { name: "Success Fee", price: "25 % du brut annuel", profiles: "À la demande", features: "Paiement au résultat · Garantie remplacement 3 mois", cta: "Contacter", highlight: false, badge: null, tooltip: "25 % du salaire brut annuel – facturé uniquement à la signature du contrat CDI" },
-                            { name: "ALTIS Intégral", price: "1 200 €/talent", profiles: "Par talent", features: "Visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois", cta: "En savoir +", highlight: false, badge: "Pack complet", tooltip: "Forfait 1 200 € par talent recruté – gestion complète visa + billet + accueil + logement 1 mois (réduction risque onboarding 80 %)" },
+                            { name: "Découverte", price: "Gratuit", profiles: "3 profils", features: "Accès limité 3 profils · Matching IA · Score compatibilité", cta: "Actif", highlight: false, badge: null, tooltip: "Idéal pour tester la plateforme sans engagement – accès limité à 3 profils" },
+                            { name: "Abonnement SaaS Premium", price: "499 €/mois", profiles: "Illimité", features: "Accès illimité base talents vérifiés · Priorité matching · Dashboard complet · Support prioritaire", cta: "Souscrire", highlight: true, badge: "Recommandé", tooltip: "Accès illimité à des profils certifiés MINEFOP/MINREX – opérationnels jour 1" },
+                            { name: "Success Fee", price: "25 % du brut annuel", profiles: "À la demande", features: "Paiement au résultat · Facturé à signature CDI · Garantie remplacement 3 mois", cta: "Contacter", highlight: false, badge: null, tooltip: "25 % du salaire brut annuel – facturé uniquement à la signature" },
+                            { name: "Pack ALTIS", price: "1 200 €/talent", profiles: "Par talent", features: "Visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois", cta: "En savoir +", highlight: false, badge: "Pack complet", tooltip: "1 200 €/talent – gestion complète visa + billet + accueil + logement (réduction risque onboarding 80 %)" },
                           ].map(({ name, price, profiles, features, cta, highlight, badge, tooltip }) => (
                             <TableRow key={name} className={highlight ? "bg-primary/5 border-l-2 border-primary" : ""}>
                               <TableCell>
