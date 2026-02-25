@@ -17,6 +17,30 @@ import imgMaintenance from "@/assets/secteur-maintenance.jpg";
 import imgAgriculture from "@/assets/secteur-agriculture.jpg";
 import imgSanteInfirmier from "@/assets/secteur-sante-infirmier.jpg";
 
+import imgSanteAideWebp from "@/assets/secteur-sante-aide.jpg?format=webp";
+import imgSupportWebp from "@/assets/secteur-support-entreprise.jpg?format=webp";
+import imgBatimentWebp from "@/assets/secteur-batiment.jpg?format=webp";
+import imgCommerceWebp from "@/assets/secteur-commerce.jpg?format=webp";
+import imgHotellerieWebp from "@/assets/secteur-hotellerie.jpg?format=webp";
+import imgTransportWebp from "@/assets/secteur-transport.jpg?format=webp";
+import imgMaintenanceWebp from "@/assets/secteur-maintenance.jpg?format=webp";
+import imgAgricultureWebp from "@/assets/secteur-agriculture.jpg?format=webp";
+import imgSanteInfirmierWebp from "@/assets/secteur-sante-infirmier.jpg?format=webp";
+
+import { OptimizedImage } from "@/components/OptimizedImage";
+
+const webpMap: Record<string, string> = {
+  [imgSanteAide]: imgSanteAideWebp,
+  [imgSupport]: imgSupportWebp,
+  [imgBatiment]: imgBatimentWebp,
+  [imgCommerce]: imgCommerceWebp,
+  [imgHotellerie]: imgHotellerieWebp,
+  [imgTransport]: imgTransportWebp,
+  [imgMaintenance]: imgMaintenanceWebp,
+  [imgAgriculture]: imgAgricultureWebp,
+  [imgSanteInfirmier]: imgSanteInfirmierWebp,
+};
+
 const secteurs = [
   {
     id: 1, secteur: "SERVICE À LA PERSONNE", metier: "Aide-soignant", rome: "J1501",
@@ -139,7 +163,7 @@ export default function MetiersCarousel() {
                       <div className="h-full rounded-2xl border bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 flex flex-col">
                         {/* Image */}
                         <div className="relative h-40 w-full overflow-hidden">
-                          <img src={s.image} alt={s.secteur} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
+                          <OptimizedImage webpSrc={webpMap[s.image]} fallbackSrc={s.image} alt={s.secteur} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
                           <div className={cn("absolute top-3 left-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm shadow-md")}>
                             <Icon className={cn("h-5 w-5", s.iconColor)} />
                           </div>

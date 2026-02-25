@@ -71,6 +71,8 @@ import { PremiumStatCard } from "@/components/PremiumStatCard";
 import { RecruitmentPipeline } from "@/components/RecruitmentPipeline";
 import { motion } from "framer-motion";
 import heroTechNetwork from "@/assets/hero-tech-network.jpg";
+import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import VerifiedTalentsTab from "@/components/dashboard/VerifiedTalentsTab";
 import { CandidateMatchCard } from "@/components/dashboard/CandidateMatchCard";
 import {
@@ -359,7 +361,7 @@ export default function DashboardEntreprise() {
           <div className="relative overflow-hidden rounded-2xl text-white shadow-premium">
             {/* Tech network background */}
             <div className="absolute inset-0">
-              <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+              <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-[hsl(222,47%,6%)]/80" />
             </div>
             <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
