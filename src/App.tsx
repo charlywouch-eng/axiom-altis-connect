@@ -34,6 +34,7 @@ import RgpdLight from "./pages/RgpdLight";
 import Leads from "./pages/Leads";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Pricing from "./pages/Pricing";
+import APropos from "./pages/APropos";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/signup-talent" element={<SignupTalent />} />
             <Route path="/metiers-en-tension" element={<MetiersEnTension />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/a-propos" element={<APropos />} />
             <Route
               path="/onboarding-role"
               element={
