@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -200,9 +201,18 @@ export default function AdminLeads() {
       <div className="space-y-6 pb-12">
 
         {/* ── Header ── */}
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard Leads Marketing</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Pipeline de conversion · Tracking multi-canaux · Export RGPD</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Dashboard Leads Marketing</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Pipeline de conversion · Tracking multi-canaux · Export RGPD</p>
+          </div>
+          <Link to="/admin/quotes">
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+              <Euro className="h-3.5 w-3.5" />
+              Demandes de devis
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Button>
+          </Link>
         </div>
 
         {/* ── KPI Cards ── */}
