@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +86,15 @@ export default function Index() {
   const [teaserEmail, setTeaserEmail] = useState("");
   const [teaserMetier, setTeaserMetier] = useState("");
   const [currentAlert, setCurrentAlert] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+
+  // Parallax scroll tracking
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Rotate live alerts
   useEffect(() => {
@@ -143,7 +152,7 @@ export default function Index() {
       </header>
 
       {/* ── Hero Full-Screen ─────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
+      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden pt-16">
         {/* Tech network background — enriched multi-layer gradient */}
         <div className="absolute inset-0">
           <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-50" loading="eager" decoding="async" fetchPriority="high" />
@@ -160,11 +169,11 @@ export default function Index() {
             <NetworkCanvas nodeCount={50} maxDistance={190} />
           </Suspense>
         </div>
-        {/* Floating orbs (enhanced — deeper, multi-color) */}
-        <div className="absolute top-[20%] right-[12%] w-[380px] h-[380px] rounded-full bg-accent/12 blur-[140px] pointer-events-none animate-float-orb" />
-        <div className="absolute bottom-[20%] left-[8%] w-[450px] h-[450px] rounded-full bg-primary/14 blur-[160px] pointer-events-none animate-float-orb-slow" />
-        <div className="absolute top-[50%] right-[30%] w-[280px] h-[280px] rounded-full bg-accent/8 blur-[110px] pointer-events-none animate-float-orb" />
-        <div className="absolute top-[10%] left-[40%] w-[200px] h-[200px] rounded-full bg-primary/6 blur-[100px] pointer-events-none animate-float-orb-slow" />
+        {/* Floating orbs with parallax — each moves at different speed */}
+        <div className="absolute top-[20%] right-[12%] w-[380px] h-[380px] rounded-full bg-accent/12 blur-[140px] pointer-events-none animate-float-orb transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * -0.12}px)` }} />
+        <div className="absolute bottom-[20%] left-[8%] w-[450px] h-[450px] rounded-full bg-primary/14 blur-[160px] pointer-events-none animate-float-orb-slow transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * 0.08}px)` }} />
+        <div className="absolute top-[50%] right-[30%] w-[280px] h-[280px] rounded-full bg-accent/8 blur-[110px] pointer-events-none animate-float-orb transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * -0.06}px) translateX(${scrollY * 0.03}px)` }} />
+        <div className="absolute top-[10%] left-[40%] w-[200px] h-[200px] rounded-full bg-primary/6 blur-[100px] pointer-events-none animate-float-orb-slow transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * 0.15}px)` }} />
 
         <div className="relative z-[3] mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
