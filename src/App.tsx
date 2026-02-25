@@ -28,7 +28,7 @@ import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
-import ResetPassword from "./pages/ResetPassword";
+
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
 import Leads from "./pages/Leads";
@@ -49,7 +49,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup-light" element={<SignupLight />} />
             <Route path="/signup-talent" element={<SignupTalent />} />

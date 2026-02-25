@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
-  Zap, ArrowRight, GraduationCap, Mail, Lock, User, CheckCircle2, XCircle,
-  Eye, EyeOff, Globe, Languages, Briefcase, X,
+  Zap, ArrowRight, GraduationCap, Mail, User, CheckCircle2, XCircle,
+  Globe, Languages, Briefcase, X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,7 +43,6 @@ const suggestedSkills = [
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, "Minimum 2 caractères").max(100, "Maximum 100 caractères"),
   email: z.string().trim().email("Adresse email invalide").max(255, "Maximum 255 caractères"),
-  password: z.string().min(8, "Minimum 8 caractères").regex(/[A-Z]/, "Au moins une majuscule").regex(/[0-9]/, "Au moins un chiffre"),
   country: z.string().min(1, "Sélectionnez un pays"),
   frenchLevel: z.string().min(1, "Sélectionnez un niveau"),
   experienceYears: z.number().min(0, "Minimum 0").max(50, "Maximum 50 ans"),
@@ -54,27 +53,20 @@ type FormData = z.infer<typeof signupSchema>;
 type FormErrors = Partial<Record<keyof FormData, string>>;
 type TouchedFields = Partial<Record<keyof FormData, boolean>>;
 
-const passwordRules = [
-  { label: "8 caractères minimum", test: (v: string) => v.length >= 8 },
-  { label: "Une majuscule", test: (v: string) => /[A-Z]/.test(v) },
-  { label: "Un chiffre", test: (v: string) => /[0-9]/.test(v) },
-];
-
 export default function SignupTalent() {
   const { session, loading } = useAuth();
   const { toast } = useToast();
   const [form, setForm] = useState<FormData>({
     fullName: "",
     email: "",
-    password: "",
     country: "",
     frenchLevel: "",
     experienceYears: 0,
     skills: [],
   });
   const [touched, setTouched] = useState<TouchedFields>({});
-  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [magicSent, setMagicSent] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
@@ -126,7 +118,7 @@ export default function SignupTalent() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     const allTouched: TouchedFields = {
-      fullName: true, email: true, password: true,
+      fullName: true, email: true,
       country: true, frenchLevel: true, experienceYears: true, skills: true,
     };
     setTouched(allTouched);
@@ -135,9 +127,8 @@ export default function SignupTalent() {
 
     setSubmitting(true);
 
-    const { error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithOtp({
       email: form.email.trim(),
-      password: form.password,
       options: {
         emailRedirectTo: window.location.origin,
         data: {
@@ -154,10 +145,7 @@ export default function SignupTalent() {
     if (error) {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
-      toast({
-        title: "Inscription réussie 🎉",
-        description: "Vérifiez votre email pour confirmer votre compte.",
-      });
+      setMagicSent(true);
     }
     setSubmitting(false);
   };
@@ -193,6 +181,25 @@ export default function SignupTalent() {
 
         {/* Form Card */}
         <div className="glass-card rounded-2xl p-8 space-y-6">
+          {magicSent ? (
+            <div className="flex flex-col items-center gap-4 py-6 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500/20">
+                <CheckCircle2 className="h-8 w-8 text-green-400" />
+              </div>
+              <p className="text-primary-foreground font-semibold text-lg">Lien envoyé !</p>
+              <p className="text-primary-foreground/50 text-sm">
+                Vérifiez votre boîte mail <span className="font-medium text-primary-foreground/70">{form.email}</span> et cliquez sur le lien pour activer votre profil.
+              </p>
+              <Button
+                variant="ghost"
+                className="text-accent hover:text-accent/80 font-semibold"
+                onClick={() => { setMagicSent(false); }}
+              >
+                Utiliser une autre adresse
+              </Button>
+            </div>
+          ) : (
+          <>
           <form onSubmit={handleSignup} className="space-y-5">
             {/* Full Name */}
             <TextFormField
@@ -364,56 +371,11 @@ export default function SignupTalent() {
               )}
             </div>
 
-            {/* Password */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-primary-foreground/70 font-medium">
-                Mot de passe
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/30" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={form.password}
-                  onChange={(e) => updateField("password", e.target.value)}
-                  onBlur={() => markTouched("password")}
-                  placeholder="••••••••"
-                  className="bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl pl-10 pr-10 focus:border-accent/50 focus:ring-accent/20"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-foreground/30 hover:text-primary-foreground/60 transition-colors"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-
-              {form.password.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-                  transition={{ duration: 0.2 }}
-                  className="space-y-1.5 pt-1"
-                >
-                  {passwordRules.map((rule) => {
-                    const passes = rule.test(form.password);
-                    return (
-                      <div key={rule.label} className="flex items-center gap-2">
-                        {passes ? (
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                        ) : (
-                          <XCircle className="h-3.5 w-3.5 text-primary-foreground/25 shrink-0" />
-                        )}
-                        <span className={`text-xs transition-colors ${passes ? "text-emerald-400" : "text-primary-foreground/30"}`}>
-                          {rule.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </motion.div>
-              )}
-            </div>
+            {/* Magic link info */}
+            <p className="text-xs text-primary-foreground/40 flex items-center gap-1.5">
+              <Mail className="h-3.5 w-3.5 text-accent" />
+              Un lien de connexion sécurisé sera envoyé à votre email – sans mot de passe
+            </p>
 
             <Button
               type="submit"
@@ -494,6 +456,8 @@ export default function SignupTalent() {
               </Link>
             </p>
           </div>
+          </>
+          )}
         </div>
 
         <p className="mt-8 text-center text-xs text-primary-foreground/30">
