@@ -136,6 +136,9 @@ export default function Index() {
           </div>
           <nav className="flex items-center gap-2">
             <ThemeToggle />
+            <Link to="/a-propos" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
+              À propos
+            </Link>
             <Link to="/metiers-en-tension" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               Métiers en tension
             </Link>
@@ -512,6 +515,7 @@ export default function Index() {
               </Link>
               <span className="text-muted-foreground/30">·</span>
               <Link to="/pricing" className="hover:text-foreground transition-colors">Tarifs</Link>
+              <Link to="/a-propos" className="hover:text-foreground transition-colors">À propos</Link>
               <span className="hover:text-foreground cursor-pointer transition-colors">Mentions légales</span>
               <span className="hover:text-foreground cursor-pointer transition-colors">CGU</span>
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors flex items-center gap-1">
