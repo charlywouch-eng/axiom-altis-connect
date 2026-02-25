@@ -142,7 +142,7 @@ export default function Index() {
       <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
         {/* Tech network background */}
         <div className="absolute inset-0">
-          <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" />
+          <img src={heroTechNetwork} alt="" className="w-full h-full object-cover" loading="eager" decoding="async" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,6%)]/95 via-[hsl(221,83%,18%)]/80 to-[hsl(187,94%,22%)]/50" />
           <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,6%)] via-transparent to-[hsl(222,47%,6%)]/40" />
         </div>
@@ -430,7 +430,7 @@ export default function Index() {
       <section className="relative overflow-hidden">
         {/* Tech background */}
         <div className="absolute inset-0">
-          <img src={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-40" />
+          <img src={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-40" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-[hsl(222,47%,6%)]/85" />
         </div>
         <div className="absolute inset-0 opacity-[0.035] bg-hero-dots" />
