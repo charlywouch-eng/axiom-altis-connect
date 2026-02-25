@@ -17,6 +17,9 @@ import {
   Briefcase, Zap, Award, TrendingUp, ChevronRight, Shield,
   Star, Mail, Phone, Info,
 } from "lucide-react";
+import { lazy, Suspense } from "react";
+
+const NetworkCanvas = lazy(() => import("@/components/landing/NetworkCanvas"));
 
 // ── Secteurs ROME ───────────────────────────────────────────────
 const SECTEURS = [
@@ -181,19 +184,14 @@ export default function SignupLight() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-hero-gradient relative">
-      {/* Subtle tech network background */}
+    <div className="min-h-screen flex flex-col bg-hero-gradient relative overflow-hidden">
+      {/* Animated network background */}
+      <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
+        <Suspense fallback={null}>
+          <NetworkCanvas nodeCount={30} maxDistance={140} color="187, 94%, 43%" color2="221, 83%, 53%" />
+        </Suspense>
+      </div>
       <div className="absolute inset-0 opacity-[0.06] bg-hero-dots pointer-events-none" />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `url('/hero-tech-network.jpg')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          opacity: 0.04,
-          mixBlendMode: "screen",
-        }}
-      />
       {/* ── Header ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-5 pt-5 pb-2 max-w-md mx-auto w-full">
         <Link to="/" className="flex items-center gap-2">
