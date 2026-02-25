@@ -17,9 +17,6 @@ import {
 import {
   ArrowRight,
   Mail,
-  Lock,
-  Eye,
-  EyeOff,
   Shield,
   ChevronRight,
   Star,
@@ -101,14 +98,12 @@ export default function Signup() {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
 
-  // Step 1 – Quick signup
+  // Step 1 – Quick signup (passwordless)
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [acceptCgu, setAcceptCgu] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [magicSent, setMagicSent] = useState(false);
 
   // Step 2 – Profile light
   const [secteur, setSecteur] = useState("");
@@ -126,54 +121,28 @@ export default function Signup() {
     setStep(s);
   };
 
-  /* ── Step 1 submit ── */
+  /* ── Step 1 submit (magic link) ── */
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!acceptCgu) {
       toast({ title: "Requis", description: "Veuillez accepter la politique de confidentialité.", variant: "destructive" });
       return;
     }
-    if (password.length < 6) {
-      toast({ title: "Mot de passe trop court", description: "6 caractères minimum.", variant: "destructive" });
-      return;
-    }
     setSubmitting(true);
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      password,
       options: {
         emailRedirectTo: window.location.origin,
         data: { role: "talent", country: "Cameroun" },
       },
     });
     if (error) {
-      if (error.message.toLowerCase().includes("already registered") || error.message.toLowerCase().includes("already been registered")) {
-        toast({
-          title: "Compte déjà existant",
-          description: (
-            <div className="flex flex-col gap-2">
-              <span>Un compte avec cet email existe déjà.</span>
-              <Button
-                size="sm"
-                variant="outline"
-                className="w-fit"
-                onClick={() => navigate("/login", { state: { forgotMode: true } })}
-              >
-                Se connecter / Réinitialiser mot de passe
-              </Button>
-            </div>
-          ),
-          variant: "destructive",
-        });
-      } else {
-        toast({ title: "Erreur", description: error.message, variant: "destructive" });
-      }
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
       setSubmitting(false);
       return;
     }
-    setUserId(data.user?.id ?? null);
+    setMagicSent(true);
     setSubmitting(false);
-    goTo(2);
   };
 
   /* ── Step 2 submit ── */
@@ -193,19 +162,6 @@ export default function Signup() {
       region,
       country: "Cameroun",
     }));
-
-    // Also update auth metadata so trigger/onboarding can pick it up
-    if (userId) {
-      await supabase.auth.updateUser({
-        data: {
-          rome_label: secteur,
-          rome_code: selectedSecteur?.rome ?? null,
-          experience_years: experienceToNumber(experience),
-          region,
-          country: "Cameroun",
-        },
-      });
-    }
 
     goTo(3);
   };
@@ -316,132 +272,124 @@ export default function Signup() {
                   transition={{ duration: 0.35, ease: easeOut }}
                 >
                   <div className="bg-card rounded-2xl shadow-2xl border border-border/30 p-6 sm:p-8 space-y-6">
-                    {/* Header */}
-                    <div className="text-center space-y-1.5">
-                      <h1 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
-                        Rejoignez AXIOM{" "}
-                        <span className="text-primary">– Gratuit & sans engagement</span>
-                      </h1>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Matching IA + offres France en tension{" "}
-                        <span className="font-medium text-foreground/70">BTP · Santé · CHR · Logistique</span>
-                      </p>
-                    </div>
-
-                    {/* Google OAuth */}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full h-11 rounded-xl font-medium gap-2 border-border hover:border-primary/40 hover:bg-primary/5 transition-all"
-                      onClick={handleGoogle}
-                      disabled={googleLoading}
-                    >
-                      <svg className="h-4 w-4" viewBox="0 0 24 24">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                      </svg>
-                      {googleLoading ? "Connexion…" : "Continuer avec Google"}
-                    </Button>
-
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 h-px bg-border" />
-                      <span className="text-xs text-muted-foreground">ou par email</span>
-                      <div className="flex-1 h-px bg-border" />
-                    </div>
-
-                    {/* Form */}
-                    <form onSubmit={handleSignup} className="space-y-4">
-                      {/* Email */}
-                      <div className="space-y-1.5">
-                        <Label htmlFor="email" className="text-sm font-medium">
-                          Email (ou téléphone +237)
-                        </Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
-                          <Input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="vous@email.com"
-                            required
-                            className="pl-9 h-11 rounded-xl"
-                          />
+                    {magicSent ? (
+                      <div className="flex flex-col items-center gap-4 py-6 text-center">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500/20">
+                          <CheckCircle2 className="h-8 w-8 text-green-500" />
                         </div>
+                        <p className="text-lg font-semibold text-foreground">Lien envoyé !</p>
+                        <p className="text-sm text-muted-foreground">
+                          Vérifiez votre boîte mail <span className="font-medium text-foreground">{email}</span> et cliquez sur le lien pour finaliser votre inscription.
+                        </p>
+                        <Button
+                          variant="ghost"
+                          className="text-primary hover:text-primary/80 font-semibold"
+                          onClick={() => { setMagicSent(false); setEmail(""); }}
+                        >
+                          Utiliser une autre adresse
+                        </Button>
                       </div>
-
-                      {/* Password */}
-                      <div className="space-y-1.5">
-                        <Label htmlFor="password" className="text-sm font-medium">
-                          Mot de passe
-                        </Label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
-                          <Input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="6 caractères minimum"
-                            required
-                            className="pl-9 pr-10 h-11 rounded-xl"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-muted-foreground transition-colors"
-                            tabIndex={-1}
-                          >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
+                    ) : (
+                      <>
+                        {/* Header */}
+                        <div className="text-center space-y-1.5">
+                          <h1 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
+                            Rejoignez AXIOM{" "}
+                            <span className="text-primary">– Gratuit & sans engagement</span>
+                          </h1>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            Matching IA + offres France en tension{" "}
+                            <span className="font-medium text-foreground/70">BTP · Santé · CHR · Logistique</span>
+                          </p>
                         </div>
-                        {password.length > 0 && password.length < 6 && (
-                          <p className="text-xs text-amber-500">6 caractères minimum</p>
-                        )}
-                      </div>
 
-                      {/* RGPD checkbox */}
-                      <div className="flex items-start gap-2.5">
-                        <Checkbox
-                          id="cgu"
-                          checked={acceptCgu}
-                          onCheckedChange={(v) => setAcceptCgu(v === true)}
-                          className="mt-0.5"
-                        />
-                        <Label htmlFor="cgu" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-                          J'accepte la{" "}
-                          <Link
-                            to="/rgpd-light"
-                            className="text-primary underline hover:no-underline"
-                            target="_blank"
+                        {/* Google OAuth */}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full h-11 rounded-xl font-medium gap-2 border-border hover:border-primary/40 hover:bg-primary/5 transition-all"
+                          onClick={handleGoogle}
+                          disabled={googleLoading}
+                        >
+                          <svg className="h-4 w-4" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                          </svg>
+                          {googleLoading ? "Connexion…" : "Continuer avec Google"}
+                        </Button>
+
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 h-px bg-border" />
+                          <span className="text-xs text-muted-foreground">ou par email</span>
+                          <div className="flex-1 h-px bg-border" />
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={handleSignup} className="space-y-4">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="email" className="text-sm font-medium">
+                              Email
+                            </Label>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
+                              <Input
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="vous@email.com"
+                                required
+                                className="pl-9 h-11 rounded-xl"
+                              />
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                            <Mail className="h-3.5 w-3.5 text-accent" />
+                            Un lien de connexion sécurisé sera envoyé à votre email
+                          </p>
+
+                          <div className="flex items-start gap-2.5">
+                            <Checkbox
+                              id="cgu"
+                              checked={acceptCgu}
+                              onCheckedChange={(v) => setAcceptCgu(v === true)}
+                              className="mt-0.5"
+                            />
+                            <Label htmlFor="cgu" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                              J'accepte la{" "}
+                              <Link
+                                to="/rgpd-light"
+                                className="text-primary underline hover:no-underline"
+                                target="_blank"
+                              >
+                                politique de confidentialité & CGU
+                              </Link>{" "}
+                              (RGPD)
+                            </Label>
+                          </div>
+
+                          <Button
+                            type="submit"
+                            disabled={submitting || !acceptCgu}
+                            className="w-full h-12 rounded-xl text-base font-semibold gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all"
                           >
-                            politique de confidentialité & CGU
-                          </Link>{" "}
-                          (RGPD)
-                        </Label>
-                      </div>
+                            {submitting ? "Envoi…" : "Continuer gratuitement"}
+                            {!submitting && <ArrowRight className="h-4 w-4" />}
+                          </Button>
+                        </form>
 
-                      {/* CTA */}
-                      <Button
-                        type="submit"
-                        disabled={submitting || !acceptCgu}
-                        className="w-full h-12 rounded-xl text-base font-semibold gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all"
-                      >
-                        {submitting ? "Création…" : "Continuer gratuitement"}
-                        {!submitting && <ArrowRight className="h-4 w-4" />}
-                      </Button>
-                    </form>
-
-                    {/* Footer RGPD */}
-                    <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
-                      <Shield className="inline h-3 w-3 mr-1 mb-0.5" />
-                      Vos données sont protégées (RGPD). Contact DPO :{" "}
-                      <a href="mailto:rgpd@axiom-talents.com" className="underline">
-                        rgpd@axiom-talents.com
-                      </a>
-                    </p>
+                        <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
+                          <Shield className="inline h-3 w-3 mr-1 mb-0.5" />
+                          Vos données sont protégées (RGPD). Contact DPO :{" "}
+                          <a href="mailto:rgpd@axiom-talents.com" className="underline">
+                            rgpd@axiom-talents.com
+                          </a>
+                        </p>
+                      </>
+                    )}
                   </div>
                 </motion.div>
               )}

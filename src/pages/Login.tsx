@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,43 +16,27 @@ const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 export default function Login() {
   const { session, loading } = useAuth();
   const { toast } = useToast();
-  const location = useLocation();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [magicSent, setMagicSent] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
-
-  // Forgot password state — can be pre-activated via navigation state from /signup-light
-  const [forgotMode, setForgotMode] = useState((location.state as any)?.forgotMode === true);
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotSubmitting, setForgotSubmitting] = useState(false);
-  const [forgotSent, setForgotSent] = useState(false);
 
   if (loading) return <FullPageLoader />;
   if (session) return <Navigate to="/onboarding-role" replace />;
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    }
-    setSubmitting(false);
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setForgotSubmitting(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: window.location.origin },
     });
     if (error) {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
-      setForgotSent(true);
+      setMagicSent(true);
     }
-    setForgotSubmitting(false);
+    setSubmitting(false);
   };
 
   return (
@@ -72,87 +56,33 @@ export default function Login() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/15 border border-accent/20">
             <Zap className="h-8 w-8 text-accent" />
           </div>
-          <AnimatePresence mode="wait">
-            {forgotMode ? (
-              <motion.div key="forgot-title" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-                <h1 className="font-display text-3xl font-bold text-primary-foreground">Mot de passe oublié</h1>
-                <p className="mt-2 text-primary-foreground/50">Nous vous enverrons un lien de réinitialisation</p>
-              </motion.div>
-            ) : (
-              <motion.div key="login-title" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-                <h1 className="font-display text-3xl font-bold text-primary-foreground">Bon retour</h1>
-                <p className="mt-2 text-primary-foreground/50">Connectez-vous à votre espace AXIOM</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <h1 className="font-display text-3xl font-bold text-primary-foreground">Bon retour</h1>
+          <p className="mt-2 text-primary-foreground/50">Connectez-vous à votre espace AXIOM</p>
         </div>
 
         <div className="glass-card rounded-2xl p-8">
           <AnimatePresence mode="wait">
-            {forgotMode ? (
+            {magicSent ? (
               <motion.div
-                key="forgot-form"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25, ease: easeOut }}
-                className="space-y-5"
+                key="magic-sent"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center gap-4 py-4 text-center"
               >
-                {forgotSent ? (
-                  <div className="flex flex-col items-center gap-4 py-4 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500/20">
-                      <CheckCircle2 className="h-8 w-8 text-green-400" />
-                    </div>
-                    <p className="text-primary-foreground font-semibold text-lg">Email envoyé !</p>
-                    <p className="text-primary-foreground/50 text-sm">
-                      Vérifiez votre boîte mail et cliquez sur le lien pour réinitialiser votre mot de passe.
-                    </p>
-                    <Button
-                      variant="ghost"
-                      className="text-accent hover:text-accent/80 font-semibold"
-                      onClick={() => { setForgotMode(false); setForgotSent(false); setForgotEmail(""); }}
-                    >
-                      Retour à la connexion
-                    </Button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleForgotPassword} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="forgot-email" className="text-primary-foreground/70 font-medium">
-                        Votre adresse email
-                      </Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/30" />
-                        <Input
-                          id="forgot-email"
-                          type="email"
-                          value={forgotEmail}
-                          onChange={(e) => setForgotEmail(e.target.value)}
-                          required
-                          autoFocus
-                          placeholder="vous@exemple.com"
-                          className="pl-10 bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20"
-                        />
-                      </div>
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 border-0 rounded-xl text-base font-semibold shadow-lg shadow-accent/20"
-                      disabled={forgotSubmitting}
-                    >
-                      {forgotSubmitting ? "Envoi…" : (
-                        <>Envoyer le lien <ArrowRight className="ml-2 h-4 w-4" /></>
-                      )}
-                    </Button>
-                    <button
-                      type="button"
-                      onClick={() => setForgotMode(false)}
-                      className="w-full text-center text-sm text-primary-foreground/40 hover:text-primary-foreground/70 transition-colors"
-                    >
-                      ← Retour à la connexion
-                    </button>
-                  </form>
-                )}
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500/20">
+                  <CheckCircle2 className="h-8 w-8 text-green-400" />
+                </div>
+                <p className="text-primary-foreground font-semibold text-lg">Lien envoyé !</p>
+                <p className="text-primary-foreground/50 text-sm">
+                  Vérifiez votre boîte mail <span className="font-medium text-primary-foreground/70">{email}</span> et cliquez sur le lien pour vous connecter.
+                </p>
+                <Button
+                  variant="ghost"
+                  className="text-accent hover:text-accent/80 font-semibold"
+                  onClick={() => { setMagicSent(false); setEmail(""); }}
+                >
+                  Utiliser une autre adresse
+                </Button>
               </motion.div>
             ) : (
               <motion.div
@@ -163,56 +93,7 @@ export default function Login() {
                 transition={{ duration: 0.25, ease: easeOut }}
                 className="space-y-6"
               >
-                <form onSubmit={handleLogin} className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-primary-foreground/70 font-medium">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      placeholder="vous@exemple.com"
-                      className="bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-primary-foreground/70 font-medium">Mot de passe</Label>
-                      <button
-                        type="button"
-                        onClick={() => setForgotMode(true)}
-                        className="text-xs text-accent hover:text-accent/80 font-medium transition-colors"
-                      >
-                        Mot de passe oublié ?
-                      </button>
-                    </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      placeholder="••••••••"
-                      className="bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 border-0 rounded-xl text-base font-semibold shadow-lg shadow-accent/20"
-                    disabled={submitting}
-                  >
-                    {submitting ? "Connexion…" : (
-                      <>Se connecter <ArrowRight className="ml-2 h-4 w-4" /></>
-                    )}
-                  </Button>
-                </form>
-
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
-                  <div className="relative flex justify-center"><span className="bg-transparent px-3 text-xs text-primary-foreground/30">ou</span></div>
-                </div>
-
+                {/* Social login */}
                 <div className="flex flex-col gap-3">
                   <Button
                     type="button"
@@ -253,9 +134,42 @@ export default function Login() {
                   </Button>
                 </div>
 
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
+                  <div className="relative flex justify-center"><span className="bg-transparent px-3 text-xs text-primary-foreground/30">ou par email</span></div>
+                </div>
+
+                {/* Magic link form */}
+                <form onSubmit={handleMagicLink} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-primary-foreground/70 font-medium">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/30" />
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        placeholder="vous@exemple.com"
+                        className="pl-10 bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20"
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 border-0 rounded-xl text-base font-semibold shadow-lg shadow-accent/20"
+                    disabled={submitting}
+                  >
+                    {submitting ? "Envoi…" : (
+                      <>Recevoir un lien de connexion <ArrowRight className="ml-2 h-4 w-4" /></>
+                    )}
+                  </Button>
+                </form>
+
                 <p className="text-center text-sm text-primary-foreground/40">
                   Pas encore de compte ?{" "}
-                  <Link to="/signup" className="font-semibold text-accent hover:text-accent/80 transition-colors">
+                  <Link to="/signup-light" className="font-semibold text-accent hover:text-accent/80 transition-colors">
                     Créer un compte
                   </Link>
                 </p>
