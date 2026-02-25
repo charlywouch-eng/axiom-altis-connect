@@ -32,6 +32,7 @@ import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
 import Leads from "./pages/Leads";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/signup-light" element={<SignupLight />} />
             <Route path="/signup-talent" element={<SignupTalent />} />
             <Route path="/metiers-en-tension" element={<MetiersEnTension />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route
               path="/onboarding-role"
               element={
