@@ -144,24 +144,29 @@ export default function Index() {
 
       {/* ── Hero Full-Screen ─────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
-        {/* Tech network background */}
+        {/* Tech network background — enriched multi-layer gradient */}
         <div className="absolute inset-0">
-          <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-60" loading="eager" decoding="async" fetchPriority="high" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,5%)]/97 via-[hsl(221,83%,14%)]/88 to-[hsl(187,94%,18%)]/50" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,5%)] via-transparent to-[hsl(222,47%,5%)]/50" />
+          <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-50" loading="eager" decoding="async" fetchPriority="high" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,4%)]/98 via-[hsl(221,83%,12%)]/92 to-[hsl(187,94%,15%)]/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,4%)] via-transparent to-[hsl(222,47%,4%)]/60" />
+          {/* Radial spotlight from center-left */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_50%,hsl(187,94%,43%,0.08),transparent_70%)]" />
         </div>
+        {/* Dot grid overlay */}
+        <div className="absolute inset-0 bg-hero-dots opacity-40 z-[1]" />
         {/* Animated node network */}
-        <div className="absolute inset-0 z-[1]">
+        <div className="absolute inset-0 z-[2]">
           <Suspense fallback={null}>
-            <NetworkCanvas nodeCount={45} maxDistance={180} />
+            <NetworkCanvas nodeCount={50} maxDistance={190} />
           </Suspense>
         </div>
-        {/* Floating orbs (enhanced) */}
-        <div className="absolute top-1/4 right-[15%] w-[320px] h-[320px] rounded-full bg-accent/10 blur-[120px] pointer-events-none animate-float-orb" />
-        <div className="absolute bottom-1/4 left-[10%] w-[400px] h-[400px] rounded-full bg-primary/12 blur-[140px] pointer-events-none animate-float-orb-slow" />
-        <div className="absolute top-[55%] right-[35%] w-[250px] h-[250px] rounded-full bg-accent/6 blur-[100px] pointer-events-none animate-float-orb" />
+        {/* Floating orbs (enhanced — deeper, multi-color) */}
+        <div className="absolute top-[20%] right-[12%] w-[380px] h-[380px] rounded-full bg-accent/12 blur-[140px] pointer-events-none animate-float-orb" />
+        <div className="absolute bottom-[20%] left-[8%] w-[450px] h-[450px] rounded-full bg-primary/14 blur-[160px] pointer-events-none animate-float-orb-slow" />
+        <div className="absolute top-[50%] right-[30%] w-[280px] h-[280px] rounded-full bg-accent/8 blur-[110px] pointer-events-none animate-float-orb" />
+        <div className="absolute top-[10%] left-[40%] w-[200px] h-[200px] rounded-full bg-primary/6 blur-[100px] pointer-events-none animate-float-orb-slow" />
 
-        <div className="relative z-[2] mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
+        <div className="relative z-[3] mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 
             {/* ── Left: Copy ───────────────────────────────────── */}
@@ -316,7 +321,7 @@ export default function Index() {
         </div>
 
         {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/60 to-transparent z-[3]" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background via-background/70 to-transparent z-[4]" />
       </section>
 
       {/* ── Stats Band ───────────────────────────────────────── */}
@@ -324,7 +329,7 @@ export default function Index() {
         <div className="mx-auto max-w-4xl">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-border shadow-xl"
+            className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-white/[0.06] shadow-2xl shadow-primary/10 ring-1 ring-white/10"
           >
             {[
               { value: "500+", label: "Talents qualifiés", icon: Users },
@@ -334,7 +339,7 @@ export default function Index() {
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <motion.div key={stat.label} custom={i} variants={scaleIn} className="bg-card px-5 py-7 text-center">
+                <motion.div key={stat.label} custom={i} variants={scaleIn} className="bg-card/95 backdrop-blur-sm px-5 py-7 text-center">
                   <Icon className="h-[18px] w-[18px] text-accent mx-auto mb-2" />
                   <p className="font-black text-3xl text-foreground">{stat.value}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
