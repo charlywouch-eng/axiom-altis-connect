@@ -451,7 +451,7 @@ export default function DashboardEntreprise() {
         </motion.div>
 
         {/* ── Tabs ───────────────────────────────────────────────── */}
-        <Tabs defaultValue="offres" className="space-y-6">
+        <Tabs value={searchParams.get("tab") || "offres"} onValueChange={(v) => navigate(`/dashboard-entreprise?tab=${v}`, { replace: true })} className="space-y-6">
           <TabsList className="bg-muted/50 p-1 h-auto flex-wrap gap-1">
             <TabsTrigger value="offres" className="gap-2 data-[state=active]:bg-card text-sm">
               <Briefcase className="h-4 w-4" /> Mes offres
