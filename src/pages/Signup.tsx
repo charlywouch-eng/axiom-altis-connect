@@ -655,7 +655,7 @@ export default function Signup() {
                         <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
                           <p className="font-semibold mb-1">Badge vérifié MINEFOP/MINREX</p>
                           <p>
-                            Certification officielle camerounaise + légalisation MINREX. Badge visible
+                            Certification officielle africaine + légalisation MINREX. Badge visible
                             par tous les recruteurs. Visibilité ×3 dans les résultats de matching.
                           </p>
                         </TooltipContent>

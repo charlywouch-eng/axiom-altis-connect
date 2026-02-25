@@ -761,7 +761,7 @@ export default function SignupLight() {
                           exit={{ opacity: 0, height: 0 }}
                           className="mt-2 pt-2 text-[10px] leading-relaxed text-white/30 border-t border-white/[0.06]"
                         >
-                          Le badge MINEFOP/MINREX certifie vos diplômes camerounais reconnus en France. Il triple votre visibilité auprès des recruteurs partenaires AXIOM et accélère l'instruction de votre visa travail.
+                          Le badge MINEFOP/MINREX certifie vos diplômes africains reconnus en France. Il triple votre visibilité auprès des recruteurs partenaires AXIOM et accélère l'instruction de votre visa travail.
                         </motion.div>
                       )}
                     </AnimatePresence>
