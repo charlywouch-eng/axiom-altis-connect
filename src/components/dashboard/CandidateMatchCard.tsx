@@ -133,7 +133,7 @@ export function CandidateMatchCard({ candidate, index, onContact }: CandidateMat
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs text-xs">
                         <p className="font-semibold mb-1">Certification officielle</p>
-                        <p>Diplôme vérifié par le Ministère camerounais de l'Emploi (MINEFOP) et/ou le Ministère des Relations Extérieures (MINREX). Conformité légale garantie pour la procédure de visa de travail.</p>
+                        <p>Diplôme vérifié par le Ministère de l'Emploi (MINEFOP) et/ou le Ministère des Relations Extérieures (MINREX). Conformité légale garantie pour la procédure de visa de travail.</p>
                       </TooltipContent>
                     </Tooltip>
                   )}
