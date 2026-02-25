@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { trackFunnel } from "@/lib/trackFunnel";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2, Star, ArrowRight, Zap, Shield, Globe, Briefcase } from "lucide-react";
@@ -95,6 +96,16 @@ export default function PaymentSuccess() {
   const score = scoreRaw ? parseInt(scoreRaw, 10) : computedScore;
 
   const signupUrl = `/signup-light?premium=true&rome=${rome}&exp=${exp}`;
+
+  useEffect(() => {
+    trackFunnel({
+      event_name: "payment_success",
+      rome_code: rome,
+      experience: exp,
+      source: "payment-success",
+      metadata: { score },
+    });
+  }, []);
 
   const perks = [
     { icon: Star,      text: "Score détaillé par compétence & niveau ROME" },

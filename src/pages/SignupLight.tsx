@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackFunnel } from "@/lib/trackFunnel";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -153,6 +154,15 @@ export default function SignupLight() {
         if (error) throw error;
         localStorage.setItem("axiom_pending_profile", JSON.stringify(meta));
         localStorage.setItem("axiom_contact", form.contact);
+
+        trackFunnel({
+          event_name: "signup_started",
+          rome_code: form.secteur,
+          experience: form.experience,
+          email_hash: form.contact,
+          source: isPremium ? "signup-light-premium" : "signup-light",
+        });
+
         setStep("score");
       }
     } catch (err: any) {

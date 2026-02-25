@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X, Download, FileImage, FileText } from "lucide-react";
+import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X, Download, FileImage, FileText, Zap } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -119,6 +119,41 @@ export default function AdminStatistics() {
       setIsExporting(false);
     }
   }, [captureSnapshot]);
+
+  // Funnel analytics query
+  const { data: funnelEvents = [] } = useQuery({
+    queryKey: ["admin_funnel_stats"],
+    queryFn: async () => {
+      const { data, error } = await (supabase.from as any)("funnel_events")
+        .select("event_name, rome_code, created_at")
+        .order("created_at", { ascending: false })
+        .limit(1000);
+      if (error) throw error;
+      return data as { event_name: string; rome_code: string | null; created_at: string }[];
+    },
+  });
+
+  const funnelCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    funnelEvents.forEach((e) => {
+      counts[e.event_name] = (counts[e.event_name] || 0) + 1;
+    });
+    return counts;
+  }, [funnelEvents]);
+
+  const funnelSteps = [
+    { key: "lead_form_submitted", label: "Lead soumis", color: "hsl(var(--accent))" },
+    { key: "lead_payment_clicked", label: "Clic paiement 10 €", color: "hsl(210, 70%, 55%)" },
+    { key: "payment_success", label: "Paiement réussi", color: "hsl(160, 60%, 45%)" },
+    { key: "signup_started", label: "Inscription démarrée", color: "hsl(var(--primary))" },
+  ];
+
+  const funnelChartData = funnelSteps.map((s) => ({
+    name: s.label,
+    count: funnelCounts[s.key] || 0,
+    fill: s.color,
+  }));
+
   const { data: talents = [], isLoading } = useQuery({
     queryKey: ["admin_talent_stats"],
     queryFn: async () => {
@@ -316,6 +351,51 @@ export default function AdminStatistics() {
             <p className="text-xs text-muted-foreground mt-4">
               Résultats : <strong>{filteredTalents.length}</strong> talent{filteredTalents.length !== 1 ? "s" : ""} sur {talents.length}
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Funnel Conversion */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Zap className="h-4 w-4 text-accent" />
+              Tunnel de conversion
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {funnelEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">Aucun événement de funnel enregistré.</p>
+            ) : (
+              <>
+                <div className="grid gap-3 sm:grid-cols-4 mb-6">
+                  {funnelSteps.map((s, i) => {
+                    const count = funnelCounts[s.key] || 0;
+                    const prevCount = i === 0 ? count : funnelCounts[funnelSteps[i - 1].key] || 0;
+                    const rate = prevCount > 0 ? Math.round((count / prevCount) * 100) : 0;
+                    return (
+                      <div key={s.key} className="rounded-lg p-3 text-center" style={{ background: `${s.color}15`, border: `1px solid ${s.color}30` }}>
+                        <p className="text-2xl font-bold" style={{ color: s.color }}>{count}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+                        {i > 0 && <p className="text-[10px] font-semibold mt-1" style={{ color: s.color }}>{rate}% conv.</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={funnelChartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
+                    <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                    <Tooltip contentStyle={customTooltipStyle} />
+                    <Bar dataKey="count" name="Événements" radius={[6, 6, 0, 0]}>
+                      {funnelChartData.map((entry, i) => (
+                        <Cell key={i} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </>
+            )}
           </CardContent>
         </Card>
 
