@@ -51,9 +51,13 @@ export default function NetworkCanvas({
     [nodeCount],
   );
 
+  // Respect prefers-reduced-motion
+  const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (prefersReducedMotion) return; // Skip animation entirely
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
