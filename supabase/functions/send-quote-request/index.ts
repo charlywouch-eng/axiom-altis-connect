@@ -51,6 +51,23 @@ serve(async (req) => {
 
     logStep("Quote request received", { company, sector, volume });
 
+    // Persist in database
+    const { error: insertError } = await supabaseClient
+      .from("quote_requests")
+      .insert({
+        user_id: user.id,
+        user_email: user.email,
+        company,
+        sector,
+        volume: volume || null,
+        message: message || null,
+      });
+    if (insertError) {
+      logStep("DB insert error (non-blocking)", { error: insertError.message });
+    } else {
+      logStep("Quote request saved to DB");
+    }
+
     const htmlContent = `
       <h2>📋 Nouvelle demande de devis</h2>
       <table style="border-collapse:collapse;width:100%;max-width:600px;font-family:sans-serif;">

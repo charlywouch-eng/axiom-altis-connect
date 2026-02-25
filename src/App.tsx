@@ -23,6 +23,7 @@ import AdminSubventions from "./pages/AdminSubventions";
 import AdminImportTalents from "./pages/AdminImportTalents";
 import AdminStatistics from "./pages/AdminStatistics";
 import AdminLeads from "./pages/AdminLeads";
+import AdminQuotes from "./pages/AdminQuotes";
 import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
@@ -154,6 +155,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AdminStatistics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/quotes"
+              element={
+                <ProtectedRoute>
+                  <AdminQuotes />
                 </ProtectedRoute>
               }
             />

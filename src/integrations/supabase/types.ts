@@ -331,6 +331,48 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_requests: {
+        Row: {
+          company: string
+          created_at: string
+          id: string
+          message: string | null
+          notes: string | null
+          sector: string
+          status: string
+          updated_at: string
+          user_email: string
+          user_id: string
+          volume: string | null
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          notes?: string | null
+          sector: string
+          status?: string
+          updated_at?: string
+          user_email: string
+          user_id: string
+          volume?: string | null
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          notes?: string | null
+          sector?: string
+          status?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+          volume?: string | null
+        }
+        Relationships: []
+      }
       talent_profiles: {
         Row: {
           apostille_date: string | null
