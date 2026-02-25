@@ -262,6 +262,18 @@ export default function DashboardTalent() {
     enabled: !!user,
   });
 
+  const { data: talentProfile } = useQuery({
+    queryKey: ["talent_profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("talent_profiles").select("is_premium, premium_unlocked_at, rome_code, rome_label, experience_years, score").eq("user_id", user!.id).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const isPremium = talentProfile?.is_premium === true;
+
   const { data: totalOpenOffers = 0 } = useQuery({
     queryKey: ["open_offers_count"],
     queryFn: async () => {
@@ -454,26 +466,49 @@ export default function DashboardTalent() {
       <DashboardLayout sidebarVariant="talent">
         <motion.div className="space-y-5 pb-12" variants={containerVariants} initial="hidden" animate="visible">
 
-          {/* ── Premium CTA Bar */}
+          {/* ── Premium CTA Bar or Premium Badge */}
           <motion.div variants={itemVariants}>
-            <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/8 px-4 py-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <Sparkles className="h-4 w-4 text-accent shrink-0" />
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <p className="text-sm font-medium text-foreground cursor-help">
-                      <span className="font-bold text-accent">Certification Premium — 30 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
+            {isPremium ? (
+              <div className="rounded-xl border border-success/30 bg-gradient-to-r from-success/10 to-accent/8 px-4 py-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md">
+                    <Award className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground flex items-center gap-2">
+                      Compte Premium Actif
+                      <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0 text-[10px] px-2 py-0.5 font-bold gap-1 shadow-sm">
+                        <Star className="h-2.5 w-2.5" /> PREMIUM
+                      </Badge>
                     </p>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-xs text-xs">
-                    Badge vérifié MINEFOP/MINREX + visibilité ×3 recruteurs partenaires. Votre profil apparaît en priorité dans les résultats de matching des entreprises premium.
-                  </TooltipContent>
-                </Tooltip>
+                    <p className="text-xs text-muted-foreground">Score détaillé · Offres illimitées · Parcours ALTIS complet · Priorité recruteurs ×3</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <CheckCircle2 className="h-4 w-4 text-success" />
+                  <span className="text-xs font-semibold text-success">Débloqué</span>
+                </div>
               </div>
-              <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={handleUnlockPayment} disabled={paymentLoading}>
-                {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Activer <ChevronRight className="ml-1 h-3 w-3" /></>}
-              </Button>
-            </div>
+            ) : (
+              <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/8 px-4 py-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="h-4 w-4 text-accent shrink-0" />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <p className="text-sm font-medium text-foreground cursor-help">
+                        <span className="font-bold text-accent">Certification Premium — 30 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs text-xs">
+                      Badge vérifié MINEFOP/MINREX + visibilité ×3 recruteurs partenaires. Votre profil apparaît en priorité dans les résultats de matching des entreprises premium.
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={handleUnlockPayment} disabled={paymentLoading}>
+                  {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Activer <ChevronRight className="ml-1 h-3 w-3" /></>}
+                </Button>
+              </div>
+            )}
           </motion.div>
 
           {/* ── Header principal */}
@@ -489,6 +524,11 @@ export default function DashboardTalent() {
                       <User className="h-3.5 w-3.5 text-white/80" />
                     </div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Espace Candidat</span>
+                    {isPremium && (
+                      <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0 text-[10px] px-2 py-0.5 font-bold gap-1 shadow-md ml-auto">
+                        <Star className="h-2.5 w-2.5" /> PREMIUM
+                      </Badge>
+                    )}
                   </div>
                   <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1">
                     Bonjour, {displayName.split(" ")[0]}
@@ -672,15 +712,27 @@ export default function DashboardTalent() {
                           </motion.div>
                         );
                       })}
-                      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-accent/20 bg-gradient-to-r from-accent/5 to-primary/5 p-4 flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">Débloquer l'accès Premium</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">Badge MINEFOP/MINREX + visibilité ×3 recruteurs</p>
-                        </div>
-                        <Button size="sm" className="shrink-0 gap-1.5 text-xs" onClick={handleUnlockPayment} disabled={paymentLoading}>
-                          <Zap className="h-3 w-3" /> 30 € <ChevronRight className="h-3.5 w-3.5" />
-                        </Button>
-                      </motion.div>
+                      {isPremium ? (
+                        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-success/30 bg-success/5 p-4 flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm">
+                            <Award className="h-4 w-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground flex items-center gap-2">Premium actif <CheckCircle2 className="h-3.5 w-3.5 text-success" /></p>
+                            <p className="text-xs text-muted-foreground">Toutes les fonctionnalités débloquées</p>
+                          </div>
+                        </motion.div>
+                      ) : (
+                        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-accent/20 bg-gradient-to-r from-accent/5 to-primary/5 p-4 flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">Débloquer l'accès Premium</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Badge MINEFOP/MINREX + visibilité ×3 recruteurs</p>
+                          </div>
+                          <Button size="sm" className="shrink-0 gap-1.5 text-xs" onClick={handleUnlockPayment} disabled={paymentLoading}>
+                            <Zap className="h-3 w-3" /> 30 € <ChevronRight className="h-3.5 w-3.5" />
+                          </Button>
+                        </motion.div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -826,6 +878,10 @@ export default function DashboardTalent() {
                                         <ArrowRight className="h-3 w-3" /> Postuler
                                       </Button>
                                     </a>
+                                  ) : isPremium ? (
+                                    <Button size="sm" className="h-7 text-xs gap-1.5 bg-primary hover:bg-primary/90">
+                                      <ArrowRight className="h-3 w-3" /> Postuler
+                                    </Button>
                                   ) : (
                                     <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5" onClick={handleUnlockPayment}>
                                       <Lock className="h-3 w-3" /> Débloquer
