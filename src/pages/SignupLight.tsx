@@ -180,7 +180,19 @@ export default function SignupLight() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-hero-gradient">
+    <div className="min-h-screen flex flex-col bg-hero-gradient relative">
+      {/* Subtle tech network background */}
+      <div className="absolute inset-0 opacity-[0.06] bg-hero-dots pointer-events-none" />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `url('/hero-tech-network.jpg')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.04,
+          mixBlendMode: "screen",
+        }}
+      />
       {/* ── Header ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-5 pt-5 pb-2 max-w-md mx-auto w-full">
         <Link to="/" className="flex items-center gap-2">
@@ -576,11 +588,11 @@ export default function SignupLight() {
                       </motion.p>
                     )}
                     <p className="text-sm leading-relaxed mb-2 text-white/50">
-                      Votre profil <span className="font-semibold text-white">{selectedSecteur?.metier ?? selectedSecteur?.label ?? ""}</span>
+                      Votre profil <span className="font-semibold text-white">{selectedSecteur?.metier?.split("/")[0]?.trim() ?? selectedSecteur?.label ?? ""}</span>
                       {form.secteur && <span className="font-mono text-accent"> ({form.secteur})</span>}
-                      {form.experience && ` · ${selectedExp?.label}`} match{" "}
+                      {form.experience && <span className="text-white/70"> {selectedExp?.label}</span>} match{" "}
                       <span className="font-bold text-accent">
-                        {Math.max(score - 7, 60)}–{score}%
+                        {Math.max(score - 7, 60)}–{score} %
                       </span>{" "}
                       sur offres en tension France
                     </p>
