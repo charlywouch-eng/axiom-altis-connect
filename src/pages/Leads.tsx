@@ -219,7 +219,7 @@ export default function Leads() {
                     </p>
                     <div className="rounded-2xl p-4 border mt-4" style={{ background: "hsl(0,0%,100%,0.03)", borderColor: "hsl(189,94%,43%,0.2)" }}>
                       <p className="text-sm italic" style={{ color: "hsl(215,25%,60%)" }}>
-                        "Des Camerounais comme vous sont déjà en poste à Paris, Lyon, Bordeaux…{" "}
+                        "Des talents d'Afrique comme vous sont déjà en poste à Paris, Lyon, Bordeaux…{" "}
                         <strong style={{ color: "hsl(189,94%,43%)" }}>Et si c'était votre tour ?"</strong>
                       </p>
                     </div>
@@ -278,7 +278,7 @@ export default function Leads() {
                   {/* Email / Phone */}
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium" style={{ color: "hsl(215,25%,72%)" }}>
-                      Email ou téléphone +237 <span style={{ color: "hsl(0,60%,65%)" }}>*</span>
+                      Email ou téléphone <span style={{ color: "hsl(0,60%,65%)" }}>*</span>
                     </label>
                     <Input
                       placeholder="exemple@email.com ou +237 6XX XXX XXX"

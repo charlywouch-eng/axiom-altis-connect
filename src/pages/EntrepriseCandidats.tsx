@@ -657,7 +657,7 @@ export default function EntrepriseCandidats() {
               Candidats disponibles
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {filtered.length} talent{filtered.length > 1 ? "s" : ""} trouvé{filtered.length > 1 ? "s" : ""} sur {allCandidates.length} · Cameroun → France
+              {filtered.length} talent{filtered.length > 1 ? "s" : ""} trouvé{filtered.length > 1 ? "s" : ""} sur {allCandidates.length} · Afrique → France
             </p>
           </div>
 
