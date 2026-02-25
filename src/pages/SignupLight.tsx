@@ -169,6 +169,7 @@ export default function SignupLight() {
           metier:     selectedSecteur?.metier ?? selectedSecteur?.label ?? "",
           rome_code:  form.secteur,
           experience: form.experience,
+          source:     "signup-light",
         },
       });
       if (error || !data?.url) throw new Error(error?.message || "Erreur paiement");

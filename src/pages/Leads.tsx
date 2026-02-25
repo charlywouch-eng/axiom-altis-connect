@@ -20,7 +20,7 @@ import heroImg from "@/assets/logo-rh-tech.png";
 const SECTEURS = [
   { label: "Maçonnerie / BTP",              rome: "F1703", sector: "BTP",         demand: "Très forte", icon: "🏗️", base: 88 },
   { label: "Aide-soignant / Santé",         rome: "J1501", sector: "Santé",       demand: "Très forte", icon: "🏥", base: 86 },
-  { label: "Transport / Logistique",        rome: "N1101", sector: "Logistique",  demand: "Forte",      icon: "🚛", base: 81 },
+  { label: "Transport / Logistique",        rome: "N4101", sector: "Logistique",  demand: "Forte",      icon: "🚛", base: 81 },
   { label: "Service salle / CHR",           rome: "G1602", sector: "CHR",         demand: "Forte",      icon: "🍽️", base: 79 },
   { label: "Maintenance industrielle",      rome: "I1304", sector: "Maintenance", demand: "Forte",      icon: "⚙️", base: 77 },
   { label: "Hôtellerie / Accueil",          rome: "G1703", sector: "Hôtellerie",  demand: "Modérée",    icon: "🏨", base: 76 },
@@ -63,14 +63,18 @@ export default function Leads() {
   const utmMedium   = searchParams.get("utm_medium");
   const utmCampaign = searchParams.get("utm_campaign");
 
-  // Pre-fill from teaser query params
+  // Pre-fill from teaser query params + handle cancel
   useEffect(() => {
     const email = searchParams.get("email");
     const metier = searchParams.get("metier");
+    const canceled = searchParams.get("canceled");
     if (email) setForm(f => ({ ...f, emailOrPhone: email }));
     if (metier) {
       setForm(f => ({ ...f, metier }));
       setSelectedSecteur(SECTEURS.find(s => s.rome === metier) ?? null);
+    }
+    if (canceled === "true") {
+      toast({ title: "Paiement annulé", description: "Vous pouvez réessayer à tout moment.", variant: "default" });
     }
   }, [searchParams]);
 
