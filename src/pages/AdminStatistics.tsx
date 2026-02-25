@@ -120,12 +120,17 @@ export default function AdminStatistics() {
     }
   }, [captureSnapshot]);
 
+  const [funnelPeriod, setFunnelPeriod] = useState<"7" | "30" | "90">("30");
+
   // Funnel analytics query
   const { data: funnelEvents = [] } = useQuery({
-    queryKey: ["admin_funnel_stats"],
+    queryKey: ["admin_funnel_stats", funnelPeriod],
     queryFn: async () => {
+      const since = new Date();
+      since.setDate(since.getDate() - Number(funnelPeriod));
       const { data, error } = await (supabase.from as any)("funnel_events")
         .select("event_name, rome_code, created_at")
+        .gte("created_at", since.toISOString())
         .order("created_at", { ascending: false })
         .limit(1000);
       if (error) throw error;
@@ -356,11 +361,24 @@ export default function AdminStatistics() {
 
         {/* Funnel Conversion */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <Zap className="h-4 w-4 text-accent" />
               Tunnel de conversion
             </CardTitle>
+            <div className="flex gap-1">
+              {(["7", "30", "90"] as const).map((p) => (
+                <Button
+                  key={p}
+                  variant={funnelPeriod === p ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 px-2.5 text-xs"
+                  onClick={() => setFunnelPeriod(p)}
+                >
+                  {p}j
+                </Button>
+              ))}
+            </div>
           </CardHeader>
           <CardContent>
             {funnelEvents.length === 0 ? (
