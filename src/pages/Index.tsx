@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
+
+const NetworkCanvas = lazy(() => import("@/components/landing/NetworkCanvas"));
 
 // ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -144,18 +146,22 @@ export default function Index() {
       <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
         {/* Tech network background */}
         <div className="absolute inset-0">
-          <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover" loading="eager" decoding="async" fetchPriority="high" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,6%)]/95 via-[hsl(221,83%,18%)]/80 to-[hsl(187,94%,22%)]/50" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,6%)] via-transparent to-[hsl(222,47%,6%)]/40" />
+          <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-60" loading="eager" decoding="async" fetchPriority="high" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,5%)]/97 via-[hsl(221,83%,14%)]/88 to-[hsl(187,94%,18%)]/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,5%)] via-transparent to-[hsl(222,47%,5%)]/50" />
         </div>
-        {/* Dot grid with turquoise tint */}
-        <div className="absolute inset-0 opacity-[0.04] bg-hero-dots" />
-        {/* Floating orbs */}
-        <div className="absolute top-1/4 right-[15%] w-[280px] h-[280px] rounded-full bg-accent/12 blur-[100px] pointer-events-none animate-float-orb" />
-        <div className="absolute bottom-1/4 left-[10%] w-[350px] h-[350px] rounded-full bg-primary/15 blur-[120px] pointer-events-none animate-float-orb-slow" />
-        <div className="absolute top-[60%] right-[40%] w-[200px] h-[200px] rounded-full bg-accent/8 blur-[80px] pointer-events-none animate-float-orb" />
+        {/* Animated node network */}
+        <div className="absolute inset-0 z-[1]">
+          <Suspense fallback={null}>
+            <NetworkCanvas nodeCount={45} maxDistance={180} />
+          </Suspense>
+        </div>
+        {/* Floating orbs (enhanced) */}
+        <div className="absolute top-1/4 right-[15%] w-[320px] h-[320px] rounded-full bg-accent/10 blur-[120px] pointer-events-none animate-float-orb" />
+        <div className="absolute bottom-1/4 left-[10%] w-[400px] h-[400px] rounded-full bg-primary/12 blur-[140px] pointer-events-none animate-float-orb-slow" />
+        <div className="absolute top-[55%] right-[35%] w-[250px] h-[250px] rounded-full bg-accent/6 blur-[100px] pointer-events-none animate-float-orb" />
 
-        <div className="relative mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
+        <div className="relative z-[2] mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 
             {/* ── Left: Copy ───────────────────────────────────── */}
@@ -310,7 +316,7 @@ export default function Index() {
         </div>
 
         {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/60 to-transparent z-[3]" />
       </section>
 
       {/* ── Stats Band ───────────────────────────────────────── */}
@@ -430,12 +436,16 @@ export default function Index() {
 
       {/* ── CTA Final ────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Tech background */}
+        {/* Tech background with network */}
         <div className="absolute inset-0">
-          <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-40" loading="lazy" decoding="async" />
-          <div className="absolute inset-0 bg-[hsl(222,47%,6%)]/85" />
+          <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-30" loading="lazy" decoding="async" />
+          <div className="absolute inset-0 bg-[hsl(222,47%,5%)]/90" />
         </div>
-        <div className="absolute inset-0 opacity-[0.035] bg-hero-dots" />
+        <div className="absolute inset-0 z-[1]">
+          <Suspense fallback={null}>
+            <NetworkCanvas nodeCount={22} maxDistance={140} />
+          </Suspense>
+        </div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl" />
 
         <div className="relative mx-auto max-w-2xl px-5 py-24 text-center md:px-10 md:py-28">
