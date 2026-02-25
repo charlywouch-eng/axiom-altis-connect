@@ -66,8 +66,8 @@ const UTM_CHANNELS = [
   {
     name: "Instagram",
     icon: "📸",
-    utm: "utm_source=instagram&utm_medium=organic&utm_campaign=phase1-cameroun",
-    cta: `Et si votre avenir était en France ? 🇫🇷\n\n9 métiers qui manquent de bras.\nDes entreprises qui CHERCHENT des talents comme vous.\nUn matching IA + visa + logement inclus.\n\nTous les détails dans notre bio ↗️\n\n#TalentsCameroun #EmploiFrance #BTP #Santé #CHR`,
+    utm: "utm_source=instagram&utm_medium=organic&utm_campaign=phase1-afrique",
+    cta: `Et si votre avenir était en France ? 🇫🇷\n\n9 métiers qui manquent de bras.\nDes entreprises qui CHERCHENT des talents comme vous.\nUn matching IA + visa + logement inclus.\n\nTous les détails dans notre bio ↗️\n\n#TalentsAfrique #EmploiFrance #BTP #Santé #CHR`,
   },
 ];
 

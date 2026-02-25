@@ -62,7 +62,7 @@ export default function TensionMetiersSection() {
             <span className="text-gradient-accent">France 2026</span>
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mx-auto mt-6 max-w-2xl text-white/60 text-lg">
-            Croisement officiel : formations CQP/DQP MINEFOP Cameroun × métiers en tension France.
+            Croisement officiel : formations CQP/DQP MINEFOP Afrique × métiers en tension France.
             Score de correspondance calculé par notre IA.
           </motion.p>
         </motion.div>

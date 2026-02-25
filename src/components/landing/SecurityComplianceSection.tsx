@@ -51,7 +51,7 @@ export default function SecurityComplianceSection() {
               <span className="text-gradient-accent">sans risque</span>
             </motion.h2>
             <motion.p custom={2} variants={fadeUp} className="mx-auto mt-6 max-w-2xl text-primary-foreground/60 text-lg leading-relaxed">
-              Diplômes apostillés au Cameroun via MINFOG + Ministère des Affaires étrangères. Alignés sur ROME. Visa France inclus. Zéro fraude. Zéro surprise.
+              Diplômes apostillés via MINFOG + Ministère des Affaires étrangères. Alignés sur ROME. Visa France inclus. Zéro fraude. Zéro surprise.
             </motion.p>
           </motion.div>
 

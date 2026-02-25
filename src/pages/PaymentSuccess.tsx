@@ -260,7 +260,7 @@ export default function PaymentSuccess() {
         >
           {[
             { icon: Shield, text: "RGPD compliant" },
-            { icon: Globe,  text: "Cameroun → France" },
+            { icon: Globe,  text: "Afrique → France" },
             { icon: Star,   text: "MINEFOP certifié" },
           ].map(({ icon: Icon, text }) => (
             <span key={text} className="flex items-center gap-1.5 text-xs" style={{ color: "hsl(215 16% 47%)" }}>
