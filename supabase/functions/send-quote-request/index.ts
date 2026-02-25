@@ -7,6 +7,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const COMMERCIAL_EMAIL = "contact@axiom-altis.com";
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[SEND-QUOTE-REQUEST] ${step}${detailsStr}`);
@@ -25,6 +28,10 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
+    if (!RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is not configured");
+    }
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
 
@@ -42,28 +49,42 @@ serve(async (req) => {
       throw new Error("Champs obligatoires manquants (entreprise, secteur)");
     }
 
-    logStep("Quote request received", { company, sector, volume, message });
+    logStep("Quote request received", { company, sector, volume });
 
-    // Store the quote request for admin tracking
-    // We'll use a simple approach: log it and notify via Supabase
-    // In production, integrate with an email service like Resend
+    const htmlContent = `
+      <h2>📋 Nouvelle demande de devis</h2>
+      <table style="border-collapse:collapse;width:100%;max-width:600px;font-family:sans-serif;">
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Email</td><td style="padding:8px;border:1px solid #ddd;">${user.email}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Entreprise</td><td style="padding:8px;border:1px solid #ddd;">${company}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Secteur</td><td style="padding:8px;border:1px solid #ddd;">${sector}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Volume</td><td style="padding:8px;border:1px solid #ddd;">${volume || "Non précisé"}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Formule</td><td style="padding:8px;border:1px solid #ddd;">Success Fee – 25% du brut annuel</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Message</td><td style="padding:8px;border:1px solid #ddd;">${message || "—"}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Date</td><td style="padding:8px;border:1px solid #ddd;">${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</td></tr>
+      </table>
+    `;
 
-    const quoteData = {
-      user_email: user.email,
-      user_id: user.id,
-      company,
-      sector,
-      volume: volume || "Non précisé",
-      message: message || "",
-      formula: "Success Fee – 25% du brut annuel",
-      requested_at: new Date().toISOString(),
-    };
+    const resendRes = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "AXIOM ALTIS <onboarding@resend.dev>",
+        to: [COMMERCIAL_EMAIL],
+        subject: `[Devis] ${company} – ${sector}`,
+        html: htmlContent,
+        reply_to: user.email,
+      }),
+    });
 
-    logStep("Quote data compiled", quoteData);
+    const resendData = await resendRes.json();
+    logStep("Resend response", { status: resendRes.status, data: resendData });
 
-    // For now, we log the request. The admin can see it in the edge function logs.
-    // TODO: Connect to Resend or another email provider for actual email delivery.
-    console.log(`[QUOTE REQUEST] New quote from ${user.email}:`, JSON.stringify(quoteData, null, 2));
+    if (!resendRes.ok) {
+      throw new Error(`Resend error: ${JSON.stringify(resendData)}`);
+    }
 
     return new Response(
       JSON.stringify({ success: true, message: "Demande de devis envoyée avec succès." }),
