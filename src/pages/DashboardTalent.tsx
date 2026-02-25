@@ -69,6 +69,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
+import { ChangePasswordCard } from "@/components/ChangePasswordCard";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
@@ -1112,6 +1113,11 @@ export default function DashboardTalent() {
                       </div>
                     </CardContent>
                   </Card>
+                </motion.div>
+
+                {/* Changer le mot de passe */}
+                <motion.div variants={itemVariants}>
+                  <ChangePasswordCard />
                 </motion.div>
 
                 {/* Diplômes & Certifications */}
