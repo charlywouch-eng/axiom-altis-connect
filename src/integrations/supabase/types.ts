@@ -157,6 +157,39 @@ export type Database = {
           },
         ]
       }
+      funnel_events: {
+        Row: {
+          created_at: string
+          email_hash: string | null
+          event_name: string
+          experience: string | null
+          id: string
+          metadata: Json | null
+          rome_code: string | null
+          source: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_hash?: string | null
+          event_name: string
+          experience?: string | null
+          id?: string
+          metadata?: Json | null
+          rome_code?: string | null
+          source?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_hash?: string | null
+          event_name?: string
+          experience?: string | null
+          id?: string
+          metadata?: Json | null
+          rome_code?: string | null
+          source?: string | null
+        }
+        Relationships: []
+      }
       job_offers: {
         Row: {
           company_id: string

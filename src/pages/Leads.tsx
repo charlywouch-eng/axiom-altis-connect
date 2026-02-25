@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { trackFunnel } from "@/lib/trackFunnel";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -121,6 +122,15 @@ export default function Leads() {
     setScore(calculatedScore);
     setLoading(false);
     setStep("score");
+
+    trackFunnel({
+      event_name: "lead_form_submitted",
+      rome_code: form.metier,
+      experience: form.experience,
+      email_hash: form.emailOrPhone,
+      source: "leads",
+      metadata: { utm_source: utmSource, utm_medium: utmMedium, utm_campaign: utmCampaign },
+    });
   };
 
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -140,6 +150,13 @@ export default function Leads() {
       });
       if (error) throw error;
       if (data?.url) {
+        trackFunnel({
+          event_name: "lead_payment_clicked",
+          rome_code: form.metier,
+          experience: form.experience,
+          email_hash: form.emailOrPhone,
+          source: "leads",
+        });
         window.location.href = data.url;
       } else {
         throw new Error("Aucune URL Stripe reçue");
