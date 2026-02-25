@@ -135,6 +135,7 @@ export default function Leads() {
           metier: selectedSecteur?.label ?? form.metier,
           rome_code: form.metier,
           experience: form.experience,
+          source: "leads",
         },
       });
       if (error) throw error;

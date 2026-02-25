@@ -21,7 +21,7 @@ import {
   Hash,
   Briefcase,
 } from "lucide-react";
-import { ChangePasswordCard } from "@/components/ChangePasswordCard";
+
 
 const SECTEURS = [
   "BTP & Travaux publics",
@@ -367,13 +367,6 @@ export default function EntrepriseProfile() {
         </motion.div>
 
         {/* Change password */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.4 }}
-        >
-          <ChangePasswordCard />
-        </motion.div>
 
         {/* Save button */}
         <motion.div

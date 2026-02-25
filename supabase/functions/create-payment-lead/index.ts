@@ -31,11 +31,20 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://axiom-altis-connect.lovable.app";
 
     // Build success URL with context so DashboardTalent can show the premium state
+    // Compute score to forward in success URL
+    const BASE_SCORES: Record<string, number> = {
+      F1703: 88, J1501: 86, N4101: 83, G1602: 79,
+      I1304: 77, G1703: 76, D1212: 71, A1401: 73, M1607: 74, A1414: 73, M1805: 72, D1502: 71,
+    };
+    const EXP_BONUS: Record<string, number> = { "0-2": 0, "2-5": 4, "5-10": 7, "10+": 10 };
+    const computedScore = Math.min(95, (BASE_SCORES[rome_code ?? ""] ?? 75) + (EXP_BONUS[experience ?? ""] ?? 0));
+
     const successParams = new URLSearchParams({
       premium: "true",
       session_id: "{CHECKOUT_SESSION_ID}",
       ...(rome_code ? { rome: rome_code } : {}),
       ...(experience ? { exp: experience } : {}),
+      score: String(computedScore),
     });
 
     const cancelPage = source === "signup-light" ? "/signup-light" : "/leads";
