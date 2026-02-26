@@ -125,10 +125,10 @@ const SLIDES = [
     iconColor: "text-sky-400",
     title: "Des premiers résultats\net une vision claire.",
     metrics: [
-      { value: "500+", label: "Talents pré-inscrits" },
-      { value: "12", label: "Entreprises pilotes" },
-      { value: "4", label: "Secteurs couverts" },
-      { value: "95%", label: "Score conformité moyen" },
+      { value: "14", label: "Talents inscrits" },
+      { value: "9", label: "Leads qualifiés" },
+      { value: "7", label: "Codes ROME couverts" },
+      { value: "46%", label: "Score conformité moyen" },
     ],
     roadmap: [
       { phase: "T1 2026", label: "Lancement MVP & premiers placements", done: true },
