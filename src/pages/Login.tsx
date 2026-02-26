@@ -17,9 +17,21 @@ export default function Login() {
   const { session, loading } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [usePassword, setUsePassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [magicSent, setMagicSent] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
+
+  const handlePasswordLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    }
+    setSubmitting(false);
+  };
 
   if (loading) return <FullPageLoader />;
   if (session) return <Navigate to="/onboarding-role" replace />;
@@ -139,8 +151,8 @@ export default function Login() {
                   <div className="relative flex justify-center"><span className="bg-transparent px-3 text-xs text-primary-foreground/30">ou par email</span></div>
                 </div>
 
-                {/* Magic link form */}
-                <form onSubmit={handleMagicLink} className="space-y-5">
+                {/* Login form */}
+                <form onSubmit={usePassword ? handlePasswordLogin : handleMagicLink} className="space-y-5">
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-primary-foreground/70 font-medium">Email</Label>
                     <div className="relative">
@@ -156,15 +168,38 @@ export default function Login() {
                       />
                     </div>
                   </div>
+                  {usePassword && (
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-primary-foreground/70 font-medium">Mot de passe</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        placeholder="••••••••"
+                        className="bg-white/5 border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 h-12 rounded-xl focus:border-accent/50 focus:ring-accent/20"
+                      />
+                    </div>
+                  )}
                   <Button
                     type="submit"
                     className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 border-0 rounded-xl text-base font-semibold shadow-lg shadow-accent/20"
                     disabled={submitting}
                   >
-                    {submitting ? "Envoi…" : (
+                    {submitting ? "Connexion…" : usePassword ? (
+                      <>Se connecter <ArrowRight className="ml-2 h-4 w-4" /></>
+                    ) : (
                       <>Recevoir un lien de connexion <ArrowRight className="ml-2 h-4 w-4" /></>
                     )}
                   </Button>
+                  <button
+                    type="button"
+                    className="w-full text-xs text-primary-foreground/40 hover:text-accent transition-colors"
+                    onClick={() => setUsePassword(!usePassword)}
+                  >
+                    {usePassword ? "Utiliser un lien magique" : "Se connecter avec un mot de passe"}
+                  </button>
                 </form>
 
                 <div className="text-center space-y-2">
