@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -141,9 +142,9 @@ export default function Pitch() {
       const savedCurrent = current;
 
       for (let i = 0; i < SLIDES.length; i++) {
-        setCurrent(i);
-        // Wait for animation to settle
-        await new Promise((r) => setTimeout(r, 600));
+        flushSync(() => setCurrent(i));
+        // Wait for animation + DOM to settle
+        await new Promise((r) => setTimeout(r, 1000));
 
         const canvas = await html2canvas(slideContainer, {
           backgroundColor: "#020617",
