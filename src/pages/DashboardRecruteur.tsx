@@ -674,6 +674,7 @@ function MatchingTab({ query, setQuery }: { query: string; setQuery: (q: string)
 /* ──────────── FACTURATION TAB ──────────── */
 function FacturationTab() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
 
   const handleCheckout = async () => {
     setCheckoutLoading(true);
@@ -691,6 +692,25 @@ function FacturationTab() {
       toast({ title: "Erreur", description: err.message || "Impossible de lancer le paiement.", variant: "destructive" });
     } finally {
       setCheckoutLoading(false);
+    }
+  };
+
+  const handlePortal = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.error) {
+        toast({ title: "Info", description: data.error, variant: "destructive" });
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: any) {
+      toast({ title: "Erreur", description: err.message || "Impossible d'ouvrir le portail.", variant: "destructive" });
+    } finally {
+      setPortalLoading(false);
     }
   };
 
@@ -847,6 +867,15 @@ function FacturationTab() {
               {checkoutLoading ? "Redirection vers Stripe..." : "Commencer à recruter — 499 €/mois"}
             </Button>
             <p className="text-xs text-white/30 text-center">Paiement sécurisé par Stripe. Annulable à tout moment.</p>
+            <Button
+              variant="outline"
+              disabled={portalLoading}
+              onClick={handlePortal}
+              className="w-full border-white/20 text-white/70 hover:bg-white/10 hover:text-white py-5 rounded-xl"
+            >
+              {portalLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
+              {portalLoading ? "Ouverture..." : "Gérer mon abonnement"}
+            </Button>
           </CardContent>
         </Card>
       </motion.div>
