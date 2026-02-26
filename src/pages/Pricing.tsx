@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Check, Zap, Crown, Building2, ArrowRight, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -28,8 +29,15 @@ const RECRUTEUR_PERKS = [
   "Support prioritaire dédié",
 ];
 
+const MONTHLY_PRICE = 499;
+const ANNUAL_MONTHLY_PRICE = Math.round(MONTHLY_PRICE * 0.8); // 20% off
+
 export default function Pricing() {
   const navigate = useNavigate();
+  const [isAnnual, setIsAnnual] = useState(false);
+
+  const displayPrice = isAnnual ? ANNUAL_MONTHLY_PRICE : MONTHLY_PRICE;
+  const billingLabel = isAnnual ? "/ mois (facturé annuellement)" : "/ mois";
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,7 +66,7 @@ export default function Pricing() {
           animate="visible"
           variants={fadeUp}
           custom={0}
-          className="mb-16 text-center"
+          className="mb-10 text-center"
         >
           <Badge variant="secondary" className="mb-4 gap-1">
             <Shield className="h-3 w-3" />
@@ -70,6 +78,40 @@ export default function Pricing() {
           <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
             Que vous soyez talent ou recruteur, AXIOM vous connecte aux meilleures opportunités France-Afrique.
           </p>
+        </motion.div>
+
+        {/* Billing toggle */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          custom={0.5}
+          className="mb-12 flex items-center justify-center gap-3"
+        >
+          <span className={`text-sm font-medium transition-colors ${!isAnnual ? "text-foreground" : "text-muted-foreground"}`}>
+            Mensuel
+          </span>
+          <button
+            onClick={() => setIsAnnual(!isAnnual)}
+            className={`relative inline-flex h-7 w-[52px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              isAnnual ? "bg-accent" : "bg-muted"
+            }`}
+            aria-label="Basculer entre mensuel et annuel"
+          >
+            <span
+              className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${
+                isAnnual ? "translate-x-[27px]" : "translate-x-[3px]"
+              }`}
+            />
+          </button>
+          <span className={`text-sm font-medium transition-colors ${isAnnual ? "text-foreground" : "text-muted-foreground"}`}>
+            Annuel
+          </span>
+          {isAnnual && (
+            <Badge className="bg-accent/15 text-accent border-accent/30 text-xs font-bold">
+              -20 %
+            </Badge>
+          )}
         </motion.div>
 
         {/* Cards */}
@@ -119,8 +161,23 @@ export default function Pricing() {
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <div className="mb-6">
-                  <span className="font-display text-5xl font-bold">499&nbsp;€</span>
-                  <span className="ml-1 text-muted-foreground">/ mois</span>
+                  <motion.span
+                    key={displayPrice}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="font-display text-5xl font-bold"
+                  >
+                    {displayPrice}&nbsp;€
+                  </motion.span>
+                  <span className="ml-1 text-muted-foreground">{billingLabel}</span>
+                  {isAnnual && (
+                    <div className="mt-1">
+                      <span className="text-sm text-muted-foreground line-through">{MONTHLY_PRICE} €/mois</span>
+                      <span className="ml-2 text-sm font-semibold text-accent">
+                        Économisez {(MONTHLY_PRICE - ANNUAL_MONTHLY_PRICE) * 12} €/an
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <ul className="mb-8 flex-1 space-y-3">
                   {RECRUTEUR_PERKS.map((p) => (
