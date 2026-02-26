@@ -12,10 +12,11 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { toast } from "@/hooks/use-toast";
 import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
-  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp
+  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2
 } from "lucide-react";
 
 
@@ -672,6 +673,27 @@ function MatchingTab({ query, setQuery }: { query: string; setQuery: (q: string)
 
 /* ──────────── FACTURATION TAB ──────────── */
 function FacturationTab() {
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout-entreprise");
+      if (error) throw error;
+      if (data?.error) {
+        toast({ title: "Info", description: data.error, variant: "destructive" });
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: any) {
+      toast({ title: "Erreur", description: err.message || "Impossible de lancer le paiement.", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   const PLANS = [
     {
       name: "Découverte",
@@ -773,12 +795,15 @@ function FacturationTab() {
                       {plan.cta ? (
                         <Button
                           size="sm"
+                          disabled={plan.highlight ? checkoutLoading : false}
+                          onClick={plan.highlight ? handleCheckout : undefined}
                           className={plan.highlight
                             ? "bg-accent text-accent-foreground hover:bg-accent/90 border-0 text-xs shadow-lg shadow-accent/20"
                             : "border-accent/30 text-accent hover:bg-accent/10 text-xs"
                           }
                           variant={plan.highlight ? "default" : "outline"}
                         >
+                          {plan.highlight && checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
                           {plan.cta}
                         </Button>
                       ) : (
@@ -813,8 +838,13 @@ function FacturationTab() {
                 </li>
               ))}
             </ul>
-            <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 border-0 py-6 text-base font-semibold rounded-xl shadow-lg shadow-accent/20">
-              <CreditCard className="mr-2 h-5 w-5" /> Commencer à recruter — 499 €/mois
+            <Button
+              disabled={checkoutLoading}
+              onClick={handleCheckout}
+              className="w-full bg-accent text-accent-foreground hover:bg-accent/90 border-0 py-6 text-base font-semibold rounded-xl shadow-lg shadow-accent/20"
+            >
+              {checkoutLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <CreditCard className="mr-2 h-5 w-5" />}
+              {checkoutLoading ? "Redirection vers Stripe..." : "Commencer à recruter — 499 €/mois"}
             </Button>
             <p className="text-xs text-white/30 text-center">Paiement sécurisé par Stripe. Annulable à tout moment.</p>
           </CardContent>
