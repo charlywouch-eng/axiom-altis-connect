@@ -43,8 +43,12 @@ serve(async (req) => {
       // ── Abonnement Premium Entreprise ───────────────────────
       if (payment_type === "entreprise_premium" && user_id) {
         console.log(`[WEBHOOK] Premium entreprise subscription activated for user ${user_id}`);
-        // Subscription is managed in Stripe — no DB changes needed beyond logging.
-        // The check-subscription function queries Stripe directly for active status.
+        // Mark company as subscribed in DB for RLS enforcement
+        const { error: subError } = await supabaseClient
+          .from("company_profiles")
+          .update({ is_subscribed: true, subscription_end: null })
+          .eq("user_id", user_id);
+        if (subError) console.error("Error updating subscription status:", subError);
       }
 
       // ── Paiement "Analyse Complète" 10€ talent ──────────────
@@ -104,6 +108,28 @@ serve(async (req) => {
     if (event.type === "customer.subscription.deleted") {
       const subscription = event.data.object as any;
       console.log(`[WEBHOOK] Subscription ${subscription.id} canceled`);
+      
+      // Find customer email to locate the company profile
+      const stripe2 = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2025-08-27.basil" });
+      const customer = await stripe2.customers.retrieve(subscription.customer);
+      if (customer && !customer.deleted && customer.email) {
+        // Find company profile by email match via profiles table
+        const { data: profile } = await supabaseClient
+          .from("profiles")
+          .select("id")
+          .eq("email", customer.email)
+          .maybeSingle();
+        if (profile) {
+          await supabaseClient
+            .from("company_profiles")
+            .update({ 
+              is_subscribed: false, 
+              subscription_end: new Date(subscription.current_period_end * 1000).toISOString() 
+            })
+            .eq("user_id", profile.id);
+          console.log(`[WEBHOOK] Company ${customer.email} subscription deactivated`);
+        }
+      }
     }
 
     return new Response(JSON.stringify({ received: true }), {

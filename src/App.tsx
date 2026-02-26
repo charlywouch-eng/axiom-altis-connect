@@ -28,6 +28,7 @@ import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
+import LienMagique from "./pages/LienMagique";
 
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             
+            <Route path="/lien-magique" element={<LienMagique />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup-light" element={<SignupLight />} />
             <Route path="/signup-talent" element={<SignupTalent />} />
