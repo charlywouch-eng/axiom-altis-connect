@@ -26,9 +26,6 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       logStep("No authorization header, returning unsubscribed");
@@ -49,6 +46,35 @@ serve(async (req) => {
     }
     const user = userData.user;
     logStep("User authenticated", { userId: user.id, email: user.email });
+
+    // 1. Check DB flag first (allows manual activation for tests/demos)
+    const { data: companyProfile } = await supabaseClient
+      .from("company_profiles")
+      .select("is_subscribed, subscription_end")
+      .eq("user_id", user.id)
+      .single();
+
+    if (companyProfile?.is_subscribed) {
+      logStep("DB flag is_subscribed=true, granting access", { subscriptionEnd: companyProfile.subscription_end });
+      return new Response(
+        JSON.stringify({
+          subscribed: true,
+          product_id: "db_manual",
+          subscription_end: companyProfile.subscription_end,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
+    // 2. Fallback to Stripe check
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      logStep("No STRIPE_SECRET_KEY, returning DB result only");
+      return new Response(
+        JSON.stringify({ subscribed: false, product_id: null, subscription_end: null }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
@@ -79,6 +105,12 @@ serve(async (req) => {
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       productId = subscription.items.data[0].price.product as string;
       logStep("Active subscription found", { subscriptionId: subscription.id, productId, endDate: subscriptionEnd });
+
+      // Sync DB flag
+      await supabaseClient
+        .from("company_profiles")
+        .update({ is_subscribed: true, subscription_end: subscriptionEnd })
+        .eq("user_id", user.id);
     } else {
       logStep("No active subscription found");
     }
