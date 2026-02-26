@@ -37,6 +37,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Pricing from "./pages/Pricing";
 import APropos from "./pages/APropos";
 import Pitch from "./pages/Pitch";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -181,6 +182,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/rgpd" element={<Rgpd />} />
             <Route path="/rgpd-light" element={<RgpdLight />} />
             <Route path="/leads" element={<Leads />} />

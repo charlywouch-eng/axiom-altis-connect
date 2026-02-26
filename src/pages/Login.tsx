@@ -214,6 +214,23 @@ export default function Login() {
                       Accès perdu ? Renvoyer un lien
                     </Link>
                   </p>
+                  <button
+                    type="button"
+                    className="text-xs text-primary-foreground/30 hover:text-accent transition-colors"
+                    onClick={async () => {
+                      if (!email.trim()) {
+                        toast({ title: "Erreur", description: "Entrez votre email d'abord", variant: "destructive" });
+                        return;
+                      }
+                      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+                        redirectTo: `${window.location.origin}/reset-password`,
+                      });
+                      if (error) toast({ title: "Erreur", description: error.message, variant: "destructive" });
+                      else toast({ title: "Email envoyé", description: "Vérifiez votre boîte mail pour réinitialiser votre mot de passe." });
+                    }}
+                  >
+                    Mot de passe oublié ?
+                  </button>
                 </div>
               </motion.div>
             )}
