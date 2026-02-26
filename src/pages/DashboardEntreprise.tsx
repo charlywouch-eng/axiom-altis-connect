@@ -413,11 +413,11 @@ export default function DashboardEntreprise() {
                     </div>
                   </div>
                   <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight mb-2">
-                    Recrutez des talents certifiés Cameroun —{" "}
+                    Recrutez des talents d'Afrique certifiés –{" "}
                     <span className="text-gradient-accent">Opérationnels jour 1</span>
                   </h1>
                   <p className="text-sm text-white/60 max-w-lg">
-                    Matching IA + conformité ROME + Pack ALTIS Zéro Stress (visa + billet + logement)
+                    Matching IA + conformité ROME + Pack ALTIS Zéro Stress (visa + billet + logement) · À partir de 499 €/mois
                   </p>
                   <div className="flex flex-wrap gap-2 mt-4">
                     <Button
