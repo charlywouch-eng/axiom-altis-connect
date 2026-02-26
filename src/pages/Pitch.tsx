@@ -128,7 +128,7 @@ const SLIDES = [
       { value: "14", label: "Talents inscrits" },
       { value: "9", label: "Leads qualifiés" },
       { value: "7", label: "Codes ROME couverts" },
-      { value: "46%", label: "Score conformité moyen" },
+      { value: "62%", label: "Score conformité moyen" },
     ],
     roadmap: [
       { phase: "T1 2026", label: "Lancement MVP & premiers placements", done: true },
