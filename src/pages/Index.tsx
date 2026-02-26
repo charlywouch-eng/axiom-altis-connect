@@ -459,14 +459,14 @@ export default function Index() {
           <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-30" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-[hsl(222,47%,5%)]/90" />
         </div>
-        <div className="absolute inset-0 z-[1]">
+        <div className="absolute inset-0 z-[1] pointer-events-none">
           <Suspense fallback={null}>
             <NetworkCanvas nodeCount={22} maxDistance={140} />
           </Suspense>
         </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl pointer-events-none" />
 
-        <div className="relative mx-auto max-w-2xl px-5 py-24 text-center md:px-10 md:py-28">
+        <div className="relative z-[2] mx-auto max-w-2xl px-5 py-24 text-center md:px-10 md:py-28">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
               Prêt à commencer ?
