@@ -102,6 +102,7 @@ export default function SignupLight() {
   const [rgpd, setRgpd] = useState(false);
   const [showPremiumTooltip, setShowPremiumTooltip] = useState(false);
 
+  const [usePhone, setUsePhone] = useState(false);
   const [form, setForm] = useState({
     contact:    "",
     secteur:    premiumRome || "",
@@ -139,7 +140,7 @@ export default function SignupLight() {
         role: "talent",
       };
 
-      if (isPhone(form.contact)) {
+      if (usePhone) {
         localStorage.setItem("axiom_pending_profile", JSON.stringify(meta));
         localStorage.setItem("axiom_contact", form.contact);
         setStep("score");
@@ -358,11 +359,11 @@ export default function SignupLight() {
                     <div className="space-y-1.5">
                       <Label className="text-sm font-semibold text-white/70 flex items-center gap-2">
                         <span className="flex items-center gap-1">
-                          {isPhone(form.contact) ? <Phone className="h-3.5 w-3.5 text-accent" /> : <Mail className="h-3.5 w-3.5 text-accent" />}
-                          Email ou Téléphone
+                          {usePhone ? <Phone className="h-3.5 w-3.5 text-accent" /> : <Mail className="h-3.5 w-3.5 text-accent" />}
+                          {usePhone ? "Téléphone" : "Email"}
                         </span>
                       </Label>
-                      {isPhone(form.contact) || (!form.contact && !form.contact.includes("@")) ? (
+                      {usePhone ? (
                         <div className="space-y-2">
                           <PhoneInput
                             value={form.contact}
@@ -370,7 +371,7 @@ export default function SignupLight() {
                           />
                           <button
                             type="button"
-                            onClick={() => handleChange("contact", "")}
+                            onClick={() => { setUsePhone(false); handleChange("contact", ""); }}
                             className="text-xs text-accent/70 hover:text-accent transition-colors"
                           >
                             Utiliser un email à la place
@@ -389,7 +390,7 @@ export default function SignupLight() {
                           />
                           <button
                             type="button"
-                            onClick={() => handleChange("contact", "+237 ")}
+                            onClick={() => { setUsePhone(true); handleChange("contact", "+237 "); }}
                             className="text-xs text-accent/70 hover:text-accent transition-colors"
                           >
                             Utiliser un numéro de téléphone
