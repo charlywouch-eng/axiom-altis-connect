@@ -478,16 +478,21 @@ export default function Index() {
             <motion.p custom={2} variants={fadeUp} className="mt-4 text-base text-white/55 max-w-md mx-auto">
               Inscription en 30 secondes. Score immédiat. Accompagnement ALTIS complet.
             </motion.p>
-            <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              <Button asChild size="lg" className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white">
-                <Link to="/signup-light">
-                  Commencer gratuitement <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
+            <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center relative z-10">
+              <Button
+                size="lg"
+                className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white"
+                onClick={() => navigate("/signup-light")}
+              >
+                Commencer gratuitement <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
-              <Button asChild size="lg" variant="ghost" className="text-white/50 hover:text-white hover:bg-white/8 text-base px-8 py-5 h-auto rounded-2xl">
-                <a href="mailto:contact@axiom-talents.com">
-                  <Mail className="mr-2 h-4 w-4" /> Nous contacter
-                </a>
+              <Button
+                size="lg"
+                variant="ghost"
+                className="text-white/50 hover:text-white hover:bg-white/8 text-base px-8 py-5 h-auto rounded-2xl"
+                onClick={() => window.location.href = "mailto:contact@axiom-talents.com"}
+              >
+                <Mail className="mr-2 h-4 w-4" /> Nous contacter
               </Button>
             </motion.div>
           </motion.div>
