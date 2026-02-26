@@ -18,6 +18,7 @@ import {
   Stethoscope,
   Truck,
   UtensilsCrossed,
+  Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -116,6 +117,27 @@ const SLIDES = [
     ],
     stat: { value: "4", label: "co-fondateurs complémentaires" },
     gradient: "from-violet-950/80 via-slate-950 to-slate-950",
+  },
+  {
+    id: "traction",
+    badge: "Traction & Roadmap",
+    icon: Rocket,
+    iconColor: "text-sky-400",
+    title: "Des premiers résultats\net une vision claire.",
+    metrics: [
+      { value: "500+", label: "Talents pré-inscrits" },
+      { value: "12", label: "Entreprises pilotes" },
+      { value: "4", label: "Secteurs couverts" },
+      { value: "95%", label: "Score conformité moyen" },
+    ],
+    roadmap: [
+      { phase: "T1 2026", label: "Lancement MVP & premiers placements", done: true },
+      { phase: "T2 2026", label: "Matching IA v2 & app mobile talent", done: false },
+      { phase: "T3 2026", label: "Expansion CHR & Agriculture", done: false },
+      { phase: "T4 2026", label: "100 placements/mois & Série A", done: false },
+    ],
+    stat: { value: "10x", label: "croissance visée en 12 mois" },
+    gradient: "from-sky-950/80 via-slate-950 to-slate-950",
   },
 ];
 
@@ -322,6 +344,43 @@ export default function Pitch() {
                         <s.icon className="h-8 w-8" />
                         <span className="text-xs">{s.label}</span>
                       </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* metrics */}
+                {slide.metrics && (
+                  <div className="grid grid-cols-4 gap-3 pt-2">
+                    {slide.metrics.map((m, i) => (
+                      <motion.div
+                        key={m.label}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.15 + i * 0.08 }}
+                        className="rounded-xl border border-white/10 bg-white/5 p-3 text-center"
+                      >
+                        <p className="text-2xl font-bold text-cyan-400">{m.value}</p>
+                        <p className="text-xs text-white/50 mt-1">{m.label}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+
+                {/* roadmap */}
+                {slide.roadmap && (
+                  <div className="space-y-2 pt-2">
+                    {slide.roadmap.map((step, i) => (
+                      <motion.div
+                        key={step.phase}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + i * 0.1 }}
+                        className="flex items-center gap-3"
+                      >
+                        <span className={`h-3 w-3 rounded-full shrink-0 ${step.done ? "bg-cyan-400" : "border-2 border-white/30"}`} />
+                        <span className="text-sm font-mono text-white/40 w-16 shrink-0">{step.phase}</span>
+                        <span className={`text-sm ${step.done ? "text-white" : "text-white/50"}`}>{step.label}</span>
+                      </motion.div>
                     ))}
                   </div>
                 )}
