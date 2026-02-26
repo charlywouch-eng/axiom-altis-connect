@@ -219,15 +219,16 @@ export default function Index() {
 
               {/* Single CTA */}
               <motion.div custom={4} variants={fadeUp} className="mt-10">
-                <Link to="/signup-light">
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 hover:scale-[1.03] border-0 group text-white btn-ripple animate-micro-pulse transition-transform duration-200"
-                  >
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 hover:scale-[1.03] border-0 group text-white btn-ripple animate-micro-pulse transition-transform duration-200"
+                >
+                  <Link to="/signup-light">
                     Commencer gratuitement
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </motion.div>
 
               {/* Social proof */}
@@ -478,16 +479,16 @@ export default function Index() {
               Inscription en 30 secondes. Score immédiat. Accompagnement ALTIS complet.
             </motion.p>
             <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              <Link to="/signup-light">
-                <Button size="lg" className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white">
+              <Button asChild size="lg" className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white">
+                <Link to="/signup-light">
                   Commencer gratuitement <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </Button>
-              </Link>
-              <a href="mailto:contact@axiom-talents.com">
-                <Button size="lg" variant="ghost" className="text-white/50 hover:text-white hover:bg-white/8 text-base px-8 py-5 h-auto rounded-2xl">
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="ghost" className="text-white/50 hover:text-white hover:bg-white/8 text-base px-8 py-5 h-auto rounded-2xl">
+                <a href="mailto:contact@axiom-talents.com">
                   <Mail className="mr-2 h-4 w-4" /> Nous contacter
-                </Button>
-              </a>
+                </a>
+              </Button>
             </motion.div>
           </motion.div>
         </div>
