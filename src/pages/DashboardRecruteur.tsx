@@ -91,6 +91,25 @@ export default function DashboardRecruteur() {
         </div>
       </header>
 
+      {/* Hero Banner */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[hsl(222,47%,8%)] via-[hsl(222,47%,12%)] to-[hsl(222,47%,6%)] border-b border-white/10">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,hsl(var(--accent)/0.12),transparent_70%)]" />
+        <div className="mx-auto max-w-7xl px-6 py-10 relative z-10">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Badge className="bg-accent/20 text-accent border-accent/30 mb-3 text-xs">
+              <Zap className="h-3 w-3 mr-1" /> Espace Recruteur B2B
+            </Badge>
+            <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-white leading-tight mb-2">
+              Recrutez des talents d'Afrique certifiés –{" "}
+              <span className="text-accent">Opérationnels jour 1</span>
+            </h1>
+            <p className="text-sm text-white/50 max-w-xl">
+              Matching IA + conformité ROME + Pack ALTIS Zéro Stress (visa + billet + logement) · À partir de 499 €/mois
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       <main className="mx-auto max-w-7xl px-6 py-8">
         {activeTab === "talents" && <TalentsTab onSelectTalent={setSelectedTalent} />}
         {activeTab === "missions" && <MissionsTab />}
@@ -653,34 +672,149 @@ function MatchingTab({ query, setQuery }: { query: string; setQuery: (q: string)
 
 /* ──────────── FACTURATION TAB ──────────── */
 function FacturationTab() {
+  const PLANS = [
+    {
+      name: "Découverte",
+      price: "Gratuit",
+      priceSuffix: "",
+      description: "Testez la plateforme",
+      features: ["3 profils talents visibles", "Score conformité basique", "Support email"],
+      cta: null,
+      highlight: false,
+    },
+    {
+      name: "Premium",
+      price: "499 €",
+      priceSuffix: "/mois",
+      description: "Accès illimité aux talents certifiés",
+      features: [
+        "Matching IA illimité",
+        "Profils complets (CV, contact, score détaillé)",
+        "Dossiers MINEFOP/MINREX vérifiés",
+        "Export PDF contrats",
+        "Support prioritaire 24/7",
+        "Accès prioritaire nouveaux talents",
+      ],
+      cta: "S'abonner — 499 €/mois",
+      highlight: true,
+    },
+    {
+      name: "Success Fee",
+      price: "25 %",
+      priceSuffix: " salaire brut annuel",
+      description: "Au recrutement effectif uniquement",
+      features: ["Facturation au succès", "Aucun risque financier", "Garantie remplacement 3 mois"],
+      cta: null,
+      highlight: false,
+    },
+    {
+      name: "Pack ALTIS",
+      price: "1 200 €",
+      priceSuffix: "/talent",
+      description: "Intégration clé-en-main",
+      features: ["Visa & titre de séjour", "Billet d'avion A/R", "Accueil aéroport", "Logement 1er mois", "Accompagnement administratif"],
+      cta: "Demander un devis",
+      highlight: false,
+    },
+  ];
+
   return (
     <motion.div initial="hidden" animate="visible">
-      <motion.div custom={0} variants={fadeUp} className="mb-6">
-        <h2 className="font-display text-2xl font-bold text-white">Facturation</h2>
-        <p className="text-white/50 text-sm mt-1">Gérez votre abonnement Pro</p>
+      <motion.div custom={0} variants={fadeUp} className="mb-8">
+        <h2 className="font-display text-2xl font-bold text-white">Tarification transparente</h2>
+        <p className="text-white/50 text-sm mt-1">Choisissez la formule adaptée à vos recrutements internationaux</p>
       </motion.div>
 
+      {/* Pricing Table */}
       <motion.div custom={1} variants={fadeUp}>
-        <Card className="bg-[hsl(222,33%,12%)] border-accent/30 max-w-lg">
+        <Card className="bg-[hsl(222,33%,12%)] border-white/10 overflow-hidden">
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-white/10 hover:bg-transparent">
+                  <TableHead className="text-white/50 w-[180px]">Formule</TableHead>
+                  <TableHead className="text-white/50">Prix</TableHead>
+                  <TableHead className="text-white/50">Inclus</TableHead>
+                  <TableHead className="text-white/50 text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {PLANS.map((plan) => (
+                  <TableRow
+                    key={plan.name}
+                    className={`border-white/5 hover:bg-white/5 ${plan.highlight ? "bg-accent/5 border-l-2 border-l-accent" : ""}`}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="font-display font-bold text-white">{plan.name}</span>
+                        {plan.highlight && (
+                          <Badge className="bg-accent/20 text-accent border-0 text-[10px]">Populaire</Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-white/40 mt-0.5">{plan.description}</p>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-display text-xl font-bold text-white">{plan.price}</span>
+                      <span className="text-xs text-white/40">{plan.priceSuffix}</span>
+                    </TableCell>
+                    <TableCell>
+                      <ul className="space-y-1">
+                        {plan.features.slice(0, 3).map(f => (
+                          <li key={f} className="flex items-center gap-1.5 text-xs text-white/60">
+                            <CheckCircle2 className="h-3 w-3 text-accent shrink-0" /> {f}
+                          </li>
+                        ))}
+                        {plan.features.length > 3 && (
+                          <li className="text-[10px] text-white/30">+{plan.features.length - 3} avantages</li>
+                        )}
+                      </ul>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {plan.cta ? (
+                        <Button
+                          size="sm"
+                          className={plan.highlight
+                            ? "bg-accent text-accent-foreground hover:bg-accent/90 border-0 text-xs shadow-lg shadow-accent/20"
+                            : "border-accent/30 text-accent hover:bg-accent/10 text-xs"
+                          }
+                          variant={plan.highlight ? "default" : "outline"}
+                        >
+                          {plan.cta}
+                        </Button>
+                      ) : (
+                        <span className="text-xs text-white/30">Inclus par défaut</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Premium highlight card */}
+      <motion.div custom={2} variants={fadeUp} className="mt-8">
+        <Card className="bg-gradient-to-br from-accent/10 to-accent/5 border-accent/30 max-w-lg">
           <CardHeader>
             <CardTitle className="font-display text-white flex items-center gap-2">
-              <Zap className="h-5 w-5 text-accent" /> Abonnement Pro
+              <Zap className="h-5 w-5 text-accent" /> Abonnement Premium
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <p className="text-4xl font-display font-bold text-white">199€<span className="text-lg text-white/40 font-normal">/mois</span></p>
-              <p className="text-sm text-white/50 mt-2">Accès illimité aux talents, matching IA, dossiers complets et support prioritaire.</p>
+              <p className="text-4xl font-display font-bold text-white">499 €<span className="text-lg text-white/40 font-normal">/mois</span></p>
+              <p className="text-sm text-white/50 mt-2">Accès illimité aux talents certifiés, matching IA, dossiers complets et support prioritaire.</p>
             </div>
             <ul className="space-y-2">
-              {["Matching IA illimité", "Dossiers talents complets", "Export PDF contrats", "Support prioritaire 24/7"].map(f => (
+              {["Matching IA illimité", "Profils complets (CV, contact)", "Dossiers MINEFOP vérifiés", "Support prioritaire 24/7"].map(f => (
                 <li key={f} className="flex items-center gap-2 text-sm text-white/70">
                   <ShieldCheck className="h-4 w-4 text-accent shrink-0" /> {f}
                 </li>
               ))}
             </ul>
             <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 border-0 py-6 text-base font-semibold rounded-xl shadow-lg shadow-accent/20">
-              <CreditCard className="mr-2 h-5 w-5" /> S'abonner — 199€/mois
+              <CreditCard className="mr-2 h-5 w-5" /> Commencer à recruter — 499 €/mois
             </Button>
             <p className="text-xs text-white/30 text-center">Paiement sécurisé par Stripe. Annulable à tout moment.</p>
           </CardContent>
