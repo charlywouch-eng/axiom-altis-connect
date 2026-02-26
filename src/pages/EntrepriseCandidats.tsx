@@ -519,7 +519,7 @@ function FilterChip({
 
 // ── Page principale ───────────────────────────────────────────────────────────
 export default function EntrepriseCandidats() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { toast } = useToast();
 
   const [search, setSearch] = useState("");
@@ -530,7 +530,21 @@ export default function EntrepriseCandidats() {
   const [sortBy, setSortBy] = useState("score_desc");
   const [dossierCandidate, setDossierCandidate] = useState<UnifiedCandidate | null>(null);
 
-  // Real talent profiles from DB
+  // Check subscription status
+  const { data: subscriptionData } = useQuery({
+    queryKey: ["enterprise_subscription_gate", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("check-subscription");
+      if (error) throw error;
+      return data as { subscribed: boolean; product_id: string | null; subscription_end: string | null };
+    },
+    enabled: !!user && role === "entreprise",
+    staleTime: 60_000,
+  });
+
+  const isSubscribed = subscriptionData?.subscribed === true;
+
+  // Real talent profiles from DB (will be empty if not subscribed due to RLS)
   const { data: dbTalents = [] } = useQuery({
     queryKey: ["talent_profiles_candidats"],
     queryFn: async () => {
@@ -542,7 +556,7 @@ export default function EntrepriseCandidats() {
       if (error) throw error;
       return data ?? [];
     },
-    enabled: !!user,
+    enabled: !!user && isSubscribed,
   });
 
   // Unify real + mock candidates
@@ -640,6 +654,46 @@ export default function EntrepriseCandidats() {
       description: `Votre demande de contact pour ${c.name} a été transmise à l'équipe AXIOM.`,
     });
   };
+
+  const handleCheckout = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout-entreprise");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch {
+      toast({ title: "Erreur", description: "Impossible de créer la session de paiement.", variant: "destructive" });
+    }
+  };
+
+  // If not subscribed, show paywall
+  if (!isSubscribed && role === "entreprise") {
+    return (
+      <DashboardLayout sidebarVariant="entreprise">
+        <div className="flex flex-col items-center justify-center py-20 text-center max-w-lg mx-auto space-y-6">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent/15 border border-accent/20">
+            <Users className="h-10 w-10 text-accent" />
+          </div>
+          <h2 className="font-display text-2xl font-bold text-foreground">Accès Premium requis</h2>
+          <p className="text-muted-foreground">
+            L'accès aux profils talents vérifiés, scores de conformité et dossiers complets est réservé aux entreprises abonnées Premium.
+          </p>
+          <div className="rounded-xl border border-accent/30 bg-accent/5 p-6 w-full space-y-3">
+            <p className="text-lg font-bold text-foreground">Premium Entreprise</p>
+            <p className="text-3xl font-display font-bold text-accent">499 €<span className="text-base font-normal text-muted-foreground">/mois</span></p>
+            <ul className="text-sm text-muted-foreground space-y-1 text-left">
+              <li>✓ Accès illimité aux profils talents</li>
+              <li>✓ Scores de conformité détaillés</li>
+              <li>✓ Diplômes vérifiés MINFOP/Apostille</li>
+              <li>✓ Contact direct candidats</li>
+            </ul>
+            <Button onClick={handleCheckout} className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 rounded-xl font-semibold text-base mt-2">
+              Souscrire maintenant
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout sidebarVariant="entreprise">

@@ -167,12 +167,19 @@ export default function Login() {
                   </Button>
                 </form>
 
-                <p className="text-center text-sm text-primary-foreground/40">
-                  Pas encore de compte ?{" "}
-                  <Link to="/signup-light" className="font-semibold text-accent hover:text-accent/80 transition-colors">
-                    Créer un compte
-                  </Link>
-                </p>
+                <div className="text-center space-y-2">
+                  <p className="text-sm text-primary-foreground/40">
+                    Pas encore de compte ?{" "}
+                    <Link to="/signup-light" className="font-semibold text-accent hover:text-accent/80 transition-colors">
+                      Créer un compte
+                    </Link>
+                  </p>
+                  <p className="text-sm text-primary-foreground/40">
+                    <Link to="/lien-magique" className="font-semibold text-primary-foreground/60 hover:text-accent transition-colors">
+                      Accès perdu ? Renvoyer un lien
+                    </Link>
+                  </p>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

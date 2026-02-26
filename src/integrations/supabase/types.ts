@@ -22,9 +22,11 @@ export type Database = {
           contact_phone: string | null
           created_at: string
           id: string
+          is_subscribed: boolean
           logo_url: string | null
           sector: string | null
           siret: string | null
+          subscription_end: string | null
           updated_at: string
           user_id: string
           website: string | null
@@ -36,9 +38,11 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           id?: string
+          is_subscribed?: boolean
           logo_url?: string | null
           sector?: string | null
           siret?: string | null
+          subscription_end?: string | null
           updated_at?: string
           user_id: string
           website?: string | null
@@ -50,9 +54,11 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           id?: string
+          is_subscribed?: boolean
           logo_url?: string | null
           sector?: string | null
           siret?: string | null
+          subscription_end?: string | null
           updated_at?: string
           user_id?: string
           website?: string | null
@@ -514,6 +520,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_enterprise_subscribed: { Args: { _user_id: string }; Returns: boolean }
       match_talents_for_offer: {
         Args: {
           _limit_count?: number
