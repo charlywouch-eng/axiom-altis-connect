@@ -11,13 +11,17 @@ import {
   Users,
   ArrowLeft,
   Maximize2,
-  
+  Download,
+  Loader2,
   HardHat,
   Stethoscope,
   Truck,
   UtensilsCrossed,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 /* ─── slide data ─── */
 const SLIDES = [
@@ -118,6 +122,7 @@ const SLIDES = [
 export default function Pitch() {
   const [current, setCurrent] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const navigate = useNavigate();
   const slide = SLIDES[current];
 
@@ -125,6 +130,43 @@ export default function Pitch() {
     (dir: 1 | -1) => setCurrent((c) => Math.max(0, Math.min(SLIDES.length - 1, c + dir))),
     [],
   );
+
+  const handleDownloadPdf = async () => {
+    setPdfLoading(true);
+    try {
+      const slideContainer = document.getElementById("pitch-slide-area");
+      if (!slideContainer) return;
+
+      const pdf = new jsPDF({ orientation: "landscape", unit: "px", format: [1920, 1080] });
+      const savedCurrent = current;
+
+      for (let i = 0; i < SLIDES.length; i++) {
+        setCurrent(i);
+        // Wait for animation to settle
+        await new Promise((r) => setTimeout(r, 600));
+
+        const canvas = await html2canvas(slideContainer, {
+          backgroundColor: "#020617",
+          scale: 2,
+          useCORS: true,
+          width: slideContainer.offsetWidth,
+          height: slideContainer.offsetHeight,
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        if (i > 0) pdf.addPage([1920, 1080], "landscape");
+        pdf.addImage(imgData, "JPEG", 0, 0, 1920, 1080);
+      }
+
+      pdf.save("AXIOM-Pitch-Deck.pdf");
+      setCurrent(savedCurrent);
+      toast({ title: "PDF téléchargé", description: "Le pitch deck a été exporté avec succès." });
+    } catch {
+      toast({ title: "Erreur", description: "Impossible de générer le PDF.", variant: "destructive" });
+    } finally {
+      setPdfLoading(false);
+    }
+  };
 
   /* keyboard nav */
   useEffect(() => {
@@ -163,6 +205,16 @@ export default function Pitch() {
             AXIOM · Pitch Deck — {current + 1}/{SLIDES.length}
           </span>
           <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDownloadPdf}
+              disabled={pdfLoading}
+              className="text-white/60 hover:text-white"
+            >
+              {pdfLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
+              {pdfLoading ? "Export…" : "PDF"}
+            </Button>
             <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="text-white/60 hover:text-white">
               <Maximize2 className="h-4 w-4" />
             </Button>
@@ -171,7 +223,7 @@ export default function Pitch() {
       )}
 
       {/* slide area */}
-      <div className="flex-1 relative overflow-hidden flex items-center justify-center select-none" onClick={() => go(1)}>
+      <div id="pitch-slide-area" className="flex-1 relative overflow-hidden flex items-center justify-center select-none" onClick={() => go(1)}>
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.id}
