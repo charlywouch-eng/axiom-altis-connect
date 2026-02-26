@@ -36,6 +36,7 @@ import Leads from "./pages/Leads";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Pricing from "./pages/Pricing";
 import APropos from "./pages/APropos";
+import Pitch from "./pages/Pitch";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/metiers-en-tension" element={<MetiersEnTension />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/a-propos" element={<APropos />} />
+            <Route path="/pitch" element={<Pitch />} />
             <Route
               path="/onboarding-role"
               element={
