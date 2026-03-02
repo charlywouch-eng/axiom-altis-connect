@@ -1,37 +1,29 @@
 project_id = "wfolueffkdzknuowwecf"
 
-[functions.create-payment-lead]
-verify_jwt = false
-
-[functions.create-payment]
-verify_jwt = false
-
-[functions.create-payment-talent]
-verify_jwt = false
-
-[functions.verify-diploma]
-verify_jwt = false
-
-[functions.france-travail-offers]
-verify_jwt = false
-
-[functions.la-bonne-boite]
-verify_jwt = false
-
-[functions.rome-metier]
-verify_jwt = false
-
-[functions.stripe-webhook]
-verify_jwt = false
-
-[functions.create-checkout-entreprise]
-verify_jwt = false
-
-[functions.check-subscription]
-verify_jwt = false
-
-[functions.customer-portal]
-verify_jwt = false
-
-[functions.send-welcome-entreprise]
-verify_jwt = false
+[functions]
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.check-subscription]
+    verify_jwt = false
+  [functions.create-checkout-entreprise]
+    verify_jwt = false
+  [functions.create-payment]
+    verify_jwt = false
+  [functions.create-payment-lead]
+    verify_jwt = false
+  [functions.create-payment-talent]
+    verify_jwt = false
+  [functions.customer-portal]
+    verify_jwt = false
+  [functions.france-travail-offers]
+    verify_jwt = false
+  [functions.la-bonne-boite]
+    verify_jwt = false
+  [functions.rome-metier]
+    verify_jwt = false
+  [functions.send-welcome-entreprise]
+    verify_jwt = false
+  [functions.stripe-webhook]
+    verify_jwt = false
+  [functions.verify-diploma]
+    verify_jwt = false
