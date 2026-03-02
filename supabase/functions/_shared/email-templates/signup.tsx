@@ -66,8 +66,17 @@ export const SignupEmail = ({
         <Text style={footer}>
           Si vous n'avez pas créé de compte, vous pouvez ignorer cet email en toute sécurité.
         </Text>
+        <Section style={signature}>
+          <Img src="https://wfolueffkdzknuowwecf.supabase.co/storage/v1/object/public/email-assets/logo-rh-tech.png" width="80" height="auto" alt="AXIOM" style={{ margin: '0 auto 8px' }} />
+          <Text style={sigSlogan}>TIaaS — Talent Infrastructure as a Service</Text>
+          <Text style={sigLinks}>
+            <Link href="https://axiom-altis-connect.lovable.app" style={sigLink}>axiom-altis-connect.lovable.app</Link>
+            {' · '}
+            <Link href="mailto:contact@axiom-talents.com" style={sigLink}>contact@axiom-talents.com</Link>
+          </Text>
+        </Section>
         <Text style={footerBrand}>
-          © {new Date().getFullYear()} AXIOM ALTIS – Recrutement international certifié
+          © {new Date().getFullYear()} AXIOM × ALTIS Mobility – Tous droits réservés
         </Text>
       </Container>
     </Body>
@@ -90,4 +99,8 @@ const link = { color: '#1E40AF', textDecoration: 'underline' }
 const ctaWrap = { textAlign: 'center' as const, margin: '32px 0' }
 const button = { backgroundColor: '#1E40AF', color: '#ffffff', fontSize: '15px', fontWeight: '600' as const, borderRadius: '10px', padding: '14px 28px', textDecoration: 'none' }
 const footer = { fontSize: '13px', color: '#94a3b8', margin: '32px 24px 8px', lineHeight: '1.5' }
-const footerBrand = { fontSize: '11px', color: '#cbd5e1', margin: '0 24px 24px', textAlign: 'center' as const }
+const signature = { borderTop: '1px solid #e2e8f0', margin: '24px 24px 0', padding: '20px 0 0', textAlign: 'center' as const }
+const sigSlogan = { fontSize: '11px', color: '#64748b', margin: '0 0 4px', fontStyle: 'italic' as const, textAlign: 'center' as const }
+const sigLinks = { fontSize: '11px', color: '#94a3b8', margin: '0', textAlign: 'center' as const }
+const sigLink = { color: '#1E40AF', textDecoration: 'none' }
+const footerBrand = { fontSize: '11px', color: '#cbd5e1', margin: '16px 24px 24px', textAlign: 'center' as const }

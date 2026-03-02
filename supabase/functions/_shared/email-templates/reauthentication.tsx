@@ -9,6 +9,7 @@ import {
   Heading,
   Html,
   Img,
+  Link,
   Preview,
   Section,
   Text,
@@ -31,7 +32,12 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
         <Text style={text}>Utilisez le code ci-dessous pour confirmer votre identité :</Text>
         <Text style={codeStyle}>{token}</Text>
         <Text style={footer}>Ce code expire sous peu. Si vous n'avez pas fait cette demande, ignorez cet email.</Text>
-        <Text style={footerBrand}>© {new Date().getFullYear()} AXIOM ALTIS – Recrutement international certifié</Text>
+        <Section style={signature}>
+          <Img src="https://wfolueffkdzknuowwecf.supabase.co/storage/v1/object/public/email-assets/logo-rh-tech.png" width="80" height="auto" alt="AXIOM" style={{ margin: '0 auto 8px' }} />
+          <Text style={sigSlogan}>TIaaS — Talent Infrastructure as a Service</Text>
+          <Text style={sigLinks}><Link href="https://axiom-altis-connect.lovable.app" style={sigLink}>axiom-altis-connect.lovable.app</Link>{' · '}<Link href="mailto:contact@axiom-talents.com" style={sigLink}>contact@axiom-talents.com</Link></Text>
+        </Section>
+        <Text style={footerBrand}>© {new Date().getFullYear()} AXIOM × ALTIS Mobility – Tous droits réservés</Text>
       </Container>
     </Body>
   </Html>
@@ -46,4 +52,8 @@ const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#0F172A', ma
 const text = { fontSize: '15px', color: '#475569', lineHeight: '1.6', margin: '0 24px 20px' }
 const codeStyle = { fontFamily: "'Space Mono', Courier, monospace", fontSize: '28px', fontWeight: 'bold' as const, color: '#1E40AF', margin: '0 24px 30px', textAlign: 'center' as const, letterSpacing: '4px' }
 const footer = { fontSize: '13px', color: '#94a3b8', margin: '32px 24px 8px', lineHeight: '1.5' }
-const footerBrand = { fontSize: '11px', color: '#cbd5e1', margin: '0 24px 24px', textAlign: 'center' as const }
+const signature = { borderTop: '1px solid #e2e8f0', margin: '24px 24px 0', padding: '20px 0 0', textAlign: 'center' as const }
+const sigSlogan = { fontSize: '11px', color: '#64748b', margin: '0 0 4px', fontStyle: 'italic' as const, textAlign: 'center' as const }
+const sigLinks = { fontSize: '11px', color: '#94a3b8', margin: '0', textAlign: 'center' as const }
+const sigLink = { color: '#1E40AF', textDecoration: 'none' }
+const footerBrand = { fontSize: '11px', color: '#cbd5e1', margin: '16px 24px 24px', textAlign: 'center' as const }
