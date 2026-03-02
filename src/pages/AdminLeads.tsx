@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Users, Download, Search, Copy, CheckCircle2,
   Globe, ExternalLink, Zap, ChevronRight, TrendingUp, Euro,
+  Kanban,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -38,7 +39,9 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   a_contacter: { label: "À contacter",   color: "bg-amber-500/10 text-amber-600 border-amber-300/40"   },
   inscrit_10:  { label: "Inscrit 10 €",  color: "bg-primary/10 text-primary border-primary/30"         },
   premium_30:  { label: "Premium 30 €",  color: "bg-emerald-500/10 text-emerald-600 border-emerald-300/40" },
+  premium_paid:{ label: "Premium payé",  color: "bg-emerald-500/10 text-emerald-600 border-emerald-300/40" },
   converti:    { label: "Converti",      color: "bg-success/10 text-success border-success/30"         },
+  reconciled:  { label: "Réconcilié",    color: "bg-success/10 text-success border-success/30"         },
   inactif:     { label: "Inactif",       color: "bg-muted text-muted-foreground border-border"          },
 };
 
@@ -172,6 +175,33 @@ export default function AdminLeads() {
     toast({ title: "Export CSV RGPD téléchargé ✓" });
   };
 
+  const exportPipelineCsv = () => {
+    const PAYMENT_STATUSES: Record<string, string> = {
+      a_contacter: "Non payé",
+      inscrit_10: "10 € payé",
+      premium_30: "30 € payé",
+      premium_paid: "Premium payé",
+      converti: "Converti",
+      reconciled: "Réconcilié",
+      inactif: "Inactif",
+    };
+    const headers = ["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Date contact"];
+    const rows = leads.map(l => [
+      l.email_or_phone,
+      l.rome_code || "—",
+      `${l.score_mock}%`,
+      PAYMENT_STATUSES[l.status] ?? l.status,
+      new Date(l.created_at).toLocaleDateString("fr-FR"),
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url;
+    a.download = `axiom-pipeline-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+    toast({ title: "Pipeline CSV exporté ✓" });
+  };
+
   const copy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
     setCopiedIdx(key);
@@ -237,8 +267,11 @@ export default function AdminLeads() {
         </div>
 
         {/* ── Tabs ── */}
-        <Tabs defaultValue="leads">
-          <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:flex h-auto gap-1 bg-muted/60 p-1 rounded-xl mb-4">
+        <Tabs defaultValue="pipeline">
+          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex h-auto gap-1 bg-muted/60 p-1 rounded-xl mb-4">
+            <TabsTrigger value="pipeline" className="text-xs font-medium px-4 py-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <Kanban className="h-3.5 w-3.5 mr-1.5" />Pipeline
+            </TabsTrigger>
             <TabsTrigger value="leads" className="text-xs font-medium px-4 py-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Users className="h-3.5 w-3.5 mr-1.5" />Leads entrants
             </TabsTrigger>
@@ -246,6 +279,85 @@ export default function AdminLeads() {
               <Globe className="h-3.5 w-3.5 mr-1.5" />Marketing & Tracking
             </TabsTrigger>
           </TabsList>
+
+          {/* ── TAB PIPELINE ── */}
+          <TabsContent value="pipeline">
+            <Card className="border-border/50">
+              <CardHeader className="pb-3">
+                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Kanban className="h-4 w-4 text-accent" />
+                    Pipeline Leads ({filteredLeads.length})
+                  </CardTitle>
+                  <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5" onClick={exportPipelineCsv}>
+                    <Download className="h-3.5 w-3.5" />Export Pipeline CSV
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="flex justify-center py-10">
+                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+                      className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full" />
+                  </div>
+                ) : filteredLeads.length === 0 ? (
+                  <div className="text-center py-10">
+                    <Kanban className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">Aucun lead dans le pipeline</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto -mx-2">
+                    <table className="w-full text-xs min-w-[550px]">
+                      <thead>
+                        <tr className="border-b border-border/50">
+                          {["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Date contact"].map(h => (
+                            <th key={h} className="text-left pb-2.5 pr-4 text-muted-foreground font-medium whitespace-nowrap">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredLeads.map((lead, i) => {
+                          const scoreColor = lead.score_mock >= 88 ? "text-emerald-500" : lead.score_mock >= 80 ? "text-primary" : "text-amber-500";
+                          const paymentStatus = ["inscrit_10", "premium_30", "premium_paid", "converti", "reconciled"].includes(lead.status);
+                          const statusCfg = STATUS_CONFIG[lead.status] ?? STATUS_CONFIG.a_contacter;
+                          return (
+                            <motion.tr
+                              key={lead.id}
+                              initial={{ opacity: 0, y: 4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: i * 0.02 }}
+                              className="border-b border-border/30 hover:bg-muted/30 transition-colors"
+                            >
+                              <td className="py-2.5 pr-4 font-medium text-foreground max-w-[200px]">
+                                <span className="truncate block" title={lead.email_or_phone}>{lead.email_or_phone}</span>
+                                <span className="text-[10px] text-muted-foreground/50 block">{lead.metier}</span>
+                              </td>
+                              <td className="py-2.5 pr-4">
+                                {lead.rome_code ? (
+                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-mono">{lead.rome_code}</Badge>
+                                ) : (
+                                  <span className="text-muted-foreground/30">—</span>
+                                )}
+                              </td>
+                              <td className={`py-2.5 pr-4 font-bold ${scoreColor}`}>{lead.score_mock}%</td>
+                              <td className="py-2.5 pr-4">
+                                <Badge className={`text-[9px] px-1.5 py-0 border ${statusCfg.color}`}>
+                                  {paymentStatus ? "✓ " : ""}{statusCfg.label}
+                                </Badge>
+                              </td>
+                              <td className="py-2.5 text-muted-foreground/50 whitespace-nowrap">
+                                {new Date(lead.created_at).toLocaleDateString("fr-FR")}
+                              </td>
+                            </motion.tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* ── TAB LEADS ── */}
           <TabsContent value="leads">
