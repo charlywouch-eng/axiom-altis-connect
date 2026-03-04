@@ -397,7 +397,8 @@ export default function SignupLight() {
                         <div className="space-y-2">
                           <PhoneInput
                             value={form.contact}
-                            onChange={(fullValue) => handleChange("contact", fullValue)}
+                            onChange={(fullValue, _isValid) => handleChange("contact", fullValue)}
+                            className="[&_button]:h-14 [&_input]:h-14"
                           />
                           <button
                             type="button"
