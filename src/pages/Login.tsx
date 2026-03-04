@@ -120,11 +120,15 @@ export default function Login() {
                     type="button"
                     variant="outline"
                     className="w-full h-12 bg-white/5 border-white/10 text-primary-foreground hover:bg-white/10 rounded-xl font-medium"
-                    disabled={oauthLoading !== null}
+                     disabled={oauthLoading !== null}
                     onClick={async () => {
                       setOauthLoading("google");
-                      const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-                      if (error) toast({ title: "Erreur", description: String(error), variant: "destructive" });
+                      try {
+                        const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+                        if (result?.error) toast({ title: "Problème avec Google ?", description: "Utilisez votre email ci-dessous pour vous connecter.", variant: "destructive" });
+                      } catch {
+                        toast({ title: "Problème avec Google ?", description: "Utilisez votre email ci-dessous pour vous connecter.", variant: "destructive" });
+                      }
                       setOauthLoading(null);
                     }}
                   >
@@ -143,8 +147,12 @@ export default function Login() {
                     disabled={oauthLoading !== null}
                     onClick={async () => {
                       setOauthLoading("apple");
-                      const { error } = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
-                      if (error) toast({ title: "Erreur", description: String(error), variant: "destructive" });
+                      try {
+                        const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
+                        if (result?.error) toast({ title: "Problème avec Apple ?", description: "Utilisez votre email ci-dessous pour vous connecter.", variant: "destructive" });
+                      } catch {
+                        toast({ title: "Problème avec Apple ?", description: "Utilisez votre email ci-dessous pour vous connecter.", variant: "destructive" });
+                      }
                       setOauthLoading(null);
                     }}
                   >
