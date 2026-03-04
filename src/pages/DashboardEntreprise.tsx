@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { trackGA4 } from "@/lib/ga4";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -120,6 +121,8 @@ export default function DashboardEntreprise() {
   const queryClient = useQueryClient();
 
   const [createOpen, setCreateOpen] = useState(false);
+
+  useEffect(() => { trackGA4("dashboard_entreprise_view"); }, []);
   const [editOffer, setEditOffer] = useState<{ id: string; data: OfferFormData } | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);

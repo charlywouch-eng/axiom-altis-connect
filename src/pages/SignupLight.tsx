@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { trackFunnel } from "@/lib/trackFunnel";
+import { trackGA4 } from "@/lib/ga4";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -166,6 +167,7 @@ export default function SignupLight() {
         });
 
         setStep("score");
+        trackGA4("score_viewed", { rome_code: form.secteur, source: "signup-light" });
       }
     } catch (err: any) {
       toast({ title: "Erreur", description: err.message, variant: "destructive" });
@@ -176,6 +178,8 @@ export default function SignupLight() {
 
   const handlePremiumPayment = async () => {
     setPaymentLoading(true);
+    trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light" });
+    trackGA4("teaser_10_eu", { rome_code: form.secteur });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
       const isEmailContact = contact.includes("@");

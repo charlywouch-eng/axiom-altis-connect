@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { trackFunnel } from "@/lib/trackFunnel";
+import { trackGA4 } from "@/lib/ga4";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -123,6 +124,7 @@ export default function Leads() {
     setScore(calculatedScore);
     setLoading(false);
     setStep("score");
+    trackGA4("score_viewed", { rome_code: form.metier, score: calculatedScore });
 
     trackFunnel({
       event_name: "lead_form_submitted",
@@ -138,6 +140,7 @@ export default function Leads() {
 
   const handlePayment = async () => {
     setPaymentLoading(true);
+    trackGA4("paiement_started", { rome_code: form.metier, source: "leads" });
     try {
       const email = form.emailOrPhone.includes("@") ? form.emailOrPhone : undefined;
       const { data, error } = await supabase.functions.invoke("create-payment-lead", {

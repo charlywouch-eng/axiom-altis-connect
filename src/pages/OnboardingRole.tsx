@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackGA4 } from "@/lib/ga4";
 import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -174,6 +175,7 @@ export default function OnboardingRole() {
   /* ─── handlers ─── */
   const selectRole = async (selectedRole: "entreprise" | "talent" | "recruteur") => {
     if (!user) return;
+    trackGA4("inscription_start", { role: selectedRole });
     setSubmitting(true);
     const { error } = await supabase
       .from("user_roles")
