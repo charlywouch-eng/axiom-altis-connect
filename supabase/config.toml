@@ -27,3 +27,5 @@ project_id = "wfolueffkdzknuowwecf"
     verify_jwt = false
   [functions.verify-diploma]
     verify_jwt = false
+  [functions.send-notification]
+    verify_jwt = false
