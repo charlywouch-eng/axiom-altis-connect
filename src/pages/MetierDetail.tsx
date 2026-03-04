@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -134,6 +135,14 @@ export default function MetierDetail() {
 
   return (
     <TooltipProvider>
+      <Helmet>
+        <title>{`${metier.rome_title} (${metier.rome_code}) – Recruter un ${metier.minefop_title} | AXIOM`}</title>
+        <meta name="description" content={`Recrutez un ${metier.minefop_title} certifié MINEFOP pour le métier ${metier.rome_title} (${metier.rome_code}). ${metier.description?.slice(0, 120)}…`} />
+        <link rel="canonical" href={`https://axiom-talents.com/metier/${metier.rome_code}`} />
+        <meta property="og:title" content={`${metier.rome_title} – Talent certifié ${metier.minefop_title}`} />
+        <meta property="og:description" content={`Niveau tension : ${metier.niveau_tension ?? 'N/A'}. Salaire moyen : ${metier.salaire_moyen_france ?? 'N/A'}. Matching IA + Pack ALTIS.`} />
+        <meta property="og:url" content={`https://axiom-talents.com/metier/${metier.rome_code}`} />
+      </Helmet>
       <div className="min-h-screen bg-background">
         {/* Top bar */}
         <header className="fixed top-0 left-0 right-0 z-50 border-b bg-card/80 backdrop-blur-xl">

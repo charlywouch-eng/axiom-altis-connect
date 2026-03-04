@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,14 @@ export default function MetiersEnTension() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      <Helmet>
+        <title>Métiers en tension France – Recrutez des talents certifiés Afrique | AXIOM</title>
+        <meta name="description" content="Découvrez les métiers en pénurie en France : BTP, santé, hôtellerie, transport… Talents certifiés MINEFOP prêts à travailler. Matching IA + visa ALTIS." />
+        <link rel="canonical" href="https://axiom-talents.com/metiers-en-tension" />
+        <meta property="og:title" content="Métiers en tension France – Talents certifiés Afrique" />
+        <meta property="og:description" content="9 secteurs en pénurie. Talents camerounais certifiés, opérationnels J1. Matching IA + Pack ALTIS." />
+        <meta property="og:url" content="https://axiom-talents.com/metiers-en-tension" />
+      </Helmet>
       <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5 md:px-12">
           <div className="flex items-center gap-4">
