@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { flushSync } from "react-dom";
+import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -217,6 +218,14 @@ export default function Pitch() {
 
   return (
     <div className={`min-h-screen bg-slate-950 text-white flex flex-col ${isFullscreen ? "cursor-none" : ""}`}>
+      <Helmet>
+        <title>AXIOM &amp; ALTIS – Pitch Deck Investisseurs 2026</title>
+        <meta name="description" content="Infrastructure souveraine de talents France-Afrique. MVP live, matching IA, Pack ALTIS Zéro Stress. Recherche 100–200 K€ pour scaler corridor Cameroun." />
+        <link rel="canonical" href="https://axiom-talents.com/pitch" />
+        <meta property="og:title" content="AXIOM & ALTIS – Pitch Deck Investisseurs 2026" />
+        <meta property="og:description" content="Infrastructure souveraine de talents France-Afrique. MVP live, matching IA, Pack ALTIS Zéro Stress. Recherche 100–200 K€ pour scaler corridor Cameroun." />
+        <meta property="og:url" content="https://axiom-talents.com/pitch" />
+      </Helmet>
       {!isFullscreen && (
         <header className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-slate-950/90 backdrop-blur-md z-50">
           <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="text-white/60 hover:text-white">
