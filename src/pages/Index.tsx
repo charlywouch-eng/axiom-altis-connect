@@ -155,7 +155,7 @@ export default function Index() {
       </header>
 
       {/* ── Hero Full-Screen ─────────────────────────────────── */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden pt-16">
+      <section ref={heroRef} className="relative lg:min-h-screen flex items-start lg:items-center overflow-x-hidden pt-16">
         {/* Tech network background — enriched multi-layer gradient */}
         <div className="absolute inset-0">
           <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-50" loading="eager" decoding="async" fetchPriority="high" />
