@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -53,6 +54,14 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12" style={{ background: "var(--gradient-hero)" }}>
+      <Helmet>
+        <title>Connexion – AXIOM & ALTIS | Espace recruteur & talent</title>
+        <meta name="description" content="Connectez-vous à votre espace AXIOM : recruteur, entreprise ou talent. Accédez au matching IA, aux profils certifiés MINEFOP et au suivi de vos recrutements." />
+        <link rel="canonical" href="https://axiom-talents.com/login" />
+        <meta property="og:title" content="Connexion – AXIOM & ALTIS" />
+        <meta property="og:description" content="Accédez à votre tableau de bord recruteur ou talent. Matching IA + certifications MINEFOP." />
+        <meta property="og:url" content="https://axiom-talents.com/login" />
+      </Helmet>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl" />
         <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl" />

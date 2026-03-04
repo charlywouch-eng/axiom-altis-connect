@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { trackFunnel } from "@/lib/trackFunnel";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
@@ -177,6 +178,14 @@ export default function Leads() {
 
   return (
     <div className="min-h-screen" style={{ background: "linear-gradient(135deg, hsl(222,47%,7%) 0%, hsl(221,83%,14%) 60%, hsl(189,94%,10%) 100%)" }}>
+      <Helmet>
+        <title>Candidature talent – AXIOM & ALTIS | Testez votre éligibilité France</title>
+        <meta name="description" content="Testez gratuitement votre éligibilité au marché français. Score de compatibilité IA, certification MINEFOP, Pack ALTIS visa + logement. BTP, santé, CHR, logistique." />
+        <link rel="canonical" href="https://axiom-talents.com/leads" />
+        <meta property="og:title" content="Testez votre éligibilité – AXIOM & ALTIS" />
+        <meta property="og:description" content="Score IA gratuit pour travailler en France. Métiers en tension BTP, santé, CHR. Certification MINEFOP + visa ALTIS." />
+        <meta property="og:url" content="https://axiom-talents.com/leads" />
+      </Helmet>
 
       {/* ── Header ── */}
       <header className="sticky top-0 z-50 border-b" style={{ background: "hsl(222,47%,7%,0.88)", backdropFilter: "blur(14px)", borderColor: "hsl(0,0%,100%,0.07)" }}>
