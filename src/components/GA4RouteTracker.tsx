@@ -1,13 +1,12 @@
-import { useEffect, forwardRef } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { trackPageView } from "@/lib/ga4";
 
 /**
  * Tracks page_view on every SPA route change.
  * Place inside <BrowserRouter>.
- * Wrapped in forwardRef to avoid React warnings when used as a direct child of layout components.
  */
-export const GA4RouteTracker = forwardRef<HTMLDivElement>(function GA4RouteTracker(_props, _ref) {
+export function GA4RouteTracker() {
   const location = useLocation();
 
   useEffect(() => {
@@ -15,4 +14,4 @@ export const GA4RouteTracker = forwardRef<HTMLDivElement>(function GA4RouteTrack
   }, [location]);
 
   return null;
-});
+}
