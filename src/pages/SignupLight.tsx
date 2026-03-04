@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { trackFunnel } from "@/lib/trackFunnel";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -197,6 +198,14 @@ export default function SignupLight() {
 
   return (
     <div className="min-h-screen flex flex-col bg-hero-gradient relative overflow-hidden">
+      <Helmet>
+        <title>Inscription talent rapide – AXIOM & ALTIS | Travaillez en France</title>
+        <meta name="description" content="Inscrivez-vous en 2 min sans mot de passe. Score de compatibilité IA gratuit pour les métiers en tension en France : BTP, santé, CHR, logistique. Certification MINEFOP + Pack ALTIS visa." />
+        <link rel="canonical" href="https://axiom-talents.com/signup-light" />
+        <meta property="og:title" content="Inscription talent rapide – AXIOM & ALTIS" />
+        <meta property="og:description" content="Score IA gratuit + certification MINEFOP. Inscription sans mot de passe en 2 min pour travailler en France." />
+        <meta property="og:url" content="https://axiom-talents.com/signup-light" />
+      </Helmet>
       {/* Animated network background */}
       <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
         <Suspense fallback={null}>

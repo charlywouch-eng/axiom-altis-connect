@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -155,6 +156,14 @@ export default function SignupTalent() {
       className="flex min-h-screen items-center justify-center px-4 py-12"
       style={{ background: "var(--gradient-hero)" }}
     >
+      <Helmet>
+        <title>Créer mon profil talent – AXIOM &amp; ALTIS | Métiers en pénurie France</title>
+        <meta name="description" content="Créez votre profil talent certifié pour les métiers en pénurie en France. Maçon, aide-soignant, cuisinier, chauffeur… Matching IA + Pack ALTIS visa, billet, logement." />
+        <link rel="canonical" href="https://axiom-talents.com/signup-talent" />
+        <meta property="og:title" content="Créer mon profil talent – AXIOM & ALTIS" />
+        <meta property="og:description" content="Profil certifié MINEFOP pour travailler en France. Matching IA sur les métiers en tension + logistique ALTIS intégrée." />
+        <meta property="og:url" content="https://axiom-talents.com/signup-talent" />
+      </Helmet>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl" />
         <div className="absolute bottom-1/4 right-1/3 w-[400px] h-[400px] rounded-full bg-accent/3 blur-3xl" />
