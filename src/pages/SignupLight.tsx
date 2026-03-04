@@ -39,10 +39,10 @@ const SECTEURS = [
 ];
 
 const EXPERIENCE_OPTIONS = [
-  { value: "0-2",  label: "Moins de 2 ans",  teaser: "Profil junior – forte demande pour formations ALTIS" },
-  { value: "2-5",  label: "2 à 5 ans",       teaser: "Profil intermédiaire très demandé en France" },
-  { value: "5-10", label: "5 à 10 ans",      teaser: "Profil expérimenté – priorité recruteurs partenaires" },
-  { value: "10+",  label: "Plus de 10 ans",  teaser: "Expert confirmé – accès direct entreprises premium" },
+  { value: "0-2",  label: "0–2 ans",   shortLabel: "Junior",      teaser: "Profil junior – forte demande pour formations ALTIS" },
+  { value: "2-5",  label: "2–5 ans",   shortLabel: "Confirmé",    teaser: "Profil intermédiaire très demandé en France" },
+  { value: "5-10", label: "5–10 ans",  shortLabel: "Expérimenté", teaser: "Profil expérimenté – priorité recruteurs partenaires" },
+  { value: "10+",  label: "+10 ans",   shortLabel: "Expert",      teaser: "Expert confirmé – accès direct entreprises premium" },
 ];
 
 const SECTOR_TENSION: Record<string, string> = {
@@ -82,6 +82,20 @@ function isPhone(value: string) {
   return /^[+\d\s().-]{7,}$/.test(value.trim()) && !value.includes("@");
 }
 
+// ── Country list with flags ──────────────────────────────────────
+const PAYS_OPTIONS = [
+  { value: "Cameroun",       flag: "🇨🇲" },
+  { value: "Sénégal",        flag: "🇸🇳" },
+  { value: "Côte d'Ivoire",  flag: "🇨🇮" },
+  { value: "Guinée",         flag: "🇬🇳" },
+  { value: "Mali",           flag: "🇲🇱" },
+  { value: "Bénin",          flag: "🇧🇯" },
+  { value: "Togo",           flag: "🇹🇬" },
+  { value: "Burkina Faso",   flag: "🇧🇫" },
+  { value: "Congo (RDC)",    flag: "🇨🇩" },
+  { value: "Autre",          flag: "🌍" },
+];
+
 // ── Main Component ──────────────────────────────────────────────
 export default function SignupLight() {
   const { toast } = useToast();
@@ -111,6 +125,9 @@ export default function SignupLight() {
     experience: premiumExp  || "",
     pays:       "Cameroun",
   });
+
+  // Show score teaser as soon as secteur OR experience is chosen
+  const showScoreTeaser = !!(form.secteur || form.experience);
 
   const selectedSecteur  = SECTEURS.find((s) => s.value === form.secteur);
   const selectedExp      = EXPERIENCE_OPTIONS.find((e) => e.value === form.experience);
@@ -267,7 +284,7 @@ export default function SignupLight() {
                 {/* Top accent bar */}
                 <div className="h-1 w-full bg-gradient-cta" />
 
-                <div className="p-6 sm:p-8">
+                <div className="p-5 sm:p-8">
 
                   {/* ── Premium banner ── */}
                   <AnimatePresence>
@@ -366,13 +383,13 @@ export default function SignupLight() {
                   </div>
 
                   {/* ── Form ── */}
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="space-y-5">
 
                     {/* Contact */}
-                    <div className="space-y-1.5">
-                      <Label className="text-sm font-semibold text-white/70 flex items-center gap-2">
+                    <div className="space-y-2">
+                      <Label className="text-[15px] font-semibold text-white/70 flex items-center gap-2">
                         <span className="flex items-center gap-1">
-                          {usePhone ? <Phone className="h-3.5 w-3.5 text-accent" /> : <Mail className="h-3.5 w-3.5 text-accent" />}
+                          {usePhone ? <Phone className="h-4 w-4 text-accent" /> : <Mail className="h-4 w-4 text-accent" />}
                           {usePhone ? "Téléphone" : "Email"}
                         </span>
                       </Label>
@@ -387,7 +404,7 @@ export default function SignupLight() {
                             onClick={() => { setUsePhone(false); handleChange("contact", ""); }}
                             className="text-xs text-accent/70 hover:text-accent transition-colors"
                           >
-                            Utiliser un email à la place
+                            ← Utiliser un email
                           </button>
                         </div>
                       ) : (
@@ -399,35 +416,35 @@ export default function SignupLight() {
                             onChange={(e) => handleChange("contact", e.target.value)}
                             autoComplete="email"
                             inputMode="email"
-                            className="h-12 rounded-xl text-base pl-4 pr-4 bg-white/5 border-white/10 text-white placeholder:text-white/25"
+                            className="h-14 rounded-xl text-lg pl-4 pr-4 bg-white/5 border-white/10 text-white placeholder:text-white/25"
                           />
                           <button
                             type="button"
                             onClick={() => { setUsePhone(true); handleChange("contact", "+237 "); }}
                             className="text-xs text-accent/70 hover:text-accent transition-colors"
                           >
-                            Utiliser un numéro de téléphone
+                            📱 Utiliser un numéro de téléphone
                           </button>
                         </div>
                       )}
                     </div>
 
                     {/* Secteur ROME */}
-                    <div className="space-y-1.5">
-                      <Label className="text-sm font-semibold text-white/70 flex items-center gap-2">
-                        <Briefcase className="h-3.5 w-3.5 text-accent" />
+                    <div className="space-y-2">
+                      <Label className="text-[15px] font-semibold text-white/70 flex items-center gap-2">
+                        <Briefcase className="h-4 w-4 text-accent" />
                         Métier principal
                         {form.secteur && (
                           <span className="font-mono text-xs font-normal text-accent">{form.secteur}</span>
                         )}
                       </Label>
                       <Select value={form.secteur} onValueChange={(v) => handleChange("secteur", v)}>
-                        <SelectTrigger className="h-12 rounded-xl text-base text-white bg-white/5 border-white/10">
+                        <SelectTrigger className="h-14 rounded-xl text-lg text-white bg-white/5 border-white/10">
                           <SelectValue placeholder="Choisissez votre secteur…" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl">
+                        <SelectContent className="rounded-xl max-h-[60vh]">
                           {SECTEURS.map((s) => (
-                            <SelectItem key={s.value} value={s.value} className="text-sm py-3">
+                            <SelectItem key={s.value} value={s.value} className="text-base py-3.5">
                               <div className="flex items-center justify-between w-full gap-3">
                                 <span>{s.label}</span>
                                 <span className="text-xs font-mono text-muted-foreground">{s.rome}</span>
@@ -442,7 +459,7 @@ export default function SignupLight() {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="text-xs px-1 text-accent"
+                            className="text-sm px-1 text-accent"
                           >
                             → {selectedSecteur.metier}
                           </motion.p>
@@ -450,24 +467,43 @@ export default function SignupLight() {
                       </AnimatePresence>
                     </div>
 
-                    {/* Expérience */}
-                    <div className="space-y-1.5">
-                      <Label className="text-sm font-semibold text-white/70 flex items-center gap-2">
-                        <TrendingUp className="h-3.5 w-3.5 text-accent" />
+                    {/* Expérience — 4 large touch buttons */}
+                    <div className="space-y-2">
+                      <Label className="text-[15px] font-semibold text-white/70 flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-accent" />
                         Années d'expérience
                       </Label>
-                      <Select value={form.experience} onValueChange={(v) => handleChange("experience", v)}>
-                        <SelectTrigger className="h-12 rounded-xl text-base text-white bg-white/5 border-white/10">
-                          <SelectValue placeholder="Sélectionnez une tranche…" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl">
-                          {EXPERIENCE_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value} className="text-sm py-3">
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {EXPERIENCE_OPTIONS.map((o) => {
+                          const isSelected = form.experience === o.value;
+                          return (
+                            <button
+                              key={o.value}
+                              type="button"
+                              onClick={() => handleChange("experience", o.value)}
+                              className={`relative h-14 rounded-xl text-center font-bold text-base transition-all duration-200 border-2 ${
+                                isSelected
+                                  ? "bg-accent/15 border-accent text-accent shadow-lg shadow-accent/10"
+                                  : "bg-white/[0.04] border-white/10 text-white/70 hover:bg-white/[0.08] hover:border-white/20 active:scale-[0.97]"
+                              }`}
+                            >
+                              <span className="block text-lg font-extrabold leading-tight">{o.label}</span>
+                              <span className={`block text-[10px] font-medium mt-0.5 ${isSelected ? "text-accent/70" : "text-white/35"}`}>
+                                {o.shortLabel}
+                              </span>
+                              {isSelected && (
+                                <motion.div
+                                  layoutId="exp-check"
+                                  className="absolute top-1.5 right-1.5"
+                                  initial={false}
+                                >
+                                  <CheckCircle2 className="h-4 w-4 text-accent" />
+                                </motion.div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
                       <AnimatePresence>
                         {selectedExp && (
                           <motion.div
@@ -476,8 +512,8 @@ export default function SignupLight() {
                             exit={{ opacity: 0, height: 0 }}
                             className="flex items-center gap-1.5 px-1"
                           >
-                            <span className="text-xs text-tension/80">⚡</span>
-                            <p className="text-xs font-medium text-tension/80">
+                            <span className="text-sm text-tension/80">⚡</span>
+                            <p className="text-sm font-medium text-tension/80">
                               {selectedExp.teaser}{form.secteur ? ` (${SECTOR_TENSION[form.secteur] ?? ""})` : ""}
                             </p>
                           </motion.div>
@@ -485,38 +521,96 @@ export default function SignupLight() {
                       </AnimatePresence>
                     </div>
 
-                    {/* Pays */}
-                    <div className="space-y-1.5">
-                      <Label className="text-sm font-semibold text-white/70 flex items-center gap-2">
-                        <MapPin className="h-3.5 w-3.5 text-accent" />
+                    {/* Pays — with flags */}
+                    <div className="space-y-2">
+                      <Label className="text-[15px] font-semibold text-white/70 flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-accent" />
                         Pays de résidence
                       </Label>
                       <Select value={form.pays} onValueChange={(v) => handleChange("pays", v)}>
-                        <SelectTrigger className="h-12 rounded-xl text-base text-white bg-white/5 border-white/10">
-                          <SelectValue placeholder="Sélectionnez votre pays…" />
+                        <SelectTrigger className="h-14 rounded-xl text-lg text-white bg-white/5 border-white/10">
+                          <SelectValue placeholder="Sélectionnez votre pays…">
+                            {form.pays && (
+                              <span className="flex items-center gap-2">
+                                <span className="text-lg">{PAYS_OPTIONS.find(p => p.value === form.pays)?.flag}</span>
+                                {form.pays}
+                              </span>
+                            )}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl">
-                          {["Cameroun", "Sénégal", "Côte d'Ivoire", "Guinée", "Mali", "Bénin", "Togo", "Burkina Faso", "Congo (RDC)", "Autre"].map((p) => (
-                            <SelectItem key={p} value={p} className="text-sm py-3">{p}</SelectItem>
+                          {PAYS_OPTIONS.map((p) => (
+                            <SelectItem key={p.value} value={p.value} className="text-base py-3.5">
+                              <span className="flex items-center gap-2.5">
+                                <span className="text-lg">{p.flag}</span>
+                                {p.value}
+                              </span>
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
 
+                    {/* ── Score teaser inline (visible after 1 field) ── */}
+                    <AnimatePresence>
+                      {showScoreTeaser && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, height: "auto", scale: 1 }}
+                          exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                          transition={{ duration: 0.4, ease }}
+                          className="rounded-2xl overflow-hidden bg-accent/[0.06] border border-accent/20"
+                        >
+                          <div className="px-4 py-3 flex items-center gap-3">
+                            <div className="relative w-14 h-14 shrink-0">
+                              <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
+                                <circle cx="28" cy="28" r="23" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
+                                <motion.circle
+                                  cx="28" cy="28" r="23"
+                                  fill="none"
+                                  stroke="hsl(var(--accent))"
+                                  strokeWidth="4"
+                                  strokeLinecap="round"
+                                  strokeDasharray={`${2 * Math.PI * 23}`}
+                                  strokeDashoffset={`${2 * Math.PI * 23}`}
+                                  animate={{ strokeDashoffset: `${2 * Math.PI * 23 * (1 - score / 100)}` }}
+                                  transition={{ duration: 1, ease: "easeOut" }}
+                                />
+                              </svg>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="font-black text-base text-white">{score}%</span>
+                              </div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-white">
+                                Score IA estimé
+                              </p>
+                              <p className="text-xs mt-0.5 text-white/45">
+                                {selectedSecteur
+                                  ? `${selectedSecteur.metier?.split("/")[0]?.trim()} · ${SECTOR_TENSION[form.secteur] ?? ""}`
+                                  : "Complétez pour affiner votre score"}
+                              </p>
+                            </div>
+                            <Sparkles className="h-5 w-5 text-accent/60 shrink-0" />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     {/* RGPD */}
-                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.04] border border-white/[0.07]">
+                    <div className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.04] border border-white/[0.07]">
                       <Checkbox
                         id="rgpd"
                         checked={rgpd}
                         onCheckedChange={(v) => setRgpd(v as boolean)}
-                        className="mt-0.5"
+                        className="mt-0.5 h-5 w-5"
                       />
-                      <label htmlFor="rgpd" className="text-xs text-white/45 leading-relaxed cursor-pointer">
+                      <label htmlFor="rgpd" className="text-sm text-white/45 leading-relaxed cursor-pointer">
                         J'accepte la{" "}
                         <Link to="/rgpd-light" className="font-semibold text-accent hover:underline" target="_blank">
                           politique RGPD & CGU
                         </Link>{" "}
-                        — Données traitées conformément aux CCT 2021 UE.
+                        — CCT 2021 UE.
                       </label>
                     </div>
 
@@ -525,19 +619,19 @@ export default function SignupLight() {
                       type="submit"
                       size="lg"
                       disabled={loading}
-                      className="w-full h-13 text-base rounded-xl font-bold shadow-xl py-4 group relative overflow-hidden bg-gradient-cta border-0 text-white"
+                      className="w-full h-16 text-lg rounded-xl font-bold shadow-xl py-4 group relative overflow-hidden bg-gradient-cta border-0 text-white"
                     >
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-cta-hover" />
                       <span className="relative flex items-center justify-center gap-2">
                         {loading ? (
                           <>
-                            <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            <span className="h-5 w-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                             Analyse en cours…
                           </>
                         ) : (
                           <>
                             Voir mon score maintenant
-                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
                           </>
                         )}
                       </span>
