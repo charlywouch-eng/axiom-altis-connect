@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -199,6 +200,14 @@ export default function Signup() {
 
   return (
     <TooltipProvider>
+      <Helmet>
+        <title>Inscription entreprise – AXIOM & ALTIS | Recrutez des talents certifiés Afrique</title>
+        <meta name="description" content="Créez votre compte entreprise AXIOM. Accédez à des talents certifiés MINEFOP pour BTP, santé, CHR, logistique. Matching IA + Pack ALTIS visa et logement." />
+        <link rel="canonical" href="https://axiom-talents.com/signup" />
+        <meta property="og:title" content="Inscription entreprise – AXIOM & ALTIS" />
+        <meta property="og:description" content="Recrutez des talents d'Afrique certifiés. Inscription gratuite, matching IA, conformité garantie." />
+        <meta property="og:url" content="https://axiom-talents.com/signup" />
+      </Helmet>
       <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(220,60%,18%)] flex flex-col" style={{ minHeight: '-webkit-fill-available' }}>
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 py-4 max-w-lg mx-auto w-full">
