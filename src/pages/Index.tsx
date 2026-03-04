@@ -134,7 +134,7 @@ export default function Index() {
             <span className="font-black text-xl tracking-tight text-white">AXIOM</span>
             <span className="hidden sm:inline text-xs font-medium text-white/40 border-l border-white/15 pl-2.5 ml-0.5">× ALTIS Mobility</span>
           </div>
-          <nav className="flex items-center gap-2">
+          <nav className="flex items-center gap-1.5 sm:gap-2">
             <ThemeToggle />
             <Link to="/a-propos" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               À propos
@@ -143,10 +143,10 @@ export default function Index() {
               Métiers en tension
             </Link>
             <Link to="/login">
-              <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/8 border border-white/10">Se connecter</Button>
+              <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/8 border border-white/10 text-xs sm:text-sm px-2.5 sm:px-3">Connexion</Button>
             </Link>
             <Link to="/signup-light">
-              <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg shadow-accent/25 border-0">
+              <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg shadow-accent/25 border-0 text-xs sm:text-sm px-3 sm:px-4">
                 Commencer
               </Button>
             </Link>
@@ -218,11 +218,11 @@ export default function Index() {
               </motion.div>
 
               {/* Single CTA */}
-              <motion.div custom={4} variants={fadeUp} className="mt-10">
+              <motion.div custom={4} variants={fadeUp} className="mt-10 flex justify-center">
                 <Button
                   asChild
                   size="lg"
-                  className="w-full sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 hover:scale-[1.03] border-0 group text-white btn-ripple animate-micro-pulse transition-transform duration-200"
+                  className="w-[90%] max-w-md sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 hover:scale-[1.03] border-0 group text-white btn-ripple animate-micro-pulse transition-transform duration-200 mx-auto"
                 >
                   <Link to="/signup-light">
                     Commencer gratuitement
@@ -304,13 +304,13 @@ export default function Index() {
                     placeholder="Email ou téléphone +237"
                     value={teaserEmail}
                     onChange={(e) => setTeaserEmail(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-11 text-sm focus:border-accent/40 focus:ring-accent/20"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-12 text-base sm:text-sm focus:border-accent/40 focus:ring-accent/20 w-full"
                   />
                   <Select value={teaserMetier} onValueChange={setTeaserMetier}>
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white h-11 text-sm">
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 text-base sm:text-sm w-full">
                       <SelectValue placeholder="Votre métier…" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="w-[var(--radix-select-trigger-width)] max-w-[calc(100vw-2rem)]">
                       {METIER_OPTIONS.map((m) => (
                         <SelectItem key={m.value} value={m.value}>
                           <span className="flex items-center gap-2">
@@ -320,7 +320,7 @@ export default function Index() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button type="submit" className="w-full h-11 bg-gradient-cta text-white font-bold border-0 hover:opacity-90 shadow-lg shadow-accent/20">
+                  <Button type="submit" className="w-full h-12 bg-gradient-cta text-white font-bold border-0 hover:opacity-90 shadow-lg shadow-accent/20 text-base sm:text-sm">
                     Voir mon score IA <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
@@ -478,10 +478,10 @@ export default function Index() {
             <motion.p custom={2} variants={fadeUp} className="mt-4 text-base text-white/55 max-w-md mx-auto">
               Inscription en 30 secondes. Score immédiat. Accompagnement ALTIS complet.
             </motion.p>
-            <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center relative z-10">
+             <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center relative z-10">
               <Button
                 size="lg"
-                className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white"
+                className="w-[90%] max-w-md sm:w-auto text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white mx-auto sm:mx-0"
                 onClick={() => navigate("/signup-light")}
               >
                 Commencer gratuitement <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
