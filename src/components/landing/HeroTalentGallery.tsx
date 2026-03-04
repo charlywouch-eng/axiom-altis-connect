@@ -31,6 +31,8 @@ export default function HeroTalentGallery() {
             <img
               src={t.src}
               alt={`Talent ${t.label}`}
+              width={80}
+              height={180}
               className="h-full w-full object-cover"
               loading="eager"
             />
