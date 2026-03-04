@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { trackGA4 } from "@/lib/ga4";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -192,6 +193,8 @@ export default function DashboardTalent() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+
+  useEffect(() => { trackGA4("dashboard_talent_view"); }, []);
 
   const handleUnlockPayment = async () => {
     setPaymentLoading(true);
