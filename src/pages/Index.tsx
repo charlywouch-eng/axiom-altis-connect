@@ -155,7 +155,7 @@ export default function Index() {
       </header>
 
       {/* ── Hero Full-Screen ─────────────────────────────────── */}
-      <section ref={heroRef} className="relative lg:min-h-screen flex items-start lg:items-center overflow-x-hidden pt-16">
+      <section ref={heroRef} className="relative lg:min-h-screen flex items-start lg:items-center overflow-x-hidden pt-16 pb-24 lg:pb-0">
         {/* Tech network background — enriched multi-layer gradient */}
         <div className="absolute inset-0">
           <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-50" loading="eager" decoding="async" fetchPriority="high" />
@@ -251,7 +251,7 @@ export default function Index() {
               initial={{ opacity: 0, x: 50, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               transition={{ delay: 0.45, duration: 0.8, ease }}
-              className="flex flex-col w-full lg:w-[420px] xl:w-[460px] gap-5"
+              className="flex flex-col w-full lg:w-[420px] xl:w-[460px] gap-5 relative z-10"
             >
               {/* Live offer alert */}
               <div className="rounded-2xl border border-accent/15 bg-white/5 backdrop-blur-md p-4 overflow-hidden shadow-lg shadow-accent/5">
@@ -334,7 +334,7 @@ export default function Index() {
         </div>
 
         {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background via-background/70 to-transparent z-[4]" />
+        <div className="absolute bottom-0 left-0 right-0 h-20 lg:h-40 bg-gradient-to-t from-background via-background/70 to-transparent z-[4] pointer-events-none" />
       </section>
 
       {/* ── Stats Band ───────────────────────────────────────── */}
