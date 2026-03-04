@@ -221,13 +221,31 @@ serve(async (req) => {
       // ── Match: notify talent about a matching offer ────────
       case "match_talent": {
         const { talent_user_id, offer_title, company_name } = payload;
+        // Try profiles first, fall back to talent_profiles for CSV-imported talents
+        let recipientEmail: string | null = null;
+        let recipientName = "Talent";
+
         const { data: profile } = await supabase
           .from("profiles")
           .select("email, full_name")
           .eq("id", talent_user_id)
           .single();
-        if (!profile?.email) throw new Error("Talent profile not found");
-        const email = matchTalentEmail(profile.full_name || "Talent", offer_title, company_name);
+
+        if (profile?.email) {
+          recipientEmail = profile.email;
+          recipientName = profile.full_name || "Talent";
+        } else {
+          // CSV-imported talents don't have profiles entries — log and skip
+          const { data: tp } = await supabase
+            .from("talent_profiles")
+            .select("full_name")
+            .eq("user_id", talent_user_id)
+            .single();
+          console.log(`[NOTIFICATION] Talent ${talent_user_id} has no email (CSV import: ${tp?.full_name}). Skipping.`);
+          break;
+        }
+
+        const email = matchTalentEmail(recipientName, offer_title, company_name);
         await sendEmail(profile.email, email.subject, email.html);
         break;
       }
