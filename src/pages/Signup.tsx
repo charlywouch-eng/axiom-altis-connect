@@ -104,6 +104,7 @@ export default function Signup() {
   const [acceptCgu, setAcceptCgu] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  
   const [magicSent, setMagicSent] = useState(false);
 
   // Step 2 – Profile light
@@ -187,9 +188,22 @@ export default function Signup() {
   const handleGoogle = async () => {
     setGoogleLoading(true);
     try {
-      await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      if (result?.error) toast({ title: "Problème avec Google ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
     } catch {
-      toast({ title: "Erreur Google", description: "Connexion impossible.", variant: "destructive" });
+      toast({ title: "Problème avec Google ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleApple = async () => {
+    setGoogleLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
+      if (result?.error) toast({ title: "Problème avec Apple ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
+    } catch {
+      toast({ title: "Problème avec Apple ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
     } finally {
       setGoogleLoading(false);
     }
@@ -312,7 +326,8 @@ export default function Signup() {
                           </p>
                         </div>
 
-                        {/* Google OAuth */}
+                        {/* Social OAuth */}
+                        <div className="flex flex-col gap-2">
                         <Button
                           type="button"
                           variant="outline"
@@ -328,6 +343,19 @@ export default function Signup() {
                           </svg>
                           {googleLoading ? "Connexion…" : "Continuer avec Google"}
                         </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full h-11 rounded-xl font-medium gap-2 border-border hover:border-primary/40 hover:bg-primary/5 transition-all"
+                          onClick={handleApple}
+                          disabled={googleLoading}
+                        >
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.32.07 2.23.74 3.01.8.88-.15 1.93-.81 3.13-.69 1.53.14 2.68.8 3.4 2.04-3.1 1.87-2.58 5.9.69 7.04-.68 1.61-1.59 3.2-2.23 3.69zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                          </svg>
+                          {googleLoading ? "Connexion…" : "Continuer avec Apple"}
+                        </Button>
+                        </div>
 
                         <div className="flex items-center gap-3">
                           <div className="flex-1 h-px bg-border" />
