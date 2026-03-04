@@ -23,14 +23,26 @@ type GA4Event =
   | "dashboard_entreprise_view";
 
 /**
+ * Check if analytics consent has been given.
+ */
+function hasConsent(): boolean {
+  try {
+    return localStorage.getItem("axiom_cookie_consent") === "accepted";
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Fire a custom GA4 event (fire-and-forget).
+ * Skipped silently if consent was not given.
  */
 export function trackGA4(
   event: GA4Event,
   params?: Record<string, string | number | boolean | undefined>
 ) {
   try {
-    if (typeof window !== "undefined" && window.gtag) {
+    if (typeof window !== "undefined" && window.gtag && hasConsent()) {
       window.gtag("event", event, params);
     }
   } catch {
@@ -40,10 +52,11 @@ export function trackGA4(
 
 /**
  * Track a page view manually (useful for SPA route changes).
+ * Skipped silently if consent was not given.
  */
 export function trackPageView(path: string, title?: string) {
   try {
-    if (typeof window !== "undefined" && window.gtag) {
+    if (typeof window !== "undefined" && window.gtag && hasConsent()) {
       window.gtag("event", "page_view", {
         page_path: path,
         page_title: title,
