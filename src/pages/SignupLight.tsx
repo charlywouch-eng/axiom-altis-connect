@@ -344,8 +344,12 @@ export default function SignupLight() {
                       disabled={oauthLoading !== null}
                       onClick={async () => {
                         setOauthLoading("google");
-                        const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-                        if (error) toast({ title: "Erreur", description: String(error), variant: "destructive" });
+                        try {
+                          const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+                          if (error) toast({ title: "Problème avec Google ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
+                        } catch {
+                          toast({ title: "Problème technique ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
+                        }
                         setOauthLoading(null);
                       }}
                     >
@@ -363,8 +367,12 @@ export default function SignupLight() {
                       disabled={oauthLoading !== null}
                       onClick={async () => {
                         setOauthLoading("apple");
-                        const { error } = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
-                        if (error) toast({ title: "Erreur", description: String(error), variant: "destructive" });
+                        try {
+                          const { error } = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
+                          if (error) toast({ title: "Problème avec Apple ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
+                        } catch {
+                          toast({ title: "Problème technique ?", description: "Utilisez votre email ci-dessous pour vous inscrire.", variant: "destructive" });
+                        }
                         setOauthLoading(null);
                       }}
                     >
@@ -456,7 +464,7 @@ export default function SignupLight() {
                         <SelectTrigger className="h-14 rounded-xl text-lg text-white bg-white/5 border-white/10">
                           <SelectValue placeholder="Choisissez votre secteur…" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl max-h-[60vh]">
+                        <SelectContent className="rounded-xl max-h-[60vh] w-[var(--radix-select-trigger-width)] max-w-[calc(100vw-2rem)]">
                           {SECTEURS.map((s) => (
                             <SelectItem key={s.value} value={s.value} className="text-base py-3.5">
                               <div className="flex items-center justify-between w-full gap-3">
@@ -552,7 +560,7 @@ export default function SignupLight() {
                             )}
                           </SelectValue>
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl">
+                        <SelectContent className="rounded-xl w-[var(--radix-select-trigger-width)] max-w-[calc(100vw-2rem)]">
                           {PAYS_OPTIONS.map((p) => (
                             <SelectItem key={p.value} value={p.value} className="text-base py-3.5">
                               <span className="flex items-center gap-2.5">
