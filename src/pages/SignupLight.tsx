@@ -119,6 +119,7 @@ export default function SignupLight() {
   const [showPremiumTooltip, setShowPremiumTooltip] = useState(false);
 
   const [usePhone, setUsePhone] = useState(false);
+  const [phoneValid, setPhoneValid] = useState(false);
   const [form, setForm] = useState({
     contact:    "",
     secteur:    premiumRome || "",
@@ -142,6 +143,10 @@ export default function SignupLight() {
     e.preventDefault();
     if (!form.contact || !form.secteur || !form.experience) {
       toast({ title: "Champs manquants", description: "Merci de remplir tous les champs.", variant: "destructive" });
+      return;
+    }
+    if (usePhone && !phoneValid) {
+      toast({ title: "Numéro invalide", description: "Vérifiez le format du numéro pour le pays sélectionné.", variant: "destructive" });
       return;
     }
     if (!rgpd) {
@@ -397,9 +402,17 @@ export default function SignupLight() {
                         <div className="space-y-2">
                           <PhoneInput
                             value={form.contact}
-                            onChange={(fullValue, _isValid) => handleChange("contact", fullValue)}
+                            onChange={(fullValue, isValid) => {
+                              handleChange("contact", fullValue);
+                              setPhoneValid(isValid);
+                            }}
                             className="[&_button]:h-14 [&_input]:h-14"
                           />
+                          {form.contact.replace(/^\+\d{2,3}\s?/, "").replace(/\s/g, "").length > 3 && !phoneValid && (
+                            <p className="text-xs text-destructive flex items-center gap-1">
+                              <Info className="h-3 w-3" /> Numéro invalide pour le pays sélectionné
+                            </p>
+                          )}
                           <button
                             type="button"
                             onClick={() => { setUsePhone(false); handleChange("contact", ""); }}
