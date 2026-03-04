@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-export const GA_MEASUREMENT_ID = "G-XXXXXXXXXX"; // ← remplacer par votre vrai ID GA4
+export const GA_MEASUREMENT_ID = "G-XXXXXXX";
 
 type GA4Event =
   | "inscription_start"
