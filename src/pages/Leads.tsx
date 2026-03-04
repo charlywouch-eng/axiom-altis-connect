@@ -191,7 +191,7 @@ export default function Leads() {
       </Helmet>
 
       {/* ── Header ── */}
-      <header className="sticky top-0 z-50 border-b" style={{ background: "hsl(222,47%,7%,0.88)", backdropFilter: "blur(14px)", borderColor: "hsl(0,0%,100%,0.07)" }}>
+      <header className="sticky top-0 z-50 border-b safe-top" style={{ background: "hsl(222,47%,7%,0.88)", backdropFilter: "blur(14px)", borderColor: "hsl(0,0%,100%,0.07)" }}>
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: "hsl(189,94%,43%,0.18)" }}>
@@ -217,8 +217,8 @@ export default function Leads() {
           <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -16 }}>
 
             {/* Hero */}
-            <section className="max-w-5xl mx-auto px-4 pt-12 pb-8">
-              <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <section className="max-w-5xl mx-auto px-4 pt-8 sm:pt-12 pb-6 sm:pb-8">
+              <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 items-center">
 
                 {/* Left copy */}
                 <motion.div
@@ -230,7 +230,7 @@ export default function Leads() {
                     Gratuit & sans engagement
                   </Badge>
 
-                  <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight mb-5" style={{ color: "hsl(0,0%,97%)" }}>
+                  <h1 className="text-2xl sm:text-4xl font-extrabold leading-tight mb-4 sm:mb-5" style={{ color: "hsl(0,0%,97%)" }}>
                     Votre avenir en France<br />
                     <span style={{ color: "hsl(189,94%,43%)" }}>commence ici.</span>
                   </h1>
@@ -313,7 +313,9 @@ export default function Leads() {
                       placeholder="exemple@email.com ou +237 6XX XXX XXX"
                       value={form.emailOrPhone}
                       onChange={e => setForm(f => ({ ...f, emailOrPhone: e.target.value }))}
-                      className="text-sm"
+                      inputMode="email"
+                      autoComplete="email"
+                      className="text-base sm:text-sm h-12 sm:h-10 rounded-xl"
                       style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}
                     />
                   </div>
@@ -324,7 +326,7 @@ export default function Leads() {
                       Métier principal <span style={{ color: "hsl(0,60%,65%)" }}>*</span>
                     </label>
                     <Select value={form.metier} onValueChange={handleMetierChange}>
-                      <SelectTrigger className="text-sm" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
+                      <SelectTrigger className="text-base sm:text-sm h-12 sm:h-10 rounded-xl" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
                         <SelectValue placeholder="Sélectionnez votre secteur…" />
                       </SelectTrigger>
                       <SelectContent>
@@ -352,7 +354,7 @@ export default function Leads() {
                       Années d'expérience <span style={{ color: "hsl(0,60%,65%)" }}>*</span>
                     </label>
                     <Select value={form.experience} onValueChange={v => setForm(f => ({ ...f, experience: v }))}>
-                      <SelectTrigger className="text-sm" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
+                      <SelectTrigger className="text-base sm:text-sm h-12 sm:h-10 rounded-xl" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
                         <SelectValue placeholder="Sélectionnez une tranche…" />
                       </SelectTrigger>
                       <SelectContent>
@@ -383,7 +385,7 @@ export default function Leads() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 text-sm font-bold rounded-xl mt-1"
+                    className="w-full h-14 sm:h-12 text-base sm:text-sm font-bold rounded-xl mt-2"
                     style={{ background: "hsl(221,83%,53%)", color: "white" }}
                   >
                     {loading ? (
@@ -420,7 +422,7 @@ export default function Leads() {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="max-w-lg mx-auto px-4 py-12"
+            className="max-w-lg mx-auto px-4 py-8 sm:py-12"
           >
             {/* Header */}
             <div className="text-center mb-8">

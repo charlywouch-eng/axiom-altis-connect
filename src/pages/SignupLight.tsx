@@ -270,7 +270,7 @@ export default function SignupLight() {
         </p>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-4 pb-12">
+      <div className="flex-1 flex flex-col items-center justify-center px-3 sm:px-4 py-4 pb-12">
         <AnimatePresence mode="wait">
 
           {/* ══════════════════════════════════════════════════
@@ -285,11 +285,11 @@ export default function SignupLight() {
               transition={{ duration: 0.35, ease }}
               className="w-full max-w-md"
             >
-              <div className="rounded-3xl overflow-hidden shadow-2xl dark-surface">
+              <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl dark-surface">
                 {/* Top accent bar */}
                 <div className="h-1 w-full bg-gradient-cta" />
 
-                <div className="p-5 sm:p-8">
+                <div className="p-4 sm:p-8">
 
                   {/* ── Premium banner ── */}
                   <AnimatePresence>
