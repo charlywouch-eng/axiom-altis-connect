@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -99,6 +100,14 @@ export default function APropos() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>À propos d'AXIOM – Plateforme de recrutement souveraine France-Afrique</title>
+        <meta name="description" content="AXIOM connecte les talents certifiés d'Afrique aux entreprises françaises en pénurie. IA de matching, certifications MINEFOP/MINREX, logistique ALTIS intégrée." />
+        <link rel="canonical" href="https://axiom-talents.com/a-propos" />
+        <meta property="og:title" content="À propos d'AXIOM – Recrutement souverain France-Afrique" />
+        <meta property="og:description" content="Notre mission : connecter les talents certifiés d'Afrique aux métiers en tension en France via l'IA et la conformité." />
+        <meta property="og:url" content="https://axiom-talents.com/a-propos" />
+      </Helmet>
 
       {/* ── Header ─────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/8 bg-[hsl(222,47%,8%)]/95 backdrop-blur-xl">

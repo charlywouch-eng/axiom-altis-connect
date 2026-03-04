@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Check, Zap, Crown, Building2, ArrowRight, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -41,6 +42,14 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Tarifs AXIOM – Recrutement talents Afrique dès 10 € | Entreprise 499 €/mois</title>
+        <meta name="description" content="Plan Talent à 10 €, abonnement Recruteur/Entreprise à 499 €/mois (399 €/mois en annuel). Success fee 25 % + Pack ALTIS 1 200 €/talent. Sans engagement." />
+        <link rel="canonical" href="https://axiom-talents.com/pricing" />
+        <meta property="og:title" content="Tarifs AXIOM – Recrutement international abordable" />
+        <meta property="og:description" content="Talent 10 € · Entreprise 499 €/mois · Pack ALTIS tout-inclus. Recrutez des talents certifiés Afrique-France." />
+        <meta property="og:url" content="https://axiom-talents.com/pricing" />
+      </Helmet>
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
