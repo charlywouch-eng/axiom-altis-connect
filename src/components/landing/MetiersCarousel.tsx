@@ -163,7 +163,7 @@ export default function MetiersCarousel() {
                       <div className="h-full rounded-2xl border bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-accent/30 flex flex-col">
                         {/* Image */}
                         <div className="relative h-40 w-full overflow-hidden">
-                          <OptimizedImage webpSrc={webpMap[s.image]} fallbackSrc={s.image} alt={s.secteur} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
+                          <OptimizedImage webpSrc={webpMap[s.image]} fallbackSrc={s.image} alt={s.secteur} width={400} height={160} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
                           <div className={cn("absolute top-3 left-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm shadow-md")}>
                             <Icon className={cn("h-5 w-5", s.iconColor)} />
                           </div>
