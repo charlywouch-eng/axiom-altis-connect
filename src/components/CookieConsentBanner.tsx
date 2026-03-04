@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { GA_MEASUREMENT_ID } from "@/lib/ga4";
 
 const CONSENT_KEY = "axiom_cookie_consent";
+const GTM_ID = "GTM-KV4FWJ8Z";
 
 type ConsentValue = "accepted" | "refused";
 
@@ -27,9 +28,22 @@ function loadGA4Script() {
   gtag("config", GA_MEASUREMENT_ID);
 }
 
-/** Remove GA4 cookies & script when consent is refused. */
+/** Load the GTM script dynamically (only once). */
+function loadGTMScript() {
+  if (document.getElementById("gtm-script")) return;
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+
+  const script = document.createElement("script");
+  script.id = "gtm-script";
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+  document.head.appendChild(script);
+}
+
+/** Remove GA4/GTM cookies & scripts when consent is refused. */
 function removeGA4() {
-  // Delete _ga* cookies
   document.cookie.split(";").forEach((c) => {
     const name = c.split("=")[0].trim();
     if (name.startsWith("_ga")) {
@@ -37,8 +51,10 @@ function removeGA4() {
       document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
     }
   });
-  const el = document.getElementById("ga4-script");
-  if (el) el.remove();
+  const gaEl = document.getElementById("ga4-script");
+  if (gaEl) gaEl.remove();
+  const gtmEl = document.getElementById("gtm-script");
+  if (gtmEl) gtmEl.remove();
   window.gtag = undefined;
 }
 
@@ -59,12 +75,14 @@ export function CookieConsentBanner() {
       setVisible(true);
     } else if (consent === "accepted") {
       loadGA4Script();
+      loadGTMScript();
     }
   }, []);
 
   const handleAccept = useCallback(() => {
     localStorage.setItem(CONSENT_KEY, "accepted");
     loadGA4Script();
+    loadGTMScript();
     setVisible(false);
   }, []);
 
