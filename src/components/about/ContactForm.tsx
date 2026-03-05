@@ -21,11 +21,23 @@ export default function ContactForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [formLoadedAt] = useState(() => Date.now());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Honeypot check — bots fill hidden fields
+    if (honeypot) return;
+
+    // Time-based check — humans take >2s to fill a form
+    if (Date.now() - formLoadedAt < 2000) {
+      toast.error("Veuillez patienter avant d'envoyer.");
+      return;
+    }
+
     if (!name.trim() || !email.trim() || !message.trim()) {
       toast.error("Veuillez remplir tous les champs.");
       return;
@@ -111,6 +123,19 @@ export default function ContactForm() {
           />
         </div>
       </motion.div>
+      {/* Honeypot — invisible to humans, filled by bots */}
+      <div aria-hidden="true" className="absolute opacity-0 h-0 overflow-hidden pointer-events-none" tabIndex={-1}>
+        <label htmlFor="contact-website">Website</label>
+        <input
+          id="contact-website"
+          name="website"
+          type="text"
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+          tabIndex={-1}
+        />
+      </div>
       <motion.div custom={1} variants={fadeUp}>
         <label htmlFor="contact-message" className="block text-sm font-medium text-foreground mb-1.5">
           Votre message
