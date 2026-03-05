@@ -1,5 +1,6 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import ContactForm from "@/components/about/ContactForm";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -278,6 +279,27 @@ export default function APropos() {
               );
             })}
           </motion.div>
+        </div>
+      </section>
+
+      {/* ── Contact ──────────────────────────────────────── */}
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-2xl px-5 md:px-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
+            <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
+              Contact
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[40px] tracking-tight">
+              Une question ? <span className="text-gradient-primary">Parlons-en</span>
+            </motion.h2>
+            <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-lg mx-auto">
+              Recruteur, talent ou partenaire — nous répondons sous 24-48h.
+            </motion.p>
+          </motion.div>
+          <div className="rounded-3xl border border-border/50 bg-card p-8 md:p-10 shadow-card relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-cta" />
+            <ContactForm />
+          </div>
         </div>
       </section>
 
