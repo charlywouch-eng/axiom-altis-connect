@@ -344,7 +344,7 @@ export default function APropos() {
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors flex items-center gap-1">
                 <Lock className="h-3 w-3" /> RGPD
               </Link>
-              <a href="mailto:contact@axiom-talents.com" className="hover:text-foreground transition-colors flex items-center gap-1"><Mail className="h-3 w-3" /> contact@axiom-talents.com</a>
+              <a href="mailto:charly@axiom-talents.com" className="hover:text-foreground transition-colors flex items-center gap-1"><Mail className="h-3 w-3" /> charly@axiom-talents.com</a>
             </div>
           </div>
           <div className="mt-5 border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
