@@ -105,7 +105,7 @@ export default function DashboardRecruteur() {
               <span className="text-accent">Opérationnels jour 1</span>
             </h1>
             <p className="text-sm text-white/50 max-w-xl">
-              Matching IA + conformité ROME + Pack ALTIS Zéro Stress (visa + billet + logement) · À partir de 499 €/mois
+              Matching IA + conformité ROME + Pack ALTIS Zéro Stress (visa + billet + logement) · SaaS 499 €/mois + Pack ALTIS 2 450 €/talent
             </p>
           </motion.div>
         </div>

@@ -232,7 +232,7 @@ export default function Pricing() {
         >
           Success Fee additionnel de 25 % du salaire annuel brut à la signature du CDI.
           <br />
-          Pack ALTIS Intégral disponible à 1 200 € / talent (visa, billet, accueil, logement).
+          Pack ALTIS Intégral disponible à 2 450 € / talent (visa, billet, accueil, logement).
         </motion.p>
       </main>
     </div>

@@ -880,7 +880,7 @@ export default function SignupLight() {
                     <div>
                       <p className="font-black text-sm text-white">Débloquez maintenant</p>
                       <p className="text-xs mt-0.5 leading-relaxed text-white/45">
-                        Score détaillé + offres France Travail matchées + parcours ALTIS personnalisé (visa ANEF + billet + logement) — <span className="font-semibold text-accent">10 € unique</span> (analyse approfondie & priorité)
+                        Score IA + analyse ROME + accès offres en tension — <span className="font-semibold text-accent">4,99 €</span> (test d'éligibilité rapide)
                       </p>
                     </div>
                   </div>

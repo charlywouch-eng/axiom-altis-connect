@@ -114,10 +114,11 @@ function buildSlides(live: ReturnType<typeof useLiveMetrics>): SlideData[] {
       id: "pricing", badge: "Pricing", icon: CreditCard, iconColor: "text-amber-400",
       title: "Un modèle économique\nhybride et scalable.",
       pricingCards: [
-        { tier: "Talent", price: "10 €", period: "unique", features: ["Analyse ROME complète", "Score IA", "Pack ALTIS", "Certification MINEFOP"] },
+        { tier: "Talent Test", price: "4,99 €", period: "unique", features: ["Score IA", "Analyse ROME de base", "Accès offres en tension"] },
+        { tier: "Talent Complet", price: "29 €", period: "unique", features: ["Analyse ROME complète", "Parcours ALTIS", "Certification MINEFOP", "Priorité matching ×3"] },
         { tier: "Recruteur", price: "499 €", period: "/mois", features: ["Talents illimités", "Matching IA", "Pipeline intégré", "Support dédié"], highlight: true },
       ],
-      extraLine: "Success Fee 25 % · Pack ALTIS Intégral 1 200 €/talent",
+      extraLine: "Success Fee 25 % · Pack ALTIS Intégral 2 450 €/talent",
       stat: { value: "499€", label: "/mois abonnement B2B" },
       gradient: "from-amber-950/80 via-slate-950 to-slate-950",
     },

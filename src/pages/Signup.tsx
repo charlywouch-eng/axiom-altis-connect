@@ -616,7 +616,7 @@ export default function Signup() {
                         className="w-full h-12 rounded-xl text-base font-semibold gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all"
                       >
                         <Star className="h-4 w-4" />
-                        Débloquer pour 10 €
+                        Débloquer pour 4,99 €
                       </Button>
 
                       <button

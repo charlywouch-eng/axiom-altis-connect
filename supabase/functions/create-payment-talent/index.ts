@@ -49,7 +49,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price: "price_1T2hDLLLoCKfmmI1xOjgrx0l", // Analyse Complète 10€
+          price: "price_1TAcRuLLoCKfmmI1JCKUqUey", // Test Éligibilité 4,99 €
           quantity: 1,
         },
       ],

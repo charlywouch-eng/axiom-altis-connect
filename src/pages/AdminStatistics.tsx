@@ -187,7 +187,7 @@ export default function AdminStatistics() {
 
   const funnelSteps = [
     { key: "lead_form_submitted", label: "Lead soumis", color: "hsl(var(--accent))" },
-    { key: "lead_payment_clicked", label: "Clic paiement 10 €", color: "hsl(210, 70%, 55%)" },
+    { key: "lead_payment_clicked", label: "Clic paiement 4,99 €", color: "hsl(210, 70%, 55%)" },
     { key: "payment_success", label: "Paiement réussi", color: "hsl(160, 60%, 45%)" },
     { key: "signup_started", label: "Inscription démarrée", color: "hsl(var(--primary))" },
   ];

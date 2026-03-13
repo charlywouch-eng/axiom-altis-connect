@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PRICE_ID = "price_1T2hDLLLoCKfmmI1xOjgrx0l"; // Analyse Complète 10 €
+const PRICE_ID = "price_1TAcRuLLoCKfmmI1JCKUqUey"; // Test Éligibilité 4,99 €
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

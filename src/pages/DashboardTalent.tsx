@@ -500,7 +500,7 @@ export default function DashboardTalent() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <p className="text-sm font-medium text-foreground cursor-help">
-                        <span className="font-bold text-accent">Certification Premium — 30 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
+                        <span className="font-bold text-accent">Déblocage complet — 29 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
                       </p>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="max-w-xs text-xs">

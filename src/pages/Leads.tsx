@@ -536,7 +536,7 @@ export default function Leads() {
                 ) : (
                   <span className="flex items-center gap-2">
                     <Zap className="h-4 w-4" />
-                    Débloquer pour 10 €
+                    Débloquer pour 4,99 €
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 )}
