@@ -177,6 +177,45 @@ export default function Leads() {
     }
   };
 
+  const handleFullPayment = async () => {
+    setFullPaymentLoading(true);
+    trackGA4("paiement_full_started", { rome_code: form.metier, source: "leads" });
+    try {
+      const email = form.emailOrPhone.includes("@") ? form.emailOrPhone : undefined;
+      const { data, error } = await supabase.functions.invoke("create-payment-lead", {
+        body: {
+          email,
+          metier: selectedSecteur?.label ?? form.metier,
+          rome_code: form.metier,
+          experience: form.experience,
+          source: "leads",
+          tier: "full",
+        },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        trackFunnel({
+          event_name: "lead_full_payment_clicked",
+          rome_code: form.metier,
+          experience: form.experience,
+          email_hash: form.emailOrPhone,
+          source: "leads",
+        });
+        window.location.href = data.url;
+      } else {
+        throw new Error("Aucune URL Stripe reçue");
+      }
+    } catch (err: any) {
+      toast({
+        title: "Erreur de paiement",
+        description: err.message ?? "Impossible d'initier le paiement. Réessayez.",
+        variant: "destructive",
+      });
+    } finally {
+      setFullPaymentLoading(false);
+    }
+  };
+
   const { label: scoreLabel, color: scoreColor } = getScoreLabel(score);
   const circumference = 2 * Math.PI * 44; // r=44
 
