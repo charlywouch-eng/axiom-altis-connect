@@ -116,7 +116,6 @@ export default function PaymentSuccess() {
     }
   };
 
-  const signupUrl = `/signup-light?premium=true&rome=${rome}&exp=${exp}`;
 
   useEffect(() => {
     trackFunnel({
