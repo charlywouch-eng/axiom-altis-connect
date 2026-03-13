@@ -182,7 +182,7 @@ const App = () => (
             <Route
               path="/dashboard-recruteur"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={["recruteur", "admin"]}>
                   <DashboardRecruteur />
                 </ProtectedRoute>
               }
