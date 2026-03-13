@@ -23,13 +23,16 @@ serve(async (req) => {
     });
 
     const body = await req.json().catch(() => ({}));
-    const { email, metier, rome_code, experience, source } = body as {
+    const { email, metier, rome_code, experience, source, tier } = body as {
       email?: string;
       metier?: string;
       rome_code?: string;
       experience?: string;
-      source?: string; // "leads" or "signup-light"
+      source?: string;
+      tier?: string;
     };
+
+    const priceConfig = PRICES[tier === "full" ? "full" : "test"];
 
     const origin = req.headers.get("origin") || "https://axiom-altis-connect.lovable.app";
 
