@@ -195,7 +195,7 @@ export default function Leads() {
       if (error) throw error;
       if (data?.url) {
         trackFunnel({
-          event_name: "lead_full_payment_clicked",
+          event_name: "lead_payment_clicked",
           rome_code: form.metier,
           experience: form.experience,
           email_hash: form.emailOrPhone,
