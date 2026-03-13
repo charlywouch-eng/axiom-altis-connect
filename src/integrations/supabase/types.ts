@@ -509,6 +509,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      company_update_rls_check: {
+        Args: {
+          _is_subscribed: boolean
+          _subscription_end: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
