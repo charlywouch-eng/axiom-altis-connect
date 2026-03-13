@@ -53,7 +53,7 @@ export default function Pricing() {
         <meta name="description" content="Test d'éligibilité à 4,99 €, déblocage complet à 29 €. Abonnement Recruteur 499 €/mois (399 €/mois en annuel). Success fee 25 % + Pack ALTIS 2 450 €/talent." />
         <link rel="canonical" href="https://axiom-talents.com/pricing" />
         <meta property="og:title" content="Tarifs AXIOM – Recrutement international abordable" />
-        <meta property="og:description" content="Talent 10 € · Entreprise 499 €/mois · Pack ALTIS tout-inclus. Recrutez des talents certifiés Afrique-France." />
+        <meta property="og:description" content="Test 4,99 € · Déblocage 29 € · Entreprise 499 €/mois · Pack ALTIS 2 450 €. Recrutez des talents certifiés Afrique-France." />
         <meta property="og:url" content="https://axiom-talents.com/pricing" />
       </Helmet>
       {/* Header */}
