@@ -61,6 +61,7 @@ export default function Leads() {
   const [score,    setScore]    = useState(0);
   const [selectedSecteur, setSelectedSecteur] = useState<typeof SECTEURS[0] | null>(null);
   const [form, setForm] = useState({ emailOrPhone: "", metier: "", experience: "", rgpd: false });
+  const [fullPaymentLoading, setFullPaymentLoading] = useState(false);
 
   const utmSource   = searchParams.get("utm_source");
   const utmMedium   = searchParams.get("utm_medium");
