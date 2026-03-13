@@ -177,7 +177,7 @@ export default function Signup() {
   };
 
   const handleUnlock = () => {
-    toast({ title: "Paiement 10 €", description: "Redirection vers la page de paiement…" });
+    toast({ title: "Paiement 4,99 €", description: "Redirection vers la page de paiement…" });
     navigate("/billing");
   };
 
@@ -594,7 +594,7 @@ export default function Signup() {
                     {/* Value teaser */}
                     <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-2">
                       <p className="text-xs font-semibold text-primary uppercase tracking-wide">
-                        Ce que vous débloquez avec Accès Essentiel 10 €
+                        Ce que vous débloquez avec le Test 4,99 €
                       </p>
                       {[
                         "Score détaillé par compétence ROME",
@@ -616,7 +616,7 @@ export default function Signup() {
                         className="w-full h-12 rounded-xl text-base font-semibold gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all"
                       >
                         <Star className="h-4 w-4" />
-                        Débloquer pour 10 €
+                        Débloquer pour 4,99 €
                       </Button>
 
                       <button

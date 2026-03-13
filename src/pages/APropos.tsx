@@ -72,10 +72,10 @@ const VISION_ITEMS = [
     icon: Target,
     title: "Modèle économique",
     points: [
-      "Freemium candidats — inscription gratuite",
+      "Freemium candidats → 4,99 € test + 29 € déblocage",
       "SaaS recruteurs : 499 €/mois",
       "Success fee : 25 % à l'embauche",
-      "Forfait ALTIS Intégral : 1 200 €/talent",
+      "Forfait ALTIS Intégral : 2 450 €/talent",
     ],
     accent: "text-tension", bg: "bg-tension/10", border: "border-tension/20",
   },

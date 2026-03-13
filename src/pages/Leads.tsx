@@ -513,8 +513,8 @@ export default function Leads() {
               <div className="rounded-xl p-3 mb-4 border text-center" style={{ background: "hsl(0,0%,100%,0.03)", borderColor: "hsl(0,0%,100%,0.07)" }}>
                 <p className="text-xs" style={{ color: "hsl(215,25%,58%)" }}>
                   Débloquez pour{" "}
-                  <strong style={{ color: "hsl(189,94%,43%)", fontSize: "1rem" }}>10 € unique</strong>{" "}
-                  : score détaillé + offres France Travail + parcours ALTIS
+                  <strong style={{ color: "hsl(189,94%,43%)", fontSize: "1rem" }}>4,99 €</strong>{" "}
+                  : score IA + analyse ROME + accès offres en tension
                 </p>
               </div>
 
@@ -536,7 +536,7 @@ export default function Leads() {
                 ) : (
                   <span className="flex items-center gap-2">
                     <Zap className="h-4 w-4" />
-                    Débloquer pour 10 €
+                    Débloquer pour 4,99 €
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 )}

@@ -127,7 +127,7 @@ interface TimelineStep {
 
 const MOCK_TIMELINE: TimelineStep[] = [
   { label: "Offre acceptée", icon: Briefcase, status: "done", date: "12 jan. 2026" },
-  { label: "Visa en cours", icon: Globe, status: "done", date: "28 jan. 2026", badge: { label: "CERTIFIÉ MINEFOP", color: "gold" }, tooltipText: "Diplôme CQP/DQP audité + Delta ROME comblé – Garantie opérationnel jour 1.", upsell: "Premium 30 € – Visibilité prioritaire recruteurs" },
+  { label: "Visa en cours", icon: Globe, status: "done", date: "28 jan. 2026", badge: { label: "CERTIFIÉ MINEFOP", color: "gold" }, tooltipText: "Diplôme CQP/DQP audité + Delta ROME comblé – Garantie opérationnel jour 1.", upsell: "Déblocage complet 29 € – Visibilité prioritaire recruteurs" },
   { label: "Billet réservé", icon: Plane, status: "done", date: "5 fév. 2026" },
   { label: "Logement trouvé", icon: Home, status: "done", date: "14 fév. 2026" },
   { label: "Formation démarrée", icon: GraduationCap, status: "active", tag: "Classes Miroirs – Module normes FR validé AXIOM", date: "En cours" },
@@ -500,7 +500,7 @@ export default function DashboardTalent() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <p className="text-sm font-medium text-foreground cursor-help">
-                        <span className="font-bold text-accent">Certification Premium — 30 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
+                        <span className="font-bold text-accent">Déblocage complet — 29 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
                       </p>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="max-w-xs text-xs">

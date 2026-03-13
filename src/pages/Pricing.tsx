@@ -13,12 +13,18 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.15, duration: 0.5 } }),
 };
 
-const TALENT_PERKS = [
-  "Analyse ROME complète de votre profil",
+const TALENT_TEST_PERKS = [
   "Score de compatibilité IA",
-  "Logistique ALTIS (visa, billet, accueil)",
+  "Analyse ROME de base",
   "Accès aux offres en tension",
+];
+
+const TALENT_FULL_PERKS = [
+  "Analyse ROME complète de votre profil",
+  "Score détaillé par compétence",
+  "Parcours ALTIS personnalisé (visa + billet + logement)",
   "Certification MINEFOP / MINREX",
+  "Priorité matching recruteurs ×3",
 ];
 
 const RECRUTEUR_PERKS = [
@@ -43,11 +49,11 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Tarifs AXIOM – Recrutement talents Afrique dès 10 € | Entreprise 499 €/mois</title>
-        <meta name="description" content="Plan Talent à 10 €, abonnement Recruteur/Entreprise à 499 €/mois (399 €/mois en annuel). Success fee 25 % + Pack ALTIS 1 200 €/talent. Sans engagement." />
+        <title>Tarifs AXIOM – Test 4,99 € · Déblocage 29 € | Entreprise 499 €/mois</title>
+        <meta name="description" content="Test d'éligibilité à 4,99 €, déblocage complet à 29 €. Abonnement Recruteur 499 €/mois (399 €/mois en annuel). Success fee 25 % + Pack ALTIS 2 450 €/talent." />
         <link rel="canonical" href="https://axiom-talents.com/pricing" />
         <meta property="og:title" content="Tarifs AXIOM – Recrutement international abordable" />
-        <meta property="og:description" content="Talent 10 € · Entreprise 499 €/mois · Pack ALTIS tout-inclus. Recrutez des talents certifiés Afrique-France." />
+        <meta property="og:description" content="Test 4,99 € · Déblocage 29 € · Entreprise 499 €/mois · Pack ALTIS 2 450 €. Recrutez des talents certifiés Afrique-France." />
         <meta property="og:url" content="https://axiom-talents.com/pricing" />
       </Helmet>
       {/* Header */}
@@ -125,29 +131,40 @@ export default function Pricing() {
 
         {/* Cards */}
         <div className="grid gap-8 md:grid-cols-2">
-          {/* Talent */}
+          {/* Talent – Test */}
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1}>
             <Card className="relative flex h-full flex-col overflow-hidden border-border/60">
               <CardHeader className="pb-2">
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                   <Crown className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Talent</CardTitle>
-                <CardDescription>Analyse complète + Pack ALTIS</CardDescription>
+                <CardTitle className="text-2xl">Test d'éligibilité</CardTitle>
+                <CardDescription>Score IA + analyse ROME de base</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <div className="mb-6">
-                  <span className="font-display text-5xl font-bold">10&nbsp;€</span>
+                  <span className="font-display text-5xl font-bold">4,99&nbsp;€</span>
                   <span className="ml-1 text-muted-foreground">/ paiement unique</span>
                 </div>
-                <ul className="mb-8 flex-1 space-y-3">
-                  {TALENT_PERKS.map((p) => (
+                <ul className="mb-4 flex-1 space-y-3">
+                  {TALENT_TEST_PERKS.map((p) => (
                     <li key={p} className="flex items-start gap-2 text-sm">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                       <span>{p}</span>
                     </li>
                   ))}
                 </ul>
+                <div className="mb-6 rounded-lg border border-accent/30 bg-accent/5 p-3">
+                  <p className="text-xs font-semibold text-accent mb-1">⬆ Déblocage complet — 29 €</p>
+                  <ul className="space-y-1.5">
+                    {TALENT_FULL_PERKS.map((p) => (
+                      <li key={p} className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <Check className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
+                        <span>{p}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 <Button className="w-full gap-2" size="lg" onClick={() => navigate("/signup-light")}>
                   Commencer
                   <ArrowRight className="h-4 w-4" />
@@ -215,7 +232,7 @@ export default function Pricing() {
         >
           Success Fee additionnel de 25 % du salaire annuel brut à la signature du CDI.
           <br />
-          Pack ALTIS Intégral disponible à 1 200 € / talent (visa, billet, accueil, logement).
+          Pack ALTIS Intégral disponible à 2 450 € / talent (visa, billet, accueil, logement).
         </motion.p>
       </main>
     </div>

@@ -84,7 +84,7 @@ serve(async (req) => {
     </tr>
     <tr style="background:#f8fafc;">
       <td style="padding:12px 16px;color:#475569;font-size:13px;">Pack ALTIS</td>
-      <td style="padding:12px 16px;color:#06B6D4;font-weight:700;font-size:13px;">1 200 €/talent</td>
+      <td style="padding:12px 16px;color:#06B6D4;font-weight:700;font-size:13px;">2 450 €/talent</td>
       <td style="padding:12px 16px;color:#475569;font-size:13px;">Visa ANEF + billet + accueil aéroport + logement 1 mois</td>
     </tr>
   </table>
