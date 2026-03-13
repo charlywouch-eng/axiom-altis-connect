@@ -889,7 +889,7 @@ export default function DashboardTalent() {
                                       <ArrowRight className="h-3 w-3" /> Postuler
                                     </Button>
                                   ) : (
-                                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5" onClick={handleUnlockPayment}>
+                                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5" onClick={() => handleUnlockPayment("full")}>
                                       <Lock className="h-3 w-3" /> Débloquer
                                     </Button>
                                   )}
