@@ -179,7 +179,7 @@ export default function Leads() {
 
   const handleFullPayment = async () => {
     setFullPaymentLoading(true);
-    trackGA4("paiement_full_started", { rome_code: form.metier, source: "leads" });
+    trackGA4("paiement_started", { rome_code: form.metier, source: "leads_full" });
     try {
       const email = form.emailOrPhone.includes("@") ? form.emailOrPhone : undefined;
       const { data, error } = await supabase.functions.invoke("create-payment-lead", {
