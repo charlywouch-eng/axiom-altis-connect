@@ -51,8 +51,8 @@ serve(async (req) => {
         if (subError) console.error("Error updating subscription status:", subError);
       }
 
-      // ── Paiement "Analyse Complète" 10€ talent ──────────────
-      if ((payment_type === "analyse_complete" || payment_type === "analyse_complete_lead") && user_id) {
+      // ── Paiement talent (test 4,99 € / déblocage complet 29 €) ──
+      if ((payment_type === "analyse_complete" || payment_type === "analyse_complete_lead" || payment_type === "deblocage_complet") && user_id) {
         const { data: existingProfile } = await supabaseClient
           .from("talent_profiles")
           .select("id")

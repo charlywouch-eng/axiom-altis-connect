@@ -510,8 +510,8 @@ export default function DashboardTalent() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={handleUnlockPayment} disabled={paymentLoading}>
-                  {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Activer <ChevronRight className="ml-1 h-3 w-3" /></>}
+                <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={() => handleUnlockPayment("full")} disabled={paymentLoading}>
+                  {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Débloquer 29 € <ChevronRight className="ml-1 h-3 w-3" /></>}
                 </Button>
               </div>
             )}
