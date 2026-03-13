@@ -224,7 +224,7 @@ export default function SignupLight() {
 
   const handleFullPayment = async () => {
     setFullPaymentLoading(true);
-    trackGA4("paiement_full_started", { rome_code: form.secteur, source: "signup-light" });
+    trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light-full" });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
       const isEmailContact = contact.includes("@");
