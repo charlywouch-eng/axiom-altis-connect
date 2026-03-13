@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { trackFunnel } from "@/lib/trackFunnel";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle2, Star, ArrowRight, Zap, Shield, Globe, Briefcase } from "lucide-react";
+import { CheckCircle2, Star, ArrowRight, Zap, Shield, Globe, Briefcase, Crown, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 /* ─── Secteurs mirror from Leads.tsx ────────────────────────────*/
 const SECTEURS: Record<string, { label: string; icon: string; demand: string }> = {
