@@ -539,6 +539,13 @@ export type Database = {
           user_id: string
         }[]
       }
+      talent_profile_update_check_rls: {
+        Args: {
+          new_row: Database["public"]["Tables"]["talent_profiles"]["Row"]
+          old_row: Database["public"]["Tables"]["talent_profiles"]["Row"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "entreprise" | "talent" | "admin" | "recruteur"
