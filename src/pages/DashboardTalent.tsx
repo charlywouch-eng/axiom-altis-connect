@@ -196,10 +196,12 @@ export default function DashboardTalent() {
 
   useEffect(() => { trackGA4("dashboard_talent_view"); }, []);
 
-  const handleUnlockPayment = async () => {
+  const handleUnlockPayment = async (tier: "test" | "full" = "test") => {
     setPaymentLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-payment-talent");
+      const { data, error } = await supabase.functions.invoke("create-payment-talent", {
+        body: { tier },
+      });
       if (error) throw error;
       if (data?.url) {
         window.location.href = data.url;
@@ -508,8 +510,8 @@ export default function DashboardTalent() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={handleUnlockPayment} disabled={paymentLoading}>
-                  {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Activer <ChevronRight className="ml-1 h-3 w-3" /></>}
+                <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={() => handleUnlockPayment("full")} disabled={paymentLoading}>
+                  {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Débloquer 29 € <ChevronRight className="ml-1 h-3 w-3" /></>}
                 </Button>
               </div>
             )}
@@ -732,8 +734,8 @@ export default function DashboardTalent() {
                             <p className="text-sm font-semibold text-foreground">Débloquer l'accès Premium</p>
                             <p className="text-xs text-muted-foreground mt-0.5">Badge MINEFOP/MINREX + visibilité ×3 recruteurs</p>
                           </div>
-                          <Button size="sm" className="shrink-0 gap-1.5 text-xs" onClick={handleUnlockPayment} disabled={paymentLoading}>
-                            <Zap className="h-3 w-3" /> 30 € <ChevronRight className="h-3.5 w-3.5" />
+                          <Button size="sm" className="shrink-0 gap-1.5 text-xs" onClick={() => handleUnlockPayment("full")} disabled={paymentLoading}>
+                            <Zap className="h-3 w-3" /> 29 € <ChevronRight className="h-3.5 w-3.5" />
                           </Button>
                         </motion.div>
                       )}
@@ -887,7 +889,7 @@ export default function DashboardTalent() {
                                       <ArrowRight className="h-3 w-3" /> Postuler
                                     </Button>
                                   ) : (
-                                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5" onClick={handleUnlockPayment}>
+                                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5" onClick={() => handleUnlockPayment("full")}>
                                       <Lock className="h-3 w-3" /> Débloquer
                                     </Button>
                                   )}

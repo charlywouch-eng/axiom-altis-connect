@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { trackFunnel } from "@/lib/trackFunnel";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle2, Star, ArrowRight, Zap, Shield, Globe, Briefcase } from "lucide-react";
+import { CheckCircle2, Star, ArrowRight, Zap, Shield, Globe, Briefcase, Crown, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 /* ─── Secteurs mirror from Leads.tsx ────────────────────────────*/
 const SECTEURS: Record<string, { label: string; icon: string; demand: string }> = {
@@ -78,10 +79,12 @@ function AnimatedCheck() {
 /* ─── Main page ─────────────────────────────────────────────────*/
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
 
   const rome      = searchParams.get("rome") ?? "F1703";
   const exp       = searchParams.get("exp")  ?? "0-2";
   const scoreRaw  = searchParams.get("score");
+  const tier      = searchParams.get("tier") ?? "test"; // "test" or "full"
   const secteur   = SECTEURS[rome] ?? SECTEURS["F1703"];
 
   /* score: from URL param OR derive from rome */
@@ -96,6 +99,23 @@ export default function PaymentSuccess() {
   const score = scoreRaw ? parseInt(scoreRaw, 10) : computedScore;
 
   const signupUrl = `/signup-light?premium=true&rome=${rome}&exp=${exp}`;
+
+  const handleUpgradeToFull = async () => {
+    setUpgradeLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment-talent", {
+        body: { tier: "full" },
+      });
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch {
+      // fallback: redirect to signup
+      window.location.href = signupUrl;
+    } finally {
+      setUpgradeLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     trackFunnel({
@@ -237,26 +257,51 @@ export default function PaymentSuccess() {
             ))}
           </motion.ul>
 
-          {/* CTA */}
+          {/* CTA — upgrade to full or create account */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.45 }}
-            className="w-full"
+            className="w-full space-y-3"
           >
-            <Link to={signupUrl} className="block w-full">
+            {tier === "test" && (
               <Button
+                onClick={handleUpgradeToFull}
+                disabled={upgradeLoading}
                 className="w-full h-12 text-base font-bold rounded-xl flex items-center justify-center gap-2 group"
                 style={{
+                  background: "linear-gradient(135deg, hsl(158 64% 30%), hsl(158 64% 42%))",
+                  boxShadow: "0 4px 24px hsl(158 64% 38% / 0.4)",
+                }}
+              >
+                <Crown className="w-4 h-4" />
+                Déblocage complet — 29 €
+                <Rocket className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            )}
+            <Link to={signupUrl} className="block w-full">
+              <Button
+                variant={tier === "test" ? "outline" : "default"}
+                className={`w-full h-12 text-base font-bold rounded-xl flex items-center justify-center gap-2 group ${
+                  tier === "test"
+                    ? "border-white/20 text-white hover:bg-white/10"
+                    : ""
+                }`}
+                style={tier !== "test" ? {
                   background: "linear-gradient(135deg, hsl(221 83% 38%), hsl(189 94% 43%))",
                   boxShadow: "0 4px 24px hsl(221 83% 38% / 0.4)",
-                }}
+                } : undefined}
               >
                 Créer mon compte complet
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
-            <p className="mt-3 text-xs" style={{ color: "hsl(215 16% 47%)" }}>
+            {tier === "test" && (
+              <p className="text-center text-[11px]" style={{ color: "hsl(158 64% 52%)" }}>
+                🔓 Score détaillé + offres matchées + parcours ALTIS + certification MINEFOP
+              </p>
+            )}
+            <p className="text-xs text-center" style={{ color: "hsl(215 16% 47%)" }}>
               Accès gratuit · Score complet disponible immédiatement après inscription
             </p>
           </motion.div>
