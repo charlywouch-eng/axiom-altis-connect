@@ -734,8 +734,8 @@ export default function DashboardTalent() {
                             <p className="text-sm font-semibold text-foreground">Débloquer l'accès Premium</p>
                             <p className="text-xs text-muted-foreground mt-0.5">Badge MINEFOP/MINREX + visibilité ×3 recruteurs</p>
                           </div>
-                          <Button size="sm" className="shrink-0 gap-1.5 text-xs" onClick={handleUnlockPayment} disabled={paymentLoading}>
-                            <Zap className="h-3 w-3" /> 30 € <ChevronRight className="h-3.5 w-3.5" />
+                          <Button size="sm" className="shrink-0 gap-1.5 text-xs" onClick={() => handleUnlockPayment("full")} disabled={paymentLoading}>
+                            <Zap className="h-3 w-3" /> 29 € <ChevronRight className="h-3.5 w-3.5" />
                           </Button>
                         </motion.div>
                       )}
