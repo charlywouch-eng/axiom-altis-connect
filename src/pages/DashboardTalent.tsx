@@ -196,10 +196,12 @@ export default function DashboardTalent() {
 
   useEffect(() => { trackGA4("dashboard_talent_view"); }, []);
 
-  const handleUnlockPayment = async () => {
+  const handleUnlockPayment = async (tier: "test" | "full" = "test") => {
     setPaymentLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-payment-talent");
+      const { data, error } = await supabase.functions.invoke("create-payment-talent", {
+        body: { tier },
+      });
       if (error) throw error;
       if (data?.url) {
         window.location.href = data.url;
