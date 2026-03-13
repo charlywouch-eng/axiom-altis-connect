@@ -177,7 +177,7 @@ export default function Signup() {
   };
 
   const handleUnlock = () => {
-    toast({ title: "Paiement 10 €", description: "Redirection vers la page de paiement…" });
+    toast({ title: "Paiement 4,99 €", description: "Redirection vers la page de paiement…" });
     navigate("/billing");
   };
 
