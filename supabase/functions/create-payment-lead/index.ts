@@ -48,17 +48,21 @@ serve(async (req) => {
     const successParams = new URLSearchParams({
       premium: "true",
       session_id: "{CHECKOUT_SESSION_ID}",
+      ...(rome_code ? { rome: rome_code } : {}),
+      ...(experience ? { exp: experience } : {}),
+      score: String(computedScore),
       ...(tier === "full" ? { tier: "full" } : {}),
+    });
 
     const cancelPage = source === "signup-light" ? "/signup-light" : "/leads";
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
-      line_items: [{ price: PRICE_ID, quantity: 1 }],
+      line_items: [{ price: priceConfig.id, quantity: 1 }],
       mode: "payment",
       success_url: `${origin}/payment-success?${successParams.toString()}`,
       cancel_url: `${origin}${cancelPage}?canceled=true`,
       metadata: {
-        payment_type: "analyse_complete_lead",
+        payment_type: priceConfig.payment_type,
         metier: metier ?? "",
         rome_code: rome_code ?? "",
         experience: experience ?? "",
