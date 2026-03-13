@@ -13,12 +13,18 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.15, duration: 0.5 } }),
 };
 
-const TALENT_PERKS = [
-  "Analyse ROME complète de votre profil",
+const TALENT_TEST_PERKS = [
   "Score de compatibilité IA",
-  "Logistique ALTIS (visa, billet, accueil)",
+  "Analyse ROME de base",
   "Accès aux offres en tension",
+];
+
+const TALENT_FULL_PERKS = [
+  "Analyse ROME complète de votre profil",
+  "Score détaillé par compétence",
+  "Parcours ALTIS personnalisé (visa + billet + logement)",
   "Certification MINEFOP / MINREX",
+  "Priorité matching recruteurs ×3",
 ];
 
 const RECRUTEUR_PERKS = [
