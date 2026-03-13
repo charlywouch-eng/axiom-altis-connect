@@ -48,10 +48,7 @@ serve(async (req) => {
     const successParams = new URLSearchParams({
       premium: "true",
       session_id: "{CHECKOUT_SESSION_ID}",
-      ...(rome_code ? { rome: rome_code } : {}),
-      ...(experience ? { exp: experience } : {}),
-      score: String(computedScore),
-    });
+      ...(tier === "full" ? { tier: "full" } : {}),
 
     const cancelPage = source === "signup-light" ? "/signup-light" : "/leads";
 
