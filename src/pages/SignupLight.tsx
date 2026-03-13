@@ -246,6 +246,7 @@ export default function SignupLight() {
     }
   };
 
+  return (
     <div className="min-h-screen flex flex-col bg-hero-gradient relative overflow-hidden">
       <Helmet>
         <title>Inscription talent rapide – AXIOM & ALTIS | Travaillez en France</title>
