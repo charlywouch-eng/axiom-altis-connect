@@ -7,7 +7,10 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PRICE_ID = "price_1TAcRuLLoCKfmmI1JCKUqUey"; // Test Éligibilité 4,99 €
+const PRICES: Record<string, { id: string; payment_type: string }> = {
+  test: { id: "price_1TAcRuLLoCKfmmI1JCKUqUey", payment_type: "analyse_complete_lead" },
+  full: { id: "price_1TAcSgLLoCKfmmI1jy4TZp8h", payment_type: "deblocage_complet_lead" },
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -20,13 +23,16 @@ serve(async (req) => {
     });
 
     const body = await req.json().catch(() => ({}));
-    const { email, metier, rome_code, experience, source } = body as {
+    const { email, metier, rome_code, experience, source, tier } = body as {
       email?: string;
       metier?: string;
       rome_code?: string;
       experience?: string;
-      source?: string; // "leads" or "signup-light"
+      source?: string;
+      tier?: string;
     };
+
+    const priceConfig = PRICES[tier === "full" ? "full" : "test"];
 
     const origin = req.headers.get("origin") || "https://axiom-altis-connect.lovable.app";
 
@@ -45,17 +51,18 @@ serve(async (req) => {
       ...(rome_code ? { rome: rome_code } : {}),
       ...(experience ? { exp: experience } : {}),
       score: String(computedScore),
+      ...(tier === "full" ? { tier: "full" } : {}),
     });
 
     const cancelPage = source === "signup-light" ? "/signup-light" : "/leads";
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
-      line_items: [{ price: PRICE_ID, quantity: 1 }],
+      line_items: [{ price: priceConfig.id, quantity: 1 }],
       mode: "payment",
       success_url: `${origin}/payment-success?${successParams.toString()}`,
       cancel_url: `${origin}${cancelPage}?canceled=true`,
       metadata: {
-        payment_type: "analyse_complete_lead",
+        payment_type: priceConfig.payment_type,
         metier: metier ?? "",
         rome_code: rome_code ?? "",
         experience: experience ?? "",

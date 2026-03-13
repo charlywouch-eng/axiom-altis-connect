@@ -115,8 +115,8 @@ export default function SignupLight() {
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [fullPaymentLoading, setFullPaymentLoading] = useState(false);
   const [rgpd, setRgpd] = useState(false);
-  const [showPremiumTooltip, setShowPremiumTooltip] = useState(false);
 
   const [usePhone, setUsePhone] = useState(false);
   const [phoneValid, setPhoneValid] = useState(false);
@@ -219,6 +219,30 @@ export default function SignupLight() {
     } catch (err: any) {
       toast({ title: "Erreur paiement", description: err.message, variant: "destructive" });
       setPaymentLoading(false);
+    }
+  };
+
+  const handleFullPayment = async () => {
+    setFullPaymentLoading(true);
+    trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light-full" });
+    try {
+      const contact = form.contact || localStorage.getItem("axiom_contact") || "";
+      const isEmailContact = contact.includes("@");
+      const { data, error } = await supabase.functions.invoke("create-payment-lead", {
+        body: {
+          email:      isEmailContact ? contact : undefined,
+          metier:     selectedSecteur?.metier ?? selectedSecteur?.label ?? "",
+          rome_code:  form.secteur,
+          experience: form.experience,
+          source:     "signup-light",
+          tier:       "full",
+        },
+      });
+      if (error || !data?.url) throw new Error(error?.message || "Erreur paiement");
+      window.location.href = data.url;
+    } catch (err: any) {
+      toast({ title: "Erreur paiement", description: err.message, variant: "destructive" });
+      setFullPaymentLoading(false);
     }
   };
 
@@ -869,7 +893,7 @@ export default function SignupLight() {
                 </div>
               </div>
 
-              {/* ── Upsell 10 € ── */}
+              {/* ── Upsell 4,99 € ── */}
               <div className="rounded-3xl overflow-hidden shadow-xl bg-[hsl(222,47%,11%)] border border-accent/20">
                 <div className="h-px w-full bg-gradient-cta" />
                 <div className="p-6">
@@ -878,20 +902,19 @@ export default function SignupLight() {
                       <Sparkles className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="font-black text-sm text-white">Débloquez maintenant</p>
+                      <p className="font-black text-sm text-white">Test d'éligibilité rapide</p>
                       <p className="text-xs mt-0.5 leading-relaxed text-white/45">
-                        Score IA + analyse ROME + accès offres en tension — <span className="font-semibold text-accent">4,99 €</span> (test d'éligibilité rapide)
+                        Score IA + analyse ROME + aperçu offres en tension — <span className="font-semibold text-accent">4,99 €</span>
                       </p>
                     </div>
                   </div>
 
-                  {/* Value props */}
                   <div className="grid grid-cols-2 gap-2 mb-5">
                     {[
-                      "Analyse approfondie ROME",
-                      "Offres France Travail illimitées",
-                      "Parcours ALTIS complet",
-                      "Priorité recruteurs ×3",
+                      "Score détaillé ROME",
+                      "Aperçu offres France Travail",
+                      "Analyse compétences IA",
+                      "Résultat immédiat",
                     ].map((item) => (
                       <div key={item} className="flex items-center gap-1.5 text-xs text-white/50">
                         <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
@@ -900,7 +923,6 @@ export default function SignupLight() {
                     ))}
                   </div>
 
-                  {/* CTA 10€ */}
                   <Button
                     size="lg"
                     className="w-full h-12 text-base rounded-xl font-bold shadow-md group relative overflow-hidden bg-gradient-cta border-0 text-white"
@@ -916,50 +938,85 @@ export default function SignupLight() {
                         </>
                       ) : (
                         <>
-                          Débloquer pour 10 €
+                          Débloquer pour 4,99 €
                           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                         </>
                       )}
                     </span>
                   </Button>
 
-                  {/* Free CTA */}
                   <button
                     onClick={() => window.location.href = "/dashboard-talent"}
                     className="w-full text-center text-xs mt-3 py-2 transition-colors hover:underline text-white/30"
                   >
-                    Continuer gratuitement (version limitée : score global sans détails) →
+                    Continuer gratuitement (version limitée) →
                   </button>
+                </div>
+              </div>
 
-                  {/* Premium 30€ tooltip */}
-                  <div className="mt-4 rounded-xl p-3 relative bg-white/[0.03] border border-white/[0.06]">
-                    <div className="flex items-start gap-2.5">
-                      <Star className="h-3.5 w-3.5 shrink-0 mt-0.5 text-tension" />
-                      <div className="flex-1">
-                        <p className="text-[11px] leading-relaxed text-white/40">
-                          <span className="font-bold text-white">Plus tard — Premium 30 €</span> : Badge vérifié MINEFOP/MINREX officiel + visibilité ×3 auprès des recruteurs partenaires
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => setShowPremiumTooltip(!showPremiumTooltip)}
-                        className="flex-shrink-0 mt-0.5"
-                      >
-                        <Info className="h-3.5 w-3.5 text-white/20" />
-                      </button>
+              {/* ── Upsell 29 € — Déblocage complet ── */}
+              <div className="rounded-3xl overflow-hidden shadow-xl bg-[hsl(222,47%,11%)] border border-[hsl(158,64%,38%,0.3)]">
+                <div className="h-px w-full" style={{ background: "linear-gradient(90deg, hsl(158 64% 30%), hsl(158 64% 42%))" }} />
+                <div className="p-6">
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0 bg-[hsl(158,64%,38%,0.1)] border border-[hsl(158,64%,38%,0.2)]">
+                      <Award className="h-5 w-5 text-[hsl(158,64%,52%)]" />
                     </div>
-                    <AnimatePresence>
-                      {showPremiumTooltip && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="mt-2 pt-2 text-[10px] leading-relaxed text-white/30 border-t border-white/[0.06]"
-                        >
-                          Le badge MINEFOP/MINREX certifie vos diplômes africains reconnus en France. Il triple votre visibilité auprès des recruteurs partenaires AXIOM et accélère l'instruction de votre visa travail.
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-black text-sm text-white">Déblocage complet</p>
+                        <Badge className="text-[10px] bg-[hsl(158,64%,38%,0.15)] text-[hsl(158,64%,52%)] border border-[hsl(158,64%,38%,0.3)]">Recommandé</Badge>
+                      </div>
+                      <p className="text-xs mt-0.5 leading-relaxed text-white/45">
+                        Tout inclus : score + offres matchées + parcours ALTIS + certification MINEFOP — <span className="font-semibold text-[hsl(158,64%,52%)]">29 €</span>
+                      </p>
+                    </div>
                   </div>
+
+                  <div className="grid grid-cols-2 gap-2 mb-5">
+                    {[
+                      "Score détaillé par compétence",
+                      "3–5 offres CDI matchées",
+                      "Parcours ALTIS : visa + billet",
+                      "Certification MINEFOP officielle",
+                      "Priorité recruteurs ×3",
+                      "Logement 1 mois inclus",
+                    ].map((item) => (
+                      <div key={item} className="flex items-center gap-1.5 text-xs text-white/50">
+                        <CheckCircle2 className="h-3 w-3 shrink-0 text-[hsl(158,64%,52%)]" />
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+
+                  <Button
+                    size="lg"
+                    className="w-full h-12 text-base rounded-xl font-bold shadow-md group relative overflow-hidden border-0 text-white"
+                    style={{
+                      background: "linear-gradient(135deg, hsl(158 64% 30%), hsl(158 64% 42%))",
+                      boxShadow: "0 4px 24px hsl(158 64% 38% / 0.3)",
+                    }}
+                    onClick={handleFullPayment}
+                    disabled={fullPaymentLoading}
+                  >
+                    <span className="relative flex items-center justify-center gap-2">
+                      {fullPaymentLoading ? (
+                        <>
+                          <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                          Redirection Stripe…
+                        </>
+                      ) : (
+                        <>
+                          Déblocage complet — 29 €
+                          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                        </>
+                      )}
+                    </span>
+                  </Button>
+
+                  <p className="text-center text-[10px] mt-2 text-[hsl(158,64%,52%,0.6)]">
+                    🔓 Économisez 24 € vs achat séparé · Accès immédiat après paiement
+                  </p>
                 </div>
               </div>
 
