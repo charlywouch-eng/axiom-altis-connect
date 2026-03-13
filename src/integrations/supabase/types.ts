@@ -546,6 +546,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      talent_update_rls_check: {
+        Args: {
+          _compliance_score: number
+          _is_premium: boolean
+          _premium_unlocked_at: string
+          _score: number
+          _user_id: string
+          _visa_status: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "entreprise" | "talent" | "admin" | "recruteur"
