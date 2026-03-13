@@ -222,7 +222,30 @@ export default function SignupLight() {
     }
   };
 
-  return (
+  const handleFullPayment = async () => {
+    setFullPaymentLoading(true);
+    trackGA4("paiement_full_started", { rome_code: form.secteur, source: "signup-light" });
+    try {
+      const contact = form.contact || localStorage.getItem("axiom_contact") || "";
+      const isEmailContact = contact.includes("@");
+      const { data, error } = await supabase.functions.invoke("create-payment-lead", {
+        body: {
+          email:      isEmailContact ? contact : undefined,
+          metier:     selectedSecteur?.metier ?? selectedSecteur?.label ?? "",
+          rome_code:  form.secteur,
+          experience: form.experience,
+          source:     "signup-light",
+          tier:       "full",
+        },
+      });
+      if (error || !data?.url) throw new Error(error?.message || "Erreur paiement");
+      window.location.href = data.url;
+    } catch (err: any) {
+      toast({ title: "Erreur paiement", description: err.message, variant: "destructive" });
+      setFullPaymentLoading(false);
+    }
+  };
+
     <div className="min-h-screen flex flex-col bg-hero-gradient relative overflow-hidden">
       <Helmet>
         <title>Inscription talent rapide – AXIOM & ALTIS | Travaillez en France</title>
