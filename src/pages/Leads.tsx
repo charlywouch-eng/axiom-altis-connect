@@ -582,6 +582,41 @@ export default function Leads() {
                 )}
               </Button>
 
+              {/* ── Full unlock 29 € ── */}
+              <div className="rounded-xl p-3 mb-3 border text-center" style={{ background: "hsl(189,94%,43%,0.06)", borderColor: "hsl(189,94%,43%,0.2)" }}>
+                <p className="text-xs" style={{ color: "hsl(215,25%,58%)" }}>
+                  Ou passez directement au{" "}
+                  <strong style={{ color: "hsl(45,93%,47%)", fontSize: "1rem" }}>déblocage complet — 29 €</strong>
+                </p>
+                <p className="text-[10px] mt-1" style={{ color: "hsl(215,25%,45%)" }}>
+                  Score + offres + dossier ALTIS complet (visa, billet, logement)
+                </p>
+              </div>
+
+              <Button
+                className="w-full h-12 font-bold text-sm rounded-xl mb-2"
+                style={{ background: "linear-gradient(135deg, hsl(45,93%,47%), hsl(36,100%,50%))", color: "hsl(222,47%,7%)" }}
+                onClick={handleFullPayment}
+                disabled={fullPaymentLoading}
+              >
+                {fullPaymentLoading ? (
+                  <span className="flex items-center gap-2">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
+                      className="h-4 w-4 border-2 border-current/30 border-t-current rounded-full"
+                    />
+                    Redirection Stripe…
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Star className="h-4 w-4" />
+                    Déblocage complet — 29 €
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                )}
+              </Button>
+
               <Button
                 variant="ghost"
                 className="w-full text-xs h-8"
