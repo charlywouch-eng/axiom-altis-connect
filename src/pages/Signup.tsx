@@ -594,7 +594,7 @@ export default function Signup() {
                     {/* Value teaser */}
                     <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-2">
                       <p className="text-xs font-semibold text-primary uppercase tracking-wide">
-                        Ce que vous débloquez avec Accès Essentiel 10 €
+                        Ce que vous débloquez avec le Test 4,99 €
                       </p>
                       {[
                         "Score détaillé par compétence ROME",
