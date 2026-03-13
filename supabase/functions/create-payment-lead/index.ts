@@ -7,7 +7,10 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PRICE_ID = "price_1TAcRuLLoCKfmmI1JCKUqUey"; // Test Éligibilité 4,99 €
+const PRICES: Record<string, { id: string; payment_type: string }> = {
+  test: { id: "price_1TAcRuLLoCKfmmI1JCKUqUey", payment_type: "analyse_complete_lead" },
+  full: { id: "price_1TAcSgLLoCKfmmI1jy4TZp8h", payment_type: "deblocage_complet_lead" },
+};
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
