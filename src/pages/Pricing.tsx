@@ -49,8 +49,8 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Tarifs AXIOM – Recrutement talents Afrique dès 10 € | Entreprise 499 €/mois</title>
-        <meta name="description" content="Plan Talent à 10 €, abonnement Recruteur/Entreprise à 499 €/mois (399 €/mois en annuel). Success fee 25 % + Pack ALTIS 1 200 €/talent. Sans engagement." />
+        <title>Tarifs AXIOM – Test 4,99 € · Déblocage 29 € | Entreprise 499 €/mois</title>
+        <meta name="description" content="Test d'éligibilité à 4,99 €, déblocage complet à 29 €. Abonnement Recruteur 499 €/mois (399 €/mois en annuel). Success fee 25 % + Pack ALTIS 2 450 €/talent." />
         <link rel="canonical" href="https://axiom-talents.com/pricing" />
         <meta property="og:title" content="Tarifs AXIOM – Recrutement international abordable" />
         <meta property="og:description" content="Talent 10 € · Entreprise 499 €/mois · Pack ALTIS tout-inclus. Recrutez des talents certifiés Afrique-France." />
