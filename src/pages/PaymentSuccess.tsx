@@ -79,10 +79,12 @@ function AnimatedCheck() {
 /* ─── Main page ─────────────────────────────────────────────────*/
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
 
   const rome      = searchParams.get("rome") ?? "F1703";
   const exp       = searchParams.get("exp")  ?? "0-2";
   const scoreRaw  = searchParams.get("score");
+  const tier      = searchParams.get("tier") ?? "test"; // "test" or "full"
   const secteur   = SECTEURS[rome] ?? SECTEURS["F1703"];
 
   /* score: from URL param OR derive from rome */
@@ -95,6 +97,24 @@ export default function PaymentSuccess() {
   };
   const computedScore = Math.min(95, (BASE_SCORES[rome] ?? 75) + (EXP_BONUS[exp] ?? 0));
   const score = scoreRaw ? parseInt(scoreRaw, 10) : computedScore;
+
+  const signupUrl = `/signup-light?premium=true&rome=${rome}&exp=${exp}`;
+
+  const handleUpgradeToFull = async () => {
+    setUpgradeLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment-talent", {
+        body: { tier: "full" },
+      });
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch {
+      // fallback: redirect to signup
+      window.location.href = signupUrl;
+    } finally {
+      setUpgradeLoading(false);
+    }
+  };
 
   const signupUrl = `/signup-light?premium=true&rome=${rome}&exp=${exp}`;
 
