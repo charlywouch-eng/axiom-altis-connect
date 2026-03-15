@@ -48,7 +48,7 @@ interface OpportunitesTabProps {
   lbbLoading: boolean;
   isPremium: boolean;
   visaStatus: string;
-  itemVariants: Record<string, unknown>;
+  itemVariants: import("framer-motion").Variants;
 }
 
 const SECTOR_BADGE_COLORS: Record<string, string> = {
