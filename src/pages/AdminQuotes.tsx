@@ -316,14 +316,31 @@ export default function AdminQuotes() {
                   </div>
                 )}
                 <div className="text-xs space-y-1.5">
+                  <span className="text-muted-foreground">Montant estimé (€)</span>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={estimatedAmount}
+                    onChange={e => setEstimatedAmount(e.target.value)}
+                    placeholder="Ex : 12 250 — laisser vide pour calcul auto"
+                    className="text-xs h-8"
+                  />
+                  <p className="text-[10px] text-muted-foreground">Laissez vide pour utiliser l'estimation automatique basée sur le volume.</p>
+                </div>
+                <div className="text-xs space-y-1.5">
                   <span className="text-muted-foreground">Notes internes</span>
                   <Textarea value={adminNotes} onChange={e => setAdminNotes(e.target.value)} placeholder="Ajouter des notes…" className="text-xs min-h-[80px]" />
                 </div>
               </div>
             )}
             <DialogFooter>
-              <Button size="sm" className="text-xs" onClick={() => selectedQuote && saveNotes.mutate({ id: selectedQuote.id, notes: adminNotes })}>
-                Enregistrer les notes
+              <Button size="sm" className="text-xs" onClick={() => selectedQuote && saveNotes.mutate({
+                id: selectedQuote.id,
+                notes: adminNotes,
+                estimated_amount: estimatedAmount.trim() ? parseFloat(estimatedAmount) : null,
+              })}>
+                Enregistrer
               </Button>
             </DialogFooter>
           </DialogContent>
