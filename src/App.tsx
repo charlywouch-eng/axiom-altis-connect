@@ -27,6 +27,7 @@ import AdminImportTalents from "./pages/AdminImportTalents";
 import AdminStatistics from "./pages/AdminStatistics";
 import AdminLeads from "./pages/AdminLeads";
 import AdminQuotes from "./pages/AdminQuotes";
+import AdminAuditLogs from "./pages/AdminAuditLogs";
 import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
@@ -175,6 +176,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminQuotes />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/audit-logs"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminAuditLogs />
                 </ProtectedRoute>
               }
             />
