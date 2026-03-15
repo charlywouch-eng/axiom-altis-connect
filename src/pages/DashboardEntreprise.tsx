@@ -1149,6 +1149,15 @@ export default function DashboardEntreprise() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* ── Quote Generator Dialog ── */}
+      <QuoteGeneratorDialog
+        open={quoteGenDialogOpen}
+        onOpenChange={setQuoteGenDialogOpen}
+        companyName={companyProfile?.company_name || ""}
+        contactEmail={companyProfile?.contact_email || user?.email || ""}
+        onQuoteGenerated={() => queryClient.invalidateQueries({ queryKey: ["my_generated_quotes"] })}
+      />
     </DashboardLayout>
   );
 }
