@@ -525,6 +525,7 @@ export default function AdminStatistics() {
               </>
             )}
           </CardContent>
+        </Card>
 
         {/* Daily Leads Chart */}
         <Card>
