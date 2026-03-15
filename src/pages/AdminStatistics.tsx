@@ -469,6 +469,63 @@ export default function AdminStatistics() {
           </CardContent>
         </Card>
 
+        {/* GA4 Conversion Funnel */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              Funnel GA4 – Acquisition &amp; Paiement
+            </CardTitle>
+            <div className="flex gap-1">
+              {(["7", "30", "90"] as const).map((p) => (
+                <Button
+                  key={p}
+                  variant={funnelPeriod === p ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 px-2.5 text-xs"
+                  onClick={() => setFunnelPeriod(p)}
+                >
+                  {p}j
+                </Button>
+              ))}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {funnelEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">Aucun événement GA4 enregistré sur cette période.</p>
+            ) : (
+              <>
+                <div className="grid gap-3 sm:grid-cols-4 mb-6">
+                  {ga4FunnelSteps.map((s, i) => {
+                    const count = funnelCounts[s.key] || 0;
+                    const prevCount = i === 0 ? count : funnelCounts[ga4FunnelSteps[i - 1].key] || 0;
+                    const rate = prevCount > 0 ? Math.round((count / prevCount) * 100) : 0;
+                    return (
+                      <div key={s.key} className="rounded-lg p-3 text-center" style={{ background: `${s.color}15`, border: `1px solid ${s.color}30` }}>
+                        <p className="text-2xl font-bold" style={{ color: s.color }}>{count}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+                        {i > 0 && <p className="text-[10px] font-semibold mt-1" style={{ color: s.color }}>{rate}% conv.</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={ga4FunnelChartData} barCategoryGap="20%">
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
+                    <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                    <Tooltip contentStyle={customTooltipStyle} />
+                    <Bar dataKey="count" name="Événements" radius={[6, 6, 0, 0]}>
+                      {ga4FunnelChartData.map((entry, i) => (
+                        <Cell key={i} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </>
+            )}
+          </CardContent>
+
         {/* Daily Leads Chart */}
         <Card>
           <CardHeader>
