@@ -155,6 +155,7 @@ export default function SignupLight() {
     }
 
     setLoading(true);
+    trackGA4("inscription_start", { rome_code: form.secteur, experience: form.experience, source: "signup-light" });
     try {
       const meta = {
         rome_code: form.secteur,
