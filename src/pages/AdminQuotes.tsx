@@ -47,6 +47,7 @@ export default function AdminQuotes() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
+  const [estimatedAmount, setEstimatedAmount] = useState("");
 
   const { data: quotes = [], isLoading } = useQuery({
     queryKey: ["admin_quotes"],
