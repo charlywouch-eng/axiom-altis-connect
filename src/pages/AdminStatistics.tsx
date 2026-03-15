@@ -260,6 +260,51 @@ export default function AdminStatistics() {
     return Array.from(new Set(talents.map((t) => t.french_level).filter(Boolean))).sort();
   }, [talents]);
 
+  // Weekly quote requests
+  const { data: quoteRequests = [] } = useQuery({
+    queryKey: ["admin_weekly_quotes"],
+    queryFn: async () => {
+      const since = new Date();
+      since.setDate(since.getDate() - 90);
+      const { data, error } = await (supabase.from as any)("quote_requests")
+        .select("created_at, status")
+        .gte("created_at", since.toISOString())
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data as { created_at: string; status: string }[];
+    },
+  });
+
+  const weeklyQuotesChart = useMemo(() => {
+    const map: Record<string, { total: number; contacte: number; converti: number }> = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i * 7);
+      const weekStart = new Date(d);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+      const key = weekStart.toISOString().slice(0, 10);
+      map[key] = { total: 0, contacte: 0, converti: 0 };
+    }
+    const weekKeys = Object.keys(map).sort();
+    quoteRequests.forEach((q) => {
+      const qDate = new Date(q.created_at);
+      const weekStart = new Date(qDate);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+      const key = weekStart.toISOString().slice(0, 10);
+      if (map[key]) {
+        map[key].total++;
+        if (q.status === "contacte" || q.status === "en_cours") map[key].contacte++;
+        if (q.status === "converti") map[key].converti++;
+      }
+    });
+    return weekKeys.map((key) => ({
+      semaine: `S${key.slice(5, 7)}/${key.slice(8, 10)}`,
+      total: map[key].total,
+      contacte: map[key].contacte,
+      converti: map[key].converti,
+    }));
+  }, [quoteRequests]);
+
 
   const countryData = Object.entries(groupBy(filteredTalents, (t) => t.country || "Inconnu"))
     .map(([name, items]) => ({ name, value: items.length }))
