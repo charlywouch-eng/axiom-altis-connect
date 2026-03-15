@@ -990,10 +990,9 @@ export default function SignupLight() {
                     {[
                       "Score détaillé par compétence",
                       "3–5 offres CDI matchées",
-                      "Parcours ALTIS : visa + billet",
+                      "Parcours ALTIS : visa ANEF + billet A/R + accueil + logement + accompagnement",
                       "Certification MINEFOP officielle",
                       "Priorité recruteurs ×3",
-                      "Logement 1 mois inclus",
                     ].map((item) => (
                       <div key={item} className="flex items-center gap-1.5 text-xs text-white/50">
                         <CheckCircle2 className="h-3 w-3 shrink-0 text-[hsl(158,64%,52%)]" />

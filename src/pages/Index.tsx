@@ -203,7 +203,7 @@ export default function Index() {
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Matching IA + visa + billet d'avion + logement ALTIS pris en charge.{" "}
+                Matching IA + visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif.{" "}
                 <strong className="text-white/85">Opérationnel dès le Jour 1.</strong>
               </motion.p>
 
