@@ -122,9 +122,9 @@ export default function AdminQuotes() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: "Total",    value: stats.total,    icon: FileText,     color: "text-foreground" },
-            { label: "Nouveaux", value: stats.nouveau,  icon: Clock,        color: "text-amber-600" },
-            { label: "En cours", value: stats.enCours,  icon: MessageSquare, color: "text-primary" },
-            { label: "Acceptés", value: stats.accepte,  icon: CheckCircle2, color: "text-emerald-600" },
+            { label: "Nouveaux",  value: stats.nouveau,   icon: Clock,        color: "text-amber-600" },
+            { label: "Contactés", value: stats.contacte,  icon: MessageSquare, color: "text-primary" },
+            { label: "Convertis", value: stats.converti,  icon: CheckCircle2, color: "text-emerald-600" },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="border-border/50">
               <CardContent className="pt-4 pb-3">
