@@ -116,8 +116,7 @@ export default function SignupLight() {
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [fullPaymentLoading, setFullPaymentLoading] = useState(false);
-  const isTestMode = searchParams.get("test") === "true" || searchParams.get("dev") === "true";
-  const [rgpd, setRgpd] = useState(isTestMode);
+  const [rgpd, setRgpd] = useState(false);
 
   const [usePhone, setUsePhone] = useState(false);
   const [phoneValid, setPhoneValid] = useState(false);
