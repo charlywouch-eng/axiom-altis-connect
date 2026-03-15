@@ -200,8 +200,8 @@ export default function SignupLight() {
 
   const handlePremiumPayment = async () => {
     setPaymentLoading(true);
+    trackGA4("paiement_4_99_started", { rome_code: form.secteur, source: "signup-light" });
     trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light" });
-    trackGA4("teaser_10_eu", { rome_code: form.secteur });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
       const isEmailContact = contact.includes("@");
@@ -224,6 +224,7 @@ export default function SignupLight() {
 
   const handleFullPayment = async () => {
     setFullPaymentLoading(true);
+    trackGA4("paiement_29_started", { rome_code: form.secteur, source: "signup-light-full" });
     trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light-full" });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
@@ -648,7 +649,10 @@ export default function SignupLight() {
                       <Checkbox
                         id="rgpd"
                         checked={rgpd}
-                        onCheckedChange={(v) => setRgpd(v as boolean)}
+                        onCheckedChange={(v) => {
+                          setRgpd(v as boolean);
+                          if (v) trackGA4("rgpd_accepted", { source: "signup-light" });
+                        }}
                         className="mt-0.5 h-5 w-5"
                       />
                       <label htmlFor="rgpd" className="text-sm text-white/45 leading-relaxed cursor-pointer">
