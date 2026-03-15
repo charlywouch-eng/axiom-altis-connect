@@ -19,6 +19,9 @@ type GA4Event =
   | "score_viewed"
   | "teaser_10_eu"
   | "paiement_started"
+  | "paiement_4_99_started"
+  | "paiement_29_started"
+  | "rgpd_accepted"
   | "dashboard_talent_view"
   | "dashboard_entreprise_view";
 
