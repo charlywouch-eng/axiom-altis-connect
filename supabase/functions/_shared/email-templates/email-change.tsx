@@ -43,7 +43,7 @@ export const EmailChangeEmail = ({ siteName, email, newEmail, confirmationUrl }:
         <Section style={signature}>
           <Img src="https://wfolueffkdzknuowwecf.supabase.co/storage/v1/object/public/email-assets/logo-rh-tech.png" width="80" height="auto" alt="AXIOM" style={{ margin: '0 auto 8px' }} />
           <Text style={sigSlogan}>TIaaS — Talent Infrastructure as a Service</Text>
-          <Text style={sigLinks}><Link href="https://axiom-altis-connect.lovable.app" style={sigLink}>axiom-altis-connect.lovable.app</Link>{' · '}<Link href="mailto:contact@axiom-talents.com" style={sigLink}>contact@axiom-talents.com</Link></Text>
+          <Text style={sigLinks}><Link href="https://axiom-talents.com" style={sigLink}>axiom-talents.com</Link>{' · '}<Link href="mailto:support@axiom-talents.com" style={sigLink}>support@axiom-talents.com</Link></Text>
         </Section>
         <Text style={footerBrand}>© {new Date().getFullYear()} AXIOM × ALTIS Mobility – Tous droits réservés</Text>
       </Container>

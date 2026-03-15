@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-const DASHBOARD_URL = "https://axiom-altis-connect.lovable.app/dashboard-entreprise";
+const DASHBOARD_URL = "https://axiom-talents.com/dashboard-entreprise";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -99,7 +99,7 @@ serve(async (req) => {
   </table>
 
   <p style="color:#64748b;font-size:13px;line-height:1.5;margin:0;">
-    Besoin d'aide ? Répondez directement à cet email ou contactez-nous à <a href="mailto:contact@axiom-altis.com" style="color:#1E40AF;">contact@axiom-altis.com</a>.
+    Besoin d'aide ? Répondez directement à cet email ou contactez-nous à <a href="mailto:support@axiom-talents.com" style="color:#1E40AF;">support@axiom-talents.com</a>.
   </p>
 </td></tr>
 
@@ -121,11 +121,11 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "AXIOM ALTIS <noreply@axiom-altis.com>",
+        from: "AXIOM ALTIS <notify@axiom-talents.com>",
         to: [user.email],
         subject: "Bienvenue sur AXIOM × ALTIS – Votre espace recruteur est prêt",
         html,
-        reply_to: "contact@axiom-altis.com",
+        reply_to: "support@axiom-talents.com",
       }),
     });
 

@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const COMMERCIAL_EMAIL = "contact@axiom-altis.com";
+const COMMERCIAL_EMAIL = "contact@axiom-talents.com";
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
@@ -94,7 +94,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "AXIOM ALTIS <noreply@axiom-altis.com>",
+        from: "AXIOM ALTIS <notify@axiom-talents.com>",
         to: [COMMERCIAL_EMAIL],
         subject: `[Devis] ${company} – ${sector}`,
         html: htmlContent,
@@ -157,7 +157,7 @@ serve(async (req) => {
             <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
               <tr>
                 <td style="background:#0ea5e9;border-radius:8px;">
-                  <a href="https://axiom-altis-connect.lovable.app/pricing" style="display:inline-block;padding:14px 32px;color:#ffffff;text-decoration:none;font-weight:700;font-size:15px;">Voir nos tarifs</a>
+                  <a href="https://axiom-talents.com/pricing" style="display:inline-block;padding:14px 32px;color:#ffffff;text-decoration:none;font-weight:700;font-size:15px;">Voir nos tarifs</a>
                 </td>
               </tr>
             </table>
@@ -168,9 +168,9 @@ serve(async (req) => {
           <td style="background:#f8fafc;padding:24px 40px;border-top:1px solid #e2e8f0;text-align:center;">
             <p style="margin:0 0 4px;color:#94a3b8;font-size:12px;">AXIOM ALTIS — Recrutement international Afrique → France</p>
             <p style="margin:0;color:#94a3b8;font-size:12px;">
-              <a href="https://axiom-altis-connect.lovable.app" style="color:#0ea5e9;text-decoration:none;">axiom-talents.com</a>
+              <a href="https://axiom-talents.com" style="color:#0ea5e9;text-decoration:none;">axiom-talents.com</a>
               &nbsp;·&nbsp;
-              <a href="mailto:contact@axiom-altis.com" style="color:#0ea5e9;text-decoration:none;">contact@axiom-altis.com</a>
+              <a href="mailto:contact@axiom-talents.com" style="color:#0ea5e9;text-decoration:none;">contact@axiom-talents.com</a>
             </p>
           </td>
         </tr>
@@ -187,7 +187,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "AXIOM ALTIS <noreply@axiom-altis.com>",
+        from: "AXIOM ALTIS <notify@axiom-talents.com>",
         to: [userEmail],
         subject: "Votre demande de devis a bien été reçue — AXIOM ALTIS",
         html: confirmationHtml,
