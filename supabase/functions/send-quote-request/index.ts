@@ -170,7 +170,7 @@ serve(async (req) => {
             <p style="margin:0;color:#94a3b8;font-size:12px;">
               <a href="https://axiom-altis-connect.lovable.app" style="color:#0ea5e9;text-decoration:none;">axiom-talents.com</a>
               &nbsp;·&nbsp;
-              <a href="mailto:contact@axiom-altis.com" style="color:#0ea5e9;text-decoration:none;">contact@axiom-altis.com</a>
+              <a href="mailto:contact@axiom-talents.com" style="color:#0ea5e9;text-decoration:none;">contact@axiom-talents.com</a>
             </p>
           </td>
         </tr>
