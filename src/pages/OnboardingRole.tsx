@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LogOut } from "lucide-react";
 import {
   Building2, Users, Search, Shield, ArrowRight, CheckCircle2,
   Briefcase, Globe, Star, Zap, ChevronRight
