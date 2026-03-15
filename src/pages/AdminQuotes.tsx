@@ -143,6 +143,86 @@ export default function AdminQuotes() {
           ))}
         </div>
 
+        {/* Monthly Revenue Chart */}
+        {(() => {
+          const VOLUME_EST: Record<string, number> = {
+            "1-5": 2450, "6-10": 2450 * 7, "11-20": 2450 * 15, "20+": 2450 * 25,
+          };
+
+          // Build 12-month timeline
+          const now = new Date();
+          const months: { key: string; label: string; demandes: number; ca: number }[] = [];
+          for (let i = 11; i >= 0; i--) {
+            const d = subMonths(now, i);
+            const key = format(d, "yyyy-MM");
+            months.push({ key, label: format(d, "MMM yy", { locale: fr }), demandes: 0, ca: 0 });
+          }
+
+          quotes.forEach(q => {
+            const key = q.created_at.slice(0, 7);
+            const m = months.find(mo => mo.key === key);
+            if (!m) return;
+            m.demandes += 1;
+            if (q.status === "converti") {
+              m.ca += q.estimated_amount != null ? q.estimated_amount : (VOLUME_EST[q.volume || "1-5"] || 2450);
+            }
+          });
+
+          const hasData = months.some(m => m.demandes > 0);
+          if (!hasData) return null;
+
+          return (
+            <Card className="border-border/50">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  Évolution mensuelle
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={months} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="demandesGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.2} />
+                          <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                      <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                      <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)} />
+                      <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                      <Tooltip
+                        contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
+                        labelStyle={{ color: "hsl(var(--foreground))", fontWeight: 600 }}
+                        formatter={(value: number, name: string) => [
+                          name === "ca" ? `${value.toLocaleString("fr-FR")} €` : value,
+                          name === "ca" ? "CA converti" : "Demandes"
+                        ]}
+                      />
+                      <Area yAxisId="right" type="monotone" dataKey="demandes" stroke="hsl(var(--accent))" fill="url(#demandesGrad)" strokeWidth={2} dot={false} />
+                      <Area yAxisId="left" type="monotone" dataKey="ca" stroke="hsl(var(--primary))" fill="url(#caGrad)" strokeWidth={2.5} dot={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex gap-4 mt-2 justify-center">
+                  <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                    <div className="w-3 h-0.5 rounded-full bg-primary" /> CA converti (€)
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                    <div className="w-3 h-0.5 rounded-full bg-accent" /> Demandes
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
+
         {/* Converted Quotes Summary */}
         {(() => {
           const convertis = quotes.filter(q => q.status === "converti");
