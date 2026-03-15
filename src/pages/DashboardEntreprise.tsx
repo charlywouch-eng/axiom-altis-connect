@@ -231,7 +231,7 @@ export default function DashboardEntreprise() {
     queryFn: async () => {
       const { data } = await supabase
         .from("company_profiles")
-        .select("company_name, logo_url")
+        .select("company_name, logo_url, contact_email")
         .eq("user_id", user!.id)
         .maybeSingle();
       return data;
