@@ -190,7 +190,10 @@ export default function AdminQuotes() {
                             <td className="py-2 pr-4 font-medium text-foreground">{q.company}</td>
                             <td className="py-2 pr-4 text-muted-foreground">{q.sector}</td>
                             <td className="py-2 pr-4 text-muted-foreground">{q.volume || "—"}</td>
-                            <td className="py-2 pr-4 font-semibold text-emerald-600">{montant.toLocaleString("fr-FR")} €</td>
+                            <td className="py-2 pr-4 font-semibold text-emerald-600">
+                              {montant.toLocaleString("fr-FR")} €
+                              {isCustom && <span className="ml-1 text-[9px] font-normal text-muted-foreground">(personnalisé)</span>}
+                            </td>
                           </tr>
                         );
                       })}
