@@ -648,7 +648,10 @@ export default function SignupLight() {
                       <Checkbox
                         id="rgpd"
                         checked={rgpd}
-                        onCheckedChange={(v) => setRgpd(v as boolean)}
+                        onCheckedChange={(v) => {
+                          setRgpd(v as boolean);
+                          if (v) trackGA4("rgpd_accepted", { source: "signup-light" });
+                        }}
                         className="mt-0.5 h-5 w-5"
                       />
                       <label htmlFor="rgpd" className="text-sm text-white/45 leading-relaxed cursor-pointer">
