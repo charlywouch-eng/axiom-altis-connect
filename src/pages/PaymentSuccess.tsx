@@ -130,7 +130,7 @@ export default function PaymentSuccess() {
   const perks = [
     { icon: Star,      text: "Score détaillé par compétence & niveau ROME" },
     { icon: Briefcase, text: "3 à 5 offres CDI France Travail matchées" },
-    { icon: Globe,     text: "Parcours ALTIS : visa + billet + logement" },
+    { icon: Globe,     text: "Parcours ALTIS : visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif" },
     { icon: Shield,    text: "Accompagnement MINEFOP certifié" },
   ];
 

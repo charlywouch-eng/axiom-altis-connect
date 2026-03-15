@@ -57,7 +57,7 @@ const SECTEURS = [
 const TRUST_CARDS = [
   { icon: Zap, title: "Matching IA précis", desc: "Algorithme ROME certifié — profil scoré en 30 secondes", accent: "text-accent", bg: "bg-accent/10" },
   { icon: Shield, title: "Certifications MINEFOP", desc: "Diplômes apostillés, reconnus par l'État français", accent: "text-success", bg: "bg-success/10" },
-  { icon: Plane, title: "Pack ALTIS Zéro Stress", desc: "Visa + billet + logement meublé pris en charge", accent: "text-primary", bg: "bg-primary/10" },
+  { icon: Plane, title: "Pack ALTIS Zéro Stress", desc: "Visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif", accent: "text-primary", bg: "bg-primary/10" },
   { icon: Star, title: "Inscription gratuite", desc: "Commencez sans engagement, débloquez le premium après", accent: "text-tension", bg: "bg-tension/10" },
 ];
 
@@ -203,7 +203,7 @@ export default function Index() {
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Matching IA + visa + billet d'avion + logement ALTIS pris en charge.{" "}
+                Matching IA + visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif.{" "}
                 <strong className="text-white/85">Opérationnel dès le Jour 1.</strong>
               </motion.p>
 
