@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Check, Zap, Crown, Building2, ArrowRight, Shield } from "lucide-react";
+import { AltisPackFAQ } from "@/components/pricing/AltisPackFAQ";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -222,12 +223,15 @@ export default function Pricing() {
           </motion.div>
         </div>
 
+        {/* FAQ Pack ALTIS */}
+        <AltisPackFAQ animationCustomStart={3} />
+
         {/* Bottom note */}
         <motion.p
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          custom={3}
+          custom={5}
           className="mt-12 text-center text-sm text-muted-foreground"
         >
           Success Fee additionnel de 25 % du salaire annuel brut à la signature du CDI.
