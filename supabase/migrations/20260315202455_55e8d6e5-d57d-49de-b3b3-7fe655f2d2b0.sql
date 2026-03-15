@@ -1,0 +1,1 @@
+ALTER TABLE public.quote_requests ADD COLUMN estimated_amount numeric DEFAULT NULL;

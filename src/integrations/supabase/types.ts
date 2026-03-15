@@ -455,6 +455,7 @@ export type Database = {
         Row: {
           company: string
           created_at: string
+          estimated_amount: number | null
           id: string
           message: string | null
           notes: string | null
@@ -468,6 +469,7 @@ export type Database = {
         Insert: {
           company: string
           created_at?: string
+          estimated_amount?: number | null
           id?: string
           message?: string | null
           notes?: string | null
@@ -481,6 +483,7 @@ export type Database = {
         Update: {
           company?: string
           created_at?: string
+          estimated_amount?: number | null
           id?: string
           message?: string | null
           notes?: string | null
