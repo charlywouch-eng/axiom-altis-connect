@@ -36,6 +36,7 @@ interface QuoteRequest {
   message: string | null;
   status: string;
   notes: string | null;
+  estimated_amount: number | null;
   created_at: string;
 }
 
@@ -46,6 +47,7 @@ export default function AdminQuotes() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
+  const [estimatedAmount, setEstimatedAmount] = useState("");
 
   const { data: quotes = [], isLoading } = useQuery({
     queryKey: ["admin_quotes"],
@@ -70,13 +72,13 @@ export default function AdminQuotes() {
   });
 
   const saveNotes = useMutation({
-    mutationFn: async ({ id, notes }: { id: string; notes: string }) => {
-      const { error } = await (supabase.from as any)("quote_requests").update({ notes }).eq("id", id);
+    mutationFn: async ({ id, notes, estimated_amount }: { id: string; notes: string; estimated_amount: number | null }) => {
+      const { error } = await (supabase.from as any)("quote_requests").update({ notes, estimated_amount }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin_quotes"] });
-      toast({ title: "Notes enregistrées" });
+      toast({ title: "Détails enregistrés" });
       setSelectedQuote(null);
     },
   });
@@ -151,6 +153,7 @@ export default function AdminQuotes() {
           };
 
           const totalEstime = convertis.reduce((sum, q) => {
+            if (q.estimated_amount != null) return sum + q.estimated_amount;
             const vol = q.volume || "1-5";
             return sum + (VOLUME_ESTIMATES[vol] || 2450);
           }, 0);
@@ -179,14 +182,18 @@ export default function AdminQuotes() {
                     <tbody>
                       {convertis.map(q => {
                         const vol = q.volume || "1-5";
-                        const montant = VOLUME_ESTIMATES[vol] || 2450;
+                        const montant = q.estimated_amount != null ? q.estimated_amount : (VOLUME_ESTIMATES[vol] || 2450);
+                        const isCustom = q.estimated_amount != null;
                         return (
                           <tr key={q.id} className="border-b border-border/20">
                             <td className="py-2 pr-4 text-muted-foreground">{new Date(q.created_at).toLocaleDateString("fr-FR")}</td>
                             <td className="py-2 pr-4 font-medium text-foreground">{q.company}</td>
                             <td className="py-2 pr-4 text-muted-foreground">{q.sector}</td>
                             <td className="py-2 pr-4 text-muted-foreground">{q.volume || "—"}</td>
-                            <td className="py-2 pr-4 font-semibold text-emerald-600">{montant.toLocaleString("fr-FR")} €</td>
+                            <td className="py-2 pr-4 font-semibold text-emerald-600">
+                              {montant.toLocaleString("fr-FR")} €
+                              {isCustom && <span className="ml-1 text-[9px] font-normal text-muted-foreground">(personnalisé)</span>}
+                            </td>
                           </tr>
                         );
                       })}
@@ -271,7 +278,7 @@ export default function AdminQuotes() {
                             </Select>
                           </td>
                           <td className="py-2.5">
-                            <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1" onClick={() => { setSelectedQuote(q); setAdminNotes(q.notes ?? ""); }}>
+                            <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1" onClick={() => { setSelectedQuote(q); setAdminNotes(q.notes ?? ""); setEstimatedAmount(q.estimated_amount != null ? String(q.estimated_amount) : ""); }}>
                               <MessageSquare className="h-3 w-3" />Détails
                             </Button>
                           </td>
@@ -309,14 +316,31 @@ export default function AdminQuotes() {
                   </div>
                 )}
                 <div className="text-xs space-y-1.5">
+                  <span className="text-muted-foreground">Montant estimé (€)</span>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={estimatedAmount}
+                    onChange={e => setEstimatedAmount(e.target.value)}
+                    placeholder="Ex : 12 250 — laisser vide pour calcul auto"
+                    className="text-xs h-8"
+                  />
+                  <p className="text-[10px] text-muted-foreground">Laissez vide pour utiliser l'estimation automatique basée sur le volume.</p>
+                </div>
+                <div className="text-xs space-y-1.5">
                   <span className="text-muted-foreground">Notes internes</span>
                   <Textarea value={adminNotes} onChange={e => setAdminNotes(e.target.value)} placeholder="Ajouter des notes…" className="text-xs min-h-[80px]" />
                 </div>
               </div>
             )}
             <DialogFooter>
-              <Button size="sm" className="text-xs" onClick={() => selectedQuote && saveNotes.mutate({ id: selectedQuote.id, notes: adminNotes })}>
-                Enregistrer les notes
+              <Button size="sm" className="text-xs" onClick={() => selectedQuote && saveNotes.mutate({
+                id: selectedQuote.id,
+                notes: adminNotes,
+                estimated_amount: estimatedAmount.trim() ? parseFloat(estimatedAmount) : null,
+              })}>
+                Enregistrer
               </Button>
             </DialogFooter>
           </DialogContent>
