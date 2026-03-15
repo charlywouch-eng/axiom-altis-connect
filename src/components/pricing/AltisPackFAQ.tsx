@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { HelpCircle, Plane, Globe, Home, FileCheck, Clock, CreditCard, ShieldCheck } from "lucide-react";
+import { HelpCircle, Plane, Globe, Home, FileCheck, Clock, CreditCard, ShieldCheck, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Accordion,
   AccordionContent,
@@ -67,6 +69,8 @@ interface AltisPackFAQProps {
 }
 
 export function AltisPackFAQ({ animationCustomStart = 4 }: AltisPackFAQProps) {
+  const navigate = useNavigate();
+
   return (
     <motion.section
       initial="hidden"
@@ -115,6 +119,23 @@ export function AltisPackFAQ({ animationCustomStart = 4 }: AltisPackFAQProps) {
           </motion.div>
         ))}
       </Accordion>
+
+      {/* CTA Demander un devis */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        custom={animationCustomStart + 1.5}
+        className="mx-auto mt-10 max-w-2xl text-center"
+      >
+        <p className="mb-4 text-sm text-muted-foreground">
+          Besoin d'un devis personnalisé pour votre entreprise ?
+        </p>
+        <Button size="lg" className="gap-2" onClick={() => navigate("/signup")}>
+          Demander un devis
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </motion.div>
     </motion.section>
   );
 }
