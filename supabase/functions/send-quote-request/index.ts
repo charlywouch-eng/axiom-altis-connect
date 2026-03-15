@@ -98,7 +98,7 @@ serve(async (req) => {
         to: [COMMERCIAL_EMAIL],
         subject: `[Devis] ${company} – ${sector}`,
         html: htmlContent,
-        reply_to: user.email,
+        reply_to: userEmail,
       }),
     });
 
