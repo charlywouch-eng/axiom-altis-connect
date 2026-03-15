@@ -126,7 +126,7 @@ serve(async (req) => {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
       body: JSON.stringify({
-        from: "AXIOM ALTIS <noreply@axiom-altis.com>",
+        from: "AXIOM ALTIS <notify@axiom-talents.com>",
         to: [recipientEmail],
         subject: `Votre devis ${quoteData.quoteNumber} — AXIOM ALTIS`,
         html: htmlEmail,
