@@ -200,8 +200,8 @@ export default function SignupLight() {
 
   const handlePremiumPayment = async () => {
     setPaymentLoading(true);
+    trackGA4("paiement_4_99_started", { rome_code: form.secteur, source: "signup-light" });
     trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light" });
-    trackGA4("teaser_10_eu", { rome_code: form.secteur });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
       const isEmailContact = contact.includes("@");
