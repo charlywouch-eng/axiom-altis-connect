@@ -35,6 +35,7 @@ const adminLinks = [
   { title: "Subventions", url: "/admin/subventions", icon: GraduationCap },
   { title: "Devis", url: "/admin/quotes", icon: FileText },
   { title: "Leads", url: "/admin/leads", icon: TrendingUp },
+  { title: "Audit & Sécurité", url: "/admin/audit-logs", icon: ShieldAlert },
   { title: "Facturation", url: "/admin/facturation", icon: CreditCard },
 ];
 
