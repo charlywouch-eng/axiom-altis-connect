@@ -153,6 +153,7 @@ export default function AdminQuotes() {
           };
 
           const totalEstime = convertis.reduce((sum, q) => {
+            if (q.estimated_amount != null) return sum + q.estimated_amount;
             const vol = q.volume || "1-5";
             return sum + (VOLUME_ESTIMATES[vol] || 2450);
           }, 0);
