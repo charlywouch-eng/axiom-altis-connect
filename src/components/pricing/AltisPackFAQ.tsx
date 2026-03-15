@@ -131,7 +131,7 @@ export function AltisPackFAQ({ animationCustomStart = 4 }: AltisPackFAQProps) {
         <p className="mb-4 text-sm text-muted-foreground">
           Besoin d'un devis personnalisé pour votre entreprise ?
         </p>
-        <Button size="lg" className="gap-2" onClick={() => navigate("/signup")}>
+        <Button size="lg" className="gap-2" onClick={() => navigate("/demande-devis")}>
           Demander un devis
           <ArrowRight className="h-4 w-4" />
         </Button>
