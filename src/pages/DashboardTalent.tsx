@@ -126,19 +126,6 @@ const MOCK_RECOMMENDED_OFFERS = [
   { id: "mock-r5", title: "Serveur / Serveuse", company: "Hôtel Splendide", codeRome: "G1602", sector: "CHR", location: "Bordeaux, Nouvelle-Aquitaine", contract: "Saisonnier", score: 78, salary: "22 000 – 26 000 €/an", skills: ["Service en salle", "HACCP", "Anglais professionnel"], tension: "Modérée", url: null },
 ];
 
-const CONTRACT_COLORS: Record<string, string> = {
-  CDI: "bg-success/10 text-success border-success/30",
-  CDD: "bg-primary/10 text-primary border-primary/30",
-  Saisonnier: "bg-accent/10 text-accent border-accent/30",
-  MIS: "bg-accent/10 text-accent border-accent/30",
-  SAI: "bg-accent/10 text-accent border-accent/30",
-};
-
-const TENSION_COLORS: Record<string, string> = {
-  "Très forte": "bg-red-500/10 text-red-600 border-red-300/40",
-  Forte: "bg-orange-500/10 text-orange-600 border-orange-300/40",
-  Modérée: "bg-amber-500/10 text-amber-600 border-amber-300/40",
-};
 
 const MOCK_PROFILE_DATA = {
   full_name: "Test Cameroon",
