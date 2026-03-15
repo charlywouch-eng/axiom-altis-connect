@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const COMMERCIAL_EMAIL = "contact@axiom-altis.com";
+const COMMERCIAL_EMAIL = "contact@axiom-talents.com";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

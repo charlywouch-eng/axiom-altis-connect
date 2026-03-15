@@ -105,7 +105,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "AXIOM Contact <notify@axiom-talents.com>",
-        to: ["charly@axiom-talents.com"],
+        to: ["contact@axiom-talents.com"],
         subject: `[Contact AXIOM] Message de ${name}`,
         html,
         reply_to: email,
