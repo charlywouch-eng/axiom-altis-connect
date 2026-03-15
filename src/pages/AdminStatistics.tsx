@@ -192,7 +192,20 @@ export default function AdminStatistics() {
     { key: "signup_started", label: "Inscription démarrée", color: "hsl(var(--primary))" },
   ];
 
+  const ga4FunnelSteps = [
+    { key: "inscription_start", label: "Inscription démarrée", color: "hsl(var(--accent))" },
+    { key: "rgpd_accepted", label: "RGPD accepté", color: "hsl(210, 70%, 55%)" },
+    { key: "paiement_4_99_started", label: "Paiement 4,99 € cliqué", color: "hsl(45, 80%, 55%)" },
+    { key: "paiement_29_started", label: "Paiement 29 € cliqué", color: "hsl(160, 60%, 45%)" },
+  ];
+
   const funnelChartData = funnelSteps.map((s) => ({
+    name: s.label,
+    count: funnelCounts[s.key] || 0,
+    fill: s.color,
+  }));
+
+  const ga4FunnelChartData = ga4FunnelSteps.map((s) => ({
     name: s.label,
     count: funnelCounts[s.key] || 0,
     fill: s.color,
@@ -446,6 +459,64 @@ export default function AdminStatistics() {
                     <Tooltip contentStyle={customTooltipStyle} />
                     <Bar dataKey="count" name="Événements" radius={[6, 6, 0, 0]}>
                       {funnelChartData.map((entry, i) => (
+                        <Cell key={i} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* GA4 Conversion Funnel */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              Funnel GA4 – Acquisition &amp; Paiement
+            </CardTitle>
+            <div className="flex gap-1">
+              {(["7", "30", "90"] as const).map((p) => (
+                <Button
+                  key={p}
+                  variant={funnelPeriod === p ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 px-2.5 text-xs"
+                  onClick={() => setFunnelPeriod(p)}
+                >
+                  {p}j
+                </Button>
+              ))}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {funnelEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">Aucun événement GA4 enregistré sur cette période.</p>
+            ) : (
+              <>
+                <div className="grid gap-3 sm:grid-cols-4 mb-6">
+                  {ga4FunnelSteps.map((s, i) => {
+                    const count = funnelCounts[s.key] || 0;
+                    const prevCount = i === 0 ? count : funnelCounts[ga4FunnelSteps[i - 1].key] || 0;
+                    const rate = prevCount > 0 ? Math.round((count / prevCount) * 100) : 0;
+                    return (
+                      <div key={s.key} className="rounded-lg p-3 text-center" style={{ background: `${s.color}15`, border: `1px solid ${s.color}30` }}>
+                        <p className="text-2xl font-bold" style={{ color: s.color }}>{count}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+                        {i > 0 && <p className="text-[10px] font-semibold mt-1" style={{ color: s.color }}>{rate}% conv.</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={ga4FunnelChartData} barCategoryGap="20%">
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} />
+                    <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                    <Tooltip contentStyle={customTooltipStyle} />
+                    <Bar dataKey="count" name="Événements" radius={[6, 6, 0, 0]}>
+                      {ga4FunnelChartData.map((entry, i) => (
                         <Cell key={i} fill={entry.fill} />
                       ))}
                     </Bar>
