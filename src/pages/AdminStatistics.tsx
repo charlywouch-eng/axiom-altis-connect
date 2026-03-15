@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X, Download, FileImage, FileText, Zap } from "lucide-react";
+import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X, Download, FileImage, FileText, Zap, FileCheck } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -259,6 +259,51 @@ export default function AdminStatistics() {
   const frenchLevels = useMemo(() => {
     return Array.from(new Set(talents.map((t) => t.french_level).filter(Boolean))).sort();
   }, [talents]);
+
+  // Weekly quote requests
+  const { data: quoteRequests = [] } = useQuery({
+    queryKey: ["admin_weekly_quotes"],
+    queryFn: async () => {
+      const since = new Date();
+      since.setDate(since.getDate() - 90);
+      const { data, error } = await (supabase.from as any)("quote_requests")
+        .select("created_at, status")
+        .gte("created_at", since.toISOString())
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data as { created_at: string; status: string }[];
+    },
+  });
+
+  const weeklyQuotesChart = useMemo(() => {
+    const map: Record<string, { total: number; contacte: number; converti: number }> = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i * 7);
+      const weekStart = new Date(d);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+      const key = weekStart.toISOString().slice(0, 10);
+      map[key] = { total: 0, contacte: 0, converti: 0 };
+    }
+    const weekKeys = Object.keys(map).sort();
+    quoteRequests.forEach((q) => {
+      const qDate = new Date(q.created_at);
+      const weekStart = new Date(qDate);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+      const key = weekStart.toISOString().slice(0, 10);
+      if (map[key]) {
+        map[key].total++;
+        if (q.status === "contacte" || q.status === "en_cours") map[key].contacte++;
+        if (q.status === "converti") map[key].converti++;
+      }
+    });
+    return weekKeys.map((key) => ({
+      semaine: `S${key.slice(5, 7)}/${key.slice(8, 10)}`,
+      total: map[key].total,
+      contacte: map[key].contacte,
+      converti: map[key].converti,
+    }));
+  }, [quoteRequests]);
 
 
   const countryData = Object.entries(groupBy(filteredTalents, (t) => t.country || "Inconnu"))
@@ -555,6 +600,40 @@ export default function AdminStatistics() {
                 <Legend />
                 <Area type="monotone" dataKey="total" name="Total leads" stroke="hsl(var(--accent))" fill="url(#gradTotal)" strokeWidth={2} />
                 <Area type="monotone" dataKey="premium" name="Premium payés" stroke="hsl(160, 60%, 45%)" fill="url(#gradPremium)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Weekly Quote Requests Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <FileCheck className="h-4 w-4 text-primary" />
+              Demandes de devis par semaine (12 dernières semaines)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart data={weeklyQuotesChart}>
+                <defs>
+                  <linearGradient id="gradQuoteTotal" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradQuoteConverti" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="semaine" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
+                <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                <Tooltip contentStyle={customTooltipStyle} />
+                <Legend />
+                <Area type="monotone" dataKey="total" name="Total devis" stroke="hsl(var(--primary))" fill="url(#gradQuoteTotal)" strokeWidth={2} />
+                <Area type="monotone" dataKey="contacte" name="Contactés" stroke="hsl(var(--accent))" fill="none" strokeWidth={2} strokeDasharray="4 2" />
+                <Area type="monotone" dataKey="converti" name="Convertis" stroke="hsl(160, 60%, 45%)" fill="url(#gradQuoteConverti)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
