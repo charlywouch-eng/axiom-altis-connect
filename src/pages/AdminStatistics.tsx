@@ -560,6 +560,40 @@ export default function AdminStatistics() {
           </CardContent>
         </Card>
 
+        {/* Weekly Quote Requests Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <FileCheck className="h-4 w-4 text-primary" />
+              Demandes de devis par semaine (12 dernières semaines)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart data={weeklyQuotesChart}>
+                <defs>
+                  <linearGradient id="gradQuoteTotal" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gradQuoteConverti" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(160, 60%, 45%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="semaine" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
+                <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                <Tooltip contentStyle={customTooltipStyle} />
+                <Legend />
+                <Area type="monotone" dataKey="total" name="Total devis" stroke="hsl(var(--primary))" fill="url(#gradQuoteTotal)" strokeWidth={2} />
+                <Area type="monotone" dataKey="contacte" name="Contactés" stroke="hsl(var(--accent))" fill="none" strokeWidth={2} strokeDasharray="4 2" />
+                <Area type="monotone" dataKey="converti" name="Convertis" stroke="hsl(160, 60%, 45%)" fill="url(#gradQuoteConverti)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Chargement…</p>
         ) : talents.length === 0 ? (
