@@ -106,8 +106,8 @@ export default function AdminQuotes() {
   const stats = {
     total: quotes.length,
     nouveau: quotes.filter(q => q.status === "nouveau").length,
-    enCours: quotes.filter(q => q.status === "en_cours").length,
-    accepte: quotes.filter(q => q.status === "accepte").length,
+    contacte: quotes.filter(q => q.status === "contacte").length,
+    converti: quotes.filter(q => q.status === "converti").length,
   };
 
   return (
