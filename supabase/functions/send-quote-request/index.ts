@@ -168,7 +168,7 @@ serve(async (req) => {
           <td style="background:#f8fafc;padding:24px 40px;border-top:1px solid #e2e8f0;text-align:center;">
             <p style="margin:0 0 4px;color:#94a3b8;font-size:12px;">AXIOM ALTIS — Recrutement international Afrique → France</p>
             <p style="margin:0;color:#94a3b8;font-size:12px;">
-              <a href="https://axiom-altis-connect.lovable.app" style="color:#0ea5e9;text-decoration:none;">axiom-talents.com</a>
+              <a href="https://axiom-talents.com" style="color:#0ea5e9;text-decoration:none;">axiom-talents.com</a>
               &nbsp;·&nbsp;
               <a href="mailto:contact@axiom-talents.com" style="color:#0ea5e9;text-decoration:none;">contact@axiom-talents.com</a>
             </p>
