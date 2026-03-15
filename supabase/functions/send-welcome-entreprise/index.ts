@@ -125,7 +125,7 @@ serve(async (req) => {
         to: [user.email],
         subject: "Bienvenue sur AXIOM × ALTIS – Votre espace recruteur est prêt",
         html,
-        reply_to: "contact@axiom-altis.com",
+        reply_to: "support@axiom-talents.com",
       }),
     });
 
