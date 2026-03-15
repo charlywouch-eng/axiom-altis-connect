@@ -32,19 +32,25 @@ serve(async (req) => {
       throw new Error("RESEND_API_KEY is not configured");
     }
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated");
-    logStep("User authenticated", { email: user.email });
-
     const body = await req.json();
-    const { company, sector, volume, message } = body;
+    const { company, sector, volume, message, user_email } = body;
 
+    // Try to get authenticated user, but allow unauthenticated requests
+    let userEmail = user_email;
+    let userId: string | null = null;
+
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: userData } = await supabaseClient.auth.getUser(token);
+      if (userData?.user) {
+        userEmail = userData.user.email || userEmail;
+        userId = userData.user.id;
+        logStep("User authenticated", { email: userEmail });
+      }
+    }
+
+    if (!userEmail) throw new Error("Email requis");
     if (!company || !sector) {
       throw new Error("Champs obligatoires manquants (entreprise, secteur)");
     }
@@ -55,8 +61,8 @@ serve(async (req) => {
     const { error: insertError } = await supabaseClient
       .from("quote_requests")
       .insert({
-        user_id: user.id,
-        user_email: user.email,
+        user_id: userId || "00000000-0000-0000-0000-000000000000",
+        user_email: userEmail,
         company,
         sector,
         volume: volume || null,
@@ -71,7 +77,7 @@ serve(async (req) => {
     const htmlContent = `
       <h2>📋 Nouvelle demande de devis</h2>
       <table style="border-collapse:collapse;width:100%;max-width:600px;font-family:sans-serif;">
-        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Email</td><td style="padding:8px;border:1px solid #ddd;">${user.email}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Email</td><td style="padding:8px;border:1px solid #ddd;">${userEmail}</td></tr>
         <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Entreprise</td><td style="padding:8px;border:1px solid #ddd;">${company}</td></tr>
         <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Secteur</td><td style="padding:8px;border:1px solid #ddd;">${sector}</td></tr>
         <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Volume</td><td style="padding:8px;border:1px solid #ddd;">${volume || "Non précisé"}</td></tr>
@@ -92,7 +98,7 @@ serve(async (req) => {
         to: [COMMERCIAL_EMAIL],
         subject: `[Devis] ${company} – ${sector}`,
         html: htmlContent,
-        reply_to: user.email,
+        reply_to: userEmail,
       }),
     });
 

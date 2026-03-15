@@ -42,6 +42,7 @@ import Pricing from "./pages/Pricing";
 import APropos from "./pages/APropos";
 import Pitch from "./pages/Pitch";
 import ResetPassword from "./pages/ResetPassword";
+import DemandeDevis from "./pages/DemandeDevis";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/a-propos" element={<APropos />} />
             <Route path="/pitch" element={<Pitch />} />
+            <Route path="/demande-devis" element={<DemandeDevis />} />
             <Route
               path="/onboarding-role"
               element={
