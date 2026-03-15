@@ -48,7 +48,7 @@ import {
   Building2,
   Save,
   MapPin,
-  Banknote,
+  
   Star,
   TrendingUp,
   Shield,
@@ -733,10 +733,11 @@ export default function DashboardTalent() {
                     <CardContent>
                       <div className="grid gap-3 sm:grid-cols-2">
                         {[
-                          { icon: Home, label: "Logement temporaire", desc: "Résidence partenaire J+1 · 3 mois inclus", status: "Actif" },
-                          { icon: GraduationCap, label: "Classes Miroirs", desc: "Formation normes FR · 120h certifiées AXIOM", status: "En cours" },
-                          { icon: Globe, label: "Visa & Légalisation", desc: "Apostille MINREX · Titre de séjour accompagné", status: "Terminé" },
-                          { icon: Banknote, label: "Avance sur salaire", desc: "Jusqu'à 2 000 € · Sans intérêts 3 premiers mois", status: "Disponible" },
+                          { icon: Globe, label: "Visa ANEF & Légalisation", desc: "Apostille MINREX · Titre de séjour accompagné", status: "Terminé" },
+                          { icon: Plane, label: "Billet d'avion A/R", desc: "Vol aller-retour inclus · Réservation AXIOM", status: "Confirmé" },
+                          { icon: Building2, label: "Accueil aéroport", desc: "Accueil personnalisé dès l'arrivée en France", status: "Planifié" },
+                          { icon: Home, label: "Logement meublé 1 mois", desc: "Résidence partenaire J+1 · Tout équipé", status: "Actif" },
+                          { icon: GraduationCap, label: "Accompagnement administratif", desc: "Démarches préfecture · Inscription services publics", status: "En cours" },
                         ].map(({ icon: Icon, label, desc, status }) => (
                           <div key={label} className="flex gap-3 p-3 rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors">
                             <div className="h-9 w-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
