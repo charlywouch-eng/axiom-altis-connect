@@ -249,6 +249,11 @@ export default function SignupLight() {
 
   return (
     <div className="min-h-screen flex flex-col bg-hero-gradient relative overflow-hidden">
+      {isTestMode && (
+        <div className="fixed top-2 right-2 z-[9999] bg-amber-500/90 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-lg backdrop-blur-sm">
+          Mode TEST – RGPD forcé
+        </div>
+      )}
       <Helmet>
         <title>Inscription talent rapide – AXIOM & ALTIS | Travaillez en France</title>
         <meta name="description" content="Inscrivez-vous en 2 min sans mot de passe. Score de compatibilité IA gratuit pour les métiers en tension en France : BTP, santé, CHR, logistique. Certification MINEFOP + Pack ALTIS visa." />
