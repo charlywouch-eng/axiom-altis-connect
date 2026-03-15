@@ -488,7 +488,6 @@ export default function OnboardingRole() {
               Se déconnecter
             </Button>
           </div>
-          </p>
         </motion.div>
       </div>
     </div>
