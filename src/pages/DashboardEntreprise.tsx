@@ -78,6 +78,8 @@ import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import VerifiedTalentsTab from "@/components/dashboard/VerifiedTalentsTab";
 import { CandidateMatchCard } from "@/components/dashboard/CandidateMatchCard";
+import { QuoteGeneratorDialog } from "@/components/dashboard/QuoteGeneratorDialog";
+import { MyQuotesList } from "@/components/dashboard/MyQuotesList";
 import {
   MOCK_OFFERS,
   MOCK_CANDIDATES,
