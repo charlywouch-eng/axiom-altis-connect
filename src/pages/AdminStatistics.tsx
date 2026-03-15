@@ -192,7 +192,20 @@ export default function AdminStatistics() {
     { key: "signup_started", label: "Inscription démarrée", color: "hsl(var(--primary))" },
   ];
 
+  const ga4FunnelSteps = [
+    { key: "inscription_start", label: "Inscription démarrée", color: "hsl(var(--accent))" },
+    { key: "rgpd_accepted", label: "RGPD accepté", color: "hsl(210, 70%, 55%)" },
+    { key: "paiement_4_99_started", label: "Paiement 4,99 € cliqué", color: "hsl(45, 80%, 55%)" },
+    { key: "paiement_29_started", label: "Paiement 29 € cliqué", color: "hsl(160, 60%, 45%)" },
+  ];
+
   const funnelChartData = funnelSteps.map((s) => ({
+    name: s.label,
+    count: funnelCounts[s.key] || 0,
+    fill: s.color,
+  }));
+
+  const ga4FunnelChartData = ga4FunnelSteps.map((s) => ({
     name: s.label,
     count: funnelCounts[s.key] || 0,
     fill: s.color,
