@@ -54,23 +54,23 @@ import {
   Shield,
   Download,
   Trash2,
-  Mail,
+  
   RefreshCw,
   Award,
   Zap,
-  ArrowRight,
+  
   Package,
   ChevronRight,
   Sparkles,
   ClipboardList,
   Flame,
-  Lock,
+  
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
-
+import OpportunitesTab from "@/components/dashboard/OpportunitesTab";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
@@ -88,22 +88,6 @@ interface LBBCompany {
   distance: number | null;
 }
 
-const SECTOR_BADGE_COLORS: Record<string, string> = {
-  BTP: "bg-orange-500/10 text-orange-700 border-orange-300/40 dark:text-orange-400",
-  Santé: "bg-emerald-500/10 text-emerald-700 border-emerald-300/40 dark:text-emerald-400",
-  CHR: "bg-violet-500/10 text-violet-700 border-violet-300/40 dark:text-violet-400",
-  Logistique: "bg-sky-500/10 text-sky-700 border-sky-300/40 dark:text-sky-400",
-  Autre: "bg-muted text-muted-foreground border-border",
-};
-
-const MOCK_LBB_COMPANIES: LBBCompany[] = [
-  { siret: "mock-1", name: "BTP Services Rhône-Alpes", sector: "BTP", romeCode: "F1703", romeLabel: "Maçonnerie", city: "Lyon", zipCode: "69001", hiringPotential: 4.8, nafLabel: "Construction", url: "#", headcount: "50-99", distance: 5 },
-  { siret: "mock-2", name: "Clinique Saint-Joseph", sector: "Santé", romeCode: "J1501", romeLabel: "Aide-soignant", city: "Paris", zipCode: "75015", hiringPotential: 4.5, nafLabel: "Activités hospitalières", url: "#", headcount: "100-199", distance: 8 },
-  { siret: "mock-3", name: "Hôtel Le Grand Palais", sector: "CHR", romeCode: "G1602", romeLabel: "Service en salle", city: "Bordeaux", zipCode: "33000", hiringPotential: 4.2, nafLabel: "Hôtels et hébergement", url: "#", headcount: "20-49", distance: 12 },
-  { siret: "mock-4", name: "Plomberie Dupont & Fils", sector: "BTP", romeCode: "F1603", romeLabel: "Plomberie", city: "Marseille", zipCode: "13001", hiringPotential: 4.0, nafLabel: "Construction", url: "#", headcount: "10-19", distance: 15 },
-  { siret: "mock-5", name: "EHPAD Les Oliviers", sector: "Santé", romeCode: "J1501", romeLabel: "Aide-soignant", city: "Toulouse", zipCode: "31000", hiringPotential: 3.8, nafLabel: "Hébergement médicalisé", url: "#", headcount: "50-99", distance: 20 },
-  { siret: "mock-6", name: "Brasserie de la République", sector: "CHR", romeCode: "G1603", romeLabel: "Restauration", city: "Nantes", zipCode: "44000", hiringPotential: 3.5, nafLabel: "Restauration traditionnelle", url: "#", headcount: "10-19", distance: 25 },
-];
 
 const FRENCH_LEVELS = [
   "Débutant (A1)",
@@ -142,19 +126,6 @@ const MOCK_RECOMMENDED_OFFERS = [
   { id: "mock-r5", title: "Serveur / Serveuse", company: "Hôtel Splendide", codeRome: "G1602", sector: "CHR", location: "Bordeaux, Nouvelle-Aquitaine", contract: "Saisonnier", score: 78, salary: "22 000 – 26 000 €/an", skills: ["Service en salle", "HACCP", "Anglais professionnel"], tension: "Modérée", url: null },
 ];
 
-const CONTRACT_COLORS: Record<string, string> = {
-  CDI: "bg-success/10 text-success border-success/30",
-  CDD: "bg-primary/10 text-primary border-primary/30",
-  Saisonnier: "bg-accent/10 text-accent border-accent/30",
-  MIS: "bg-accent/10 text-accent border-accent/30",
-  SAI: "bg-accent/10 text-accent border-accent/30",
-};
-
-const TENSION_COLORS: Record<string, string> = {
-  "Très forte": "bg-red-500/10 text-red-600 border-red-300/40",
-  Forte: "bg-orange-500/10 text-orange-600 border-orange-300/40",
-  Modérée: "bg-amber-500/10 text-amber-600 border-amber-300/40",
-};
 
 const MOCK_PROFILE_DATA = {
   full_name: "Test Cameroon",
@@ -274,7 +245,7 @@ export default function DashboardTalent() {
   const { data: talentProfile } = useQuery({
     queryKey: ["talent_profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("talent_profiles").select("is_premium, premium_unlocked_at, rome_code, rome_label, experience_years, score").eq("user_id", user!.id).maybeSingle();
+      const { data, error } = await supabase.from("talent_profiles").select("is_premium, premium_unlocked_at, rome_code, rome_label, experience_years, score, visa_status").eq("user_id", user!.id).maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -784,183 +755,17 @@ export default function DashboardTalent() {
                 </motion.div>
               </TabsContent>
 
-              {/* TAB 3 — OPPORTUNITÉS */}
               <TabsContent value="opportunites" className="space-y-5 mt-0">
-                {/* Offres recommandées */}
-                <motion.div variants={itemVariants}>
-                  <Card className="overflow-hidden border-primary/20 shadow-sm">
-                    <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary/40" />
-                    <CardHeader className="pb-2">
-                     <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                        <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Briefcase className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        Offres France Travail
-                        {ftLoading
-                          ? <RefreshCw className="h-3.5 w-3.5 text-muted-foreground animate-spin ml-1" />
-                          : ftOffers && ftOffers.length > 0
-                            ? <Badge className="text-[9px] px-2 py-0.5 bg-success/10 text-success border-success/30 ml-1">LIVE</Badge>
-                            : <Badge className="text-[9px] px-2 py-0.5 bg-muted text-muted-foreground ml-1">DEMO</Badge>
-                        }
-                      </CardTitle>
-                      <p className="text-xs text-muted-foreground">BTP · Santé · CHR — Secteurs en forte tension · Score de compatibilité IA</p>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {offersToDisplay.map((offer: Record<string, unknown> & { score?: number }, i) => {
-                        const score = (offer.score as number) ?? 80;
-                        const contract = String(offer.contract ?? "CDI");
-                        const tension = String(offer.tension ?? "Forte");
-                        const sector = String(offer.sector ?? "BTP");
-                        const offerUrl = offer.url ? String(offer.url) : null;
-                        const title = String(offer.title ?? "Offre");
-                        const company = String(offer.company ?? "Entreprise non communiquée");
-                        const location = String(offer.location ?? "France");
-                        const salary = offer.salary ? String(offer.salary) : null;
-                        const skills = Array.isArray(offer.skills) ? (offer.skills as string[]) : [];
-                        const sectorColor = SECTOR_BADGE_COLORS[sector] ?? SECTOR_BADGE_COLORS.Autre;
-                        const scoreColor = score >= 90 ? "text-emerald-500" : score >= 80 ? "text-primary" : "text-amber-500";
-
-                        return (
-                          <motion.div
-                            key={String(offer.id ?? i)}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.07 }}
-                            className="rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-primary/20 transition-all group"
-                          >
-                            <div className="flex gap-3 p-3.5">
-                              {/* Score circle */}
-                              <div className="flex flex-col items-center gap-1 shrink-0">
-                                <div className="relative h-12 w-12">
-                                  <svg className="h-12 w-12 -rotate-90" viewBox="0 0 36 36">
-                                    <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-border/40" />
-                                    <circle
-                                      cx="18" cy="18" r="15" fill="none" strokeWidth="2.5"
-                                      strokeDasharray={`${(score / 100) * 94.2} 94.2`}
-                                      strokeLinecap="round"
-                                      className={scoreColor}
-                                      style={{ stroke: "currentColor" }}
-                                    />
-                                  </svg>
-                                  <span className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold ${scoreColor}`}>{score}%</span>
-                                </div>
-                                <Badge className={`text-[8px] px-1 py-0 border ${sectorColor}`}>{sector}</Badge>
-                              </div>
-
-                              {/* Content */}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-start justify-between gap-2 flex-wrap">
-                                  <div className="min-w-0">
-                                    <p className="text-sm font-semibold text-foreground truncate">{title}</p>
-                                    <p className="text-xs text-muted-foreground truncate">{company}</p>
-                                    <div className="flex items-center gap-1 mt-0.5">
-                                      <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
-                                      <span className="text-xs text-muted-foreground truncate">{location}</span>
-                                    </div>
-                                  </div>
-                                  <div className="flex flex-wrap gap-1 shrink-0">
-                                    <Badge className={`text-[9px] px-1.5 py-0 border ${CONTRACT_COLORS[contract] ?? "bg-muted text-muted-foreground"}`}>{contract}</Badge>
-                                    <Badge className={`text-[9px] px-1.5 py-0 border ${TENSION_COLORS[tension] ?? "bg-muted text-muted-foreground"}`}>{tension}</Badge>
-                                  </div>
-                                </div>
-
-                                {salary && (
-                                  <div className="flex items-center gap-1 mt-1.5">
-                                    <Banknote className="h-3 w-3 text-muted-foreground" />
-                                    <span className="text-xs text-muted-foreground">{salary}</span>
-                                  </div>
-                                )}
-
-                                {skills.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-1.5">
-                                    {skills.slice(0, 3).map((s) => (
-                                      <Badge key={s} variant="outline" className="text-[9px] px-1.5 py-0">{s}</Badge>
-                                    ))}
-                                  </div>
-                                )}
-
-                                {/* Bouton Postuler toujours visible */}
-                                <div className="mt-2.5">
-                                  {offerUrl ? (
-                                    <a href={offerUrl} target="_blank" rel="noopener noreferrer">
-                                      <Button size="sm" className="h-7 text-xs gap-1.5 bg-primary hover:bg-primary/90">
-                                        <ArrowRight className="h-3 w-3" /> Postuler
-                                      </Button>
-                                    </a>
-                                  ) : isPremium ? (
-                                    <Button size="sm" className="h-7 text-xs gap-1.5 bg-primary hover:bg-primary/90">
-                                      <ArrowRight className="h-3 w-3" /> Postuler
-                                    </Button>
-                                  ) : (
-                                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/5" onClick={() => handleUnlockPayment("full")}>
-                                      <Lock className="h-3 w-3" /> Débloquer
-                                    </Button>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-
-                      {/* Source badge */}
-                      <div className="flex items-center justify-center pt-1">
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1.5">
-                          {ftOffers && ftOffers.length > 0
-                            ? <><CheckCircle2 className="h-3 w-3 text-success" />Offres en direct · France Travail</>
-                            : <><RefreshCw className="h-3 w-3" />Données simulées · Connectez France Travail</>
-                          }
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-
-                {/* La Bonne Boîte */}
-                <motion.div variants={itemVariants}>
-                  <Card className="overflow-hidden border-accent/20 shadow-sm">
-                    <div className="h-1 w-full bg-gradient-to-r from-accent to-primary/40" />
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                        <div className="h-7 w-7 rounded-lg bg-accent/10 flex items-center justify-center">
-                          <Building2 className="h-3.5 w-3.5 text-accent" />
-                        </div>
-                        Entreprises qui recrutent
-                        {lbbLoading && <RefreshCw className="h-3.5 w-3.5 text-muted-foreground animate-spin ml-1" />}
-                      </CardTitle>
-                      <p className="text-xs text-muted-foreground">Entreprises à fort potentiel d'embauche dans vos secteurs</p>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {(lbbCompanies ?? MOCK_LBB_COMPANIES).map((company) => {
-                          const sectorColor = SECTOR_BADGE_COLORS[company.sector] ?? SECTOR_BADGE_COLORS.Autre;
-                          return (
-                            <motion.div key={company.siret} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col gap-2 p-3.5 rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-accent/30 transition-all group">
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <p className="text-sm font-semibold text-foreground line-clamp-1">{company.name}</p>
-                                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><MapPin className="h-3 w-3" />{company.city} {company.zipCode && `(${company.zipCode.slice(0, 2)})`}{company.distance != null && ` · ${company.distance} km`}</p>
-                                </div>
-                                <Badge className={`text-[9px] px-1.5 py-0 border shrink-0 ${sectorColor}`}>{company.sector}</Badge>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-1.5">
-                                  <Star className="h-3 w-3 text-tension fill-tension" />
-                                  <span className="text-xs font-semibold">{company.hiringPotential.toFixed(1)}</span>
-                                  <span className="text-xs text-muted-foreground">potentiel</span>
-                                </div>
-                                {company.headcount && <span className="text-[10px] text-muted-foreground">{company.headcount} sal.</span>}
-                              </div>
-                              <Button size="sm" variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/5 gap-1.5 text-xs group-hover:bg-primary/5 transition-colors" onClick={() => { if (company.url && company.url !== "#") window.open(company.url, "_blank"); }}>
-                                <Mail className="h-3 w-3" /> Candidature spontanée
-                              </Button>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                <OpportunitesTab
+                  offersToDisplay={offersToDisplay}
+                  ftOffers={ftOffers}
+                  ftLoading={ftLoading}
+                  lbbCompanies={lbbCompanies}
+                  lbbLoading={lbbLoading}
+                  isPremium={isPremium}
+                  visaStatus={talentProfile?.visa_status ?? "en_attente"}
+                  itemVariants={itemVariants}
+                />
               </TabsContent>
 
               {/* TAB 4 — MON PROFIL */}
