@@ -54,7 +54,7 @@ import {
   Shield,
   Download,
   Trash2,
-  Mail,
+  
   RefreshCw,
   Award,
   Zap,
