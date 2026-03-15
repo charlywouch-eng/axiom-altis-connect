@@ -36,6 +36,7 @@ interface QuoteRequest {
   message: string | null;
   status: string;
   notes: string | null;
+  estimated_amount: number | null;
   created_at: string;
 }
 
