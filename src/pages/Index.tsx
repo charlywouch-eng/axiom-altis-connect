@@ -142,6 +142,9 @@ export default function Index() {
             <Link to="/metiers-en-tension" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               Métiers en tension
             </Link>
+            <Link to="/demande-devis" className="hidden lg:inline text-sm font-semibold text-accent hover:text-accent/80 transition-colors px-3 py-1.5">
+              Demander un devis
+            </Link>
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/8 border border-white/10 text-xs sm:text-sm px-2.5 sm:px-3">Connexion</Button>
             </Link>
