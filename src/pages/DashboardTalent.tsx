@@ -70,7 +70,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
-
+import OpportunitesTab from "@/components/dashboard/OpportunitesTab";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
