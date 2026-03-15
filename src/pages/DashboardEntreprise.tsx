@@ -78,6 +78,8 @@ import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import VerifiedTalentsTab from "@/components/dashboard/VerifiedTalentsTab";
 import { CandidateMatchCard } from "@/components/dashboard/CandidateMatchCard";
+import { QuoteGeneratorDialog } from "@/components/dashboard/QuoteGeneratorDialog";
+import { MyQuotesList } from "@/components/dashboard/MyQuotesList";
 import {
   MOCK_OFFERS,
   MOCK_CANDIDATES,
@@ -138,6 +140,7 @@ export default function DashboardEntreprise() {
   const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
   const [quoteForm, setQuoteForm] = useState({ company: "", sector: "", volume: "", message: "" });
   const [quoteSubmitting, setQuoteSubmitting] = useState(false);
+  const [quoteGenDialogOpen, setQuoteGenDialogOpen] = useState(false);
 
   // Show toast on subscription success/cancel
   useEffect(() => {
@@ -228,7 +231,7 @@ export default function DashboardEntreprise() {
     queryFn: async () => {
       const { data } = await supabase
         .from("company_profiles")
-        .select("company_name, logo_url")
+        .select("company_name, logo_url, contact_email")
         .eq("user_id", user!.id)
         .maybeSingle();
       return data;
@@ -875,12 +878,20 @@ export default function DashboardEntreprise() {
                       <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                         <Crown className="h-4 w-4 text-accent" /> Besoin d'un devis sur mesure ?
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Contactez notre équipe pour les recrutements en volume (&gt;10 talents)</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Générez un devis professionnel PDF en quelques clics</p>
                     </div>
-                    <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 font-semibold shrink-0" onClick={() => setQuoteDialogOpen(true)}>
-                      Contacter <ArrowRight className="ml-1 h-3 w-3" />
-                    </Button>
+                    <div className="flex gap-2 shrink-0">
+                      <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-1.5" onClick={() => setQuoteGenDialogOpen(true)}>
+                        <FileText className="h-3.5 w-3.5" /> Générer un devis
+                      </Button>
+                      <Button size="sm" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10 font-semibold" onClick={() => setQuoteDialogOpen(true)}>
+                        Demande simple <ArrowRight className="ml-1 h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
+
+                  {/* ── Liste des devis générés ── */}
+                  <MyQuotesList />
 
                   {/* ── Gestion abonnement ── */}
                   {isPremium && (
@@ -1138,6 +1149,15 @@ export default function DashboardEntreprise() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* ── Quote Generator Dialog ── */}
+      <QuoteGeneratorDialog
+        open={quoteGenDialogOpen}
+        onOpenChange={setQuoteGenDialogOpen}
+        companyName={companyProfile?.company_name || ""}
+        contactEmail={companyProfile?.contact_email || user?.email || ""}
+        onQuoteGenerated={() => queryClient.invalidateQueries({ queryKey: ["my_generated_quotes"] })}
+      />
     </DashboardLayout>
   );
 }
