@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { HelpCircle, Plane, Globe, Home, FileCheck, Clock, CreditCard, ShieldCheck } from "lucide-react";
+import { HelpCircle, Plane, Globe, Home, FileCheck, Clock, CreditCard, ShieldCheck, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Accordion,
   AccordionContent,
