@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import {
-  FileText, Search, Download, CheckCircle2, Clock, XCircle, MessageSquare,
+  FileText, Search, Download, CheckCircle2, Clock, XCircle, MessageSquare, Euro,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -137,6 +137,66 @@ export default function AdminQuotes() {
             </Card>
           ))}
         </div>
+
+        {/* Converted Quotes Summary */}
+        {(() => {
+          const convertis = quotes.filter(q => q.status === "converti");
+          if (convertis.length === 0) return null;
+
+          const VOLUME_ESTIMATES: Record<string, number> = {
+            "1-5": 2450,
+            "6-10": 2450 * 7,
+            "11-20": 2450 * 15,
+            "20+": 2450 * 25,
+          };
+
+          const totalEstime = convertis.reduce((sum, q) => {
+            const vol = q.volume || "1-5";
+            return sum + (VOLUME_ESTIMATES[vol] || 2450);
+          }, 0);
+
+          return (
+            <Card className="border-emerald-300/30 bg-emerald-500/5">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Euro className="h-4 w-4 text-emerald-600" />
+                  Devis convertis — Chiffre d'affaires estimé
+                  <Badge className="ml-auto bg-emerald-500/10 text-emerald-600 border-emerald-300/40 text-xs border">
+                    {totalEstime.toLocaleString("fr-FR")} €
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto -mx-2">
+                  <table className="w-full text-xs min-w-[500px]">
+                    <thead>
+                      <tr className="border-b border-emerald-300/20">
+                        {["Date", "Entreprise", "Secteur", "Volume", "Montant estimé"].map(h => (
+                          <th key={h} className="text-left pb-2 pr-4 text-muted-foreground font-medium whitespace-nowrap">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {convertis.map(q => {
+                        const vol = q.volume || "1-5";
+                        const montant = VOLUME_ESTIMATES[vol] || 2450;
+                        return (
+                          <tr key={q.id} className="border-b border-border/20">
+                            <td className="py-2 pr-4 text-muted-foreground">{new Date(q.created_at).toLocaleDateString("fr-FR")}</td>
+                            <td className="py-2 pr-4 font-medium text-foreground">{q.company}</td>
+                            <td className="py-2 pr-4 text-muted-foreground">{q.sector}</td>
+                            <td className="py-2 pr-4 text-muted-foreground">{q.volume || "—"}</td>
+                            <td className="py-2 pr-4 font-semibold text-emerald-600">{montant.toLocaleString("fr-FR")} €</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         {/* Table */}
         <Card className="border-border/50">
