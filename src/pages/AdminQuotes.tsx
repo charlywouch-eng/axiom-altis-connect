@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import {
-  FileText, Search, Download, CheckCircle2, Clock, XCircle, MessageSquare,
+  FileText, Search, Download, CheckCircle2, Clock, XCircle, MessageSquare, Euro,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
