@@ -21,8 +21,9 @@ import {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   nouveau:    { label: "Nouveau",    color: "bg-amber-500/10 text-amber-600 border-amber-300/40",       icon: Clock },
-  en_cours:   { label: "En cours",   color: "bg-primary/10 text-primary border-primary/30",             icon: MessageSquare },
-  accepte:    { label: "Accepté",    color: "bg-emerald-500/10 text-emerald-600 border-emerald-300/40", icon: CheckCircle2 },
+  contacte:   { label: "Contacté",   color: "bg-primary/10 text-primary border-primary/30",             icon: MessageSquare },
+  en_cours:   { label: "En cours",   color: "bg-sky-500/10 text-sky-600 border-sky-300/40",             icon: Clock },
+  converti:   { label: "Converti",   color: "bg-emerald-500/10 text-emerald-600 border-emerald-300/40", icon: CheckCircle2 },
   refuse:     { label: "Refusé",     color: "bg-destructive/10 text-destructive border-destructive/30", icon: XCircle },
 };
 
