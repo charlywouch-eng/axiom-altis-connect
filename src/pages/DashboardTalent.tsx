@@ -64,7 +64,7 @@ import {
   Sparkles,
   ClipboardList,
   Flame,
-  Lock,
+  
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
