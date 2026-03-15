@@ -470,8 +470,24 @@ export default function OnboardingRole() {
             )}
           </motion.div>
 
-          <p className="mt-6 text-center text-xs" style={{ color: "hsl(215,25%,35%)" }}>
-            Plateforme RH certifiée · Données sécurisées · RGPD
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <p className="text-center text-xs" style={{ color: "hsl(215,25%,35%)" }}>
+              Plateforme RH certifiée · Données sécurisées · RGPD
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs gap-1.5"
+              style={{ color: "hsl(215,25%,45%)" }}
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/login");
+              }}
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Se déconnecter
+            </Button>
+          </div>
           </p>
         </motion.div>
       </div>
