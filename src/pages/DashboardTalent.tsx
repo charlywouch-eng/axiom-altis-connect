@@ -88,22 +88,6 @@ interface LBBCompany {
   distance: number | null;
 }
 
-const SECTOR_BADGE_COLORS: Record<string, string> = {
-  BTP: "bg-orange-500/10 text-orange-700 border-orange-300/40 dark:text-orange-400",
-  Santé: "bg-emerald-500/10 text-emerald-700 border-emerald-300/40 dark:text-emerald-400",
-  CHR: "bg-violet-500/10 text-violet-700 border-violet-300/40 dark:text-violet-400",
-  Logistique: "bg-sky-500/10 text-sky-700 border-sky-300/40 dark:text-sky-400",
-  Autre: "bg-muted text-muted-foreground border-border",
-};
-
-const MOCK_LBB_COMPANIES: LBBCompany[] = [
-  { siret: "mock-1", name: "BTP Services Rhône-Alpes", sector: "BTP", romeCode: "F1703", romeLabel: "Maçonnerie", city: "Lyon", zipCode: "69001", hiringPotential: 4.8, nafLabel: "Construction", url: "#", headcount: "50-99", distance: 5 },
-  { siret: "mock-2", name: "Clinique Saint-Joseph", sector: "Santé", romeCode: "J1501", romeLabel: "Aide-soignant", city: "Paris", zipCode: "75015", hiringPotential: 4.5, nafLabel: "Activités hospitalières", url: "#", headcount: "100-199", distance: 8 },
-  { siret: "mock-3", name: "Hôtel Le Grand Palais", sector: "CHR", romeCode: "G1602", romeLabel: "Service en salle", city: "Bordeaux", zipCode: "33000", hiringPotential: 4.2, nafLabel: "Hôtels et hébergement", url: "#", headcount: "20-49", distance: 12 },
-  { siret: "mock-4", name: "Plomberie Dupont & Fils", sector: "BTP", romeCode: "F1603", romeLabel: "Plomberie", city: "Marseille", zipCode: "13001", hiringPotential: 4.0, nafLabel: "Construction", url: "#", headcount: "10-19", distance: 15 },
-  { siret: "mock-5", name: "EHPAD Les Oliviers", sector: "Santé", romeCode: "J1501", romeLabel: "Aide-soignant", city: "Toulouse", zipCode: "31000", hiringPotential: 3.8, nafLabel: "Hébergement médicalisé", url: "#", headcount: "50-99", distance: 20 },
-  { siret: "mock-6", name: "Brasserie de la République", sector: "CHR", romeCode: "G1603", romeLabel: "Restauration", city: "Nantes", zipCode: "44000", hiringPotential: 3.5, nafLabel: "Restauration traditionnelle", url: "#", headcount: "10-19", distance: 25 },
-];
 
 const FRENCH_LEVELS = [
   "Débutant (A1)",
