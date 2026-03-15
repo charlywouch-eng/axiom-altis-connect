@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Check, Zap, Crown, Building2, ArrowRight, Shield } from "lucide-react";
+import { AltisPackFAQ } from "@/components/pricing/AltisPackFAQ";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
