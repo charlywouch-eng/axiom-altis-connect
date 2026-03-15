@@ -21,8 +21,9 @@ import {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   nouveau:    { label: "Nouveau",    color: "bg-amber-500/10 text-amber-600 border-amber-300/40",       icon: Clock },
-  en_cours:   { label: "En cours",   color: "bg-primary/10 text-primary border-primary/30",             icon: MessageSquare },
-  accepte:    { label: "Accepté",    color: "bg-emerald-500/10 text-emerald-600 border-emerald-300/40", icon: CheckCircle2 },
+  contacte:   { label: "Contacté",   color: "bg-primary/10 text-primary border-primary/30",             icon: MessageSquare },
+  en_cours:   { label: "En cours",   color: "bg-sky-500/10 text-sky-600 border-sky-300/40",             icon: Clock },
+  converti:   { label: "Converti",   color: "bg-emerald-500/10 text-emerald-600 border-emerald-300/40", icon: CheckCircle2 },
   refuse:     { label: "Refusé",     color: "bg-destructive/10 text-destructive border-destructive/30", icon: XCircle },
 };
 
@@ -105,8 +106,8 @@ export default function AdminQuotes() {
   const stats = {
     total: quotes.length,
     nouveau: quotes.filter(q => q.status === "nouveau").length,
-    enCours: quotes.filter(q => q.status === "en_cours").length,
-    accepte: quotes.filter(q => q.status === "accepte").length,
+    contacte: quotes.filter(q => q.status === "contacte").length,
+    converti: quotes.filter(q => q.status === "converti").length,
   };
 
   return (
@@ -121,9 +122,9 @@ export default function AdminQuotes() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: "Total",    value: stats.total,    icon: FileText,     color: "text-foreground" },
-            { label: "Nouveaux", value: stats.nouveau,  icon: Clock,        color: "text-amber-600" },
-            { label: "En cours", value: stats.enCours,  icon: MessageSquare, color: "text-primary" },
-            { label: "Acceptés", value: stats.accepte,  icon: CheckCircle2, color: "text-emerald-600" },
+            { label: "Nouveaux",  value: stats.nouveau,   icon: Clock,        color: "text-amber-600" },
+            { label: "Contactés", value: stats.contacte,  icon: MessageSquare, color: "text-primary" },
+            { label: "Convertis", value: stats.converti,  icon: CheckCircle2, color: "text-emerald-600" },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="border-border/50">
               <CardContent className="pt-4 pb-3">
