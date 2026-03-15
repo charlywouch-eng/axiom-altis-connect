@@ -182,7 +182,8 @@ export default function AdminQuotes() {
                     <tbody>
                       {convertis.map(q => {
                         const vol = q.volume || "1-5";
-                        const montant = VOLUME_ESTIMATES[vol] || 2450;
+                        const montant = q.estimated_amount != null ? q.estimated_amount : (VOLUME_ESTIMATES[vol] || 2450);
+                        const isCustom = q.estimated_amount != null;
                         return (
                           <tr key={q.id} className="border-b border-border/20">
                             <td className="py-2 pr-4 text-muted-foreground">{new Date(q.created_at).toLocaleDateString("fr-FR")}</td>
