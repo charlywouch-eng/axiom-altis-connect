@@ -220,6 +220,63 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_quotes: {
+        Row: {
+          company_name: string
+          contact_email: string
+          created_at: string
+          id: string
+          items: Json
+          notes: string | null
+          pdf_url: string | null
+          quote_number: string
+          sector: string | null
+          status: string
+          total_ht: number
+          total_ttc: number
+          updated_at: string
+          user_id: string
+          validity_date: string
+          volume: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_email: string
+          created_at?: string
+          id?: string
+          items?: Json
+          notes?: string | null
+          pdf_url?: string | null
+          quote_number: string
+          sector?: string | null
+          status?: string
+          total_ht?: number
+          total_ttc?: number
+          updated_at?: string
+          user_id: string
+          validity_date: string
+          volume?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_email?: string
+          created_at?: string
+          id?: string
+          items?: Json
+          notes?: string | null
+          pdf_url?: string | null
+          quote_number?: string
+          sector?: string | null
+          status?: string
+          total_ht?: number
+          total_ttc?: number
+          updated_at?: string
+          user_id?: string
+          validity_date?: string
+          volume?: string | null
+        }
+        Relationships: []
+      }
       job_offers: {
         Row: {
           company_id: string
