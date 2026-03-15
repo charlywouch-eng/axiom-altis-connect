@@ -274,7 +274,7 @@ export default function DashboardTalent() {
   const { data: talentProfile } = useQuery({
     queryKey: ["talent_profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("talent_profiles").select("is_premium, premium_unlocked_at, rome_code, rome_label, experience_years, score").eq("user_id", user!.id).maybeSingle();
+      const { data, error } = await supabase.from("talent_profiles").select("is_premium, premium_unlocked_at, rome_code, rome_label, experience_years, score, visa_status").eq("user_id", user!.id).maybeSingle();
       if (error) throw error;
       return data;
     },
