@@ -278,7 +278,7 @@ export default function AdminQuotes() {
                             </Select>
                           </td>
                           <td className="py-2.5">
-                            <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1" onClick={() => { setSelectedQuote(q); setAdminNotes(q.notes ?? ""); }}>
+                            <Button size="sm" variant="ghost" className="h-6 text-[10px] gap-1" onClick={() => { setSelectedQuote(q); setAdminNotes(q.notes ?? ""); setEstimatedAmount(q.estimated_amount != null ? String(q.estimated_amount) : ""); }}>
                               <MessageSquare className="h-3 w-3" />Détails
                             </Button>
                           </td>
