@@ -50,10 +50,9 @@ const VISION_ITEMS = [
     icon: Plane,
     title: "ALTIS — Les bras opérationnels",
     points: [
-      "Pack Zéro Stress : visa + billet d'avion",
+      "Pack Zéro Stress : visa ANEF + billet d'avion",
       "Accueil aéroport + logement meublé 1 mois",
-      "Ouverture compte bancaire + sécu",
-      "Accompagnement physique J1 → J30",
+      "Accompagnement administratif J1 → J30",
     ],
     accent: "text-primary", bg: "bg-primary/10", border: "border-primary/20",
   },

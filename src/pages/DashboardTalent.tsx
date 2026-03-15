@@ -48,7 +48,7 @@ import {
   Building2,
   Save,
   MapPin,
-  Banknote,
+  
   Star,
   TrendingUp,
   Shield,
