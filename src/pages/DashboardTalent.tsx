@@ -240,13 +240,16 @@ export default function DashboardTalent() {
     if (pending && user) {
       try {
         const data = JSON.parse(pending);
-        supabase.from("talent_profiles").upsert({
+        // SECURITY: Only allow safe profile fields from localStorage
+        // Never trust is_premium, compliance_score, visa_status, score, premium_unlocked_at
+        const safeData = {
           user_id: user.id,
-          rome_label: data.rome_label,
-          rome_code: data.rome_code,
-          experience_years: data.experience_years,
-          country: data.country ?? "Cameroun",
-        }).then(({ error }) => {
+          rome_label: typeof data.rome_label === "string" ? data.rome_label.slice(0, 200) : undefined,
+          rome_code: typeof data.rome_code === "string" ? data.rome_code.slice(0, 10) : undefined,
+          experience_years: typeof data.experience_years === "number" ? Math.min(Math.max(0, Math.floor(data.experience_years)), 50) : undefined,
+          country: typeof data.country === "string" ? data.country.slice(0, 100) : "Cameroun",
+        };
+        supabase.from("talent_profiles").upsert(safeData).then(({ error }) => {
           if (!error) {
             localStorage.removeItem("axiom_pending_profile");
             queryClient.invalidateQueries({ queryKey: ["talent_profile", user.id] });
