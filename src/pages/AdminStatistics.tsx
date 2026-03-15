@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X, Download, FileImage, FileText, Zap } from "lucide-react";
+import { Users, Globe, GraduationCap, Star, TrendingUp, Award, X, Download, FileImage, FileText, Zap, FileCheck } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
