@@ -140,6 +140,7 @@ export default function DashboardEntreprise() {
   const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
   const [quoteForm, setQuoteForm] = useState({ company: "", sector: "", volume: "", message: "" });
   const [quoteSubmitting, setQuoteSubmitting] = useState(false);
+  const [quoteGenDialogOpen, setQuoteGenDialogOpen] = useState(false);
 
   // Show toast on subscription success/cancel
   useEffect(() => {
