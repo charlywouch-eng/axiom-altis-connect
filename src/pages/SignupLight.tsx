@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   ArrowRight, CheckCircle2, Lock, Sparkles, MapPin,
   Briefcase, Zap, Award, TrendingUp, ChevronRight, Shield,
-  Star, Mail, Phone, Info, Lock,
+  Star, Mail, Phone, Info,
 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { PhoneInput } from "@/components/PhoneInput";
