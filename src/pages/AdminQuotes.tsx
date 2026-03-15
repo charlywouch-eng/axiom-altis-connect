@@ -72,13 +72,13 @@ export default function AdminQuotes() {
   });
 
   const saveNotes = useMutation({
-    mutationFn: async ({ id, notes }: { id: string; notes: string }) => {
-      const { error } = await (supabase.from as any)("quote_requests").update({ notes }).eq("id", id);
+    mutationFn: async ({ id, notes, estimated_amount }: { id: string; notes: string; estimated_amount: number | null }) => {
+      const { error } = await (supabase.from as any)("quote_requests").update({ notes, estimated_amount }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin_quotes"] });
-      toast({ title: "Notes enregistrées" });
+      toast({ title: "Détails enregistrés" });
       setSelectedQuote(null);
     },
   });
