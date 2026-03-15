@@ -668,8 +668,8 @@ export default function SignupLight() {
                     <Button
                       type="submit"
                       size="lg"
-                      disabled={loading}
-                      className="w-full h-16 text-lg rounded-xl font-bold shadow-xl py-4 group relative overflow-hidden bg-gradient-cta border-0 text-white"
+                      disabled={loading || !rgpd}
+                      className="w-full h-16 text-lg rounded-xl font-bold shadow-xl py-4 group relative overflow-hidden bg-gradient-cta border-0 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-cta-hover" />
                       <span className="relative flex items-center justify-center gap-2">
