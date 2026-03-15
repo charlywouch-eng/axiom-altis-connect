@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -12,12 +12,15 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import {
-  FileText, Search, Download, CheckCircle2, Clock, XCircle, MessageSquare, Euro,
+  FileText, Search, Download, CheckCircle2, Clock, XCircle, MessageSquare, Euro, TrendingUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { format, parseISO, startOfMonth, subMonths } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   nouveau:    { label: "Nouveau",    color: "bg-amber-500/10 text-amber-600 border-amber-300/40",       icon: Clock },
