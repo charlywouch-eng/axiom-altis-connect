@@ -42,6 +42,7 @@ import Pricing from "./pages/Pricing";
 import APropos from "./pages/APropos";
 import Pitch from "./pages/Pitch";
 import ResetPassword from "./pages/ResetPassword";
+import DemandeDevis from "./pages/DemandeDevis";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
