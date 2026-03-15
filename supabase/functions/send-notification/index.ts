@@ -333,6 +333,36 @@ serve(async (req) => {
         break;
       }
 
+      // ── Security alert (from audit_logs trigger) ──────────
+      case "security_alert": {
+        const { user_id, action, details, created_at } = payload;
+        // Send to all admin emails
+        const { data: admins } = await supabase
+          .from("user_roles")
+          .select("user_id")
+          .eq("role", "admin");
+        if (!admins?.length) break;
+        for (const admin of admins) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("email")
+            .eq("id", admin.user_id)
+            .single();
+          if (!profile?.email) continue;
+          const body = `
+            <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
+              <strong>⚠️ Alerte sécurité détectée</strong>
+            </p>
+            <div style="background:#fef2f2;border-left:4px solid #ef4444;padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:16px;">
+              <p style="margin:0 0 8px;font-weight:700;color:#991b1b;font-size:14px;">${action}</p>
+              <pre style="margin:0;color:#64748b;font-size:12px;white-space:pre-wrap;">${JSON.stringify(details, null, 2)}</pre>
+            </div>
+            <p style="color:#64748b;font-size:13px;margin:0;">User ID: ${user_id}<br/>Date: ${created_at}</p>`;
+          await sendEmail(profile.email, `🚨 Alerte sécurité AXIOM : ${action}`, wrapEmail("Alerte sécurité", action, body));
+        }
+        break;
+      }
+
       default:
         throw new Error(`Unknown notification type: ${type}`);
     }
