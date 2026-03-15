@@ -58,7 +58,7 @@ import {
   RefreshCw,
   Award,
   Zap,
-  ArrowRight,
+  
   Package,
   ChevronRight,
   Sparkles,
