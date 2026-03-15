@@ -99,7 +99,7 @@ serve(async (req) => {
   </table>
 
   <p style="color:#64748b;font-size:13px;line-height:1.5;margin:0;">
-    Besoin d'aide ? Répondez directement à cet email ou contactez-nous à <a href="mailto:contact@axiom-altis.com" style="color:#1E40AF;">contact@axiom-altis.com</a>.
+    Besoin d'aide ? Répondez directement à cet email ou contactez-nous à <a href="mailto:support@axiom-talents.com" style="color:#1E40AF;">support@axiom-talents.com</a>.
   </p>
 </td></tr>
 
