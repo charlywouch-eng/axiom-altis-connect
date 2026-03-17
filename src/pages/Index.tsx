@@ -584,16 +584,17 @@ export default function Index() {
               <span className="text-muted-foreground/30">·</span>
               <Link to="/pricing" className="hover:text-foreground transition-colors">Tarifs</Link>
               <Link to="/a-propos" className="hover:text-foreground transition-colors">À propos</Link>
-              <span className="hover:text-foreground cursor-pointer transition-colors">Mentions légales</span>
-              <span className="hover:text-foreground cursor-pointer transition-colors">CGU</span>
+              <Link to="/rgpd-light" className="hover:text-foreground transition-colors">Mentions légales</Link>
+              <Link to="/rgpd-light" className="hover:text-foreground transition-colors">CGU</Link>
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors flex items-center gap-1">
                 <Lock className="h-3 w-3" /> RGPD
               </Link>
-              <a href="mailto:contact@axiom-talents.com" className="hover:text-foreground transition-colors flex items-center gap-1"><Mail className="h-3 w-3" /> contact@axiom-talents.com</a>
+              <a href="mailto:charly@axiom-talents.com" className="hover:text-foreground transition-colors flex items-center gap-1"><Mail className="h-3 w-3" /> charly@axiom-talents.com</a>
+              <a href="tel:+33686401810" className="hover:text-foreground transition-colors text-xs">+33 6 86 40 18 10</a>
             </div>
           </div>
           <div className="mt-5 border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
-            © 2026 AXIOM × ALTIS Mobility. Tous droits réservés. ·{" "}
+            © 2026 AXIOM × ALTIS Mobility · SIRET en cours d'immatriculation ·{" "}
             <Link to="/rgpd" className="hover:text-muted-foreground transition-colors">Politique de confidentialité</Link>
           </div>
         </div>
