@@ -182,97 +182,33 @@ function incompleteProfileEmail(talentName: string, _email: string) {
   };
 }
 
-// ─── Send helpers ────────────────────────────────────────────
-
-/** Primary: Gmail SMTP via denomailer */
-async function sendViaGmail(to: string, subject: string, html: string) {
-  if (!GMAIL_APP_PASSWORD) throw new Error("GMAIL_APP_PASSWORD not configured");
-
-  const client = new SMTPClient({
-    connection: {
-      hostname: "smtp.gmail.com",
-      port: 465,
-      tls: true,
-      auth: {
-        username: GMAIL_USER,
-        password: GMAIL_APP_PASSWORD,
-      },
-    },
-  });
-
-  await client.send({
-    from: `${FROM_NAME} <${GMAIL_USER}>`,
-    to,
-    subject,
-    content: "auto",
-    html,
-  });
-
-  await client.close();
-  console.log(`[GMAIL] ✅ Sent "${subject}" to ${to}`);
-}
-
-/** Fallback: Resend (silent log only, kept for post-DNS reactivation) */
-async function sendViaResendSilent(to: string, subject: string, html: string) {
-  if (!RESEND_API_KEY) {
-    console.log(`[RESEND-LOG] Skipped (no key): "${subject}" → ${to}`);
-    return;
-  }
-  try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: FROM_EMAIL_RESEND,
-        to: [to],
-        subject,
-        html,
-        reply_to: "contact@axiom-talents.com",
-      }),
-    });
-    const data = await res.json();
-    console.log(`[RESEND-LOG] ${res.ok ? "OK" : "FAIL"}: "${subject}" → ${to}`, JSON.stringify(data).slice(0, 200));
-  } catch (e) {
-    console.log(`[RESEND-LOG] Error (silent): ${e}`);
-  }
-}
-
-/** Main send: Gmail primary, Resend silent log */
+/** Send via Resend using demo domain (delivered@resend.dev) — no DNS needed */
 async function sendEmail(to: string, subject: string, html: string) {
-  // Primary: Gmail SMTP
-  try {
-    await sendViaGmail(to, subject, html);
-  } catch (gmailErr) {
-    console.error(`[GMAIL] ❌ Failed: ${gmailErr}`);
-    // If Gmail fails, try Resend as actual fallback
-    if (RESEND_API_KEY) {
-      console.log(`[FALLBACK] Trying Resend for "${subject}" → ${to}`);
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: FROM_EMAIL_RESEND,
-          to: [to],
-          subject,
-          html,
-          reply_to: "contact@axiom-talents.com",
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(`Both Gmail and Resend failed: ${JSON.stringify(data)}`);
-      console.log(`[FALLBACK] Resend OK: "${subject}" → ${to}`);
-      return;
-    }
-    throw gmailErr;
-  }
+  if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
 
-  // Silent Resend log (non-blocking)
+  // Use demo domain (no DNS verification required)
+  const fromAddr = FROM_EMAIL_DEMO;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+    },
+    body: JSON.stringify({
+      from: fromAddr,
+      to: [to],
+      subject,
+      html,
+      reply_to: "charly@axiom-talents.com",
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(`Resend error: ${JSON.stringify(data)}`);
+  console.log(`[DEMO-SEND] ✅ Sent "${subject}" → ${to} (from ${fromAddr})`, data);
+  return data;
+}
   sendViaResendSilent(to, subject, html).catch(() => {});
 }
 
