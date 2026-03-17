@@ -407,6 +407,11 @@ export default function Index() {
         </div>
       </section>
 
+      {/* ── Partners Carousel ─────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <PartnersCarousel />
+      </Suspense>
+
       {/* ── 9 Secteurs Grid ──────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32" style={{ contentVisibility: "auto", containIntrinsicSize: "0 600px" }}>
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
