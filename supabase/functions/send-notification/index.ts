@@ -209,8 +209,6 @@ async function sendEmail(to: string, subject: string, html: string) {
   console.log(`[DEMO-SEND] ✅ Sent "${subject}" → ${to} (from ${fromAddr})`, data);
   return data;
 }
-  sendViaResendSilent(to, subject, html).catch(() => {});
-}
 
 // ─── Main handler ────────────────────────────────────────────
 serve(async (req) => {
