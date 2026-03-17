@@ -23,6 +23,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 const NetworkCanvas = lazy(() => import("@/components/landing/NetworkCanvas"));
 const HowItWorksSection = lazy(() => import("@/components/landing/HowItWorksSection"));
 const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection"));
+const PartnersCarousel = lazy(() => import("@/components/landing/PartnersCarousel"));
 
 // ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
