@@ -56,6 +56,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <DemoBanner />
           <GA4RouteTracker />
           <Routes>
             <Route path="/" element={<Index />} />
