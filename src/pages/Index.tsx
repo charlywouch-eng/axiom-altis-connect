@@ -21,6 +21,8 @@ import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
 
 const NetworkCanvas = lazy(() => import("@/components/landing/NetworkCanvas"));
+const HowItWorksSection = lazy(() => import("@/components/landing/HowItWorksSection"));
+const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection"));
 
 // ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -345,7 +347,7 @@ export default function Index() {
         <div className="mx-auto max-w-4xl">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-white/[0.06] shadow-2xl shadow-primary/10 ring-1 ring-white/10"
+            className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-accent/20 to-success/20 shadow-2xl shadow-primary/10 ring-1 ring-white/10"
           >
             {[
               { value: "500+", label: "Talents qualifiés", icon: Users },
@@ -355,10 +357,12 @@ export default function Index() {
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <motion.div key={stat.label} custom={i} variants={scaleIn} className="bg-card/95 backdrop-blur-sm px-5 py-7 text-center">
-                  <Icon className="h-[18px] w-[18px] text-accent mx-auto mb-2" />
+                <motion.div key={stat.label} custom={i} variants={scaleIn} className="group bg-card/98 backdrop-blur-sm px-5 py-8 text-center transition-all duration-300 hover:bg-accent/5">
+                  <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
+                    <Icon className="h-[18px] w-[18px] text-accent" />
+                  </div>
                   <p className="font-black text-3xl text-foreground">{stat.value}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground font-medium">{stat.label}</p>
                 </motion.div>
               );
             })}
@@ -389,19 +393,22 @@ export default function Index() {
               key={s.rome}
               custom={i}
               variants={scaleIn}
-              className={`group relative rounded-2xl border bg-gradient-to-br p-5 hover-lift cursor-default ${s.color}`}
+              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30 ${s.color}`}
             >
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">{s.emoji}</span>
-                <Badge className="bg-tension/12 text-tension border-tension/25 text-[10px] px-2 py-0.5 font-bold shrink-0">
-                  {s.tag}
-                </Badge>
-              </div>
-              <h3 className="font-bold text-sm text-foreground mb-1">{s.label}</h3>
-              <p className="text-[11px] text-muted-foreground font-mono mb-3">{s.rome}</p>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <CheckCircle2 className="h-3 w-3 text-success shrink-0" />
-                Certifiable MINEFOP
+              <div className="absolute inset-0 rounded-2xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-3xl group-hover:scale-110 transition-transform duration-300">{s.emoji}</span>
+                  <Badge className="bg-tension/12 text-tension border-tension/25 text-[10px] px-2 py-0.5 font-bold shrink-0">
+                    {s.tag}
+                  </Badge>
+                </div>
+                <h3 className="font-bold text-sm text-foreground mb-1 group-hover:text-accent transition-colors">{s.label}</h3>
+                <p className="text-[11px] text-muted-foreground font-mono mb-3">{s.rome}</p>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <CheckCircle2 className="h-3 w-3 text-success shrink-0" />
+                  Certifiable MINEFOP
+                </div>
               </div>
             </motion.div>
           ))}
@@ -418,6 +425,11 @@ export default function Index() {
         </motion.div>
       </section>
 
+      {/* ── How It Works ─────────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <HowItWorksSection />
+      </Suspense>
+
       {/* ── 4 Cartes Confiance ───────────────────────────────── */}
       <section className="bg-muted/30 py-20 md:py-28" style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}>
         <div className="mx-auto max-w-6xl px-5 md:px-10">
@@ -432,7 +444,7 @@ export default function Index() {
 
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
           >
             {TRUST_CARDS.map((card, i) => {
               const Icon = card.icon;
@@ -441,19 +453,24 @@ export default function Index() {
                   key={card.title}
                   custom={i}
                   variants={scaleIn}
-                  className="rounded-2xl border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+                  className="group rounded-2xl border bg-card p-6 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
                 >
-                  <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${card.bg}`}>
+                  <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl ${card.bg} group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className={`h-5 w-5 ${card.accent}`} />
                   </div>
-                  <h3 className="mb-1.5 font-bold text-sm text-foreground">{card.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
+                  <h3 className="mb-2 font-bold text-base text-foreground group-hover:text-accent transition-colors">{card.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
                 </motion.div>
               );
             })}
           </motion.div>
         </div>
       </section>
+
+      {/* ── Testimonials ─────────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <TestimonialsSection />
+      </Suspense>
 
       {/* ── CTA Final ────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
