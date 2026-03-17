@@ -425,6 +425,11 @@ export default function Index() {
         </motion.div>
       </section>
 
+      {/* ── How It Works ─────────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <HowItWorksSection />
+      </Suspense>
+
       {/* ── 4 Cartes Confiance ───────────────────────────────── */}
       <section className="bg-muted/30 py-20 md:py-28" style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}>
         <div className="mx-auto max-w-6xl px-5 md:px-10">
@@ -439,7 +444,7 @@ export default function Index() {
 
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
           >
             {TRUST_CARDS.map((card, i) => {
               const Icon = card.icon;
@@ -448,19 +453,24 @@ export default function Index() {
                   key={card.title}
                   custom={i}
                   variants={scaleIn}
-                  className="rounded-2xl border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+                  className="group rounded-2xl border bg-card p-6 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
                 >
-                  <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${card.bg}`}>
+                  <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl ${card.bg} group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className={`h-5 w-5 ${card.accent}`} />
                   </div>
-                  <h3 className="mb-1.5 font-bold text-sm text-foreground">{card.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
+                  <h3 className="mb-2 font-bold text-base text-foreground group-hover:text-accent transition-colors">{card.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
                 </motion.div>
               );
             })}
           </motion.div>
         </div>
       </section>
+
+      {/* ── Testimonials ─────────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <TestimonialsSection />
+      </Suspense>
 
       {/* ── CTA Final ────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
