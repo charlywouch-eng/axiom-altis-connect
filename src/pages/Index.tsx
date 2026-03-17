@@ -393,19 +393,22 @@ export default function Index() {
               key={s.rome}
               custom={i}
               variants={scaleIn}
-              className={`group relative rounded-2xl border bg-gradient-to-br p-5 hover-lift cursor-default ${s.color}`}
+              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30 ${s.color}`}
             >
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">{s.emoji}</span>
-                <Badge className="bg-tension/12 text-tension border-tension/25 text-[10px] px-2 py-0.5 font-bold shrink-0">
-                  {s.tag}
-                </Badge>
-              </div>
-              <h3 className="font-bold text-sm text-foreground mb-1">{s.label}</h3>
-              <p className="text-[11px] text-muted-foreground font-mono mb-3">{s.rome}</p>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <CheckCircle2 className="h-3 w-3 text-success shrink-0" />
-                Certifiable MINEFOP
+              <div className="absolute inset-0 rounded-2xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-3xl group-hover:scale-110 transition-transform duration-300">{s.emoji}</span>
+                  <Badge className="bg-tension/12 text-tension border-tension/25 text-[10px] px-2 py-0.5 font-bold shrink-0">
+                    {s.tag}
+                  </Badge>
+                </div>
+                <h3 className="font-bold text-sm text-foreground mb-1 group-hover:text-accent transition-colors">{s.label}</h3>
+                <p className="text-[11px] text-muted-foreground font-mono mb-3">{s.rome}</p>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <CheckCircle2 className="h-3 w-3 text-success shrink-0" />
+                  Certifiable MINEFOP
+                </div>
               </div>
             </motion.div>
           ))}
