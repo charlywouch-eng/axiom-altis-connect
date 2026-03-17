@@ -42,8 +42,44 @@ const scaleIn = {
     transition: { delay: i * 0.07, duration: 0.45, ease },
   }),
 };
+// ── Animated Counter ──────────────────────────────────────────
+function AnimatedCounter({ end, suffix, duration = 1.8 }: { end: number; suffix: string; duration?: number }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [display, setDisplay] = useState(0);
 
-// ── Data ──────────────────────────────────────────────────────
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          const start = performance.now();
+          const step = (now: number) => {
+            const progress = Math.min((now - start) / (duration * 1000), 1);
+            // ease-out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setDisplay(Math.round(eased * end));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [end, duration, hasAnimated]);
+
+  return (
+    <p ref={ref} className="font-black text-3xl text-foreground tabular-nums">
+      {display}{suffix}
+    </p>
+  );
+}
+
+
 const SECTEURS = [
   { emoji: "🏗️", label: "BTP & Construction", rome: "F1703", tag: "Grande demande", color: "from-orange-500/10 to-orange-500/5 border-orange-300/30 dark:border-orange-700/30" },
   { emoji: "🏥", label: "Santé & Aide à la personne", rome: "J1501", tag: "Pénurie critique", color: "from-emerald-500/10 to-emerald-500/5 border-emerald-300/30 dark:border-emerald-700/30" },
