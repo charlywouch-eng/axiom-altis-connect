@@ -42,8 +42,44 @@ const scaleIn = {
     transition: { delay: i * 0.07, duration: 0.45, ease },
   }),
 };
+// ── Animated Counter ──────────────────────────────────────────
+function AnimatedCounter({ end, suffix, duration = 1.8 }: { end: number; suffix: string; duration?: number }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [display, setDisplay] = useState(0);
 
-// ── Data ──────────────────────────────────────────────────────
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          const start = performance.now();
+          const step = (now: number) => {
+            const progress = Math.min((now - start) / (duration * 1000), 1);
+            // ease-out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setDisplay(Math.round(eased * end));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [end, duration, hasAnimated]);
+
+  return (
+    <p ref={ref} className="font-black text-3xl text-foreground tabular-nums">
+      {display}{suffix}
+    </p>
+  );
+}
+
+
 const SECTEURS = [
   { emoji: "🏗️", label: "BTP & Construction", rome: "F1703", tag: "Grande demande", color: "from-orange-500/10 to-orange-500/5 border-orange-300/30 dark:border-orange-700/30" },
   { emoji: "🏥", label: "Santé & Aide à la personne", rome: "J1501", tag: "Pénurie critique", color: "from-emerald-500/10 to-emerald-500/5 border-emerald-300/30 dark:border-emerald-700/30" },
@@ -350,10 +386,10 @@ export default function Index() {
             className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-accent/20 to-success/20 shadow-2xl shadow-primary/10 ring-1 ring-white/10"
           >
             {[
-              { value: "500+", label: "Talents qualifiés", icon: Users },
-              { value: "98%", label: "Taux de rétention", icon: BarChart3 },
-              { value: "15", label: "Pays d'origine", icon: Globe },
-              { value: "30j", label: "Délai moyen", icon: Clock },
+              { end: 500, suffix: "+", label: "Talents qualifiés", icon: Users },
+              { end: 98, suffix: "%", label: "Taux de rétention", icon: BarChart3 },
+              { end: 15, suffix: "", label: "Pays d'origine", icon: Globe },
+              { end: 30, suffix: "j", label: "Délai moyen", icon: Clock },
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
@@ -361,7 +397,7 @@ export default function Index() {
                   <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
                     <Icon className="h-[18px] w-[18px] text-accent" />
                   </div>
-                  <p className="font-black text-3xl text-foreground">{stat.value}</p>
+                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
                   <p className="mt-1 text-xs text-muted-foreground font-medium">{stat.label}</p>
                 </motion.div>
               );
