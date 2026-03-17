@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import avatarJeanPierre from "@/assets/avatar-jean-pierre.jpg";
+import avatarFatou from "@/assets/avatar-fatou.jpg";
+import avatarEmmanuel from "@/assets/avatar-emmanuel.jpg";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -18,6 +21,7 @@ const TESTIMONIALS = [
     name: "Jean-Pierre M.",
     role: "Maçon qualifié",
     origin: "🇨🇲 Douala → Lyon",
+    avatar: avatarJeanPierre,
     quote:
       "En 6 semaines j'ai eu mon visa et mon CDI. Le Pack ALTIS m'a tout organisé : billet, logement, accueil à l'aéroport. Je recommande à 100%.",
     score: 92,
@@ -27,6 +31,7 @@ const TESTIMONIALS = [
     name: "Fatou D.",
     role: "Aide-soignante",
     origin: "🇸🇳 Dakar → Marseille",
+    avatar: avatarFatou,
     quote:
       "Mon diplôme MINEFOP a été reconnu grâce à AXIOM. Le matching IA m'a trouvé un poste qui correspond exactement à mes compétences.",
     score: 88,
@@ -36,6 +41,7 @@ const TESTIMONIALS = [
     name: "Emmanuel K.",
     role: "Technicien maintenance",
     origin: "🇨🇮 Abidjan → Toulouse",
+    avatar: avatarEmmanuel,
     quote:
       "Le processus est transparent et rapide. Mon score était de 85 et j'ai été embauché en CDI dans les 30 jours.",
     score: 85,
@@ -121,11 +127,18 @@ export default function TestimonialsSection() {
               </p>
 
               <div className="flex items-center justify-between border-t border-white/10 pt-4">
-                <div>
-                  <p className="text-sm font-bold text-white">{t.name}</p>
-                  <p className="text-xs text-white/40">
-                    {t.role} · {t.origin}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={t.avatar}
+                    alt={t.name}
+                    className="h-10 w-10 rounded-full object-cover ring-2 ring-accent/30"
+                  />
+                  <div>
+                    <p className="text-sm font-bold text-white">{t.name}</p>
+                    <p className="text-xs text-white/40">
+                      {t.role} · {t.origin}
+                    </p>
+                  </div>
                 </div>
                 <div className="text-right">
                   <Badge className="bg-accent/15 text-accent border-accent/25 text-[10px] font-bold">
