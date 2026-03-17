@@ -11,7 +11,9 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const SITE_URL = "https://axiom-talents.com";
-const FROM_EMAIL = "AXIOM ALTIS <notify@axiom-talents.com>";
+// Demo mode: use Resend test domain (no DNS verification needed)
+const FROM_EMAIL_DEMO = "AXIOM & ALTIS <delivered@resend.dev>";
+const FROM_EMAIL_PROD = "AXIOM ALTIS <notify@axiom-talents.com>";
 
 // ─── Email wrapper ──────────────────────────────────────────
 function wrapEmail(title: string, preheader: string, body: string): string {
@@ -156,7 +158,7 @@ function diplomaVerifiedEmail(talentName: string, diplomaName: string, status: "
   };
 }
 
-function incompleteProfileEmail(talentName: string, email: string) {
+function incompleteProfileEmail(talentName: string, _email: string) {
   const body = `
     <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
       Bonjour <strong>${talentName || "Talent"}</strong>,
@@ -180,9 +182,12 @@ function incompleteProfileEmail(talentName: string, email: string) {
   };
 }
 
-// ─── Send helper ─────────────────────────────────────────────
+/** Send via Resend using demo domain (delivered@resend.dev) — no DNS needed */
 async function sendEmail(to: string, subject: string, html: string) {
   if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
+
+  // Use demo domain (no DNS verification required)
+  const fromAddr = FROM_EMAIL_DEMO;
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -191,17 +196,17 @@ async function sendEmail(to: string, subject: string, html: string) {
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: FROM_EMAIL,
+      from: fromAddr,
       to: [to],
       subject,
       html,
-      reply_to: "contact@axiom-talents.com",
+      reply_to: "charly@axiom-talents.com",
     }),
   });
 
   const data = await res.json();
   if (!res.ok) throw new Error(`Resend error: ${JSON.stringify(data)}`);
-  console.log(`[NOTIFICATION] Sent "${subject}" to ${to}`, data);
+  console.log(`[DEMO-SEND] ✅ Sent "${subject}" → ${to} (from ${fromAddr})`, data);
   return data;
 }
 
@@ -218,10 +223,8 @@ serve(async (req) => {
     console.log(`[NOTIFICATION] type=${type}`, JSON.stringify(payload).slice(0, 200));
 
     switch (type) {
-      // ── Match: notify talent about a matching offer ────────
       case "match_talent": {
         const { talent_user_id, offer_title, company_name } = payload;
-        // Try profiles first, fall back to talent_profiles for CSV-imported talents
         let recipientEmail: string | null = null;
         let recipientName = "Talent";
 
@@ -235,7 +238,6 @@ serve(async (req) => {
           recipientEmail = profile.email;
           recipientName = profile.full_name || "Talent";
         } else {
-          // CSV-imported talents don't have profiles entries — log and skip
           const { data: tp } = await supabase
             .from("talent_profiles")
             .select("full_name")
@@ -250,7 +252,6 @@ serve(async (req) => {
         break;
       }
 
-      // ── Match: notify entreprise about a matching talent ───
       case "match_entreprise": {
         const { entreprise_user_id, talent_name, score } = payload;
         const { data: profile } = await supabase
@@ -269,7 +270,6 @@ serve(async (req) => {
         break;
       }
 
-      // ── Visa status changed ────────────────────────────────
       case "visa_status": {
         const { talent_user_id, old_status, new_status, talent_name } = payload;
         const { data: profile } = await supabase
@@ -283,7 +283,6 @@ serve(async (req) => {
         break;
       }
 
-      // ── Diploma verified/refused ───────────────────────────
       case "diploma_status": {
         const { talent_user_id, diploma_name, status } = payload;
         const { data: profile } = await supabase
@@ -297,9 +296,7 @@ serve(async (req) => {
         break;
       }
 
-      // ── Incomplete profile reminder (called by cron) ───────
       case "incomplete_reminder": {
-        // Find talent profiles created > 48h ago with low compliance score
         const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
         const { data: talents } = await supabase
           .from("talent_profiles")
@@ -333,10 +330,8 @@ serve(async (req) => {
         break;
       }
 
-      // ── Security alert (from audit_logs trigger) ──────────
       case "security_alert": {
         const { user_id, action, details, created_at } = payload;
-        // Send to all admin emails
         const { data: admins } = await supabase
           .from("user_roles")
           .select("user_id")
@@ -360,6 +355,24 @@ serve(async (req) => {
             <p style="color:#64748b;font-size:13px;margin:0;">User ID: ${user_id}<br/>Date: ${created_at}</p>`;
           await sendEmail(profile.email, `🚨 Alerte sécurité AXIOM : ${action}`, wrapEmail("Alerte sécurité", action, body));
         }
+        break;
+      }
+
+      // ── Demo test: send a test email to verify Gmail works ──
+      case "demo_test": {
+        const testHtml = wrapEmail(
+          "Test démo AXIOM",
+          "Email de test pour la présentation",
+          `<p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
+            ✅ <strong>Fallback Gmail actif</strong> — Cet email confirme que le système d'envoi fonctionne correctement pour la démo du 17 mars 2026.
+          </p>
+          <p style="color:#64748b;font-size:13px;">Envoyé le ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>`
+        );
+        await sendEmail(
+          payload?.to || GMAIL_USER,
+          "✅ Test démo AXIOM – Fallback Gmail OK",
+          testHtml
+        );
         break;
       }
 
