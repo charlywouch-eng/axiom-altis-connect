@@ -351,10 +351,10 @@ export default function Index() {
             className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-accent/20 to-success/20 shadow-2xl shadow-primary/10 ring-1 ring-white/10"
           >
             {[
-              { value: "500+", label: "Talents qualifiés", icon: Users },
-              { value: "98%", label: "Taux de rétention", icon: BarChart3 },
-              { value: "15", label: "Pays d'origine", icon: Globe },
-              { value: "30j", label: "Délai moyen", icon: Clock },
+              { end: 500, suffix: "+", label: "Talents qualifiés", icon: Users },
+              { end: 98, suffix: "%", label: "Taux de rétention", icon: BarChart3 },
+              { end: 15, suffix: "", label: "Pays d'origine", icon: Globe },
+              { end: 30, suffix: "j", label: "Délai moyen", icon: Clock },
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
@@ -362,7 +362,7 @@ export default function Index() {
                   <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
                     <Icon className="h-[18px] w-[18px] text-accent" />
                   </div>
-                  <p className="font-black text-3xl text-foreground">{stat.value}</p>
+                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
                   <p className="mt-1 text-xs text-muted-foreground font-medium">{stat.label}</p>
                 </motion.div>
               );
