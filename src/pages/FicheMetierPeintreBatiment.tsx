@@ -176,17 +176,24 @@ export default function FicheMetierPeintreBatiment() {
             </div>
           </div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-16">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-12">
             <motion.div custom={0} variants={fadeUp}>
-              <Card className="border-destructive/20 bg-destructive/5">
-                <CardContent className="flex items-start gap-4 p-6">
-                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold">Information importante</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">AXIOM facilite la mise en relation entre talents qualifiés et employeurs. ALTIS propose un accompagnement logistique et administratif. Aucune garantie de placement, de visa ou de contrat de travail n'est donnée. Les décisions relèvent des autorités et employeurs.</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <Card className="border-accent/20 bg-accent/5"><CardContent className="p-6 text-center space-y-4">
+                <p className="text-base font-medium leading-relaxed">✨ Chaque talent est unique. Votre parcours, votre expérience, votre détermination… tout cela a de la valeur en France. Commencez votre évaluation gratuite et découvrez ce que vous valez vraiment.</p>
+                <Button asChild size="lg" className="gap-2"><Link to="/signup-light?rome=F1502">Découvrir mon score gratuitement <ArrowRight className="h-4 w-4" /></Link></Button>
+              </CardContent></Card>
+            </motion.div>
+          </motion.div>
+
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-8">
+            <motion.div custom={0} variants={fadeUp}>
+              <Card className="border-destructive/20 bg-destructive/5"><CardContent className="flex items-start gap-4 p-6">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold">Information importante</h4>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">AXIOM facilite la mise en relation entre talents qualifiés et employeurs. ALTIS propose un accompagnement logistique et administratif. Aucune garantie de placement, de visa ou de contrat de travail n'est donnée. Les décisions relèvent des autorités et employeurs.</p>
+                </div>
+              </CardContent></Card>
             </motion.div>
           </motion.div>
         </main>
