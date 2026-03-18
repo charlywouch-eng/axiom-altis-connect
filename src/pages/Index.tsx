@@ -237,16 +237,15 @@ export default function Index() {
                 custom={1} variants={fadeUp}
                 className="text-[38px] font-black leading-[1.04] text-white sm:text-[50px] md:text-[58px] tracking-tight"
               >
-                <span className="text-gradient-accent">9 métiers</span> en pénurie France{" "}
-                vous attendent
+                La France cherche des{" "}
+                <span className="text-gradient-accent">talents comme le vôtre</span>
               </motion.h1>
 
               <motion.p
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Matching IA + visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif.{" "}
-                <strong className="text-white/85">Opérationnel dès le Jour 1.</strong>
+                Dans les secteurs les plus demandés : <strong className="text-white/85">construction, santé, restauration, maintenance</strong> et bien plus encore.
               </motion.p>
 
               {/* Proof points */}
