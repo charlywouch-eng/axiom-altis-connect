@@ -192,24 +192,24 @@ export default function SignupLight() {
         toast({ title: "Numéro invalide", description: "Vérifiez le format du numéro.", variant: "destructive" });
         return;
       }
-      trackGA4("funnel_step_contact", { source: "signup-light" });
+      trackGA4("funnel_step_contact" as any, { source: "signup-light" });
       setFunnelStep("secteur");
     } else if (funnelStep === "secteur") {
       if (!form.secteur) {
         toast({ title: "Champ requis", description: "Choisissez votre secteur.", variant: "destructive" });
         return;
       }
-      trackGA4("funnel_step_secteur", { rome_code: form.secteur, source: "signup-light" });
+      trackGA4("funnel_step_secteur" as any, { rome_code: form.secteur, source: "signup-light" });
       setFunnelStep("experience");
     } else if (funnelStep === "experience") {
       if (!form.experience) {
         toast({ title: "Champ requis", description: "Sélectionnez votre expérience.", variant: "destructive" });
         return;
       }
-      trackGA4("funnel_step_experience", { experience: form.experience, source: "signup-light" });
+      trackGA4("funnel_step_experience" as any, { experience: form.experience, source: "signup-light" });
       setFunnelStep("pays");
     } else if (funnelStep === "pays") {
-      trackGA4("funnel_step_pays", { country: form.pays, source: "signup-light" });
+      trackGA4("funnel_step_pays" as any, { country: form.pays, source: "signup-light" });
       setFunnelStep("confirm");
     } else if (funnelStep === "confirm") {
       handleSubmit();
