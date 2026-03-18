@@ -211,6 +211,28 @@ export default function AdminStatistics() {
     fill: s.color,
   }));
 
+  // Signup-light progressive funnel steps
+  const signupLightSteps = [
+    { key: "signup_started", label: "Contact", color: "hsl(var(--accent))" },
+    { key: "lead_form_submitted", label: "Secteur", color: "hsl(210, 70%, 55%)" },
+    { key: "lead_score_viewed", label: "Expérience", color: "hsl(45, 80%, 55%)" },
+    { key: "lead_payment_clicked", label: "Pays / Score", color: "hsl(340, 65%, 55%)" },
+    { key: "signup_completed", label: "Confirmé", color: "hsl(160, 60%, 45%)" },
+  ];
+
+  const signupLightData = signupLightSteps.map((s, i) => {
+    const count = funnelCounts[s.key] || 0;
+    const first = funnelCounts[signupLightSteps[0].key] || 0;
+    const prev = i === 0 ? count : funnelCounts[signupLightSteps[i - 1].key] || 0;
+    return {
+      label: s.label,
+      count,
+      color: s.color,
+      pctOfTotal: first > 0 ? Math.round((count / first) * 100) : 0,
+      stepRate: i === 0 ? 100 : prev > 0 ? Math.round((count / prev) * 100) : 0,
+    };
+  });
+
   const { data: talents = [], isLoading } = useQuery({
     queryKey: ["admin_talent_stats"],
     queryFn: async () => {
