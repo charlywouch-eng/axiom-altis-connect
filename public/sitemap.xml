@@ -51,6 +51,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://axiom-talents.com/fiches-metiers/f1703-macon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/m1805-infirmier</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/j1501-aide-soignant</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/f1502-peintre-batiment</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/i1308-technicien-maintenance</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://axiom-talents.com/rgpd</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
