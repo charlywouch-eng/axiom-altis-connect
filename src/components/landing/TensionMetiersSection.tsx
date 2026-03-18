@@ -162,6 +162,14 @@ export default function TensionMetiersSection() {
             { to: "/fiches-metiers/j1501-aide-soignant", label: "Aide-soignant · J1501", tension: "Très haute" },
             { to: "/fiches-metiers/f1502-peintre-batiment", label: "Peintre en bâtiment · F1502", tension: "Haute" },
             { to: "/fiches-metiers/i1308-technicien-maintenance", label: "Technicien maintenance · I1308", tension: "Très haute" },
+            { to: "/fiches-metiers/j1403-auxiliaire-puericulture", label: "Auxiliaire puériculture · J1403", tension: "Très haute" },
+            { to: "/fiches-metiers/j1103-infirmier-bloc", label: "Infirmier bloc · J1103", tension: "Très haute" },
+            { to: "/fiches-metiers/f1702-couvreur", label: "Couvreur · F1702", tension: "Très haute" },
+            { to: "/fiches-metiers/f1605-plombier-chauffagiste", label: "Plombier-chauffagiste · F1605", tension: "Très haute" },
+            { to: "/fiches-metiers/f1603-carreleur", label: "Carreleur · F1603", tension: "Haute" },
+            { to: "/fiches-metiers/g1602-cuisinier", label: "Cuisinier · G1602", tension: "Très haute" },
+            { to: "/fiches-metiers/g1603-serveur", label: "Serveur · G1603", tension: "Très haute" },
+            { to: "/fiches-metiers/g1501-agent-polyvalent-restauration", label: "Agent restauration · G1501", tension: "Haute" },
           ].map((fiche, i) => (
             <motion.div key={fiche.to} custom={i} variants={fadeUp}>
               <Link
