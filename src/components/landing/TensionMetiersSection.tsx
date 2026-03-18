@@ -149,13 +149,32 @@ export default function TensionMetiersSection() {
           ))}
         </motion.div>
 
+        {/* Fiche métier highlight */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           custom={0}
           variants={fadeUp}
-          className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="mt-12 flex justify-center"
+        >
+          <Link
+            to="/fiches-metiers/f1703-macon"
+            className="group flex items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3 transition-all hover:bg-accent/20 hover:border-accent/50"
+          >
+            <Badge className="bg-destructive/90 text-destructive-foreground border-0 text-[10px] font-bold">Très haute tension</Badge>
+            <span className="text-sm font-semibold text-white">Fiche métier : Maçon qualifié · F1703</span>
+            <ArrowRight className="h-4 w-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+          </Link>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          custom={1}
+          variants={fadeUp}
+          className="mt-6 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <Link to="/metiers-en-tension">
             <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 px-10 py-6 h-auto text-base font-semibold rounded-xl">
