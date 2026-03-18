@@ -193,6 +193,7 @@ export default function SignupLight() {
         return;
       }
       trackGA4("funnel_step_contact" as any, { source: "signup-light" });
+      trackFunnel({ event_name: "signup_started", email_hash: form.contact, source: "signup-light", metadata: { step: "contact" } });
       setFunnelStep("secteur");
     } else if (funnelStep === "secteur") {
       if (!form.secteur) {
@@ -200,6 +201,7 @@ export default function SignupLight() {
         return;
       }
       trackGA4("funnel_step_secteur" as any, { rome_code: form.secteur, source: "signup-light" });
+      trackFunnel({ event_name: "lead_form_submitted", rome_code: form.secteur, email_hash: form.contact, source: "signup-light", metadata: { step: "secteur" } });
       setFunnelStep("experience");
     } else if (funnelStep === "experience") {
       if (!form.experience) {
@@ -207,9 +209,11 @@ export default function SignupLight() {
         return;
       }
       trackGA4("funnel_step_experience" as any, { experience: form.experience, source: "signup-light" });
+      trackFunnel({ event_name: "lead_score_viewed", rome_code: form.secteur, experience: form.experience, email_hash: form.contact, source: "signup-light", metadata: { step: "experience" } });
       setFunnelStep("pays");
     } else if (funnelStep === "pays") {
       trackGA4("funnel_step_pays" as any, { country: form.pays, source: "signup-light" });
+      trackFunnel({ event_name: "lead_payment_clicked", rome_code: form.secteur, experience: form.experience, email_hash: form.contact, source: "signup-light", metadata: { step: "pays", country: form.pays } });
       setFunnelStep("confirm");
     } else if (funnelStep === "confirm") {
       handleSubmit();
@@ -250,11 +254,12 @@ export default function SignupLight() {
         localStorage.setItem("axiom_contact", form.contact);
 
         trackFunnel({
-          event_name: "signup_started",
+          event_name: "signup_completed",
           rome_code: form.secteur,
           experience: form.experience,
           email_hash: form.contact,
           source: isPremium ? "signup-light-premium" : "signup-light",
+          metadata: { step: "confirm" },
         });
 
         setFunnelStep("score");
@@ -271,6 +276,7 @@ export default function SignupLight() {
     setPaymentLoading(true);
     trackGA4("paiement_4_99_started", { rome_code: form.secteur, source: "signup-light" });
     trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light" });
+    trackFunnel({ event_name: "lead_payment_clicked", rome_code: form.secteur, experience: form.experience, email_hash: form.contact, source: "signup-light", metadata: { tier: "4.99", step: "payment" } });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
       const isEmailContact = contact.includes("@");
@@ -295,6 +301,7 @@ export default function SignupLight() {
     setFullPaymentLoading(true);
     trackGA4("paiement_29_started", { rome_code: form.secteur, source: "signup-light-full" });
     trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light-full" });
+    trackFunnel({ event_name: "lead_payment_clicked", rome_code: form.secteur, experience: form.experience, email_hash: form.contact, source: "signup-light-full", metadata: { tier: "29", step: "payment_full" } });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
       const isEmailContact = contact.includes("@");
