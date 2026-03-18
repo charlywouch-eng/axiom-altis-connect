@@ -28,6 +28,27 @@ export function ConfettiCanvas({ trigger }: { trigger: boolean }) {
 
   useEffect(() => {
     if (!trigger) return;
+
+    // ── Celebration chime (Web Audio API) ──
+    try {
+      const audioCtx = new AudioContext();
+      const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, audioCtx.currentTime + i * 0.12);
+        gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + i * 0.12 + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.12 + 0.35);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + i * 0.12);
+        osc.stop(audioCtx.currentTime + i * 0.12 + 0.4);
+      });
+    } catch {
+      // Silent fail if AudioContext unavailable
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
