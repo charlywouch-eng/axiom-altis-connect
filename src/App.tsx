@@ -34,6 +34,7 @@ import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
 import LienMagique from "./pages/LienMagique";
+import FicheMetierMacon from "./pages/FicheMetierMacon";
 
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
