@@ -254,11 +254,12 @@ export default function SignupLight() {
         localStorage.setItem("axiom_contact", form.contact);
 
         trackFunnel({
-          event_name: "signup_started",
+          event_name: "signup_completed",
           rome_code: form.secteur,
           experience: form.experience,
           email_hash: form.contact,
           source: isPremium ? "signup-light-premium" : "signup-light",
+          metadata: { step: "confirm" },
         });
 
         setFunnelStep("score");
