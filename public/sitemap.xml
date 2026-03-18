@@ -76,6 +76,46 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://axiom-talents.com/fiches-metiers/j1403-auxiliaire-puericulture</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/j1103-infirmier-bloc</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/f1702-couvreur</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/f1605-plombier-chauffagiste</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/f1603-carreleur</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/g1602-cuisinier</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/g1603-serveur</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://axiom-talents.com/fiches-metiers/g1501-agent-polyvalent-restauration</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://axiom-talents.com/rgpd</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
