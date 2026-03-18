@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { PhoneInput } from "@/components/PhoneInput";
+import { ConfettiCanvas } from "@/components/ConfettiCanvas";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
@@ -337,8 +338,11 @@ export default function SignupLight() {
 
   const isFormStep = funnelStep !== "score";
 
+  const showConfetti = funnelStep === "score";
+
   return (
     <div className="min-h-screen flex flex-col bg-hero-gradient relative overflow-hidden">
+      <ConfettiCanvas trigger={showConfetti} />
       <Helmet>
         <title>Inscription talent rapide – AXIOM & ALTIS | Travaillez en France</title>
         <meta name="description" content="Inscrivez-vous en 2 min sans mot de passe. Score de compatibilité IA gratuit pour les métiers en tension en France : BTP, santé, CHR, logistique. Certification MINEFOP + Pack ALTIS visa." />
