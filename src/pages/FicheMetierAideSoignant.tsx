@@ -170,7 +170,12 @@ export default function FicheMetierAideSoignant() {
                     <Separator className="bg-accent/10" />
                     <motion.div custom={2} variants={fadeUp}><p className="text-sm text-muted-foreground leading-relaxed">Avec ALTIS, vous arrivez en France prêt à démarrer, une fois les éventuelles validations ou formations réalisées par l'employeur.</p></motion.div>
                     <motion.div custom={3} variants={fadeUp}>
-                      <Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=J1501">Commencer mon évaluation de conformité <ArrowRight className="h-4 w-4" /></Link></Button>
+                      <Card className="border-accent/30 bg-accent/5 mb-4"><CardContent className="p-4">
+                        <p className="text-sm font-medium text-accent leading-relaxed">💛 Prendre soin des autres est votre force. En France, les établissements de santé recherchent activement des aide-soignants humains et qualifiés comme vous. Votre empathie et votre dévouement sont des qualités rares et précieuses.</p>
+                      </CardContent></Card>
+                    </motion.div>
+                    <motion.div custom={4} variants={fadeUp}>
+                      <Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=J1501">Découvrir mon score et commencer mon parcours <ArrowRight className="h-4 w-4" /></Link></Button>
                     </motion.div>
                   </CardContent>
                 </Card>
