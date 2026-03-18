@@ -276,6 +276,7 @@ export default function SignupLight() {
     setPaymentLoading(true);
     trackGA4("paiement_4_99_started", { rome_code: form.secteur, source: "signup-light" });
     trackGA4("paiement_started", { rome_code: form.secteur, source: "signup-light" });
+    trackFunnel({ event_name: "lead_payment_clicked", rome_code: form.secteur, experience: form.experience, email_hash: form.contact, source: "signup-light", metadata: { tier: "4.99", step: "payment" } });
     try {
       const contact = form.contact || localStorage.getItem("axiom_contact") || "";
       const isEmailContact = contact.includes("@");
