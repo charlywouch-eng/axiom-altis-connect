@@ -39,6 +39,14 @@ import FicheMetierInfirmier from "./pages/FicheMetierInfirmier";
 import FicheMetierAideSoignant from "./pages/FicheMetierAideSoignant";
 import FicheMetierPeintreBatiment from "./pages/FicheMetierPeintreBatiment";
 import FicheMetierTechnicienMaintenance from "./pages/FicheMetierTechnicienMaintenance";
+import FicheMetierAuxiliairePuericulture from "./pages/FicheMetierAuxiliairePuericulture";
+import FicheMetierInfirmierBloc from "./pages/FicheMetierInfirmierBloc";
+import FicheMetierCouvreur from "./pages/FicheMetierCouvreur";
+import FicheMetierPlombier from "./pages/FicheMetierPlombier";
+import FicheMetierCarreleur from "./pages/FicheMetierCarreleur";
+import FicheMetierCuisinier from "./pages/FicheMetierCuisinier";
+import FicheMetierServeur from "./pages/FicheMetierServeur";
+import FicheMetierAgentRestauration from "./pages/FicheMetierAgentRestauration";
 
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
@@ -202,6 +210,14 @@ const App = () => (
             <Route path="/fiches-metiers/j1501-aide-soignant" element={<FicheMetierAideSoignant />} />
             <Route path="/fiches-metiers/f1502-peintre-batiment" element={<FicheMetierPeintreBatiment />} />
             <Route path="/fiches-metiers/i1308-technicien-maintenance" element={<FicheMetierTechnicienMaintenance />} />
+            <Route path="/fiches-metiers/j1403-auxiliaire-puericulture" element={<FicheMetierAuxiliairePuericulture />} />
+            <Route path="/fiches-metiers/j1103-infirmier-bloc" element={<FicheMetierInfirmierBloc />} />
+            <Route path="/fiches-metiers/f1702-couvreur" element={<FicheMetierCouvreur />} />
+            <Route path="/fiches-metiers/f1605-plombier-chauffagiste" element={<FicheMetierPlombier />} />
+            <Route path="/fiches-metiers/f1603-carreleur" element={<FicheMetierCarreleur />} />
+            <Route path="/fiches-metiers/g1602-cuisinier" element={<FicheMetierCuisinier />} />
+            <Route path="/fiches-metiers/g1603-serveur" element={<FicheMetierServeur />} />
+            <Route path="/fiches-metiers/g1501-agent-polyvalent-restauration" element={<FicheMetierAgentRestauration />} />
             <Route
               path="/dashboard-recruteur"
               element={
