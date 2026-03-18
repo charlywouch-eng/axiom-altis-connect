@@ -192,6 +192,7 @@ const App = () => (
               }
             />
             <Route path="/metier/:code" element={<MetierDetail />} />
+            <Route path="/fiches-metiers/f1703-macon" element={<FicheMetierMacon />} />
             <Route
               path="/dashboard-recruteur"
               element={
