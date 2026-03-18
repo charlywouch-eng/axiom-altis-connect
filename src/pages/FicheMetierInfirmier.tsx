@@ -180,8 +180,15 @@ export default function FicheMetierInfirmier() {
                       <p className="text-sm text-muted-foreground leading-relaxed">Avec ALTIS, vous arrivez en France prêt à démarrer, une fois les éventuelles validations ou formations réalisées par l'employeur.</p>
                     </motion.div>
                     <motion.div custom={3} variants={fadeUp}>
+                      <Card className="border-accent/30 bg-accent/5 mb-4">
+                        <CardContent className="p-4">
+                          <p className="text-sm font-medium text-accent leading-relaxed">🩺 Votre vocation de soigner transcende les frontières. En France, des milliers de patients attendent des professionnels comme vous — dévoués, compétents et humains. Vous avez le pouvoir de changer des vies, ici aussi.</p>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                    <motion.div custom={4} variants={fadeUp}>
                       <Button asChild className="w-full gap-2" size="lg">
-                        <Link to="/signup-light?rome=M1805">Commencer mon évaluation de conformité <ArrowRight className="h-4 w-4" /></Link>
+                        <Link to="/signup-light?rome=M1805">Découvrir mon score et commencer mon parcours <ArrowRight className="h-4 w-4" /></Link>
                       </Button>
                     </motion.div>
                   </CardContent>
@@ -205,7 +212,18 @@ export default function FicheMetierInfirmier() {
             </div>
           </div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-16">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-12">
+            <motion.div custom={0} variants={fadeUp}>
+              <Card className="border-accent/20 bg-accent/5">
+                <CardContent className="p-6 text-center space-y-4">
+                  <p className="text-base font-medium leading-relaxed">✨ Chaque talent est unique. Votre parcours, votre expérience, votre détermination… tout cela a de la valeur en France. Commencez votre évaluation gratuite et découvrez ce que vous valez vraiment.</p>
+                  <Button asChild size="lg" className="gap-2"><Link to="/signup-light?rome=M1805">Découvrir mon score gratuitement <ArrowRight className="h-4 w-4" /></Link></Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
+
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-8">
             <motion.div custom={0} variants={fadeUp}>
               <Card className="border-destructive/20 bg-destructive/5">
                 <CardContent className="flex items-start gap-4 p-6">

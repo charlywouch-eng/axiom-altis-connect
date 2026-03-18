@@ -149,7 +149,12 @@ export default function FicheMetierTechnicienMaintenance() {
                     </motion.div>
                     <Separator className="bg-accent/10" />
                     <motion.div custom={2} variants={fadeUp}><p className="text-sm text-muted-foreground leading-relaxed">Avec ALTIS, vous arrivez en France prêt à démarrer, une fois les éventuelles validations ou formations réalisées par l'employeur.</p></motion.div>
-                    <motion.div custom={3} variants={fadeUp}><Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=I1308">Commencer mon évaluation de conformité <ArrowRight className="h-4 w-4" /></Link></Button></motion.div>
+                    <motion.div custom={3} variants={fadeUp}>
+                      <Card className="border-accent/30 bg-accent/5 mb-4"><CardContent className="p-4">
+                        <p className="text-sm font-medium text-accent leading-relaxed">⚙️ Votre expertise technique est une richesse que l'industrie française recherche activement. Diagnostiquer, réparer, optimiser — vos compétences sont universelles et très valorisées. Le monde industriel français vous attend.</p>
+                      </CardContent></Card>
+                    </motion.div>
+                    <motion.div custom={4} variants={fadeUp}><Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=I1308">Découvrir mon score et commencer mon parcours <ArrowRight className="h-4 w-4" /></Link></Button></motion.div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -171,17 +176,24 @@ export default function FicheMetierTechnicienMaintenance() {
             </div>
           </div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-16">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-12">
             <motion.div custom={0} variants={fadeUp}>
-              <Card className="border-destructive/20 bg-destructive/5">
-                <CardContent className="flex items-start gap-4 p-6">
-                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold">Information importante</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">AXIOM facilite la mise en relation entre talents qualifiés et employeurs. ALTIS propose un accompagnement logistique et administratif. Aucune garantie de placement, de visa ou de contrat de travail n'est donnée. Les décisions relèvent des autorités et employeurs.</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <Card className="border-accent/20 bg-accent/5"><CardContent className="p-6 text-center space-y-4">
+                <p className="text-base font-medium leading-relaxed">✨ Chaque talent est unique. Votre parcours, votre expérience, votre détermination… tout cela a de la valeur en France. Commencez votre évaluation gratuite et découvrez ce que vous valez vraiment.</p>
+                <Button asChild size="lg" className="gap-2"><Link to="/signup-light?rome=I1308">Découvrir mon score gratuitement <ArrowRight className="h-4 w-4" /></Link></Button>
+              </CardContent></Card>
+            </motion.div>
+          </motion.div>
+
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-8">
+            <motion.div custom={0} variants={fadeUp}>
+              <Card className="border-destructive/20 bg-destructive/5"><CardContent className="flex items-start gap-4 p-6">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold">Information importante</h4>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">AXIOM facilite la mise en relation entre talents qualifiés et employeurs. ALTIS propose un accompagnement logistique et administratif. Aucune garantie de placement, de visa ou de contrat de travail n'est donnée. Les décisions relèvent des autorités et employeurs.</p>
+                </div>
+              </CardContent></Card>
             </motion.div>
           </motion.div>
         </main>
