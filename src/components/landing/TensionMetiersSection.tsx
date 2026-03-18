@@ -149,23 +149,31 @@ export default function TensionMetiersSection() {
           ))}
         </motion.div>
 
-        {/* Fiche métier highlight */}
+        {/* Fiches métiers highlights */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          custom={0}
-          variants={fadeUp}
-          className="mt-12 flex justify-center"
+          className="mt-12 flex flex-wrap justify-center gap-3"
         >
-          <Link
-            to="/fiches-metiers/f1703-macon"
-            className="group flex items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3 transition-all hover:bg-accent/20 hover:border-accent/50"
-          >
-            <Badge className="bg-destructive/90 text-destructive-foreground border-0 text-[10px] font-bold">Très haute tension</Badge>
-            <span className="text-sm font-semibold text-white">Fiche métier : Maçon qualifié · F1703</span>
-            <ArrowRight className="h-4 w-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
-          </Link>
+          {[
+            { to: "/fiches-metiers/f1703-macon", label: "Maçon qualifié · F1703", tension: "Très haute" },
+            { to: "/fiches-metiers/m1805-infirmier", label: "Infirmier diplômé · M1805", tension: "Très haute" },
+            { to: "/fiches-metiers/j1501-aide-soignant", label: "Aide-soignant · J1501", tension: "Très haute" },
+            { to: "/fiches-metiers/f1502-peintre-batiment", label: "Peintre en bâtiment · F1502", tension: "Haute" },
+            { to: "/fiches-metiers/i1308-technicien-maintenance", label: "Technicien maintenance · I1308", tension: "Très haute" },
+          ].map((fiche, i) => (
+            <motion.div key={fiche.to} custom={i} variants={fadeUp}>
+              <Link
+                to={fiche.to}
+                className="group flex items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3 transition-all hover:bg-accent/20 hover:border-accent/50"
+              >
+                <Badge className={`${fiche.tension === "Très haute" ? "bg-destructive/90 text-destructive-foreground" : "bg-accent text-accent-foreground"} border-0 text-[10px] font-bold`}>{fiche.tension}</Badge>
+                <span className="text-sm font-semibold text-white">{fiche.label}</span>
+                <ArrowRight className="h-4 w-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Link>
+            </motion.div>
+          ))}
         </motion.div>
 
         <motion.div
