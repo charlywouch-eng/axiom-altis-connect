@@ -23,7 +23,11 @@ type GA4Event =
   | "paiement_29_started"
   | "rgpd_accepted"
   | "dashboard_talent_view"
-  | "dashboard_entreprise_view";
+  | "dashboard_entreprise_view"
+  | "funnel_step_contact"
+  | "funnel_step_secteur"
+  | "funnel_step_experience"
+  | "funnel_step_pays";
 
 /**
  * Check if analytics consent has been given.
