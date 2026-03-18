@@ -594,7 +594,99 @@ export default function AdminStatistics() {
           </CardContent>
         </Card>
 
-        {/* Daily Leads Chart */}
+        {/* Signup-Light Visual Funnel */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Filter className="h-4 w-4 text-accent" />
+              Entonnoir Signup-Light – Drop-offs par étape
+            </CardTitle>
+            <div className="flex gap-1">
+              {(["7", "30", "90"] as const).map((p) => (
+                <Button
+                  key={p}
+                  variant={funnelPeriod === p ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 px-2.5 text-xs"
+                  onClick={() => setFunnelPeriod(p)}
+                >
+                  {p}j
+                </Button>
+              ))}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {signupLightData[0].count === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">Aucun événement signup-light enregistré sur cette période.</p>
+            ) : (
+              <div className="space-y-3">
+                {signupLightData.map((step, i) => {
+                  const maxCount = signupLightData[0].count;
+                  const barWidth = maxCount > 0 ? Math.max(8, (step.count / maxCount) * 100) : 0;
+                  const dropoff = i > 0 ? signupLightData[i - 1].count - step.count : 0;
+                  return (
+                    <div key={step.label}>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white" style={{ backgroundColor: step.color }}>
+                            {i + 1}
+                          </span>
+                          <span className="text-sm font-medium">{step.label}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs">
+                          {i > 0 && dropoff > 0 && (
+                            <span className="text-destructive font-medium">-{dropoff} ({100 - step.stepRate}%)</span>
+                          )}
+                          <span className="font-bold text-foreground">{step.count}</span>
+                          <span className="text-muted-foreground">({step.pctOfTotal}%)</span>
+                        </div>
+                      </div>
+                      <div className="relative h-8 w-full rounded-md bg-muted/50 overflow-hidden">
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-md transition-all duration-700 ease-out"
+                          style={{
+                            width: `${barWidth}%`,
+                            background: `linear-gradient(90deg, ${step.color}, ${step.color}cc)`,
+                            opacity: 0.85,
+                          }}
+                        />
+                        {i > 0 && step.stepRate < 100 && (
+                          <div
+                            className="absolute inset-y-0 rounded-r-md bg-destructive/10"
+                            style={{
+                              left: `${barWidth}%`,
+                              width: `${Math.max(0, (signupLightData[i - 1].count - step.count) / maxCount * 100)}%`,
+                            }}
+                          />
+                        )}
+                      </div>
+                      {i < signupLightData.length - 1 && (
+                        <div className="flex justify-center py-0.5">
+                          <svg width="12" height="12" viewBox="0 0 12 12" className="text-muted-foreground/40">
+                            <path d="M6 0 L6 12 M2 8 L6 12 L10 8" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                {/* Summary */}
+                <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Taux de conversion global
+                  </p>
+                  <p className="text-lg font-bold" style={{ color: signupLightData[signupLightData.length - 1].color }}>
+                    {signupLightData[0].count > 0
+                      ? Math.round((signupLightData[signupLightData.length - 1].count / signupLightData[0].count) * 100)
+                      : 0}%
+                  </p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
