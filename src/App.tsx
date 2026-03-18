@@ -35,6 +35,10 @@ import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
 import LienMagique from "./pages/LienMagique";
 import FicheMetierMacon from "./pages/FicheMetierMacon";
+import FicheMetierInfirmier from "./pages/FicheMetierInfirmier";
+import FicheMetierAideSoignant from "./pages/FicheMetierAideSoignant";
+import FicheMetierPeintreBatiment from "./pages/FicheMetierPeintreBatiment";
+import FicheMetierTechnicienMaintenance from "./pages/FicheMetierTechnicienMaintenance";
 
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
