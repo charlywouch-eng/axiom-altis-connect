@@ -34,6 +34,7 @@ import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
 import LienMagique from "./pages/LienMagique";
+import FicheMetierMacon from "./pages/FicheMetierMacon";
 
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
@@ -192,6 +193,7 @@ const App = () => (
               }
             />
             <Route path="/metier/:code" element={<MetierDetail />} />
+            <Route path="/fiches-metiers/f1703-macon" element={<FicheMetierMacon />} />
             <Route
               path="/dashboard-recruteur"
               element={
