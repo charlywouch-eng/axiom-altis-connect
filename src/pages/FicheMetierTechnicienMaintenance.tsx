@@ -64,6 +64,22 @@ export default function FicheMetierTechnicienMaintenance() {
         <title>Technicien de maintenance – Code ROME I1308 | AXIOM Talents</title>
         <meta name="description" content="Fiche métier Technicien de maintenance industrielle (ROME I1308) : missions, compétences, salaire attractif en France et accompagnement AXIOM & ALTIS." />
         <link rel="canonical" href="https://axiom-talents.com/fiches-metiers/i1308-technicien-maintenance" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "Technicien de maintenance industrielle",
+          "description": "Diagnostiquer les pannes, assurer la maintenance préventive et curative des équipements industriels, optimiser la disponibilité des machines. Métier en très haute tension en France.",
+          "identifier": { "@type": "PropertyValue", "name": "ROME", "value": "I1308" },
+          "datePosted": "2025-05-01",
+          "validThrough": "2026-12-31",
+          "employmentType": "FULL_TIME",
+          "hiringOrganization": { "@type": "Organization", "name": "AXIOM Talents", "sameAs": "https://axiom-talents.com" },
+          "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressCountry": "FR" } },
+          "baseSalary": { "@type": "MonetaryAmount", "currency": "EUR", "value": { "@type": "QuantitativeValue", "value": 2500, "minValue": 2100, "maxValue": 3200, "unitText": "MONTH" } },
+          "industry": "Industrie / Maintenance",
+          "occupationalCategory": "I1308",
+          "qualifications": "BTS/DUT Maintenance industrielle ou équivalent"
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background text-foreground">
