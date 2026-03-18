@@ -192,7 +192,7 @@ export default function SignupLight() {
         toast({ title: "Numéro invalide", description: "Vérifiez le format du numéro.", variant: "destructive" });
         return;
       }
-      trackGA4("funnel_step_contact", { source: "signup-light" });
+      trackGA4("funnel_step_contact" as any, { source: "signup-light" });
       setFunnelStep("secteur");
     } else if (funnelStep === "secteur") {
       if (!form.secteur) {
