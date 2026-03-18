@@ -47,6 +47,7 @@ import FicheMetierCarreleur from "./pages/FicheMetierCarreleur";
 import FicheMetierCuisinier from "./pages/FicheMetierCuisinier";
 import FicheMetierServeur from "./pages/FicheMetierServeur";
 import FicheMetierAgentRestauration from "./pages/FicheMetierAgentRestauration";
+import FichesMetiersIndex from "./pages/FichesMetiersIndex";
 
 import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
@@ -205,6 +206,7 @@ const App = () => (
               }
             />
             <Route path="/metier/:code" element={<MetierDetail />} />
+            <Route path="/fiches-metiers" element={<FichesMetiersIndex />} />
             <Route path="/fiches-metiers/f1703-macon" element={<FicheMetierMacon />} />
             <Route path="/fiches-metiers/m1805-infirmier" element={<FicheMetierInfirmier />} />
             <Route path="/fiches-metiers/j1501-aide-soignant" element={<FicheMetierAideSoignant />} />
