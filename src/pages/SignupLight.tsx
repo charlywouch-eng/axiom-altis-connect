@@ -199,7 +199,7 @@ export default function SignupLight() {
         toast({ title: "Champ requis", description: "Choisissez votre secteur.", variant: "destructive" });
         return;
       }
-      trackGA4("funnel_step_secteur", { rome_code: form.secteur, source: "signup-light" });
+      trackGA4("funnel_step_secteur" as any, { rome_code: form.secteur, source: "signup-light" });
       setFunnelStep("experience");
     } else if (funnelStep === "experience") {
       if (!form.experience) {
