@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { PhoneInput } from "@/components/PhoneInput";
+import { ConfettiCanvas } from "@/components/ConfettiCanvas";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
