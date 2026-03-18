@@ -64,6 +64,22 @@ export default function FicheMetierInfirmier() {
         <title>Infirmier diplômé – Code ROME M1805 | AXIOM Talents</title>
         <meta name="description" content="Fiche métier Infirmier diplômé (ROME M1805) : missions, compétences, salaire attractif en France et accompagnement AXIOM & ALTIS pour les talents de la santé." />
         <link rel="canonical" href="https://axiom-talents.com/fiches-metiers/m1805-infirmier" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "Infirmier diplômé",
+          "description": "Assurer les soins infirmiers, surveiller l'état clinique des patients, administrer les traitements prescrits. Métier en très haute tension en France.",
+          "identifier": { "@type": "PropertyValue", "name": "ROME", "value": "M1805" },
+          "datePosted": "2025-05-01",
+          "validThrough": "2026-12-31",
+          "employmentType": "FULL_TIME",
+          "hiringOrganization": { "@type": "Organization", "name": "AXIOM Talents", "sameAs": "https://axiom-talents.com" },
+          "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressCountry": "FR" } },
+          "baseSalary": { "@type": "MonetaryAmount", "currency": "EUR", "value": { "@type": "QuantitativeValue", "value": 2600, "minValue": 2200, "maxValue": 3500, "unitText": "MONTH" } },
+          "industry": "Santé",
+          "occupationalCategory": "M1805",
+          "qualifications": "Diplôme d'État Infirmier ou équivalent reconnu"
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background text-foreground">

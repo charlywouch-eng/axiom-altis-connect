@@ -64,6 +64,22 @@ export default function FicheMetierPeintreBatiment() {
         <title>Peintre en bâtiment – Code ROME F1502 | AXIOM Talents</title>
         <meta name="description" content="Fiche métier Peintre en bâtiment (ROME F1502) : missions, compétences, salaire attractif en France et accompagnement AXIOM & ALTIS." />
         <link rel="canonical" href="https://axiom-talents.com/fiches-metiers/f1502-peintre-batiment" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "Peintre en bâtiment",
+          "description": "Préparer les surfaces, appliquer peintures et revêtements muraux, réaliser les finitions intérieures et extérieures. Métier en haute tension en France.",
+          "identifier": { "@type": "PropertyValue", "name": "ROME", "value": "F1502" },
+          "datePosted": "2025-05-01",
+          "validThrough": "2026-12-31",
+          "employmentType": "FULL_TIME",
+          "hiringOrganization": { "@type": "Organization", "name": "AXIOM Talents", "sameAs": "https://axiom-talents.com" },
+          "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressCountry": "FR" } },
+          "baseSalary": { "@type": "MonetaryAmount", "currency": "EUR", "value": { "@type": "QuantitativeValue", "value": 2100, "minValue": 1850, "maxValue": 2600, "unitText": "MONTH" } },
+          "industry": "Construction / BTP",
+          "occupationalCategory": "F1502",
+          "qualifications": "CQP/DQP Peinture en bâtiment ou équivalent"
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background text-foreground">

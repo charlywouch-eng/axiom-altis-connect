@@ -67,6 +67,22 @@ export default function FicheMetierMacon() {
           content="Fiche métier Maçon qualifié (ROME F1703) : missions, compétences, conditions de travail et accompagnement AXIOM & ALTIS pour les talents du BTP."
         />
         <link rel="canonical" href="https://axiom-talents.com/fiches-metiers/f1703-macon" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "Maçon qualifié",
+          "description": "Réaliser des ouvrages en maçonnerie (murs, cloisons, dalles), préparer mortiers et enduits, assembler des éléments d'armature de béton armé. Métier en très haute tension en France.",
+          "identifier": { "@type": "PropertyValue", "name": "ROME", "value": "F1703" },
+          "datePosted": "2025-05-01",
+          "validThrough": "2026-12-31",
+          "employmentType": "FULL_TIME",
+          "hiringOrganization": { "@type": "Organization", "name": "AXIOM Talents", "sameAs": "https://axiom-talents.com" },
+          "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressCountry": "FR" } },
+          "baseSalary": { "@type": "MonetaryAmount", "currency": "EUR", "value": { "@type": "QuantitativeValue", "value": 2200, "minValue": 1900, "maxValue": 2800, "unitText": "MONTH" } },
+          "industry": "Construction / BTP",
+          "occupationalCategory": "F1703",
+          "qualifications": "CQP/DQP Maçonnerie ou équivalent"
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background text-foreground">

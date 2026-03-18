@@ -64,6 +64,22 @@ export default function FicheMetierAideSoignant() {
         <title>Aide-soignant – Code ROME J1501 | AXIOM Talents</title>
         <meta name="description" content="Fiche métier Aide-soignant (ROME J1501) : missions, compétences, salaire en France et accompagnement AXIOM & ALTIS pour les talents du secteur santé." />
         <link rel="canonical" href="https://axiom-talents.com/fiches-metiers/j1501-aide-soignant" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "Aide-soignant",
+          "description": "Accompagner les patients dans les gestes de la vie quotidienne, assurer les soins d'hygiène et de confort, participer à la surveillance clinique. Métier en très haute tension en France.",
+          "identifier": { "@type": "PropertyValue", "name": "ROME", "value": "J1501" },
+          "datePosted": "2025-05-01",
+          "validThrough": "2026-12-31",
+          "employmentType": "FULL_TIME",
+          "hiringOrganization": { "@type": "Organization", "name": "AXIOM Talents", "sameAs": "https://axiom-talents.com" },
+          "jobLocation": { "@type": "Place", "address": { "@type": "PostalAddress", "addressCountry": "FR" } },
+          "baseSalary": { "@type": "MonetaryAmount", "currency": "EUR", "value": { "@type": "QuantitativeValue", "value": 2000, "minValue": 1800, "maxValue": 2400, "unitText": "MONTH" } },
+          "industry": "Santé / Aide à la personne",
+          "occupationalCategory": "J1501",
+          "qualifications": "DEAS ou diplôme équivalent reconnu"
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background text-foreground">
