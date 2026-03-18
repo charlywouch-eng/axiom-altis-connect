@@ -209,7 +209,7 @@ export default function SignupLight() {
       trackGA4("funnel_step_experience" as any, { experience: form.experience, source: "signup-light" });
       setFunnelStep("pays");
     } else if (funnelStep === "pays") {
-      trackGA4("funnel_step_pays", { country: form.pays, source: "signup-light" });
+      trackGA4("funnel_step_pays" as any, { country: form.pays, source: "signup-light" });
       setFunnelStep("confirm");
     } else if (funnelStep === "confirm") {
       handleSubmit();
