@@ -534,6 +534,15 @@ serve(async (req) => {
 
         const smEmail = sectorMatchEmail(smProfile.full_name || "Talent", match_count || 1, top_sector || "BTP");
         await sendEmail(smProfile.email, smEmail.subject, smEmail.html);
+        // Insert in-app push notification
+        await insertPushNotification(
+          supabase,
+          talent_user_id,
+          `Nouvelles opportunités dans ${top_sector || "votre secteur"}`,
+          `Votre profil correspond à ${match_count || 1} offre(s) avec un score IA > 80 % – Consultez vos opportunités !`,
+          "sector_match",
+          "/dashboard-talent?tab=opportunites"
+        );
         await logNotification(supabase, talent_user_id, "sector_match");
         break;
       }
