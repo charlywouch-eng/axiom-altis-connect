@@ -95,7 +95,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
   };
 
   const canProceed = () => {
-    if (step === 0) return fullName.trim().length >= 2;
+    if (step === 0) return fullName.trim().length >= 2 && experienceYears.length > 0;
     if (step === 1) return experiences.some(e => e.poste.trim());
     if (step === 2) return formations.some(f => f.diplome.trim());
     if (step === 3) return competences.length > 0;
