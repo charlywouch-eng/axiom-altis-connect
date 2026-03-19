@@ -258,14 +258,6 @@ export default function DashboardTalent() {
 
   const isPremium = talentProfile?.is_premium === true;
 
-  const { data: totalOpenOffers = 0 } = useQuery({
-    queryKey: ["open_offers_count"],
-    queryFn: async () => {
-      const { count, error } = await supabase.from("job_offers").select("*", { count: "exact", head: true }).eq("status", "open");
-      if (error) throw error;
-      return count || 0;
-    },
-  });
 
   // Secteurs prioritaires BTP / Santé / CHR
   const PRIORITY_ROME = [
