@@ -36,7 +36,9 @@ const COUNTRY_FILTERS_REC = [
   { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
   { label: "Mali", flag: "🇲🇱", value: "Mali" },
   { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
-  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+  { label: "Cameroun", flag: "🇨🇲", value: "Cameroun" },
+  { label: "Togo", flag: "🇹🇬", value: "Togo" },
+  { label: "Bénin", flag: "🇧🇯", value: "Bénin" },
 ] as const;
 
 
