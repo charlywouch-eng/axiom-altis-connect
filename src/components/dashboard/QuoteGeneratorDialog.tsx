@@ -94,7 +94,7 @@ export function QuoteGeneratorDialog({
     if (form.includePackAltis) {
       items.push({
         label: "Pack ALTIS",
-        description: "Formalités visa de travail (procédure ANEF) + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif",
+        description: "Formalités visa de travail (procédure ANEF) + accueil aéroport + logement meublé 1 mois + accompagnement administratif",
         quantity: volume,
         unitPrice: 2450,
         total: 2450 * volume,

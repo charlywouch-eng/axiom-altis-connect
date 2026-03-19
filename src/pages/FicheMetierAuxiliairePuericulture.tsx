@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Baby, Briefcase, Wrench, ShieldCheck, ArrowRight, CheckCircle2,
-  MapPin, Euro, Clock, Moon, Plane, Home, GraduationCap,
+  MapPin, Euro, Clock, Moon, Plane, Home, Globe, GraduationCap,
   FileCheck, AlertTriangle, ArrowLeft, Mail
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -40,10 +40,10 @@ const CONDITIONS = [
   "Possibilité d'évolution vers éducateur de jeunes enfants",
 ];
 const ALTIS_SERVICES = [
-  { icon: Plane, text: "Billet d'avion et accueil à l'arrivée en France" },
+  { icon: Globe, text: "Formalités visa de travail – Procédure ANEF" },
+  { icon: Plane, text: "Accueil & assistance à l'aéroport" },
   { icon: Home, text: "Logement meublé pour le premier mois" },
-  { icon: FileCheck, text: "Accompagnement pour la demande de visa accéléré" },
-  { icon: GraduationCap, text: "Mise en relation avec des formations aux normes françaises" },
+  { icon: FileCheck, text: "Accompagnement administratif complet" },
 ];
 
 export default function FicheMetierAuxiliairePuericulture() {
@@ -124,7 +124,7 @@ export default function FicheMetierAuxiliairePuericulture() {
             <Card className="border-accent/30 bg-accent/5">
               <CardContent className="p-6 space-y-4">
                 <h3 className="font-bold text-lg flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-accent" /> Pack ALTIS Zéro Stress</h3>
-                <p className="text-sm text-muted-foreground">Le Pack ALTIS Zéro Stress vous accompagne pour la demande de visa accéléré, le billet d'avion, l'accueil à l'arrivée et un logement meublé pour le premier mois. Une mise en relation avec des formations aux normes françaises peut être proposée selon vos besoins.</p>
+                <p className="text-sm text-muted-foreground">Le Pack ALTIS Zéro Stress vous accompagne dans les formalités de visa de travail (procédure ANEF), l'accueil à l'aéroport, un logement meublé pour le premier mois et l'accompagnement administratif complet (préfecture, sécurité sociale, ouverture de compte).</p>
                 <ul className="space-y-2">{ALTIS_SERVICES.map((s, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm"><s.icon className="h-4 w-4 text-accent shrink-0" />{s.text}</li>
                 ))}</ul>

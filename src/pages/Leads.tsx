@@ -542,7 +542,7 @@ export default function Leads() {
                 {[
                   "Score détaillé par compétence & niveau ROME",
                   "3 à 5 offres CDI France Travail matchées",
-                  "Parcours ALTIS : visa + billet + logement",
+                  "Parcours ALTIS : visa + accueil + logement",
                 ].map(item => (
                   <div key={item} className="flex items-start gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: "hsl(189,94%,43%)" }} />

@@ -231,10 +231,9 @@ export function generateQuotePdf(data: QuoteData): jsPDF {
   doc.setTextColor(...grey);
   const packDetails = [
     "• Formalités visa de travail – Procédure ANEF : accompagnement complet des démarches (ANEF + Préfecture, Code CESEDA)",
-    "• Billet A/R : vol aller-retour Cameroun ↔ France",
-    "• Accueil aéroport : transfert et accompagnement à l'arrivée",
-    "• Logement meublé : 1 mois d'hébergement inclus",
-    "• Accompagnement administratif : ouverture compte bancaire, sécurité sociale, titre de séjour",
+    "• Accueil & assistance aéroport : accueil personnalisé et assistance dès l'arrivée en France",
+    "• Logement meublé : 1 mois d'hébergement en résidence partenaire",
+    "• Accompagnement administratif : préfecture, sécurité sociale, ouverture de compte bancaire",
   ];
   packDetails.forEach((d) => {
     doc.text(d, margin, y);

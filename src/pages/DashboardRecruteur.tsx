@@ -105,7 +105,7 @@ export default function DashboardRecruteur() {
               <span className="text-accent">Opérationnels jour 1</span>
             </h1>
             <p className="text-sm text-white/50 max-w-xl">
-              Matching IA + conformité ROME + Pack ALTIS Zéro Stress (formalités visa de travail – procédure ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif) · SaaS 499 €/mois + Pack ALTIS 2 450 €/talent
+              Matching IA + conformité ROME + Pack ALTIS Zéro Stress (formalités visa de travail – procédure ANEF + accueil aéroport + logement meublé 1 mois + accompagnement administratif) · SaaS 499 €/mois + Pack ALTIS 2 450 €/talent
             </p>
           </motion.div>
         </div>
@@ -754,7 +754,7 @@ function FacturationTab() {
       price: "1 200 €",
       priceSuffix: "/talent",
       description: "Intégration clé-en-main",
-      features: ["Visa & titre de séjour", "Billet d'avion A/R", "Accueil aéroport", "Logement 1er mois", "Accompagnement administratif"],
+      features: ["Formalités visa de travail", "Accueil & assistance aéroport", "Logement 1er mois", "Accompagnement administratif"],
       cta: "Demander un devis",
       highlight: false,
     },

@@ -51,8 +51,8 @@ const VISION_ITEMS = [
     icon: Plane,
     title: "ALTIS — Les bras opérationnels",
     points: [
-      "Pack Zéro Stress : formalités visa de travail (procédure ANEF) + billet d'avion",
-      "Accueil aéroport + logement meublé 1 mois",
+      "Pack Zéro Stress : formalités visa de travail (procédure ANEF)",
+      "Accueil & assistance aéroport + logement meublé 1 mois",
       "Accompagnement administratif J1 → J30",
     ],
     accent: "text-primary", bg: "bg-primary/10", border: "border-primary/20",
