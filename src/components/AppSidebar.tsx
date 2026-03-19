@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, FileText, TrendingUp, ShieldAlert, Bell } from "lucide-react";
+import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, FileText, TrendingUp, ShieldAlert, Bell, Building2 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -21,6 +21,7 @@ const talentLinks = [
 
 const entrepriseLinks = [
   { title: "Accueil", url: "/dashboard-entreprise", icon: Home },
+  { title: "Espace Société", url: "/dashboard-societe", icon: Building2 },
   { title: "Mes offres", url: "/dashboard-entreprise?tab=offres", icon: Briefcase },
   { title: "Candidats", url: "/dashboard-entreprise/candidats", icon: Users },
   { title: "Mon profil", url: "/dashboard-entreprise/profil", icon: UserCircle },
