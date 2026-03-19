@@ -12,7 +12,7 @@ import { MotivationalQuote } from "@/components/MotivationalQuote";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import heroImg from "@/assets/metier-aide-soignant-j1501.jpg";
+import heroImg from "@/assets/metier-aide-soignant.jpg";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const fadeUp = {
