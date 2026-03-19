@@ -42,7 +42,8 @@ const suggestedSkills = [
 ];
 
 const signupSchema = z.object({
-  fullName: z.string().trim().min(2, "Minimum 2 caractères").max(100, "Maximum 100 caractères"),
+  firstName: z.string().trim().min(2, "Minimum 2 caractères").max(50, "Maximum 50 caractères"),
+  lastName: z.string().trim().min(2, "Minimum 2 caractères").max(50, "Maximum 50 caractères"),
   email: z.string().trim().email("Adresse email invalide").max(255, "Maximum 255 caractères"),
   country: z.string().min(1, "Sélectionnez un pays"),
   frenchLevel: z.string().min(1, "Sélectionnez un niveau"),
