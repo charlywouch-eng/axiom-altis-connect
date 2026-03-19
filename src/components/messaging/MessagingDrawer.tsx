@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   ArrowLeft, Send, Check, CheckCheck, MessageSquare, Search,
+  Languages, Sparkles, Loader2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, isToday, isYesterday } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type Conversation = {
   id: string;
@@ -60,6 +62,12 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
   const [search, setSearch] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // AI state
+  const [translations, setTranslations] = useState<Record<string, string>>({});
+  const [translatingId, setTranslatingId] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
   // Fetch conversations
   const { data: conversations = [] } = useQuery({
     queryKey: ["conversations", user?.id],
@@ -72,7 +80,6 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
         .order("last_message_at", { ascending: false });
       if (error) throw error;
 
-      // Enrich with other participant info
       const enriched = await Promise.all(
         (data || []).map(async (c: any) => {
           const otherId = c.participant_1 === user.id ? c.participant_2 : c.participant_1;
@@ -87,7 +94,6 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
             .eq("user_id", otherId)
             .single();
 
-          // Count unread
           const { count } = await supabase
             .from("messages")
             .select("*", { count: "exact", head: true })
@@ -148,6 +154,20 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
     }
   }, [messages]);
 
+  // Load AI suggestions when last received message changes
+  useEffect(() => {
+    if (!activeConvo || messages.length === 0) {
+      setSuggestions([]);
+      return;
+    }
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.sender_id === user?.id) {
+      setSuggestions([]);
+      return;
+    }
+    loadSuggestions(lastMsg.content);
+  }, [messages.length, activeConvo?.id]);
+
   // Realtime subscription
   useEffect(() => {
     if (!activeConvo) return;
@@ -167,6 +187,12 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
     return () => { supabase.removeChannel(channel); };
   }, [activeConvo?.id]);
 
+  // Reset AI state when switching conversations
+  useEffect(() => {
+    setTranslations({});
+    setSuggestions([]);
+  }, [activeConvo?.id]);
+
   // Send message
   const sendMutation = useMutation({
     mutationFn: async (content: string) => {
@@ -177,7 +203,6 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
         content,
       });
       if (error) throw error;
-      // Update conversation last message
       await supabase.from("conversations").update({
         last_message_text: content,
         last_message_at: new Date().toISOString(),
@@ -186,6 +211,7 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
     },
     onSuccess: () => {
       setMessageText("");
+      setSuggestions([]);
       qc.invalidateQueries({ queryKey: ["messages", activeConvo?.id] });
       qc.invalidateQueries({ queryKey: ["conversations"] });
     },
@@ -196,6 +222,50 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
     if (!trimmed) return;
     sendMutation.mutate(trimmed);
   }, [messageText, sendMutation]);
+
+  // AI: Translate a message
+  const handleTranslate = async (msgId: string, text: string) => {
+    if (translations[msgId]) {
+      setTranslations(prev => {
+        const copy = { ...prev };
+        delete copy[msgId];
+        return copy;
+      });
+      return;
+    }
+    setTranslatingId(msgId);
+    try {
+      const { data, error } = await supabase.functions.invoke("chat-ai-assist", {
+        body: { action: "translate", text },
+      });
+      if (error) throw error;
+      if (data?.translation) {
+        setTranslations(prev => ({ ...prev, [msgId]: data.translation }));
+      }
+    } catch (e: any) {
+      toast.error("Erreur de traduction", { description: e.message });
+    } finally {
+      setTranslatingId(null);
+    }
+  };
+
+  // AI: Load suggestions
+  const loadSuggestions = async (lastMessage: string) => {
+    setLoadingSuggestions(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("chat-ai-assist", {
+        body: { action: "suggest", text: lastMessage },
+      });
+      if (error) throw error;
+      if (data?.suggestions) {
+        setSuggestions(data.suggestions);
+      }
+    } catch {
+      // Silent fail for suggestions
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
 
   const filteredConvos = conversations.filter(c =>
     !search || c.other_name?.toLowerCase().includes(search.toLowerCase())
@@ -312,7 +382,7 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
           </>
         ) : (
           <>
-            {/* Chat view */}
+            {/* Chat header */}
             <div className="flex items-center gap-3 p-4 border-b">
               <Button variant="ghost" size="icon" onClick={() => setActiveConvo(null)} className="shrink-0">
                 <ArrowLeft className="h-4 w-4" />
@@ -322,7 +392,7 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
                   {getInitials(activeConvo.other_name || "U")}
                 </AvatarFallback>
               </Avatar>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold truncate">{activeConvo.other_name}</p>
                 {activeConvo.other_role && (
                   <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 border-0 mt-0.5", roleColor(activeConvo.other_role))}>
@@ -330,6 +400,9 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
                   </Badge>
                 )}
               </div>
+              <Badge variant="outline" className="text-[9px] gap-1 text-accent border-accent/30">
+                <Sparkles className="h-3 w-3" /> IA
+              </Badge>
             </div>
 
             {/* Messages */}
@@ -341,8 +414,10 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
               ) : (
                 messages.map((m) => {
                   const isMine = m.sender_id === user?.id;
+                  const hasTranslation = !!translations[m.id];
+                  const isTranslating = translatingId === m.id;
                   return (
-                    <div key={m.id} className={cn("flex", isMine ? "justify-end" : "justify-start")}>
+                    <div key={m.id} className={cn("flex flex-col", isMine ? "items-end" : "items-start")}>
                       <div className={cn(
                         "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm shadow-sm",
                         isMine
@@ -350,6 +425,17 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
                           : "bg-muted text-foreground rounded-bl-md"
                       )}>
                         <p className="whitespace-pre-wrap break-words">{m.content}</p>
+                        {hasTranslation && (
+                          <div className={cn(
+                            "mt-2 pt-2 border-t text-xs italic",
+                            isMine ? "border-accent-foreground/20 text-accent-foreground/80" : "border-border text-muted-foreground"
+                          )}>
+                            <span className="flex items-center gap-1 mb-0.5 not-italic font-medium">
+                              <Languages className="h-3 w-3" /> Traduction
+                            </span>
+                            {translations[m.id]}
+                          </div>
+                        )}
                         <div className={cn(
                           "flex items-center gap-1 mt-1",
                           isMine ? "justify-end" : "justify-start"
@@ -367,11 +453,59 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
                           )}
                         </div>
                       </div>
+                      {/* Translate button */}
+                      <button
+                        onClick={() => handleTranslate(m.id, m.content)}
+                        disabled={isTranslating}
+                        className={cn(
+                          "flex items-center gap-1 text-[10px] mt-1 px-2 py-0.5 rounded-full transition-colors",
+                          hasTranslation
+                            ? "text-accent bg-accent/10 hover:bg-accent/20"
+                            : "text-muted-foreground hover:text-accent hover:bg-accent/10"
+                        )}
+                      >
+                        {isTranslating ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <Languages className="h-3 w-3" />
+                        )}
+                        {hasTranslation ? "Masquer" : "Traduire"}
+                      </button>
                     </div>
                   );
                 })
               )}
             </div>
+
+            {/* AI Suggestions */}
+            {(suggestions.length > 0 || loadingSuggestions) && (
+              <div className="px-3 py-2 border-t border-border/50 bg-accent/5">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <Sparkles className="h-3 w-3 text-accent" />
+                  <span className="text-[10px] font-medium text-accent">Suggestions IA</span>
+                </div>
+                {loadingSuggestions ? (
+                  <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                    <Loader2 className="h-3 w-3 animate-spin" /> Génération...
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {suggestions.map((s, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setMessageText(s);
+                          setSuggestions([]);
+                        }}
+                        className="text-xs px-3 py-1.5 rounded-full bg-card border border-accent/20 text-foreground hover:bg-accent/10 hover:border-accent/40 transition-colors truncate max-w-[90%]"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Input */}
             <div className="p-3 border-t bg-card/50">

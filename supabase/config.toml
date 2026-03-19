@@ -31,3 +31,5 @@ project_id = "wfolueffkdzknuowwecf"
     verify_jwt = false
   [functions.send-quote-pdf]
     verify_jwt = false
+  [functions.chat-ai-assist]
+    verify_jwt = false
