@@ -135,7 +135,8 @@ export default function SignupTalent() {
       options: {
         emailRedirectTo: window.location.origin,
         data: {
-          full_name: form.fullName.trim(),
+          first_name: form.firstName.trim(),
+          full_name: `${form.firstName.trim()} ${form.lastName.trim()}`,
           role: "talent",
           country: form.country,
           french_level: form.frenchLevel,
