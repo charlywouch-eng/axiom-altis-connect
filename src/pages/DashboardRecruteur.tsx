@@ -208,7 +208,7 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
     },
   });
 
-
+  const filtered = talents?.filter(t => {
     const matchSearch = !search ||
       t.full_name?.toLowerCase().includes(search.toLowerCase()) ||
       t.rome_code?.toLowerCase().includes(search.toLowerCase()) ||
