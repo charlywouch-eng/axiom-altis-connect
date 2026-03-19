@@ -54,6 +54,21 @@ interface RomeData {
   debouches: { label: string; code: string }[];
 }
 
+interface MarcheData {
+  tensions: Array<Record<string, unknown>>;
+  salaires: Array<Record<string, unknown>>;
+  bmo: Record<string, unknown> | null;
+  source: string;
+}
+
+interface CompetencesData {
+  competences: Array<{ code: string; label: string; type?: string; domain?: string }>;
+  savoirFaire: Array<{ code: string; label: string }>;
+  savoirEtre: Array<{ code: string; label: string }>;
+  contextes: string[];
+  source: string;
+}
+
 async function fetchRomeData(romeCode: string): Promise<RomeData | null> {
   const { data: sessionData } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
@@ -70,6 +85,28 @@ async function fetchRomeData(romeCode: string): Promise<RomeData | null> {
 
   if (!res.ok) return null;
   return res.json() as Promise<RomeData>;
+}
+
+async function fetchMarcheData(romeCode: string): Promise<MarcheData | null> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+  const res = await fetch(`${supabaseUrl}/functions/v1/marche-du-travail`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ codeRome: romeCode }),
+  });
+  if (!res.ok) return null;
+  return res.json() as Promise<MarcheData>;
+}
+
+async function fetchCompetencesData(romeCode: string): Promise<CompetencesData | null> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+  const res = await fetch(`${supabaseUrl}/functions/v1/competences-rome`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ romeCode }),
+  });
+  if (!res.ok) return null;
+  return res.json() as Promise<CompetencesData>;
 }
 
 export default function MetierDetail() {
