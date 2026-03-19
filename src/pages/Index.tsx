@@ -578,10 +578,10 @@ export default function Index() {
              <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center relative z-10">
               <Button
                 size="lg"
-                className="w-[90%] max-w-md sm:w-auto text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white mx-auto sm:mx-0"
+                className="w-[90%] max-w-md sm:w-auto text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-accent hover:bg-accent/90 border-0 group text-accent-foreground mx-auto sm:mx-0"
                 onClick={() => navigate("/signup-light")}
               >
-                Commencer gratuitement <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                Commencer mon évaluation gratuite <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
               <Button
                 size="lg"
