@@ -137,7 +137,11 @@ export default function Signup() {
       email: email.trim(),
       options: {
         emailRedirectTo: window.location.origin,
-        data: { role: "talent", country: "Cameroun" },
+        data: {
+          role: "entreprise",
+          first_name: firstName.trim(),
+          full_name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+        },
       },
     });
     if (error) {
