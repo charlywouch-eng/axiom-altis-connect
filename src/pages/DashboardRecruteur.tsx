@@ -214,7 +214,7 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
   return (
     <motion.div initial="hidden" animate="visible">
       {/* ── 3 Stat Cards ── */}
-      <motion.div custom={0} variants={fadeUp} className="grid gap-4 sm:grid-cols-3 mb-8">
+      <motion.div custom={0} variants={fadeUp} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20">
@@ -245,6 +245,17 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
             <div>
               <p className="text-xs text-white/40 uppercase tracking-wider">Offres en tension</p>
               <p className="font-display text-3xl font-bold text-white tabular-nums">{offersCount ?? "—"}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20">
+              <ClipboardList className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs text-white/40 uppercase tracking-wider">Candidatures en cours</p>
+              <p className="font-display text-3xl font-bold text-white tabular-nums">{candidaturesCount ?? "—"}</p>
             </div>
           </CardContent>
         </Card>
