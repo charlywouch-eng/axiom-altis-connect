@@ -123,6 +123,7 @@ export default function DashboardRecruteur() {
         {activeTab === "missions" && <MissionsTab />}
         {activeTab === "matching" && <MatchingTab query={matchQuery} setQuery={setMatchQuery} />}
         {activeTab === "facturation" && <FacturationTab />}
+        {activeTab === "candidatures" && <CandidaturesTab />}
       </main>
 
       {/* Talent Dossier Modal */}
