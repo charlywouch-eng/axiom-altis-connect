@@ -165,6 +165,7 @@ export default function DashboardTalent() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+  const [candidatureOpen, setCandidatureOpen] = useState(false);
 
   useEffect(() => { trackGA4("dashboard_talent_view"); }, []);
 
