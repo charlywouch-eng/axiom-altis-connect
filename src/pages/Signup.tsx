@@ -100,6 +100,8 @@ export default function Signup() {
   const [direction, setDirection] = useState(1);
 
   // Step 1 – Quick signup (passwordless)
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [acceptCgu, setAcceptCgu] = useState(false);
   const [submitting, setSubmitting] = useState(false);
