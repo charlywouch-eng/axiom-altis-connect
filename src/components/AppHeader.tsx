@@ -52,6 +52,7 @@ export function AppHeader() {
           <p className="text-sm font-medium">{user?.email}</p>
           <p className="text-xs capitalize text-muted-foreground">{role}</p>
         </div>
+        <MessagingButton />
         <NotificationBell />
         <ThemeToggle />
         <Button variant="ghost" size="icon" onClick={signOut} title="Se déconnecter" className="hover:bg-destructive/10 hover:text-destructive">
