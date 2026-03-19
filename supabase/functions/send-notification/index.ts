@@ -271,6 +271,25 @@ async function logNotification(supabase: any, talentUserId: string, notification
   });
 }
 
+// ─── Insert in-app push notification ─────────────────────────
+async function insertPushNotification(
+  supabase: any,
+  userId: string,
+  title: string,
+  message: string,
+  type: string,
+  link?: string
+) {
+  await supabase.from("notifications").insert({
+    user_id: userId,
+    title,
+    message,
+    type,
+    link: link || null,
+    read: false,
+  });
+}
+
 // ─── Check if talent has notifications enabled ───────────────
 async function isNotificationEnabled(supabase: any, talentUserId: string): Promise<boolean> {
   const { data } = await supabase
