@@ -528,6 +528,7 @@ function FrancoTalentsSection({
       country.includes("côte d'ivoire") || country.includes("cote d'ivoire") ||
       country.includes("mali") ||
       country.includes("burkina") ||
+      country.includes("cameroun") || country.includes("cameroon") ||
       country.includes("togo") || country.includes("bénin") || country.includes("benin");
     if (!isFranco) return false;
     if (!countryFilter) return true;
