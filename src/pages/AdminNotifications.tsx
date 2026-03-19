@@ -106,7 +106,7 @@ export default function AdminNotifications() {
   }) ?? [];
 
   return (
-    <DashboardLayout variant="admin">
+    <DashboardLayout sidebarVariant="admin">
       <div className="p-4 md:p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
