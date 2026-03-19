@@ -68,10 +68,11 @@ import {
   
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { PremiumStatCard } from "@/components/PremiumStatCard";
+
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
 import OpportunitesTab from "@/components/dashboard/OpportunitesTab";
+import CandidatureHistorySection from "@/components/dashboard/CandidatureHistorySection";
 import CandidatureFormDialog from "@/components/dashboard/CandidatureFormDialog";
 
 // ── Types ────────────────────────────────────────────────────
@@ -257,14 +258,6 @@ export default function DashboardTalent() {
 
   const isPremium = talentProfile?.is_premium === true;
 
-  const { data: totalOpenOffers = 0 } = useQuery({
-    queryKey: ["open_offers_count"],
-    queryFn: async () => {
-      const { count, error } = await supabase.from("job_offers").select("*", { count: "exact", head: true }).eq("status", "open");
-      if (error) throw error;
-      return count || 0;
-    },
-  });
 
   // Secteurs prioritaires BTP / Santé / CHR
   const PRIORITY_ROME = [
@@ -609,31 +602,7 @@ export default function DashboardTalent() {
 
               {/* TAB 1 — DASHBOARD */}
               <TabsContent value="dashboard" className="space-y-5 mt-0">
-                <motion.div variants={itemVariants}>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    <PremiumStatCard title="Offres disponibles" value={String(Math.max(totalOpenOffers, offersToDisplay.length))} subtitle="Postes actifs · Secteurs en forte tension" tensionLevel="low" tensionLabel="STABLE" icon={Briefcase} />
-                    <PremiumStatCard title="Score de compatibilité" value={`${offersToDisplay[0]?.score ?? 85}%`} subtitle="BTP – Maçonnerie F1703 · Demande élevée" tensionLevel="low" tensionLabel="STABLE" icon={Star} />
-                    <PremiumStatCard title="Progression ALTIS" value={`${PROGRESS_PERCENT}%`} subtitle="4 étapes sur 6 · Formation en cours" tensionLevel="medium" tensionLabel="EN COURS" icon={TrendingUp} />
-                  </div>
-                </motion.div>
-
-                {/* Postuler CTA */}
-                <motion.div variants={itemVariants}>
-                  <Card className="border-accent/30 bg-gradient-to-r from-accent/5 to-primary/5">
-                    <CardContent className="p-5 flex items-center justify-between gap-4">
-                      <div>
-                        <h3 className="font-semibold text-foreground flex items-center gap-2">
-                          <Sparkles className="h-4 w-4 text-accent" />
-                          Postuler via AXIOM
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-1">Créez votre CV structuré en 5 minutes. Les recruteurs le verront immédiatement.</p>
-                      </div>
-                      <Button onClick={() => setCandidatureOpen(true)} className="shrink-0 bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5">
-                        <ClipboardList className="h-4 w-4" /> Postuler
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                <CandidatureHistorySection onPostuler={() => setCandidatureOpen(true)} />
               </TabsContent>
 
               {/* TAB 2 — MON PARCOURS */}
