@@ -30,6 +30,9 @@ import {
   Info,
   RefreshCw,
   ExternalLink,
+  BarChart3,
+  Target,
+  Brain,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
