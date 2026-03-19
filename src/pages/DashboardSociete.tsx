@@ -23,8 +23,19 @@ import {
   MapPin,
   Globe,
   ChevronRight,
+  Briefcase,
+  CalendarDays,
+  CircleDot,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const TENSION_FILTERS = ["Tous", "Très haute", "Haute", "Croissante"] as const;
 const SECTOR_FILTERS = ["BTP", "Santé", "CHR", "Logistique", "Industrie"] as const;
