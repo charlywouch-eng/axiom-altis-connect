@@ -17,7 +17,7 @@ import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
   Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList,
-  TrendingUp, Sparkles, Phone
+  TrendingUp, Sparkles, Phone, Award, Star, MessageSquare
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
 
@@ -26,8 +26,24 @@ import avatarBtp from "@/assets/talent-btp.jpg";
 import avatarLogistique from "@/assets/talent-logistique.jpg";
 import avatarTech from "@/assets/talent-tech.jpg";
 import avatarFormation from "@/assets/talent-formation.jpg";
+import talentAvatar1 from "@/assets/talent-avatar-1.jpg";
+import talentAvatar2 from "@/assets/talent-avatar-2.jpg";
+import talentAvatar3 from "@/assets/talent-avatar-3.jpg";
+import talentAvatar4 from "@/assets/talent-avatar-4.jpg";
+import talentAvatar5 from "@/assets/talent-avatar-5.jpg";
+import talentAvatar6 from "@/assets/talent-avatar-6.jpg";
 
 const TALENT_AVATARS = [avatarSante, avatarBtp, avatarLogistique, avatarTech, avatarFormation];
+const FRANCO_PHOTOS = [talentAvatar1, talentAvatar2, talentAvatar3, talentAvatar4, talentAvatar5, talentAvatar6];
+
+const COUNTRY_FILTERS_REC = [
+  { label: "Tous", flag: "🌍", value: null as string | null },
+  { label: "Sénégal", flag: "🇸🇳", value: "Sénégal" },
+  { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
+  { label: "Mali", flag: "🇲🇱", value: "Mali" },
+  { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
+  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+] as const;
 
 
 const fadeUp = {
@@ -168,9 +184,12 @@ function getTensionLevel(score: number): string {
 /* ──────────── TALENTS TAB ──────────── */
 function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
   const { session } = useAuth();
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string>("Tous");
+  const [countryFilter, setCountryFilter] = useState<string | null>(null);
+  const [invitingId, setInvitingId] = useState<string | null>(null);
 
   const { data: talents, isLoading } = useQuery({
     queryKey: ["recruteur-talents"],
@@ -271,8 +290,18 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
           </CardContent>
         </Card>
       </motion.div>
+      {/* ── Talents Francophones Recommandés ──────────── */}
+      <FrancoTalentsSection
+        talents={talents ?? []}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
+        invitingId={invitingId}
+        setInvitingId={setInvitingId}
+        session={session}
+        qc={qc}
+      />
 
-      {/* ── Outils IA Section ── */}
+
       <motion.div custom={0.5} variants={fadeUp} className="mb-10">
         <div className="flex items-center gap-3 mb-5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/20">
@@ -471,6 +500,202 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
           <p className="text-white/50">Aucun talent trouvé.</p>
           <p className="text-white/30 text-sm mt-1">Essayez un autre filtre ou terme de recherche.</p>
         </div>
+      )}
+    </motion.div>
+  );
+}
+
+/* ──────────── FRANCO TALENTS SECTION ──────────── */
+function FrancoTalentsSection({
+  talents,
+  countryFilter,
+  setCountryFilter,
+  invitingId,
+  setInvitingId,
+  session,
+  qc,
+}: {
+  talents: any[];
+  countryFilter: string | null;
+  setCountryFilter: (v: string | null) => void;
+  invitingId: string | null;
+  setInvitingId: (v: string | null) => void;
+  session: any;
+  qc: ReturnType<typeof useQueryClient>;
+}) {
+  const toastFn = toast;
+
+  const francoTalents = talents.filter((t) => {
+    const country = t.country?.toLowerCase() || "";
+    const isFranco =
+      country.includes("sénégal") || country.includes("senegal") ||
+      country.includes("côte d'ivoire") || country.includes("cote d'ivoire") ||
+      country.includes("mali") ||
+      country.includes("burkina") ||
+      country.includes("togo") || country.includes("bénin") || country.includes("benin");
+    if (!isFranco) return false;
+    if (!countryFilter) return true;
+    return country.includes(countryFilter.toLowerCase());
+  });
+
+  const handleInvite = async (talent: { user_id: string; full_name: string | null }) => {
+    if (!session?.user?.id) return;
+    setInvitingId(talent.user_id);
+    try {
+      const { data: existing } = await supabase
+        .from("conversations")
+        .select("id")
+        .or(`and(participant_1.eq.${session.user.id},participant_2.eq.${talent.user_id}),and(participant_1.eq.${talent.user_id},participant_2.eq.${session.user.id})`)
+        .limit(1)
+        .maybeSingle();
+
+      let convoId = existing?.id;
+      if (!convoId) {
+        const { data: newConvo, error } = await supabase
+          .from("conversations")
+          .insert({ participant_1: session.user.id, participant_2: talent.user_id })
+          .select("id")
+          .single();
+        if (error) throw error;
+        convoId = newConvo.id;
+      }
+
+      const msg = `👋 Bonjour ${talent.full_name || "Talent"} ! Votre profil a retenu notre attention. Nous aimerions échanger avec vous sur une opportunité professionnelle en France. Êtes-vous disponible pour en discuter ? 🇫🇷`;
+      await supabase.from("messages").insert({ conversation_id: convoId, sender_id: session.user.id, content: msg });
+      await supabase.from("conversations").update({ last_message_text: msg, last_message_at: new Date().toISOString() }).eq("id", convoId);
+
+      qc.invalidateQueries({ queryKey: ["conversations"] });
+      toastFn({ title: "✅ Invitation envoyée", description: `${talent.full_name || "Le talent"} a été contacté via AXIOM Connect.` });
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : "Erreur inconnue";
+      toastFn({ title: "Erreur", description: errMsg, variant: "destructive" });
+    } finally {
+      setInvitingId(null);
+    }
+  };
+
+  return (
+    <motion.div custom={0.3} variants={fadeUp} className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
+          <Award className="h-5 w-5 text-accent" />
+          Talents Francophones Recommandés
+        </h2>
+        <Badge className="bg-accent/15 text-accent border-0 text-xs font-bold px-2.5 gap-1">
+          <Sparkles className="h-3 w-3" /> IA Matching
+        </Badge>
+      </div>
+
+      {/* Country filters */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {COUNTRY_FILTERS_REC.map((cf) => (
+          <button
+            key={cf.label}
+            onClick={() => setCountryFilter(cf.value)}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              countryFilter === cf.value
+                ? "bg-accent text-accent-foreground shadow-md shadow-accent/20"
+                : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border border-white/10"
+            }`}
+          >
+            <span className="text-sm">{cf.flag}</span>
+            {cf.label}
+          </button>
+        ))}
+      </div>
+
+      {francoTalents.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {francoTalents.slice(0, 6).map((t, i) => (
+            <motion.div
+              key={t.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+            >
+              <Card className="group bg-[hsl(222,33%,12%)] border-white/10 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 transition-all duration-300 overflow-hidden">
+                <CardContent className="p-0">
+                  {/* Photo header */}
+                  <div className="relative h-32 bg-gradient-to-br from-[hsl(222,47%,11%)] to-[hsl(199,89%,48%/0.3)]">
+                    <img
+                      src={FRANCO_PHOTOS[i % FRANCO_PHOTOS.length]}
+                      alt={t.full_name || "Talent"}
+                      className="w-full h-full object-cover opacity-70 group-hover:opacity-85 transition-opacity"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,33%,12%)] via-transparent to-transparent" />
+                    {/* Score badge */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1 bg-[hsl(222,33%,8%)]/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-lg border border-accent/30">
+                      <Star className="h-3.5 w-3.5 text-accent" />
+                      <span className="font-display text-lg font-extrabold text-accent tabular-nums">
+                        {t.compliance_score}
+                      </span>
+                      <span className="text-[10px] text-accent/60">%</span>
+                    </div>
+                    {/* Country flag */}
+                    <div className="absolute top-3 left-3 bg-[hsl(222,33%,8%)]/90 backdrop-blur-sm rounded-lg px-2.5 py-1 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg">
+                      <Globe className="h-3 w-3 text-accent" />
+                      {t.country}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <p className="font-bold text-white text-sm">{t.full_name || "Talent certifié"}</p>
+                      <p className="text-xs text-accent font-medium mt-0.5">
+                        {t.rome_label || "Professionnel qualifié"} {t.rome_code && `· ${t.rome_code}`}
+                      </p>
+                    </div>
+
+                    {/* Skills */}
+                    {t.skills && t.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {t.skills.slice(0, 3).map((s: string) => (
+                          <span key={s} className="text-[10px] bg-accent/10 text-accent rounded-full px-2 py-0.5 font-medium">{s}</span>
+                        ))}
+                        {t.skills.length > 3 && (
+                          <span className="text-[10px] bg-white/10 text-white/50 rounded-full px-2 py-0.5">+{t.skills.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Meta info */}
+                    <div className="flex items-center gap-3 text-[10px] text-white/40">
+                      {t.french_level && <span className="flex items-center gap-1">🗣️ {t.french_level}</span>}
+                      {t.experience_years != null && t.experience_years > 0 && (
+                        <span className="flex items-center gap-1">📅 {t.experience_years} ans</span>
+                      )}
+                    </div>
+
+                    {/* CTA */}
+                    <Button
+                      size="sm"
+                      className="w-full gap-2 text-xs bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-md shadow-accent/20"
+                      disabled={invitingId === t.user_id}
+                      onClick={() => handleInvite({ user_id: t.user_id, full_name: t.full_name })}
+                    >
+                      {invitingId === t.user_id ? (
+                        <>⏳ Envoi en cours…</>
+                      ) : (
+                        <><MessageSquare className="h-3.5 w-3.5" /> Inviter via AXIOM Connect</>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <Card className="bg-[hsl(222,33%,12%)] border-white/10">
+          <CardContent className="p-8 text-center">
+            <Globe className="h-10 w-10 text-white/20 mx-auto mb-3" />
+            <p className="text-sm text-white/50">
+              {countryFilter ? `Aucun talent disponible pour ${countryFilter}.` : "Aucun talent francophone disponible."}
+            </p>
+            <p className="text-xs text-white/30 mt-1">Les talents s'inscrivent chaque jour sur AXIOM.</p>
+          </CardContent>
+        </Card>
       )}
     </motion.div>
   );
