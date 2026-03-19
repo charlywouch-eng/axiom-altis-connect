@@ -523,7 +523,7 @@ function FrancoTalentsSection({
   session: any;
   qc: ReturnType<typeof useQueryClient>;
 }) {
-  const { toast: toastFn } = toast;
+  const toastFn = toast;
 
   const francoTalents = talents.filter((t) => {
     const country = t.country?.toLowerCase() || "";
