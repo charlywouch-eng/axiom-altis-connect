@@ -1153,25 +1153,11 @@ export default function SignupLight() {
                       <Sparkles className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="font-black text-sm text-white">Votre score IA complet est prêt</p>
-                      <p className="text-xs mt-0.5 leading-relaxed text-white/45">
-                        Débloquez le PDF détaillé + priorité recruteurs + certification MINEFOP
+                      <p className="font-black text-sm text-white">Votre score IA complet est prêt.</p>
+                      <p className="text-xs mt-1 leading-relaxed text-white/45">
+                        Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).
                       </p>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 mb-5">
-                    {[
-                      "PDF score détaillé ROME",
-                      "Aperçu offres France Travail",
-                      "Priorité recruteurs ×3",
-                      "Résultat immédiat",
-                    ].map((item) => (
-                      <div key={item} className="flex items-center gap-1.5 text-xs text-white/50">
-                        <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
-                        {item}
-                      </div>
-                    ))}
                   </div>
 
                   <Button
@@ -1181,7 +1167,7 @@ export default function SignupLight() {
                   >
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-cta-hover" />
                     <span className="relative flex items-center justify-center gap-2">
-                      Débloquer mon résultat maintenant
+                      Débloquer mon résultat maintenant – 4,99&nbsp;€
                       <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </span>
                   </Button>
@@ -1225,10 +1211,10 @@ export default function SignupLight() {
                 <Award className="h-8 w-8 text-accent" />
               </div>
               <DialogTitle className="font-black text-xl text-white">
-                Débloquez votre analyse complète
+                Votre score IA complet est prêt.
               </DialogTitle>
-              <DialogDescription className="text-sm text-white/50">
-                Votre score de {score}% indique un excellent potentiel. Choisissez votre formule :
+              <DialogDescription className="text-sm leading-relaxed text-white/50">
+                Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).
               </DialogDescription>
             </DialogHeader>
 
@@ -1239,11 +1225,11 @@ export default function SignupLight() {
               className="w-full text-left p-4 rounded-2xl border-2 border-accent/30 bg-accent/[0.06] hover:bg-accent/[0.12] transition-all group"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-sm text-white">Analyse approfondie</span>
-                <span className="font-black text-lg text-accent">4,99 €</span>
+                <span className="font-bold text-sm text-white">Débloquer mon résultat maintenant</span>
+                <span className="font-black text-lg text-accent">4,99&nbsp;€</span>
               </div>
               <div className="space-y-1">
-                {["PDF score détaillé", "Aperçu offres en tension", "Analyse compétences IA", "Résultat immédiat"].map(i => (
+                {["PDF score détaillé", "Priorité recruteurs modérée", "Offres personnalisées", "Résultat immédiat"].map(i => (
                   <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
                     <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
                     {i}
