@@ -369,6 +369,60 @@ export default function MetierDetail() {
                 </Card>
               </motion.div>
 
+              {/* Compétences enrichies via API Compétences ROME */}
+              {competencesData && competencesData.source !== "unavailable" && (
+                (competencesData.savoirFaire.length > 0 || competencesData.savoirEtre.length > 0) && (
+                  <motion.div initial="hidden" animate="visible" custom={4.5} variants={fadeUp}>
+                    <Card className="border-primary/20">
+                      <CardContent className="p-8">
+                        <h2 className="flex items-center gap-2 font-display text-xl font-bold mb-5">
+                          <Target className="h-5 w-5 text-primary" /> Compétences détaillées
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1 ml-1">
+                            <Globe className="h-3 w-3" /> API Compétences ROME
+                          </Badge>
+                        </h2>
+                        {competencesData.savoirFaire.length > 0 && (
+                          <div className="mb-5">
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-3">Savoir-faire</p>
+                            <div className="flex flex-wrap gap-2">
+                              {competencesData.savoirFaire.map((sf, i) => (
+                                <Badge key={i} variant="secondary" className="text-xs px-3 py-1.5 rounded-lg">
+                                  {sf.label}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {competencesData.savoirEtre.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-3">Savoir-être professionnels</p>
+                            <div className="flex flex-wrap gap-2">
+                              {competencesData.savoirEtre.map((se, i) => (
+                                <Badge key={i} className="bg-accent/10 text-accent border-accent/20 text-xs px-3 py-1.5 rounded-lg">
+                                  {se.label}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {competencesData.contextes.length > 0 && (
+                          <div>
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-3">Contextes de travail</p>
+                            <div className="flex flex-wrap gap-2">
+                              {competencesData.contextes.map((ctx, i) => (
+                                <Badge key={i} variant="outline" className="text-xs px-3 py-1.5 rounded-lg">
+                                  {ctx}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )
+              )}
+
               {/* Formations – données ROME officielles */}
               {(romeLoading || (romeData?.formations && romeData.formations.length > 0)) && (
                 <motion.div initial="hidden" animate="visible" custom={5} variants={fadeUp}>
