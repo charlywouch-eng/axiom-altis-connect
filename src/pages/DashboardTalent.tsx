@@ -1002,6 +1002,12 @@ export default function DashboardTalent() {
               onCropComplete={handleCropComplete}
             />
           )}
+
+          <CandidatureFormDialog
+            open={candidatureOpen}
+            onOpenChange={setCandidatureOpen}
+            prefillName={profileData?.full_name || ""}
+          />
         </motion.div>
       </DashboardLayout>
     </TooltipProvider>
