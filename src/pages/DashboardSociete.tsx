@@ -51,13 +51,20 @@ const COUNTRY_FILTERS = [
   { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
 ] as const;
 
+import talentAvatar1 from "@/assets/talent-avatar-1.jpg";
+import talentAvatar2 from "@/assets/talent-avatar-2.jpg";
+import talentAvatar3 from "@/assets/talent-avatar-3.jpg";
+import talentAvatar4 from "@/assets/talent-avatar-4.jpg";
+import talentAvatar5 from "@/assets/talent-avatar-5.jpg";
+import talentAvatar6 from "@/assets/talent-avatar-6.jpg";
+
 const TALENT_PHOTOS = [
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face",
+  talentAvatar1,
+  talentAvatar2,
+  talentAvatar3,
+  talentAvatar4,
+  talentAvatar5,
+  talentAvatar6,
 ];
 
 const fadeUp = {
