@@ -432,7 +432,7 @@ export default function DashboardTalent() {
   };
 
   const displayFirstName = profile?.first_name || user?.user_metadata?.first_name || null;
-  const displayName = displayFirstName || (profile?.full_name?.split(" ")[0]) || (user?.user_metadata?.full_name as string)?.split(" ")[0] || user?.email?.split("@")[0] || "Talent";
+  const displayName = displayFirstName || (profile?.full_name && profile.full_name !== "" ? profile.full_name.split(" ")[0] : null) || (user?.user_metadata?.full_name as string)?.split(" ")[0] || user?.email?.split("@")[0] || "Talent";
   const displayCountry = profile?.country || MOCK_PROFILE_DATA.country;
   const displayFrench = profile?.french_level || MOCK_PROFILE_DATA.french_level;
   const offersToDisplay = ftOffers && ftOffers.length > 0 ? ftOffers : MOCK_RECOMMENDED_OFFERS;
