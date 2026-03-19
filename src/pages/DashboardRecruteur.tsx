@@ -184,14 +184,12 @@ function getTensionLevel(score: number): string {
 /* ──────────── TALENTS TAB ──────────── */
 function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
   const { session } = useAuth();
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string>("Tous");
-
   const [countryFilter, setCountryFilter] = useState<string | null>(null);
   const [invitingId, setInvitingId] = useState<string | null>(null);
-  const { session } = useAuth();
-  const qc = useQueryClient();
 
   const { data: talents, isLoading } = useQuery({
     queryKey: ["recruteur-talents"],
