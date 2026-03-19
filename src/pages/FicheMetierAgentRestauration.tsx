@@ -37,10 +37,10 @@ const CONDITIONS = [
   "Évolution possible vers responsable d'équipe ou cuisinier",
 ];
 const ALTIS_SERVICES = [
-  { icon: Plane, text: "Billet d'avion et accueil à l'arrivée en France" },
+  { icon: Globe, text: "Formalités visa de travail – Procédure ANEF" },
+  { icon: Plane, text: "Accueil & assistance à l'aéroport" },
   { icon: Home, text: "Logement meublé pour le premier mois" },
-  { icon: FileCheck, text: "Accompagnement pour la demande de visa accéléré" },
-  { icon: GraduationCap, text: "Mise en relation avec des formations aux normes françaises" },
+  { icon: FileCheck, text: "Accompagnement administratif complet" },
 ];
 
 export default function FicheMetierAgentRestauration() {
