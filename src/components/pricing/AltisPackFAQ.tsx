@@ -30,7 +30,7 @@ const FAQ_ITEMS = [
     icon: Clock,
     question: "Combien de temps dure le processus complet ?",
     answer:
-      "En moyenne 8 à 12 semaines entre la signature et l'arrivée du talent en France. La phase visa ANEF représente la majorité du délai. Nous anticipons les démarches administratives en parallèle pour optimiser le calendrier.",
+      "En moyenne 8 à 12 semaines entre la signature et l'arrivée du talent en France. La phase formalités visa de travail (procédure ANEF) représente la majorité du délai. Nous anticipons les démarches administratives en parallèle pour optimiser le calendrier.",
   },
   {
     icon: Plane,
