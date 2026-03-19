@@ -1037,3 +1037,52 @@ function ProfileField({ label, value }: { label: string; value?: string | null }
     </div>
   );
 }
+
+/* ──────────── NOTIFICATION TOGGLE ──────────── */
+function NotificationToggle({ userId }: { userId?: string }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: enabled, isLoading } = useQuery({
+    queryKey: ["notification_pref", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("talent_profiles")
+        .select("email_notifications_enabled")
+        .eq("user_id", userId!)
+        .limit(1)
+        .single();
+      return data?.email_notifications_enabled ?? true;
+    },
+    enabled: !!userId,
+  });
+
+  const toggle = async () => {
+    if (!userId) return;
+    const newVal = !enabled;
+    const { error } = await supabase
+      .from("talent_profiles")
+      .update({ email_notifications_enabled: newVal } as any)
+      .eq("user_id", userId);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    queryClient.setQueryData(["notification_pref", userId], newVal);
+    toast({ title: newVal ? "Notifications activées" : "Notifications désactivées" });
+  };
+
+  if (isLoading || enabled === undefined) return null;
+
+  return (
+    <Button
+      size="sm"
+      variant={enabled ? "default" : "outline"}
+      className={`gap-1.5 text-xs shrink-0 ${enabled ? "bg-accent text-accent-foreground hover:bg-accent/90" : ""}`}
+      onClick={toggle}
+    >
+      <Bell className="h-3.5 w-3.5" />
+      {enabled ? "Activé" : "Désactivé"}
+    </Button>
+  );
+}
