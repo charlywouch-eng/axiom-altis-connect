@@ -241,15 +241,15 @@ export default function Index() {
                 custom={1} variants={fadeUp}
                 className="text-[38px] font-black leading-[1.04] text-white sm:text-[50px] md:text-[58px] tracking-tight"
               >
-                La France cherche des{" "}
-                <span className="text-gradient-accent">talents comme le vôtre</span>
+                Les secteurs qui recrutent le plus en France{" "}
+                <span className="text-gradient-accent">vous attendent</span>
               </motion.h1>
 
               <motion.p
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Des opportunités réelles dans les secteurs qui recrutent le plus — <strong className="text-accent">Matching IA + Accompagnement ALTIS complet</strong>
+                Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où <strong className="text-accent">votre talent peut s'épanouir</strong>
               </motion.p>
 
               {/* Proof points */}
