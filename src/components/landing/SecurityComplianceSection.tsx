@@ -21,7 +21,7 @@ const fadeUp = {
 const badges = [
   { icon: FileCheck, label: "Diplômes authentifiés & apostillés", detail: "Apostille légalisée via MINFOG et le Ministère des Affaires étrangères du Cameroun, conforme à la Convention de La Haye." },
   { icon: ShieldCheck, label: "Conformité ROME garantie", detail: "Chaque profil est évalué et certifié selon le référentiel ROME de France Travail pour une reconnaissance immédiate." },
-  { icon: Plane, label: "Visa & logement clé en main", detail: "Prise en charge complète : demande de visa, billet d'avion, logement meublé à l'arrivée en France." },
+  { icon: Plane, label: "Visa & logement clé en main", detail: "Prise en charge complète : formalités visa de travail (procédure ANEF), accueil aéroport, logement meublé à l'arrivée en France." },
   { icon: ScanSearch, label: "Vérification 360° par AXIOM", detail: "Background check complet : identité, diplômes, références professionnelles et casier judiciaire." },
 ];
 
