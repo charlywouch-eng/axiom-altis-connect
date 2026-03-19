@@ -16,8 +16,9 @@ import { toast } from "@/hooks/use-toast";
 import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
-  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2
+  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList
 } from "lucide-react";
+import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
 
 
 const fadeUp = {
@@ -63,6 +64,9 @@ export default function DashboardRecruteur() {
               <TabsTrigger value="facturation" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
                 <CreditCard className="h-4 w-4" /> Facturation
               </TabsTrigger>
+              <TabsTrigger value="candidatures" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
+                <ClipboardList className="h-4 w-4" /> Candidatures
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -86,6 +90,9 @@ export default function DashboardRecruteur() {
               </TabsTrigger>
               <TabsTrigger value="facturation" className="flex-1 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-white/60 text-xs">
                 <CreditCard className="h-3 w-3" />
+              </TabsTrigger>
+              <TabsTrigger value="candidatures" className="flex-1 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-white/60 text-xs">
+                <ClipboardList className="h-3 w-3" />
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -116,6 +123,7 @@ export default function DashboardRecruteur() {
         {activeTab === "missions" && <MissionsTab />}
         {activeTab === "matching" && <MatchingTab query={matchQuery} setQuery={setMatchQuery} />}
         {activeTab === "facturation" && <FacturationTab />}
+        {activeTab === "candidatures" && <CandidaturesTab />}
       </main>
 
       {/* Talent Dossier Modal */}
@@ -879,6 +887,80 @@ function FacturationTab() {
           </CardContent>
         </Card>
       </motion.div>
+    </motion.div>
+  );
+}
+
+/* ──────────── CANDIDATURES TAB ──────────── */
+function CandidaturesTab() {
+  const [search, setSearch] = useState("");
+
+  const { data: candidatures, isLoading } = useQuery({
+    queryKey: ["recruteur-candidatures"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("candidatures" as any)
+        .select("*")
+        .eq("status", "submitted")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const filtered = candidatures?.filter((c: any) =>
+    !search || c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+    c.competences?.some((comp: string) => comp.toLowerCase().includes(search.toLowerCase()))
+  ) ?? [];
+
+  const handleContact = (_id: string) => {
+    toast({ title: "Contact initié", description: "Un email de prise de contact a été envoyé au candidat." });
+  };
+
+  const handleActivateAltis = (_id: string) => {
+    toast({ title: "Pack ALTIS activé", description: "Les formalités visa + accueil seront lancées pour ce candidat." });
+  };
+
+  return (
+    <motion.div initial="hidden" animate="visible">
+      <motion.div custom={0} variants={fadeUp} className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div>
+          <h2 className="font-display text-2xl font-bold text-white">Candidatures reçues</h2>
+          <p className="text-white/50 text-sm mt-1">{filtered.length} candidature{filtered.length > 1 ? 's' : ''} · CV structurés AXIOM</p>
+        </div>
+        <div className="relative w-full sm:w-80">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Rechercher par nom, compétence..."
+            className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/30"
+          />
+        </div>
+      </motion.div>
+
+      {isLoading ? (
+        <div className="flex justify-center py-16">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-16">
+          <ClipboardList className="mx-auto h-12 w-12 text-white/20 mb-4" />
+          <p className="text-white/50">Aucune candidature reçue pour le moment.</p>
+        </div>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((c: any, i: number) => (
+            <motion.div key={c.id} custom={i + 1} variants={fadeUp}>
+              <CandidatureCvCard
+                candidature={c}
+                onContact={handleContact}
+                onActivateAltis={handleActivateAltis}
+              />
+            </motion.div>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }

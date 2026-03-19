@@ -38,6 +38,66 @@ export type Database = {
         }
         Relationships: []
       }
+      candidatures: {
+        Row: {
+          certifications: string[]
+          city: string | null
+          competences: string[]
+          compliance_score: number
+          contract_type: string | null
+          created_at: string
+          desired_salary: string | null
+          experiences: Json
+          formations: Json
+          full_name: string
+          id: string
+          mobility: string | null
+          phone: string | null
+          photo_url: string | null
+          status: string
+          talent_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          certifications?: string[]
+          city?: string | null
+          competences?: string[]
+          compliance_score?: number
+          contract_type?: string | null
+          created_at?: string
+          desired_salary?: string | null
+          experiences?: Json
+          formations?: Json
+          full_name?: string
+          id?: string
+          mobility?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          status?: string
+          talent_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          certifications?: string[]
+          city?: string | null
+          competences?: string[]
+          compliance_score?: number
+          contract_type?: string | null
+          created_at?: string
+          desired_salary?: string | null
+          experiences?: Json
+          formations?: Json
+          full_name?: string
+          id?: string
+          mobility?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          status?: string
+          talent_user_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       company_profiles: {
         Row: {
           address: string | null

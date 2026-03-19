@@ -71,6 +71,7 @@ import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
 import OpportunitesTab from "@/components/dashboard/OpportunitesTab";
+import CandidatureFormDialog from "@/components/dashboard/CandidatureFormDialog";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
@@ -164,6 +165,7 @@ export default function DashboardTalent() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+  const [candidatureOpen, setCandidatureOpen] = useState(false);
 
   useEffect(() => { trackGA4("dashboard_talent_view"); }, []);
 
@@ -567,6 +569,24 @@ export default function DashboardTalent() {
                     <PremiumStatCard title="Score de compatibilité" value={`${offersToDisplay[0]?.score ?? 85}%`} subtitle="BTP – Maçonnerie F1703 · Demande élevée" tensionLevel="low" tensionLabel="STABLE" icon={Star} />
                     <PremiumStatCard title="Progression ALTIS" value={`${PROGRESS_PERCENT}%`} subtitle="4 étapes sur 6 · Formation en cours" tensionLevel="medium" tensionLabel="EN COURS" icon={TrendingUp} />
                   </div>
+                </motion.div>
+
+                {/* Postuler CTA */}
+                <motion.div variants={itemVariants}>
+                  <Card className="border-accent/30 bg-gradient-to-r from-accent/5 to-primary/5">
+                    <CardContent className="p-5 flex items-center justify-between gap-4">
+                      <div>
+                        <h3 className="font-semibold text-foreground flex items-center gap-2">
+                          <Sparkles className="h-4 w-4 text-accent" />
+                          Postuler via AXIOM
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1">Créez votre CV structuré en 5 minutes. Les recruteurs le verront immédiatement.</p>
+                      </div>
+                      <Button onClick={() => setCandidatureOpen(true)} className="shrink-0 bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5">
+                        <ClipboardList className="h-4 w-4" /> Postuler
+                      </Button>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               </TabsContent>
 
@@ -982,6 +1002,12 @@ export default function DashboardTalent() {
               onCropComplete={handleCropComplete}
             />
           )}
+
+          <CandidatureFormDialog
+            open={candidatureOpen}
+            onOpenChange={setCandidatureOpen}
+            prefillName={profile?.full_name || ""}
+          />
         </motion.div>
       </DashboardLayout>
     </TooltipProvider>
