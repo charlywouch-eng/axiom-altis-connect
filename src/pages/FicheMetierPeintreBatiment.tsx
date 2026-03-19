@@ -113,6 +113,8 @@ export default function FicheMetierPeintreBatiment() {
           </div>
         </motion.section>
 
+        <MotivationalQuote quote="Votre précision et votre savoir-faire méritent d'être reconnus à leur juste valeur." />
+
         <main className="mx-auto max-w-6xl px-4 pb-24">
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-10">

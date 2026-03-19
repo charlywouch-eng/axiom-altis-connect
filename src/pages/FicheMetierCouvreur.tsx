@@ -91,6 +91,8 @@ export default function FicheMetierCouvreur() {
           </div>
         </motion.section>
 
+        <MotivationalQuote quote="Votre courage et votre maîtrise des hauteurs font de vous un professionnel indispensable sur les chantiers français." />
+
         <div className="mx-auto max-w-6xl px-4 py-12 grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>

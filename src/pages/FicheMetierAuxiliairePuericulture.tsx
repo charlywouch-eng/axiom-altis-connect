@@ -95,6 +95,8 @@ export default function FicheMetierAuxiliairePuericulture() {
           </div>
         </motion.section>
 
+        <MotivationalQuote quote="Votre douceur et votre dévouement auprès des tout-petits sont un don précieux que la France attend." />
+
         <div className="mx-auto max-w-6xl px-4 py-12 grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>

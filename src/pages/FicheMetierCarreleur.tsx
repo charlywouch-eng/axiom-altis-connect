@@ -80,6 +80,8 @@ export default function FicheMetierCarreleur() {
           </div>
         </motion.section>
 
+        <MotivationalQuote quote="Votre sens du détail et votre art de la pose transforment chaque espace en une œuvre durable." />
+
         <div className="mx-auto max-w-6xl px-4 py-12 grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}><motion.h2 custom={0} variants={fadeUp} className="flex items-center gap-2 text-xl font-bold"><Briefcase className="h-5 w-5 text-accent" /> Missions principales</motion.h2><ul className="mt-4 space-y-3">{MISSIONS.map((m, i) => (<motion.li key={i} custom={i + 1} variants={fadeUp} className="flex items-start gap-3"><CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" /><span className="text-muted-foreground">{m}</span></motion.li>))}</ul></motion.div>

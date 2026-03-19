@@ -115,6 +115,8 @@ export default function FicheMetierAideSoignant() {
           </div>
         </motion.section>
 
+        <MotivationalQuote quote="Votre compassion et votre expérience ont déjà aidé tant de vies. En France, elles pourraient changer bien plus encore." />
+
         <main className="mx-auto max-w-6xl px-4 pb-24">
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-10">
