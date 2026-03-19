@@ -310,6 +310,7 @@ export default function FicheMetierMacon() {
               </a>
             </div>
           </div>
+          <CesedaLegalNotice />
         </footer>
       </div>
     </>
