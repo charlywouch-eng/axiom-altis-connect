@@ -473,23 +473,58 @@ export default function DashboardTalent() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 to-primary/8 px-4 py-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <Sparkles className="h-4 w-4 text-accent shrink-0" />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p className="text-sm font-medium text-foreground cursor-help">
-                        <span className="font-bold text-accent">Déblocage complet — 29 €</span> · Badge officiel MINEFOP/MINREX + visibilité prioritaire ×3 auprès des recruteurs partenaires
-                      </p>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="max-w-xs text-xs">
-                      Badge vérifié MINEFOP/MINREX + visibilité ×3 recruteurs partenaires. Votre profil apparaît en priorité dans les résultats de matching des entreprises premium.
-                    </TooltipContent>
-                  </Tooltip>
+              <div className="rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/[0.06] via-primary/[0.04] to-accent/[0.08] p-5 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-11 w-11 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center shrink-0">
+                    <Shield className="h-5 w-5 text-accent" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-foreground">Vous voulez aller plus loin ?</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                      Débloquez le service complet pour maximiser vos chances
+                    </p>
+                  </div>
                 </div>
-                <Button size="sm" variant="outline" className="shrink-0 border-accent/40 text-accent hover:bg-accent/10 text-xs font-semibold" onClick={() => handleUnlockPayment("full")} disabled={paymentLoading}>
-                  {paymentLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <>Débloquer 29 € <ChevronRight className="ml-1 h-3 w-3" /></>}
-                </Button>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[
+                    "Préparation complète de votre dossier ALTIS",
+                    "Priorité recruteurs ×3",
+                    "Accompagnement administratif renforcé (préfecture, sécurité sociale, compte bancaire)",
+                    "Badge « Profil Vérifié Premium »",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-2 text-xs text-muted-foreground">
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-accent mt-0.5" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="border-accent/30 text-accent text-[10px] font-bold gap-1 px-2.5 py-0.5">
+                      <Sparkles className="h-3 w-3" /> Pack ALTIS Zéro Stress
+                    </Badge>
+                    <span className="text-lg font-black text-foreground">29&nbsp;€</span>
+                    <span className="text-[10px] text-muted-foreground">(une seule fois)</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-accent text-accent-foreground hover:bg-accent/90 text-xs font-semibold px-5 shadow-md shadow-accent/15"
+                    onClick={() => handleUnlockPayment("full")}
+                    disabled={paymentLoading}
+                  >
+                    {paymentLoading ? (
+                      <RefreshCw className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <>Activer le service complet – 29&nbsp;€ <ChevronRight className="ml-1 h-3 w-3" /></>
+                    )}
+                  </Button>
+                </div>
+
+                <p className="text-[10px] text-muted-foreground/50 text-center">
+                  🔒 Paiement sécurisé Stripe · Accès immédiat après paiement
+                </p>
               </div>
             )}
           </motion.div>
