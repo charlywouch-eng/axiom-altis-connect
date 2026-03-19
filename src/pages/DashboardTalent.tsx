@@ -473,7 +473,13 @@ export default function DashboardTalent() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/[0.06] via-primary/[0.04] to-accent/[0.08] p-5 space-y-4">
+              <motion.div
+                className="rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/[0.06] via-primary/[0.04] to-accent/[0.08] p-5 space-y-4"
+                initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ boxShadow: "0 0 30px hsl(var(--accent) / 0.12)" }}
+              >
                 <div className="flex items-start gap-3">
                   <div className="h-11 w-11 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center shrink-0">
                     <Shield className="h-5 w-5 text-accent" />
@@ -525,7 +531,7 @@ export default function DashboardTalent() {
                 <p className="text-[10px] text-muted-foreground/50 text-center">
                   🔒 Paiement sécurisé Stripe · Accès immédiat après paiement
                 </p>
-              </div>
+              </motion.div>
             )}
           </motion.div>
 
