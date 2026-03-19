@@ -438,8 +438,8 @@ export default function Index() {
               key={s.rome}
               custom={i}
               variants={scaleIn}
-              whileHover={{ y: -8, scale: 1.03, transition: { duration: 0.25 } }}
-              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:shadow-xl hover:border-accent/30 ${s.color}`}
+              whileHover={{ y: -8, scale: 1.04, boxShadow: "0 20px 40px -12px rgba(6,182,212,0.15)", transition: { duration: 0.25 } }}
+              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:border-accent/30 ${s.color}`}
             >
               <div className="absolute inset-0 rounded-2xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative">
