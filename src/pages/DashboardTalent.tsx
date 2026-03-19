@@ -1124,3 +1124,138 @@ function NotificationToggle({ userId }: { userId?: string }) {
     </Button>
   );
 }
+
+/* ──────────── EXPÉRIENCES VALORISÉES SECTION ──────────── */
+function ExperiencesValoriseesSection({ userId, experienceYears }: { userId?: string; experienceYears?: number | null }) {
+  const { data: candidatures } = useQuery({
+    queryKey: ["candidatures_exp", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("candidatures")
+        .select("id, full_name, competences, experiences, compliance_score, status, created_at")
+        .eq("talent_user_id", userId!)
+        .order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: !!userId,
+  });
+
+  const [filterExp, setFilterExp] = useState(false);
+
+  // Derive experience years from candidature experiences array
+  const enriched = (candidatures || []).map((c: any) => {
+    const exps = (c.experiences as any[]) || [];
+    // estimate total years from duree fields
+    let totalYears = experienceYears || 0;
+    if (exps.length > 0 && !totalYears) {
+      totalYears = exps.reduce((sum: number, e: any) => {
+        const match = e.duree?.match(/(\d+)/);
+        return sum + (match ? parseInt(match[1]) : 1);
+      }, 0);
+    }
+    return { ...c, totalYears };
+  });
+
+  const displayed = filterExp ? enriched.filter(c => c.totalYears >= 5) : enriched;
+
+  if (!enriched.length && !experienceYears) return null;
+
+  const userYears = experienceYears || 0;
+  const isExperienced = userYears >= 5;
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+      <Card className="overflow-hidden border-amber-500/20 shadow-sm">
+        <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-accent to-amber-500/40" />
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base font-semibold">
+            <div className="h-7 w-7 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <Briefcase className="h-3.5 w-3.5 text-amber-600" />
+            </div>
+            Vos expériences valorisées
+            {isExperienced && (
+              <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 text-[10px] px-2 py-0.5 font-bold gap-1 ml-1">
+                <Award className="h-2.5 w-2.5" /> Profil Expérimenté
+              </Badge>
+            )}
+          </CardTitle>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {userYears > 0 ? `${userYears} an${userYears > 1 ? "s" : ""} d'expérience professionnelle` : "Renseignez votre expérience pour booster votre score IA"}
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {/* Experience badge + filter */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 bg-muted/40 rounded-lg px-3 py-2 border border-border/50">
+              <Briefcase className="h-4 w-4 text-amber-600" />
+              <span className="text-2xl font-black text-foreground">{userYears}</span>
+              <span className="text-xs text-muted-foreground">an{userYears > 1 ? "s" : ""}</span>
+              {isExperienced && <Sparkles className="h-3.5 w-3.5 text-amber-500" />}
+            </div>
+            {enriched.length > 0 && (
+              <Button
+                size="sm"
+                variant={filterExp ? "default" : "outline"}
+                className={`text-xs gap-1.5 ${filterExp ? "bg-amber-500 text-white hover:bg-amber-600" : "border-amber-500/30 text-amber-600 hover:bg-amber-500/5"}`}
+                onClick={() => setFilterExp(!filterExp)}
+              >
+                <Award className="h-3 w-3" />
+                Profils Expérimentés (5+ ans)
+              </Button>
+            )}
+          </div>
+
+          {/* Candidatures with experience displayed */}
+          {displayed.length > 0 ? (
+            <div className="grid gap-2.5 sm:grid-cols-2">
+              {displayed.map((c: any, i: number) => (
+                <motion.div
+                  key={c.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                  className="group flex gap-3 p-3.5 rounded-xl border border-border/50 bg-gradient-to-br from-card to-muted/20 hover:border-amber-500/30 hover:shadow-md transition-all"
+                >
+                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500/15 to-accent/15 flex items-center justify-center shrink-0">
+                    <Briefcase className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <p className="text-sm font-semibold text-foreground truncate">{c.full_name || "Candidature"}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] px-1.5 py-0 font-bold gap-0.5">
+                        <Briefcase className="h-2.5 w-2.5" /> {c.totalYears} an{c.totalYears > 1 ? "s" : ""} exp.
+                      </Badge>
+                      {c.totalYears >= 5 && (
+                        <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 text-[9px] px-1.5 py-0 font-bold gap-0.5">
+                          <Award className="h-2.5 w-2.5" /> Expérimenté
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0">
+                        Score: {c.compliance_score || 0}%
+                      </Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {((c.competences as string[]) || []).slice(0, 3).map((comp: string) => (
+                        <span key={comp} className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{comp}</span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : filterExp ? (
+            <div className="text-center py-6">
+              <Award className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Aucun profil avec 5+ ans d'expérience.</p>
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <Briefcase className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Envoyez votre candidature pour valoriser votre expérience.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
