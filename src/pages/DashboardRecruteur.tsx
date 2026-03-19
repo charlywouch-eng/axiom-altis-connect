@@ -26,8 +26,24 @@ import avatarBtp from "@/assets/talent-btp.jpg";
 import avatarLogistique from "@/assets/talent-logistique.jpg";
 import avatarTech from "@/assets/talent-tech.jpg";
 import avatarFormation from "@/assets/talent-formation.jpg";
+import talentAvatar1 from "@/assets/talent-avatar-1.jpg";
+import talentAvatar2 from "@/assets/talent-avatar-2.jpg";
+import talentAvatar3 from "@/assets/talent-avatar-3.jpg";
+import talentAvatar4 from "@/assets/talent-avatar-4.jpg";
+import talentAvatar5 from "@/assets/talent-avatar-5.jpg";
+import talentAvatar6 from "@/assets/talent-avatar-6.jpg";
 
 const TALENT_AVATARS = [avatarSante, avatarBtp, avatarLogistique, avatarTech, avatarFormation];
+const FRANCO_PHOTOS = [talentAvatar1, talentAvatar2, talentAvatar3, talentAvatar4, talentAvatar5, talentAvatar6];
+
+const COUNTRY_FILTERS_REC = [
+  { label: "Tous", flag: "🌍", value: null as string | null },
+  { label: "Sénégal", flag: "🇸🇳", value: "Sénégal" },
+  { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
+  { label: "Mali", flag: "🇲🇱", value: "Mali" },
+  { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
+  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+] as const;
 
 
 const fadeUp = {
