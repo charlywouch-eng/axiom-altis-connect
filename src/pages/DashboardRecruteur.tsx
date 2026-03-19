@@ -290,8 +290,18 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
           </CardContent>
         </Card>
       </motion.div>
+      {/* ── Talents Francophones Recommandés ──────────── */}
+      <FrancoTalentsSection
+        talents={talents ?? []}
+        countryFilter={countryFilter}
+        setCountryFilter={setCountryFilter}
+        invitingId={invitingId}
+        setInvitingId={setInvitingId}
+        session={session}
+        qc={qc}
+      />
 
-      {/* ── Outils IA Section ── */}
+
       <motion.div custom={0.5} variants={fadeUp} className="mb-10">
         <div className="flex items-center gap-3 mb-5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/20">
