@@ -74,6 +74,9 @@ import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
 import OpportunitesTab from "@/components/dashboard/OpportunitesTab";
 import CandidatureHistorySection from "@/components/dashboard/CandidatureHistorySection";
 import CandidatureFormDialog from "@/components/dashboard/CandidatureFormDialog";
+import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
+import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
+import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
