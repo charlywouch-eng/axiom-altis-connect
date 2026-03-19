@@ -33,6 +33,7 @@ const adminLinks = [
   { title: "Import CSV", url: "/admin/import-talents", icon: FileUp },
   { title: "Statistiques", url: "/admin/statistics", icon: BarChart3 },
   { title: "Offres", url: "/admin/offres", icon: Briefcase },
+  { title: "Candidatures", url: "/admin/candidatures", icon: ClipboardList },
   { title: "Subventions", url: "/admin/subventions", icon: GraduationCap },
   { title: "Devis", url: "/admin/quotes", icon: FileText },
   { title: "Leads", url: "/admin/leads", icon: TrendingUp },
