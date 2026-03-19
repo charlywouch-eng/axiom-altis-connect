@@ -605,6 +605,65 @@ export default function DashboardTalent() {
 
               {/* TAB 1 — DASHBOARD */}
               <TabsContent value="dashboard" className="space-y-5 mt-0">
+                {/* Upsell 29 € pour les utilisateurs ayant payé 4,99 € mais pas encore premium */}
+                {!isPremium && (
+                  <motion.div variants={itemVariants}>
+                    <Card className="overflow-hidden border-accent/25 shadow-md">
+                      <div className="h-1.5 w-full bg-gradient-to-r from-accent via-primary to-accent/50" />
+                      <CardContent className="p-5 space-y-4">
+                        <div className="flex items-start gap-3">
+                          <div className="h-11 w-11 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center shrink-0">
+                            <Zap className="h-5 w-5 text-accent" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm text-foreground">🚀 Débloquez le service complet</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                              Préparation dossier ALTIS + priorité recruteurs ×3 + badge Premium
+                            </p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {[
+                            "Dossier ALTIS complet (visa, logement, admin)",
+                            "Priorité recruteurs ×3",
+                            "Accompagnement préfecture + sécu sociale",
+                            "Badge « Profil Vérifié Premium »",
+                          ].map((item) => (
+                            <div key={item} className="flex items-start gap-2 text-xs text-muted-foreground">
+                              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-accent mt-0.5" />
+                              <span>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="border-accent/30 text-accent text-[10px] font-bold gap-1 px-2.5 py-0.5">
+                              <Sparkles className="h-3 w-3" /> Pack ALTIS
+                            </Badge>
+                            <span className="text-lg font-black text-foreground">29&nbsp;€</span>
+                            <span className="text-[10px] text-muted-foreground">(une seule fois)</span>
+                          </div>
+                          <Button
+                            size="sm"
+                            className="bg-accent text-accent-foreground hover:bg-accent/90 text-xs font-semibold px-5 shadow-md shadow-accent/15"
+                            onClick={() => handleUnlockPayment("full")}
+                            disabled={paymentLoading}
+                          >
+                            {paymentLoading ? (
+                              <RefreshCw className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <>Activer – 29&nbsp;€ <ChevronRight className="ml-1 h-3 w-3" /></>
+                            )}
+                          </Button>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground/50 text-center">
+                          🔒 Paiement sécurisé Stripe · Accès immédiat après paiement
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+
                 {/* Section "Vos expériences valorisées" */}
                 <ExperiencesValoriseesSection userId={user?.id} experienceYears={talentProfile?.experience_years} />
 
