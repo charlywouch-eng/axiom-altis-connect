@@ -54,6 +54,9 @@ const COUNTRY_FILTERS = [
 ] as const;
 
 import { getAvatarForTalent } from "@/lib/metierAvatars";
+import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
+import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
+import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
