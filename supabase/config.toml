@@ -33,3 +33,7 @@ project_id = "wfolueffkdzknuowwecf"
     verify_jwt = false
   [functions.chat-ai-assist]
     verify_jwt = false
+  [functions.marche-du-travail]
+    verify_jwt = false
+  [functions.competences-rome]
+    verify_jwt = false

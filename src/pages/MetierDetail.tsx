@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -30,6 +30,9 @@ import {
   Info,
   RefreshCw,
   ExternalLink,
+  BarChart3,
+  Target,
+  
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -54,6 +57,21 @@ interface RomeData {
   debouches: { label: string; code: string }[];
 }
 
+interface MarcheData {
+  tensions: Array<Record<string, unknown>>;
+  salaires: Array<Record<string, unknown>>;
+  bmo: Record<string, unknown> | null;
+  source: string;
+}
+
+interface CompetencesData {
+  competences: Array<{ code: string; label: string; type?: string; domain?: string }>;
+  savoirFaire: Array<{ code: string; label: string }>;
+  savoirEtre: Array<{ code: string; label: string }>;
+  contextes: string[];
+  source: string;
+}
+
 async function fetchRomeData(romeCode: string): Promise<RomeData | null> {
   const { data: sessionData } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
@@ -70,6 +88,28 @@ async function fetchRomeData(romeCode: string): Promise<RomeData | null> {
 
   if (!res.ok) return null;
   return res.json() as Promise<RomeData>;
+}
+
+async function fetchMarcheData(romeCode: string): Promise<MarcheData | null> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+  const res = await fetch(`${supabaseUrl}/functions/v1/marche-du-travail`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ codeRome: romeCode }),
+  });
+  if (!res.ok) return null;
+  return res.json() as Promise<MarcheData>;
+}
+
+async function fetchCompetencesData(romeCode: string): Promise<CompetencesData | null> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+  const res = await fetch(`${supabaseUrl}/functions/v1/competences-rome`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ romeCode }),
+  });
+  if (!res.ok) return null;
+  return res.json() as Promise<CompetencesData>;
 }
 
 export default function MetierDetail() {
@@ -109,7 +149,23 @@ export default function MetierDetail() {
     queryFn: () => fetchRomeData(code!),
     enabled: !!code,
     retry: false,
-    staleTime: 1000 * 60 * 30, // cache 30 min
+    staleTime: 1000 * 60 * 30,
+  });
+
+  const { data: marcheData } = useQuery({
+    queryKey: ["marche-du-travail", code],
+    queryFn: () => fetchMarcheData(code!),
+    enabled: !!code,
+    retry: false,
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const { data: competencesData } = useQuery({
+    queryKey: ["competences-rome", code],
+    queryFn: () => fetchCompetencesData(code!),
+    enabled: !!code,
+    retry: false,
+    staleTime: 1000 * 60 * 60,
   });
 
   if (isLoading) {
@@ -312,6 +368,60 @@ export default function MetierDetail() {
                   </CardContent>
                 </Card>
               </motion.div>
+
+              {/* Compétences enrichies via API Compétences ROME */}
+              {competencesData && competencesData.source !== "unavailable" && (
+                (competencesData.savoirFaire.length > 0 || competencesData.savoirEtre.length > 0) && (
+                  <motion.div initial="hidden" animate="visible" custom={4.5} variants={fadeUp}>
+                    <Card className="border-primary/20">
+                      <CardContent className="p-8">
+                        <h2 className="flex items-center gap-2 font-display text-xl font-bold mb-5">
+                          <Target className="h-5 w-5 text-primary" /> Compétences détaillées
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1 ml-1">
+                            <Globe className="h-3 w-3" /> API Compétences ROME
+                          </Badge>
+                        </h2>
+                        {competencesData.savoirFaire.length > 0 && (
+                          <div className="mb-5">
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-3">Savoir-faire</p>
+                            <div className="flex flex-wrap gap-2">
+                              {competencesData.savoirFaire.map((sf, i) => (
+                                <Badge key={i} variant="secondary" className="text-xs px-3 py-1.5 rounded-lg">
+                                  {sf.label}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {competencesData.savoirEtre.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-3">Savoir-être professionnels</p>
+                            <div className="flex flex-wrap gap-2">
+                              {competencesData.savoirEtre.map((se, i) => (
+                                <Badge key={i} className="bg-accent/10 text-accent border-accent/20 text-xs px-3 py-1.5 rounded-lg">
+                                  {se.label}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {competencesData.contextes.length > 0 && (
+                          <div>
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-3">Contextes de travail</p>
+                            <div className="flex flex-wrap gap-2">
+                              {competencesData.contextes.map((ctx, i) => (
+                                <Badge key={i} variant="outline" className="text-xs px-3 py-1.5 rounded-lg">
+                                  {ctx}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )
+              )}
 
               {/* Formations – données ROME officielles */}
               {(romeLoading || (romeData?.formations && romeData.formations.length > 0)) && (
@@ -569,6 +679,58 @@ export default function MetierDetail() {
                   </CardContent>
                 </Card>
               </motion.div>
+
+              {/* Marché du travail stats */}
+              {marcheData && marcheData.source !== "unavailable" && (
+                <motion.div initial="hidden" animate="visible" custom={3.5} variants={fadeUp}>
+                  <Card className="border-primary/20">
+                    <CardContent className="p-6 space-y-4">
+                      <h3 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wider text-primary">
+                        <BarChart3 className="h-4 w-4" /> Marché du travail
+                      </h3>
+                      {marcheData.tensions && Array.isArray(marcheData.tensions) && marcheData.tensions.length > 0 && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Tension métier</p>
+                          <div className="flex items-center gap-2">
+                            <Target className="h-4 w-4 text-destructive" />
+                            <p className="font-semibold text-sm text-foreground">
+                              {String((marcheData.tensions[0] as Record<string, unknown>)?.libelle ||
+                                (marcheData.tensions[0] as Record<string, unknown>)?.indicateur ||
+                                "Données disponibles")}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {marcheData.salaires && Array.isArray(marcheData.salaires) && marcheData.salaires.length > 0 && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Salaire médian proposé</p>
+                          <div className="flex items-center gap-2">
+                            <Banknote className="h-4 w-4 text-success" />
+                            <p className="font-semibold text-sm text-foreground">
+                              {String((marcheData.salaires[0] as Record<string, unknown>)?.salaireMedian ||
+                                (marcheData.salaires[0] as Record<string, unknown>)?.libelle ||
+                                "Voir données")}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {marcheData.bmo && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Besoins en main d'œuvre (BMO)</p>
+                          <p className="text-sm font-medium text-foreground">
+                            {String((marcheData.bmo as Record<string, unknown>)?.projetsRecrutement || 
+                              (marcheData.bmo as Record<string, unknown>)?.totalProjets || 
+                              "Données BMO disponibles")}
+                          </p>
+                        </div>
+                      )}
+                      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1 w-full justify-center py-1">
+                        <Globe className="h-3 w-3" /> API Marché du travail · France Travail
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
 
               <motion.div initial="hidden" animate="visible" custom={4} variants={fadeUp}>
                 <Link to="/dashboard-entreprise" className="block">
