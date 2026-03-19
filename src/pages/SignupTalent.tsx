@@ -59,7 +59,8 @@ export default function SignupTalent() {
   const { session, loading } = useAuth();
   const { toast } = useToast();
   const [form, setForm] = useState<FormData>({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     country: "",
     frenchLevel: "",
