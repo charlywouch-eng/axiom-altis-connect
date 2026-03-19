@@ -134,7 +134,7 @@ export default function DashboardSociete() {
   const francoTalents = talents?.filter((t) => {
     if (!t.country) return false;
     const c = t.country.toLowerCase();
-    const francoCountries = ["sénégal", "senegal", "côte d'ivoire", "cote d'ivoire", "mali", "burkina faso", "burkina", "cameroun", "cameroon"];
+    const francoCountries = ["sénégal", "senegal", "côte d'ivoire", "cote d'ivoire", "mali", "burkina faso", "burkina", "cameroun", "cameroon", "togo", "bénin", "benin"];
     if (!francoCountries.some(fc => c.includes(fc))) return false;
     if (countryFilter) {
       return c.includes(countryFilter.toLowerCase());
