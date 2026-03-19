@@ -236,7 +236,7 @@ export default function Pricing() {
         >
           Success Fee additionnel de 25 % du salaire annuel brut à la signature du CDI.
           <br />
-          Pack ALTIS Intégral disponible à 2 450 € / talent (visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif).
+          Pack ALTIS Intégral disponible à 2 450 € / talent (formalités visa de travail – procédure ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif).
         </motion.p>
       </main>
     </div>

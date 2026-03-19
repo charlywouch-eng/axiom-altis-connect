@@ -599,7 +599,7 @@ export default function Signup() {
                       {[
                         "Score détaillé par compétence ROME",
                         "Offres France Travail matchées en temps réel",
-                        "Parcours ALTIS complet (visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif)",
+                        "Parcours ALTIS complet (formalités visa de travail – procédure ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif)",
                         "Priorité dans la file de matching entreprises",
                       ].map((item) => (
                         <div key={item} className="flex items-start gap-2">

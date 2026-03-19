@@ -148,7 +148,7 @@ serve(async (req) => {
               </tr>
               <tr>
                 <td style="padding:10px 16px;font-weight:600;color:#334155;font-size:14px;">Pack inclus</td>
-                <td style="padding:10px 16px;color:#475569;font-size:14px;">Visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif</td>
+                <td style="padding:10px 16px;color:#475569;font-size:14px;">Formalités visa de travail (procédure ANEF) + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif</td>
               </tr>
             </table>
             <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.6;">

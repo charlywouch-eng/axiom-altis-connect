@@ -89,7 +89,7 @@ export function AltisPackFAQ({ animationCustomStart = 4 }: AltisPackFAQProps) {
           Pack ALTIS — tout savoir
         </h2>
         <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
-          Visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif — 2 450 €/talent.
+          Formalités visa de travail (procédure ANEF) + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif — 2 450 €/talent.
         </p>
       </div>
 

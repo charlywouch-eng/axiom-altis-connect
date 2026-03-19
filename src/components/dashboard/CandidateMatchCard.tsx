@@ -157,7 +157,7 @@ export function CandidateMatchCard({ candidate, index, onContact }: CandidateMat
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-xs text-xs">
                   <p className="font-semibold mb-1">Pack ALTIS Zéro Stress — Optionnel</p>
-                  <p>+5% fee — visa ANEF, billet d'avion, accueil aéroport, installation logement. Forfait facturé entreprise, zéro gestion RH mobilité.</p>
+                  <p>+5% fee — formalités visa de travail (procédure ANEF), billet d'avion, accueil aéroport, installation logement. Forfait facturé entreprise, zéro gestion RH mobilité.</p>
                 </TooltipContent>
               </Tooltip>
               <Button

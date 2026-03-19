@@ -534,7 +534,7 @@ export default function Leads() {
               style={{ background: "hsl(221,83%,14%,0.55)", borderColor: "hsl(189,94%,43%,0.25)" }}
             >
               <p className="text-sm font-semibold mb-3" style={{ color: "hsl(0,0%,90%)" }}>
-                🎯 Votre profil correspond déjà à des offres en tension en France. Vous êtes potentiellement éligible au <strong style={{ color: "hsl(189,94%,43%)" }}>visa ANEF</strong>.
+                🎯 Votre profil correspond déjà à des offres en tension en France. Vous êtes potentiellement éligible au <strong style={{ color: "hsl(189,94%,43%)" }}>visa de travail (procédure ANEF)</strong>.
               </p>
 
               <div className="space-y-2 mb-5">

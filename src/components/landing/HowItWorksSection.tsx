@@ -35,7 +35,7 @@ const STEPS = [
     icon: Plane,
     step: "03",
     title: "Pack ALTIS complet",
-    desc: "Visa ANEF, billet A/R, accueil aéroport, logement meublé 1 mois et accompagnement administratif. Opérationnel J1.",
+    desc: "Formalités visa de travail (procédure ANEF), billet A/R, accueil aéroport, logement meublé 1 mois et accompagnement administratif. Opérationnel J1.",
     accent: "from-success to-success/60",
     glow: "bg-success/15",
     iconColor: "text-success",
