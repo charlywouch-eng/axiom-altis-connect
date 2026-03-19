@@ -178,7 +178,10 @@ export default function Index() {
             <Link to="/a-propos" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               À propos
             </Link>
-            <Link to="/metiers-en-tension" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
+            <Link to="/fiches-metiers" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
+              Fiches métiers
+            </Link>
+            <Link to="/metiers-en-tension" className="hidden lg:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               Métiers en tension
             </Link>
             <Link to="/demande-devis" className="hidden lg:inline text-sm font-semibold text-accent hover:text-accent/80 transition-colors px-3 py-1.5">
