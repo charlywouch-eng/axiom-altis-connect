@@ -422,10 +422,10 @@ export default function Index() {
             Opportunités 2026
           </motion.p>
           <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[42px] leading-tight tracking-tight">
-            Les <span className="text-gradient-primary">9 secteurs</span> les plus demandés
+            Les <span className="text-gradient-primary">secteurs qui recrutent le plus</span> en France vous attendent
           </motion.h2>
-          <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-lg mx-auto">
-            Forte probabilité d'embauche + accompagnement ALTIS complet pour chaque secteur.
+          <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
+            Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où votre talent peut s'épanouir
           </motion.p>
         </motion.div>
 
