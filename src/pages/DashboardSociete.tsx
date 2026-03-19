@@ -57,15 +57,58 @@ import talentAvatar3 from "@/assets/talent-avatar-3.jpg";
 import talentAvatar4 from "@/assets/talent-avatar-4.jpg";
 import talentAvatar5 from "@/assets/talent-avatar-5.jpg";
 import talentAvatar6 from "@/assets/talent-avatar-6.jpg";
+import metierInfirmier from "@/assets/metier-infirmier.jpg";
+import metierAideSoignant from "@/assets/metier-aide-soignant.jpg";
+import metierAuxPuer from "@/assets/metier-auxiliaire-puericulture.jpg";
+import metierCariste from "@/assets/metier-cariste.jpg";
+import metierCarreleur from "@/assets/metier-carreleur.jpg";
+import metierChauffeur from "@/assets/metier-chauffeur-routier.jpg";
+import metierCouvreur from "@/assets/metier-couvreur.jpg";
+import metierCuisinier from "@/assets/metier-cuisinier.jpg";
+import metierInfirmierBloc from "@/assets/metier-infirmier-bloc.jpg";
+import metierMacon from "@/assets/metier-macon.jpg";
+import metierOuvrierAgricole from "@/assets/metier-ouvrier-agricole.jpg";
+import metierPeintre from "@/assets/metier-peintre-batiment.jpg";
+import metierPlombier from "@/assets/metier-plombier.jpg";
+import metierServeur from "@/assets/metier-serveur.jpg";
+import metierTechnicien from "@/assets/metier-technicien-maintenance.jpg";
+import metierAgentRestauration from "@/assets/metier-agent-restauration.jpg";
 
-const TALENT_PHOTOS = [
-  talentAvatar1,
-  talentAvatar2,
-  talentAvatar3,
-  talentAvatar4,
-  talentAvatar5,
-  talentAvatar6,
-];
+const TALENT_PHOTOS = [talentAvatar1, talentAvatar2, talentAvatar3, talentAvatar4, talentAvatar5, talentAvatar6];
+
+const ROME_AVATAR_MAP: Record<string, string> = {
+  "J1506": metierInfirmier, "J1505": metierInfirmier,
+  "J1501": metierAideSoignant,
+  "J1403": metierAuxPuer,
+  "N1101": metierCariste,
+  "F1603": metierCarreleur,
+  "N4101": metierChauffeur,
+  "F1702": metierCouvreur,
+  "G1602": metierCuisinier,
+  "J1103": metierInfirmierBloc,
+  "F1703": metierMacon, "F1701": metierMacon,
+  "A1101": metierOuvrierAgricole,
+  "F1502": metierPeintre,
+  "F1605": metierPlombier,
+  "G1603": metierServeur,
+  "I1308": metierTechnicien, "I1304": metierTechnicien,
+  "G1501": metierAgentRestauration,
+};
+
+function getAvatarForTalent(romeCode: string | null, index: number): string {
+  if (romeCode) {
+    const code = romeCode.toUpperCase().trim();
+    if (ROME_AVATAR_MAP[code]) return ROME_AVATAR_MAP[code];
+    const prefix = code.substring(0, 1);
+    if (prefix === "J") return metierInfirmier;
+    if (prefix === "F") return metierMacon;
+    if (prefix === "G") return metierCuisinier;
+    if (prefix === "N") return metierChauffeur;
+    if (prefix === "I") return metierTechnicien;
+    if (prefix === "A") return metierOuvrierAgricole;
+  }
+  return TALENT_PHOTOS[index % TALENT_PHOTOS.length];
+}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
