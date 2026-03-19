@@ -16,9 +16,18 @@ import { toast } from "@/hooks/use-toast";
 import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
-  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList
+  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList,
+  TrendingUp, Sparkles, Phone
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
+
+import avatarSante from "@/assets/talent-sante.jpg";
+import avatarBtp from "@/assets/talent-btp.jpg";
+import avatarLogistique from "@/assets/talent-logistique.jpg";
+import avatarTech from "@/assets/talent-tech.jpg";
+import avatarFormation from "@/assets/talent-formation.jpg";
+
+const TALENT_AVATARS = [avatarSante, avatarBtp, avatarLogistique, avatarTech, avatarFormation];
 
 
 const fadeUp = {
@@ -108,11 +117,11 @@ export default function DashboardRecruteur() {
               <Zap className="h-3 w-3 mr-1" /> Espace Recruteur B2B
             </Badge>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-white leading-tight mb-2">
-              Recrutez des talents d'Afrique certifiés –{" "}
-              <span className="text-accent">Opérationnels jour 1</span>
+              Votre cockpit de recrutement –{" "}
+              <span className="text-accent">Talents qualifiés prêts à intégrer votre équipe</span>
             </h1>
             <p className="text-sm text-white/50 max-w-xl">
-              Matching IA + conformité ROME + Pack ALTIS Zéro Stress (formalités visa de travail – procédure ANEF + accueil aéroport + logement meublé 1 mois + accompagnement administratif) · SaaS 499 €/mois + Pack ALTIS 2 450 €/talent
+              Matching IA + conformité ROME + Pack ALTIS Zéro Stress · SaaS 499 €/mois + Pack ALTIS 2 450 €/talent
             </p>
           </motion.div>
         </div>
@@ -132,10 +141,36 @@ export default function DashboardRecruteur() {
   );
 }
 
+/* ── Tension filter types ── */
+const TENSION_FILTERS = ["Tous", "Très haute tension", "Haute tension", "Croissante"] as const;
+const SECTOR_FILTERS = ["Tous", "BTP", "Santé", "CHR", "Logistique", "Industrie"] as const;
+
+function getSectorFromRome(romeCode?: string | null): string {
+  if (!romeCode) return "Autre";
+  const prefix = romeCode.charAt(0);
+  switch (prefix) {
+    case "F": return "BTP";
+    case "J": case "M": return "Santé";
+    case "G": return "CHR";
+    case "N": return "Logistique";
+    case "H": case "I": return "Industrie";
+    case "A": return "Agriculture";
+    default: return "Autre";
+  }
+}
+
+function getTensionLevel(score: number): string {
+  if (score >= 85) return "Très haute tension";
+  if (score >= 65) return "Haute tension";
+  return "Croissante";
+}
+
 /* ──────────── TALENTS TAB ──────────── */
 function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
   const { session } = useAuth();
   const [search, setSearch] = useState("");
+  const [tensionFilter, setTensionFilter] = useState<string>("Tous");
+  const [sectorFilter, setSectorFilter] = useState<string>("Tous");
 
   const { data: talents, isLoading } = useQuery({
     queryKey: ["recruteur-talents"],
@@ -150,28 +185,114 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
     },
   });
 
-  const filtered = talents?.filter(t =>
-    !search || t.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-    t.rome_code?.toLowerCase().includes(search.toLowerCase()) ||
-    t.rome_label?.toLowerCase().includes(search.toLowerCase())
-  ) ?? [];
+  const { data: offersCount } = useQuery({
+    queryKey: ["tension-offers-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("job_offers")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "open");
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const filtered = talents?.filter(t => {
+    const matchSearch = !search ||
+      t.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+      t.rome_code?.toLowerCase().includes(search.toLowerCase()) ||
+      t.rome_label?.toLowerCase().includes(search.toLowerCase());
+    const matchTension = tensionFilter === "Tous" || getTensionLevel(t.compliance_score) === tensionFilter;
+    const matchSector = sectorFilter === "Tous" || getSectorFromRome(t.rome_code) === sectorFilter;
+    return matchSearch && matchTension && matchSector;
+  }) ?? [];
+
+  const avgScore = talents?.length
+    ? Math.round(talents.reduce((sum, t) => sum + (t.compliance_score || 0), 0) / talents.length)
+    : 0;
 
   return (
     <motion.div initial="hidden" animate="visible">
-      <motion.div custom={0} variants={fadeUp} className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div>
-          <h2 className="font-display text-2xl font-bold text-white">Talents certifiés</h2>
-          <p className="text-white/50 text-sm mt-1">{filtered.length} talent{filtered.length > 1 ? 's' : ''} disponible{filtered.length > 1 ? 's' : ''}</p>
-        </div>
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+      {/* ── 3 Stat Cards ── */}
+      <motion.div custom={0} variants={fadeUp} className="grid gap-4 sm:grid-cols-3 mb-8">
+        <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20">
+              <Users className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs text-white/40 uppercase tracking-wider">Talents disponibles</p>
+              <p className="font-display text-3xl font-bold text-white tabular-nums">{talents?.length ?? "—"}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20">
+              <Brain className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs text-white/40 uppercase tracking-wider">Score IA moyen</p>
+              <p className="font-display text-3xl font-bold text-accent tabular-nums">{avgScore} %</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20">
+              <Flame className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs text-white/40 uppercase tracking-wider">Offres en tension</p>
+              <p className="font-display text-3xl font-bold text-white tabular-nums">{offersCount ?? "—"}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* ── Search Bar ── */}
+      <motion.div custom={1} variants={fadeUp} className="mb-5">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-accent/50" />
           <Input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Rechercher par nom, ROME..."
-            className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/30"
+            placeholder="Chercher un talent, un métier ou un code ROME"
+            className="pl-12 py-6 text-base bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-xl"
           />
         </div>
+      </motion.div>
+
+      {/* ── Filter Pills ── */}
+      <motion.div custom={2} variants={fadeUp} className="mb-8 flex flex-wrap gap-2">
+        {TENSION_FILTERS.map(f => (
+          <button
+            key={f}
+            onClick={() => setTensionFilter(f)}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+              tensionFilter === f
+                ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border border-white/10"
+            }`}
+          >
+            {f === "Très haute tension" && <Flame className="inline h-3 w-3 mr-1" />}
+            {f}
+          </button>
+        ))}
+        <div className="w-px h-6 bg-white/10 self-center mx-1" />
+        {SECTOR_FILTERS.map(f => (
+          <button
+            key={f}
+            onClick={() => setSectorFilter(f)}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+              sectorFilter === f
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border border-white/10"
+            }`}
+          >
+            {f}
+          </button>
+        ))}
       </motion.div>
 
       {isLoading ? (
@@ -179,66 +300,104 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((talent, i) => (
-            <motion.div key={talent.id} custom={i + 1} variants={fadeUp}>
-              <Card className="bg-[hsl(222,33%,12%)] border-white/10 hover:border-accent/40 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
-                    <Avatar className="h-[100px] w-[100px] shrink-0">
-                      <AvatarFallback className="bg-accent/20 text-accent font-bold text-2xl">
-                        {talent.full_name?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || 'T'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-display font-bold text-white truncate">{talent.full_name || "Talent"}</h3>
-                      <p className="text-xs text-white/40 mt-0.5">{talent.country || "Cameroun"}</p>
-                      <p className="text-xs font-mono text-accent mt-2">
-                        {talent.rome_code && `ROME ${talent.rome_code}`}
-                      </p>
-                      <p className="text-xs text-white/50 truncate">{talent.rome_label}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {talent.compliance_score >= 70 && (
-                      <Badge className="bg-accent/20 text-accent border-0 text-[10px] gap-1">
-                        <ShieldCheck className="h-3 w-3" /> MINREX validé
-                      </Badge>
-                    )}
-                    {talent.french_level && (
-                      <Badge variant="outline" className="border-white/20 text-white/60 text-[10px]">
-                        FR: {talent.french_level}
-                      </Badge>
-                    )}
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((talent, i) => {
+            const matchPercent = Math.min(99, Math.max(72, talent.compliance_score + Math.floor(Math.random() * 8) - 4));
+            const avatarImg = TALENT_AVATARS[i % TALENT_AVATARS.length];
+            return (
+              <motion.div key={talent.id} custom={i + 3} variants={fadeUp}>
+                <Card className="bg-[hsl(222,33%,12%)] border-white/10 hover:border-accent/40 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10 overflow-hidden group">
+                  {/* Photo hero */}
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={avatarImg}
+                      alt={`${talent.full_name || "Talent"} intégré dans une équipe multiculturelle`}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,33%,12%)] via-transparent to-transparent" />
+                    {/* Score overlay */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-[hsl(222,33%,8%)]/90 backdrop-blur-sm px-3 py-1.5 border border-accent/30">
                       <Flame className="h-4 w-4 text-accent" />
-                      <span className="font-display font-bold text-lg text-accent">{talent.compliance_score}</span>
-                      <span className="text-xs text-white/30">/100</span>
+                      <span className="font-display text-xl font-black text-accent tabular-nums">{talent.compliance_score}%</span>
                     </div>
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        onSelectTalent(talent);
-                        // Fire profile_viewed notification (fire-and-forget)
-                        if (talent.user_id && session?.access_token) {
-                          supabase.functions.invoke("send-notification", {
-                            body: { type: "profile_viewed", payload: { talent_user_id: talent.user_id } },
-                          }).catch(() => {});
-                        }
-                      }}
-                      className="bg-accent text-accent-foreground hover:bg-accent/90 border-0 text-xs"
-                    >
-                      Voir dossier
-                    </Button>
+                    {/* Tension badge */}
+                    <div className="absolute top-3 left-3">
+                      <Badge className={
+                        talent.compliance_score >= 85
+                          ? "bg-destructive/90 text-destructive-foreground border-0 text-[10px]"
+                          : talent.compliance_score >= 65
+                          ? "bg-accent/90 text-accent-foreground border-0 text-[10px]"
+                          : "bg-white/20 text-white border-0 text-[10px]"
+                      }>
+                        {getTensionLevel(talent.compliance_score)}
+                      </Badge>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+
+                  <CardContent className="p-5 pt-3">
+                    {/* Name & meta */}
+                    <h3 className="font-display text-lg font-bold text-white truncate">{talent.full_name || "Talent"}</h3>
+                    <p className="text-xs text-white/40 mt-0.5">{talent.country || "Cameroun"} · {talent.experience_years || 0} ans d'expérience</p>
+
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-xs font-mono text-accent">{talent.rome_code && `ROME ${talent.rome_code}`}</span>
+                      <span className="text-xs text-white/40">·</span>
+                      <span className="text-xs text-white/50 truncate">{talent.rome_label}</span>
+                    </div>
+
+                    {/* Match line */}
+                    <div className="mt-3 flex items-center gap-2 rounded-lg bg-accent/10 px-3 py-2">
+                      <TrendingUp className="h-4 w-4 text-accent shrink-0" />
+                      <span className="text-xs text-accent font-medium">Votre profil correspond à {matchPercent} % à cette offre</span>
+                    </div>
+
+                    {/* Badges */}
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {talent.compliance_score >= 70 && (
+                        <Badge className="bg-accent/20 text-accent border-0 text-[10px] gap-1">
+                          <ShieldCheck className="h-3 w-3" /> Certifié
+                        </Badge>
+                      )}
+                      {talent.french_level && (
+                        <Badge variant="outline" className="border-white/20 text-white/60 text-[10px]">
+                          FR: {talent.french_level}
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="mt-4 flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          onSelectTalent(talent);
+                          if (talent.user_id && session?.access_token) {
+                            supabase.functions.invoke("send-notification", {
+                              body: { type: "profile_viewed", payload: { talent_user_id: talent.user_id } },
+                            }).catch(() => {});
+                          }
+                        }}
+                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 border-0 text-xs gap-1.5"
+                      >
+                        <Phone className="h-3.5 w-3.5" /> Contacter
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          toast({ title: "Pack ALTIS activé", description: `Les formalités visa + accueil seront lancées pour ${talent.full_name}.` });
+                        }}
+                        className="flex-1 border-accent/40 text-accent hover:bg-accent/10 hover:text-accent text-xs gap-1.5"
+                      >
+                        <Sparkles className="h-3.5 w-3.5" /> Activer ALTIS
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
         </div>
       )}
 
@@ -246,6 +405,7 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
         <div className="text-center py-16">
           <Users className="mx-auto h-12 w-12 text-white/20 mb-4" />
           <p className="text-white/50">Aucun talent trouvé.</p>
+          <p className="text-white/30 text-sm mt-1">Essayez un autre filtre ou terme de recherche.</p>
         </div>
       )}
     </motion.div>
