@@ -68,8 +68,7 @@ export default function TestimonialsSection() {
       <div className="relative mx-auto max-w-6xl px-5 md:px-10">
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          animate="visible"
           className="text-center mb-14"
         >
           <motion.p
