@@ -416,7 +416,7 @@ export default function Index() {
       </Suspense>
 
       {/* ── Secteurs Grid ────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32" style={{ contentVisibility: "auto", containIntrinsicSize: "0 600px" }}>
+      <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
             Opportunités 2026
