@@ -267,7 +267,7 @@ export default function DashboardSociete() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
               <Award className="h-5 w-5 text-accent" />
-              Talents Francophones Recommandés
+              Talents Francophones &amp; Diaspora Recommandés
             </h2>
             <Badge className="bg-accent/15 text-accent border-0 text-xs font-bold px-2.5 gap-1">
               <Sparkles className="h-3 w-3" /> IA Matching
