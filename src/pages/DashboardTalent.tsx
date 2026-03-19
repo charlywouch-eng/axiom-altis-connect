@@ -605,6 +605,9 @@ export default function DashboardTalent() {
 
               {/* TAB 1 — DASHBOARD */}
               <TabsContent value="dashboard" className="space-y-5 mt-0">
+                {/* Section "Vos expériences valorisées" */}
+                <ExperiencesValoriseesSection userId={user?.id} experienceYears={talentProfile?.experience_years} />
+
                 <CandidatureHistorySection onPostuler={() => setCandidatureOpen(true)} />
               </TabsContent>
 

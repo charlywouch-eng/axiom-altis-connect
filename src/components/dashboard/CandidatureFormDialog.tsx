@@ -107,6 +107,9 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
     if (!user) return;
     setSubmitting(true);
     try {
+      // Compute a simple compliance score boost for experience
+      const expBonus = experienceYears === "10+" ? 20 : experienceYears === "5-10" ? 15 : experienceYears === "2-5" ? 10 : 5;
+
       const { error } = await supabase.from("candidatures" as any).insert({
         talent_user_id: user.id,
         full_name: fullName.trim(),
@@ -119,9 +122,15 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
         contract_type: contractType || null,
         mobility: mobility || null,
         desired_salary: desiredSalary || null,
+        compliance_score: expBonus,
         status: "submitted",
       } as any);
       if (error) throw error;
+
+      // Also update talent_profiles experience_years
+      const expYearsNum = experienceYears === "10+" ? 12 : experienceYears === "5-10" ? 7 : experienceYears === "2-5" ? 3 : 1;
+      await supabase.from("talent_profiles").update({ experience_years: expYearsNum } as any).eq("user_id", user.id);
+
       toast.success("Candidature envoyée ! Votre CV est maintenant visible par les recruteurs.");
       onOpenChange(false);
       onSuccess?.();
