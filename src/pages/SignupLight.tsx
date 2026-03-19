@@ -1225,11 +1225,11 @@ export default function SignupLight() {
               className="w-full text-left p-4 rounded-2xl border-2 border-accent/30 bg-accent/[0.06] hover:bg-accent/[0.12] transition-all group"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-sm text-white">Analyse approfondie</span>
-                <span className="font-black text-lg text-accent">4,99 €</span>
+                <span className="font-bold text-sm text-white">Débloquer mon résultat maintenant</span>
+                <span className="font-black text-lg text-accent">4,99&nbsp;€</span>
               </div>
               <div className="space-y-1">
-                {["PDF score détaillé", "Aperçu offres en tension", "Analyse compétences IA", "Résultat immédiat"].map(i => (
+                {["PDF score détaillé", "Priorité recruteurs modérée", "Offres personnalisées", "Résultat immédiat"].map(i => (
                   <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
                     <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
                     {i}
