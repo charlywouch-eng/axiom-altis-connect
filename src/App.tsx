@@ -34,6 +34,7 @@ import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
 import DashboardRecruteur from "./pages/DashboardRecruteur";
+import DashboardSociete from "./pages/DashboardSociete";
 import LienMagique from "./pages/LienMagique";
 import FicheMetierMacon from "./pages/FicheMetierMacon";
 import FicheMetierInfirmier from "./pages/FicheMetierInfirmier";
@@ -250,6 +251,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["recruteur", "admin"]}>
                   <DashboardRecruteur />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard-societe"
+              element={
+                <ProtectedRoute allowedRoles={["entreprise", "admin"]}>
+                  <DashboardSociete />
                 </ProtectedRoute>
               }
             />
