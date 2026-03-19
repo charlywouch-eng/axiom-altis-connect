@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -26,6 +26,8 @@ import {
   Briefcase,
   CalendarDays,
   CircleDot,
+  MessageSquare,
+  Award,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -40,6 +42,24 @@ import { fr } from "date-fns/locale";
 const TENSION_FILTERS = ["Tous", "Très haute", "Haute", "Croissante"] as const;
 const SECTOR_FILTERS = ["BTP", "Santé", "CHR", "Logistique", "Industrie"] as const;
 
+const COUNTRY_FILTERS = [
+  { label: "Tous", flag: "🌍", value: null },
+  { label: "Sénégal", flag: "🇸🇳", value: "Sénégal" },
+  { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
+  { label: "Mali", flag: "🇲🇱", value: "Mali" },
+  { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
+  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+] as const;
+
+const TALENT_PHOTOS = [
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face",
+];
+
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.45 } }),
@@ -48,11 +68,14 @@ const fadeUp = {
 export default function DashboardSociete() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const qc = useQueryClient();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string | null>(null);
   const [altisLoading, setAltisLoading] = useState<string | null>(null);
+  const [countryFilter, setCountryFilter] = useState<string | null>(null);
+  const [invitingId, setInvitingId] = useState<string | null>(null);
 
   // Handle return from Stripe
   useEffect(() => {
@@ -112,6 +135,64 @@ export default function DashboardSociete() {
     );
   });
 
+  // Francophone talents filtered by country
+  const francoTalents = talents?.filter((t) => {
+    if (!t.country) return false;
+    const c = t.country.toLowerCase();
+    const francoCountries = ["sénégal", "senegal", "côte d'ivoire", "cote d'ivoire", "mali", "burkina faso", "burkina", "togo", "bénin", "benin"];
+    if (!francoCountries.some(fc => c.includes(fc))) return false;
+    if (countryFilter) {
+      if (countryFilter === "Togo") return c.includes("togo") || c.includes("bénin") || c.includes("benin");
+      return c.includes(countryFilter.toLowerCase());
+    }
+    return true;
+  }) ?? [];
+
+  // Invite via AXIOM Connect
+  const handleInvite = async (talent: { user_id: string; full_name: string | null }) => {
+    if (!user) return;
+    setInvitingId(talent.user_id);
+    try {
+      // Create or reuse conversation
+      const { data: existing } = await supabase
+        .from("conversations")
+        .select("id")
+        .or(`and(participant_1.eq.${user.id},participant_2.eq.${talent.user_id}),and(participant_1.eq.${talent.user_id},participant_2.eq.${user.id})`)
+        .limit(1)
+        .maybeSingle();
+
+      let convoId = existing?.id;
+      if (!convoId) {
+        const { data: newConvo, error } = await supabase
+          .from("conversations")
+          .insert({ participant_1: user.id, participant_2: talent.user_id })
+          .select("id")
+          .single();
+        if (error) throw error;
+        convoId = newConvo.id;
+      }
+
+      // Send invitation message
+      const msg = `👋 Bonjour ${talent.full_name || "Talent"} ! Votre profil a retenu notre attention. Nous aimerions échanger avec vous sur une opportunité professionnelle en France. Êtes-vous disponible pour en discuter ? 🇫🇷`;
+      await supabase.from("messages").insert({
+        conversation_id: convoId,
+        sender_id: user.id,
+        content: msg,
+      });
+      await supabase.from("conversations").update({
+        last_message_text: msg,
+        last_message_at: new Date().toISOString(),
+      }).eq("id", convoId);
+
+      qc.invalidateQueries({ queryKey: ["conversations"] });
+      toast({ title: "✅ Invitation envoyée", description: `${talent.full_name || "Le talent"} a été contacté via AXIOM Connect.` });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      toast({ title: "Erreur", description: msg, variant: "destructive" });
+    } finally {
+      setInvitingId(null);
+    }
+  };
   const handleContact = (name: string) => {
     toast({ title: "Demande envoyée", description: `Votre demande de contact pour ${name} a été transmise.` });
   };
@@ -187,6 +268,137 @@ export default function DashboardSociete() {
               </CardContent>
             </Card>
           ))}
+        </motion.div>
+
+        {/* ── Talents Francophones Recommandés ──────────── */}
+        <motion.div custom={1.5} variants={fadeUp}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
+              <Award className="h-5 w-5 text-accent" />
+              Talents Francophones Recommandés
+            </h2>
+            <Badge className="bg-accent/15 text-accent border-0 text-xs font-bold px-2.5 gap-1">
+              <Sparkles className="h-3 w-3" /> IA Matching
+            </Badge>
+          </div>
+
+          {/* Country filters */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {COUNTRY_FILTERS.map((cf) => (
+              <button
+                key={cf.label}
+                onClick={() => setCountryFilter(cf.value)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  countryFilter === cf.value
+                    ? "bg-accent text-accent-foreground shadow-md shadow-accent/20"
+                    : "bg-card border border-border/50 text-muted-foreground hover:border-accent/30 hover:text-foreground"
+                }`}
+              >
+                <span className="text-sm">{cf.flag}</span>
+                {cf.label}
+              </button>
+            ))}
+          </div>
+
+          {francoTalents.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {francoTalents.slice(0, 6).map((t, i) => (
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                >
+                  <Card className="group bg-gradient-to-br from-card to-card/80 border-border/50 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 transition-all duration-300 overflow-hidden">
+                    <CardContent className="p-0">
+                      {/* Photo header */}
+                      <div className="relative h-32 bg-gradient-to-br from-[hsl(222,47%,11%)] to-[hsl(199,89%,48%/0.3)]">
+                        <img
+                          src={TALENT_PHOTOS[i % TALENT_PHOTOS.length]}
+                          alt={t.full_name || "Talent"}
+                          className="w-full h-full object-cover opacity-70 group-hover:opacity-85 transition-opacity"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                        {/* Score badge */}
+                        <div className="absolute top-3 right-3 flex items-center gap-1 bg-card/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-lg">
+                          <Star className="h-3.5 w-3.5 text-accent" />
+                          <span className="font-display text-lg font-extrabold text-accent tabular-nums">
+                            {t.compliance_score}
+                          </span>
+                          <span className="text-[10px] text-accent/60">%</span>
+                        </div>
+                        {/* Country flag */}
+                        <div className="absolute top-3 left-3 bg-card/90 backdrop-blur-sm rounded-lg px-2.5 py-1 text-xs font-semibold text-foreground flex items-center gap-1.5 shadow-lg">
+                          <Globe className="h-3 w-3 text-accent" />
+                          {t.country}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-4 space-y-3">
+                        <div>
+                          <p className="font-bold text-foreground text-sm">{t.full_name || "Talent certifié"}</p>
+                          <p className="text-xs text-accent font-medium mt-0.5">
+                            {t.rome_label || "Professionnel qualifié"} {t.rome_code && `· ${t.rome_code}`}
+                          </p>
+                        </div>
+
+                        {/* Skills */}
+                        {t.skills && t.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {t.skills.slice(0, 3).map((s) => (
+                              <span key={s} className="text-[10px] bg-accent/10 text-accent rounded-full px-2 py-0.5 font-medium">{s}</span>
+                            ))}
+                            {t.skills.length > 3 && (
+                              <span className="text-[10px] bg-muted/50 text-muted-foreground rounded-full px-2 py-0.5">+{t.skills.length - 3}</span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Meta info */}
+                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                          {t.french_level && (
+                            <span className="flex items-center gap-1">
+                              🗣️ {t.french_level}
+                            </span>
+                          )}
+                          {t.experience_years != null && t.experience_years > 0 && (
+                            <span className="flex items-center gap-1">
+                              📅 {t.experience_years} ans
+                            </span>
+                          )}
+                        </div>
+
+                        {/* CTA */}
+                        <Button
+                          size="sm"
+                          className="w-full gap-2 text-xs bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-md shadow-accent/20"
+                          disabled={invitingId === t.user_id}
+                          onClick={() => handleInvite({ user_id: t.user_id, full_name: t.full_name })}
+                        >
+                          {invitingId === t.user_id ? (
+                            <>⏳ Envoi en cours…</>
+                          ) : (
+                            <><MessageSquare className="h-3.5 w-3.5" /> Inviter via AXIOM Connect</>
+                          )}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <Card className="bg-card border-border/50">
+              <CardContent className="p-8 text-center">
+                <Globe className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  {countryFilter ? `Aucun talent disponible pour ${countryFilter}.` : "Aucun talent francophone disponible."}
+                </p>
+                <p className="text-xs text-muted-foreground/60 mt-1">Les talents s'inscrivent chaque jour sur AXIOM.</p>
+              </CardContent>
+            </Card>
+          )}
         </motion.div>
 
         {/* ── Search + Filters ─────────────────────────── */}
