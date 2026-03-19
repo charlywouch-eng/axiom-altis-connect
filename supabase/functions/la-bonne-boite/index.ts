@@ -13,7 +13,7 @@ const FT_TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/acces
 async function getFranceTravailToken(
   clientId: string,
   clientSecret: string
-): Promise<string> {
+): Promise<string | null> {
   const scopes = ["api_labonneboitev1", "api_labonneboitev1 o2dsoffre"];
 
   console.log(`LBB auth attempt — clientId prefix: ${clientId.substring(0, 8)}...`);
