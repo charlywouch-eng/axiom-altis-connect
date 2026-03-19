@@ -146,7 +146,23 @@ export default function MetierDetail() {
     queryFn: () => fetchRomeData(code!),
     enabled: !!code,
     retry: false,
-    staleTime: 1000 * 60 * 30, // cache 30 min
+    staleTime: 1000 * 60 * 30,
+  });
+
+  const { data: marcheData } = useQuery({
+    queryKey: ["marche-du-travail", code],
+    queryFn: () => fetchMarcheData(code!),
+    enabled: !!code,
+    retry: false,
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const { data: competencesData } = useQuery({
+    queryKey: ["competences-rome", code],
+    queryFn: () => fetchCompetencesData(code!),
+    enabled: !!code,
+    retry: false,
+    staleTime: 1000 * 60 * 60,
   });
 
   if (isLoading) {
