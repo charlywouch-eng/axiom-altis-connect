@@ -364,7 +364,7 @@ export default function DashboardSociete() {
                       {/* Photo header */}
                       <div className="relative h-32 bg-gradient-to-br from-[hsl(222,47%,11%)] to-[hsl(199,89%,48%/0.3)]">
                         <img
-                          src={TALENT_PHOTOS[i % TALENT_PHOTOS.length]}
+                          src={getAvatarForTalent(t.rome_code, i)}
                           alt={t.full_name || "Talent"}
                           className="w-full h-full object-cover opacity-70 group-hover:opacity-85 transition-opacity"
                         />
