@@ -925,6 +925,20 @@ export default function DashboardTalent() {
                         </div>
                       )}
 
+                      {/* Notifications email */}
+                      <div className="rounded-xl border border-border/50 bg-muted/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                          <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <Bell className="h-4 w-4 text-accent" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">Notifications email</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Recevez un email quand un recruteur consulte votre profil ou quand de nouvelles opportunités correspondent à votre profil.</p>
+                          </div>
+                        </div>
+                        <NotificationToggle userId={user?.id} />
+                      </div>
+
                       {/* RGPD section */}
                       <div className="rounded-xl border border-border/50 bg-muted/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div className="flex items-start gap-3">
