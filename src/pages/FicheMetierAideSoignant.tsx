@@ -7,6 +7,7 @@ import {
   FileCheck, AlertTriangle, ArrowLeft, Mail, HandHeart
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -228,6 +229,7 @@ export default function FicheMetierAideSoignant() {
               <a href="mailto:contact@axiom-talents.com" className="flex items-center gap-1 hover:text-foreground transition-colors"><Mail className="h-3 w-3" /> contact@axiom-talents.com</a>
             </div>
           </div>
+          <CesedaLegalNotice />
         </footer>
       </div>
     </>

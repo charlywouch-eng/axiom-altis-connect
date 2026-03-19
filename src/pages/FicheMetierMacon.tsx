@@ -7,6 +7,7 @@ import {
   FileCheck, AlertTriangle, ArrowLeft, Mail
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -309,6 +310,7 @@ export default function FicheMetierMacon() {
               </a>
             </div>
           </div>
+          <CesedaLegalNotice />
         </footer>
       </div>
     </>

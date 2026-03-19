@@ -16,6 +16,7 @@ import { FullPageLoader } from "@/components/FullPageLoader";
 import { Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -600,6 +601,7 @@ export default function Index() {
             © 2026 AXIOM × ALTIS Mobility · SIRET en cours d'immatriculation ·{" "}
             <Link to="/rgpd" className="hover:text-muted-foreground transition-colors">Politique de confidentialité</Link>
           </div>
+          <CesedaLegalNotice />
         </div>
       </footer>
     </div>

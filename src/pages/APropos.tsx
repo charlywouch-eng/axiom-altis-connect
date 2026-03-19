@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -374,6 +375,7 @@ export default function APropos() {
           <div className="mt-5 border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
             © 2026 AXIOM × ALTIS Mobility — Tous droits réservés
           </div>
+          <CesedaLegalNotice />
         </div>
       </footer>
     </div>
