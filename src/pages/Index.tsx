@@ -249,7 +249,7 @@ export default function Index() {
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Dans les secteurs les plus demandés : <strong className="text-white/85">construction, santé, restauration, maintenance</strong> et bien plus encore.
+                Des opportunités réelles dans les secteurs qui recrutent le plus — <strong className="text-accent">Matching IA + Accompagnement ALTIS complet</strong>
               </motion.p>
 
               {/* Proof points */}
