@@ -71,6 +71,7 @@ import { PremiumStatCard } from "@/components/PremiumStatCard";
 import DiplomaUpload from "@/components/dashboard/DiplomaUpload";
 import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
 import OpportunitesTab from "@/components/dashboard/OpportunitesTab";
+import CandidatureFormDialog from "@/components/dashboard/CandidatureFormDialog";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
