@@ -135,6 +135,64 @@ export default function DashboardSociete() {
     );
   });
 
+  // Francophone talents filtered by country
+  const francoTalents = talents?.filter((t) => {
+    if (!t.country) return false;
+    const c = t.country.toLowerCase();
+    const francoCountries = ["sénégal", "senegal", "côte d'ivoire", "cote d'ivoire", "mali", "burkina faso", "burkina", "togo", "bénin", "benin"];
+    if (!francoCountries.some(fc => c.includes(fc))) return false;
+    if (countryFilter) {
+      if (countryFilter === "Togo") return c.includes("togo") || c.includes("bénin") || c.includes("benin");
+      return c.includes(countryFilter.toLowerCase());
+    }
+    return true;
+  }) ?? [];
+
+  // Invite via AXIOM Connect
+  const handleInvite = async (talent: { user_id: string; full_name: string | null }) => {
+    if (!user) return;
+    setInvitingId(talent.user_id);
+    try {
+      // Create or reuse conversation
+      const { data: existing } = await supabase
+        .from("conversations")
+        .select("id")
+        .or(`and(participant_1.eq.${user.id},participant_2.eq.${talent.user_id}),and(participant_1.eq.${talent.user_id},participant_2.eq.${user.id})`)
+        .limit(1)
+        .maybeSingle();
+
+      let convoId = existing?.id;
+      if (!convoId) {
+        const { data: newConvo, error } = await supabase
+          .from("conversations")
+          .insert({ participant_1: user.id, participant_2: talent.user_id })
+          .select("id")
+          .single();
+        if (error) throw error;
+        convoId = newConvo.id;
+      }
+
+      // Send invitation message
+      const msg = `👋 Bonjour ${talent.full_name || "Talent"} ! Votre profil a retenu notre attention. Nous aimerions échanger avec vous sur une opportunité professionnelle en France. Êtes-vous disponible pour en discuter ? 🇫🇷`;
+      await supabase.from("messages").insert({
+        conversation_id: convoId,
+        sender_id: user.id,
+        content: msg,
+      });
+      await supabase.from("conversations").update({
+        last_message_text: msg,
+        last_message_at: new Date().toISOString(),
+      }).eq("id", convoId);
+
+      qc.invalidateQueries({ queryKey: ["conversations"] });
+      toast({ title: "✅ Invitation envoyée", description: `${talent.full_name || "Le talent"} a été contacté via AXIOM Connect.` });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      toast({ title: "Erreur", description: msg, variant: "destructive" });
+    } finally {
+      setInvitingId(null);
+    }
+  };
   const handleContact = (name: string) => {
     toast({ title: "Demande envoyée", description: `Votre demande de contact pour ${name} a été transmise.` });
   };
