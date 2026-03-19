@@ -91,6 +91,9 @@ export default function DashboardRecruteur() {
               <TabsTrigger value="facturation" className="flex-1 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-white/60 text-xs">
                 <CreditCard className="h-3 w-3" />
               </TabsTrigger>
+              <TabsTrigger value="candidatures" className="flex-1 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-white/60 text-xs">
+                <ClipboardList className="h-3 w-3" />
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
