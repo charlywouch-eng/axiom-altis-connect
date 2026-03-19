@@ -121,7 +121,7 @@ export default function SignupTalent() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     const allTouched: TouchedFields = {
-      fullName: true, email: true,
+      firstName: true, lastName: true, email: true,
       country: true, frenchLevel: true, experienceYears: true, skills: true,
     };
     setTouched(allTouched);
