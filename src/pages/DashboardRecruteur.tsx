@@ -16,9 +16,18 @@ import { toast } from "@/hooks/use-toast";
 import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
-  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList
+  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList,
+  TrendingUp, Sparkles, Phone, Heart
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
+
+import avatarSante from "@/assets/talent-sante.jpg";
+import avatarBtp from "@/assets/talent-btp.jpg";
+import avatarLogistique from "@/assets/talent-logistique.jpg";
+import avatarTech from "@/assets/talent-tech.jpg";
+import avatarFormation from "@/assets/talent-formation.jpg";
+
+const TALENT_AVATARS = [avatarSante, avatarBtp, avatarLogistique, avatarTech, avatarFormation];
 
 
 const fadeUp = {
