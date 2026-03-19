@@ -254,6 +254,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/dashboard-societe"
+              element={
+                <ProtectedRoute allowedRoles={["entreprise", "admin"]}>
+                  <DashboardSociete />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/rgpd" element={<Rgpd />} />
             <Route path="/rgpd-light" element={<RgpdLight />} />
