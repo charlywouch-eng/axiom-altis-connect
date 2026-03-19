@@ -117,11 +117,11 @@ export default function DashboardRecruteur() {
               <Zap className="h-3 w-3 mr-1" /> Espace Recruteur B2B
             </Badge>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-white leading-tight mb-2">
-              Votre cockpit de recrutement –{" "}
-              <span className="text-accent">Talents qualifiés prêts à intégrer votre équipe</span>
+              Votre cockpit RH –{" "}
+              <span className="text-accent">Recrutez des talents qualifiés en toute sérénité</span>
             </h1>
             <p className="text-sm text-white/50 max-w-xl">
-              Matching IA + conformité ROME + Pack ALTIS Zéro Stress · SaaS 499 €/mois + Pack ALTIS 2 450 €/talent
+              Matching IA · Conformité ROME · Talents certifiés prêts à intégrer votre équipe · Pack ALTIS Zéro Stress
             </p>
           </motion.div>
         </div>
