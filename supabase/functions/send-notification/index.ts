@@ -506,8 +506,18 @@ serve(async (req) => {
         const { data: pvProfile } = await supabase.from("profiles").select("email, full_name").eq("id", talent_user_id).single();
         if (!pvProfile?.email) { console.log(`[NOTIFICATION] No email for talent ${talent_user_id}`); break; }
 
+        // Send email
         const pvEmail = profileViewedEmail(pvProfile.full_name || "Talent");
         await sendEmail(pvProfile.email, pvEmail.subject, pvEmail.html);
+        // Insert in-app push notification
+        await insertPushNotification(
+          supabase,
+          talent_user_id,
+          "Un recruteur a consulté votre profil",
+          "Un recruteur vient de voir votre profil ! C'est un signal très positif. Optimisez votre profil pour maximiser vos chances.",
+          "profile_viewed",
+          "/dashboard-talent?tab=profil"
+        );
         await logNotification(supabase, talent_user_id, "profile_viewed");
         break;
       }
