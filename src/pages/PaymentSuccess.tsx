@@ -265,19 +265,30 @@ export default function PaymentSuccess() {
             className="w-full space-y-3"
           >
             {tier === "test" && (
-              <Button
-                onClick={handleUpgradeToFull}
-                disabled={upgradeLoading}
-                className="w-full h-12 text-base font-bold rounded-xl flex items-center justify-center gap-2 group"
-                style={{
-                  background: "linear-gradient(135deg, hsl(158 64% 30%), hsl(158 64% 42%))",
-                  boxShadow: "0 4px 24px hsl(158 64% 38% / 0.4)",
-                }}
-              >
-                <Crown className="w-4 h-4" />
-                Déblocage complet — 29 €
-                <Rocket className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Button>
+              <div className="relative">
+                <motion.span
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: [1, 1.08, 1], opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 0.6, repeat: Infinity, repeatDelay: 3 }}
+                  className="absolute -top-2.5 right-3 z-10 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold shadow-lg"
+                  style={{ background: "linear-gradient(135deg, hsl(45,93%,47%), hsl(36,100%,50%))", color: "hsl(222,47%,7%)", boxShadow: "0 2px 12px hsl(45,93%,47%,0.4)" }}
+                >
+                  ⭐ Recommandé
+                </motion.span>
+                <Button
+                  onClick={handleUpgradeToFull}
+                  disabled={upgradeLoading}
+                  className="w-full h-12 text-base font-bold rounded-xl flex items-center justify-center gap-2 group"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(158 64% 30%), hsl(158 64% 42%))",
+                    boxShadow: "0 4px 24px hsl(158 64% 38% / 0.4)",
+                  }}
+                >
+                  <Crown className="w-4 h-4" />
+                  Déblocage complet — 29 €
+                  <Rocket className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </div>
             )}
             <Link to={signupUrl} className="block w-full">
               <Button

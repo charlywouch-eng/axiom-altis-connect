@@ -584,7 +584,16 @@ export default function Leads() {
               </Button>
 
               {/* ── Full unlock 29 € ── */}
-              <div className="rounded-xl p-3 mb-3 border text-center" style={{ background: "hsl(189,94%,43%,0.06)", borderColor: "hsl(189,94%,43%,0.2)" }}>
+              <div className="relative rounded-xl p-3 mb-3 border text-center" style={{ background: "hsl(189,94%,43%,0.06)", borderColor: "hsl(189,94%,43%,0.2)" }}>
+                <motion.span
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: [1, 1.08, 1], opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.6, repeat: Infinity, repeatDelay: 3 }}
+                  className="absolute -top-2.5 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold shadow-lg"
+                  style={{ background: "linear-gradient(135deg, hsl(158,64%,38%), hsl(158,64%,48%))", color: "white", boxShadow: "0 2px 12px hsl(158,64%,38%,0.4)" }}
+                >
+                  ⭐ Recommandé
+                </motion.span>
                 <p className="text-xs" style={{ color: "hsl(215,25%,58%)" }}>
                   Ou passez directement au{" "}
                   <strong style={{ color: "hsl(45,93%,47%)", fontSize: "1rem" }}>déblocage complet — 29 €</strong>

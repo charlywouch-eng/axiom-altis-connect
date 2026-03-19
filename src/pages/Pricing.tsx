@@ -155,7 +155,8 @@ export default function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <div className="mb-6 rounded-lg border border-accent/30 bg-accent/5 p-3">
+                <div className="relative mb-6 rounded-lg border border-accent/30 bg-accent/5 p-3">
+                  <span className="absolute -top-2.5 right-3 inline-flex items-center gap-1 rounded-full bg-success px-2.5 py-0.5 text-[10px] font-bold text-white shadow-lg animate-pulse-soft">⭐ Recommandé</span>
                   <p className="text-xs font-semibold text-accent mb-1">⬆ Déblocage complet — 29 €</p>
                   <ul className="space-y-1.5">
                     {TALENT_FULL_PERKS.map((p) => (
