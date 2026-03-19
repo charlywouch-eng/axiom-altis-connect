@@ -251,6 +251,7 @@ export default function FicheMetierInfirmier() {
               <a href="mailto:contact@axiom-talents.com" className="flex items-center gap-1 hover:text-foreground transition-colors"><Mail className="h-3 w-3" /> contact@axiom-talents.com</a>
             </div>
           </div>
+          <CesedaLegalNotice />
         </footer>
       </div>
     </>
