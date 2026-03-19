@@ -209,6 +209,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/notifications"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminNotifications />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/metier/:code" element={<MetierDetail />} />
             <Route path="/fiches-metiers" element={<FichesMetiersIndex />} />
             <Route path="/fiches-metiers/f1703-macon" element={<FicheMetierMacon />} />
