@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import {
-  Phone, Mail, MapPin, Briefcase, GraduationCap,
-  Award, Heart, ShieldCheck, Zap, Flame, Star
+  Phone, MapPin, Briefcase, GraduationCap,
+  Award, Heart, ShieldCheck, Zap, Star
 } from "lucide-react";
 
 interface Experience {

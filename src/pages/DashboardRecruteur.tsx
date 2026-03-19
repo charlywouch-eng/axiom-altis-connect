@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
-  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList, Phone
+  Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
 
