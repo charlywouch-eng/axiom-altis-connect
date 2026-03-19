@@ -241,15 +241,15 @@ export default function Index() {
                 custom={1} variants={fadeUp}
                 className="text-[38px] font-black leading-[1.04] text-white sm:text-[50px] md:text-[58px] tracking-tight"
               >
-                La France cherche des{" "}
-                <span className="text-gradient-accent">talents comme le vôtre</span>
+                Les secteurs qui recrutent le plus en France{" "}
+                <span className="text-gradient-accent">vous attendent</span>
               </motion.h1>
 
               <motion.p
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Des opportunités réelles dans les secteurs qui recrutent le plus — <strong className="text-accent">Matching IA + Accompagnement ALTIS complet</strong>
+                Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où <strong className="text-accent">votre talent peut s'épanouir</strong>
               </motion.p>
 
               {/* Proof points */}
@@ -270,7 +270,7 @@ export default function Index() {
                   className="w-[90%] max-w-md sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground btn-ripple animate-micro-pulse transition-transform duration-200 mx-auto"
                 >
                   <Link to="/signup-light">
-                    Commencer mon évaluation gratuite
+                    Commencer
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
@@ -422,10 +422,10 @@ export default function Index() {
             Opportunités 2026
           </motion.p>
           <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[42px] leading-tight tracking-tight">
-            Les <span className="text-gradient-primary">secteurs qui recrutent</span> en France vous attendent
+            Les <span className="text-gradient-primary">secteurs qui recrutent</span> en France
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
-            Construction · Santé · Restauration · Logistique · Industrie et bien d'autres domaines où votre talent peut s'épanouir
+            Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où votre talent peut s'épanouir
           </motion.p>
         </motion.div>
 
@@ -438,8 +438,8 @@ export default function Index() {
               key={s.rome}
               custom={i}
               variants={scaleIn}
-              whileHover={{ y: -8, scale: 1.03, transition: { duration: 0.25 } }}
-              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:shadow-xl hover:border-accent/30 ${s.color}`}
+              whileHover={{ y: -8, scale: 1.04, boxShadow: "0 20px 40px -12px rgba(6,182,212,0.15)", transition: { duration: 0.25 } }}
+              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:border-accent/30 ${s.color}`}
             >
               <div className="absolute inset-0 rounded-2xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative">
