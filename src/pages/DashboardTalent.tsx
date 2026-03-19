@@ -791,6 +791,15 @@ export default function DashboardTalent() {
                     </CardContent>
                   </Card>
                 </motion.div>
+                {/* Formations Recommandées (Pack ALTIS) */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailFormationsCard romeCode={talentProfile?.rome_code || "F1703"} />
+                </motion.div>
+
+                {/* Agences France Travail */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailAgencesCard />
+                </motion.div>
               </TabsContent>
 
               <TabsContent value="opportunites" className="space-y-5 mt-0">
