@@ -110,6 +110,9 @@ export default function MetiersEnTension() {
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            <Link to="/fiches-metiers" className="hidden md:inline text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5">
+              Fiches métiers
+            </Link>
             <Link to="/signup">
               <Button size="sm" className="shadow-lg shadow-accent/20">Recruter des talents</Button>
             </Link>

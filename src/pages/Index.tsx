@@ -586,6 +586,7 @@ export default function Index() {
               <span className="text-muted-foreground/30">·</span>
               <Link to="/pricing" className="hover:text-foreground transition-colors">Tarifs</Link>
               <Link to="/a-propos" className="hover:text-foreground transition-colors">À propos</Link>
+              <Link to="/fiches-metiers" className="hover:text-foreground transition-colors">Fiches métiers</Link>
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors">Mentions légales</Link>
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors">CGU</Link>
               <Link to="/rgpd-light" className="hover:text-foreground transition-colors flex items-center gap-1">
