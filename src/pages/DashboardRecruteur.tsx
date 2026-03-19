@@ -134,6 +134,7 @@ export default function DashboardRecruteur() {
 
 /* ──────────── TALENTS TAB ──────────── */
 function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
+  const { session } = useAuth();
   const [search, setSearch] = useState("");
 
   const { data: talents, isLoading } = useQuery({
