@@ -48,7 +48,7 @@ const COUNTRY_FILTERS = [
   { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
   { label: "Mali", flag: "🇲🇱", value: "Mali" },
   { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
-  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+  { label: "Cameroun", flag: "🇨🇲", value: "Cameroun" },
 ] as const;
 
 import { getAvatarForTalent } from "@/lib/metierAvatars";
@@ -132,10 +132,9 @@ export default function DashboardSociete() {
   const francoTalents = talents?.filter((t) => {
     if (!t.country) return false;
     const c = t.country.toLowerCase();
-    const francoCountries = ["sénégal", "senegal", "côte d'ivoire", "cote d'ivoire", "mali", "burkina faso", "burkina", "togo", "bénin", "benin"];
+    const francoCountries = ["sénégal", "senegal", "côte d'ivoire", "cote d'ivoire", "mali", "burkina faso", "burkina", "cameroun", "cameroon"];
     if (!francoCountries.some(fc => c.includes(fc))) return false;
     if (countryFilter) {
-      if (countryFilter === "Togo") return c.includes("togo") || c.includes("bénin") || c.includes("benin");
       return c.includes(countryFilter.toLowerCase());
     }
     return true;
@@ -268,7 +267,7 @@ export default function DashboardSociete() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
               <Award className="h-5 w-5 text-accent" />
-              Talents Francophones Recommandés
+              Talents Francophones &amp; Diaspora Recommandés
             </h2>
             <Badge className="bg-accent/15 text-accent border-0 text-xs font-bold px-2.5 gap-1">
               <Sparkles className="h-3 w-3" /> IA Matching
