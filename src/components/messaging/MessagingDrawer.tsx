@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   ArrowLeft, Send, Check, CheckCheck, MessageSquare, Search,
-  Languages, Sparkles, Loader2,
+  Languages, Sparkles, Loader2, Circle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,6 +67,90 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
   const [translatingId, setTranslatingId] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+
+  // Presence state
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  const [otherIsTyping, setOtherIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const presenceChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const typingChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+
+  // --- Global presence channel (online status) ---
+  useEffect(() => {
+    if (!user || !open) return;
+
+    const channel = supabase.channel("axiom-presence", {
+      config: { presence: { key: user.id } },
+    });
+
+    channel
+      .on("presence", { event: "sync" }, () => {
+        const state = channel.presenceState();
+        const ids = new Set<string>();
+        Object.keys(state).forEach(key => ids.add(key));
+        setOnlineUsers(ids);
+      })
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          await channel.track({ user_id: user.id, online_at: new Date().toISOString() });
+        }
+      });
+
+    presenceChannelRef.current = channel;
+
+    return () => {
+      supabase.removeChannel(channel);
+      presenceChannelRef.current = null;
+    };
+  }, [user?.id, open]);
+
+  // --- Typing indicator channel (per conversation) ---
+  useEffect(() => {
+    if (!activeConvo || !user) return;
+
+    const otherId = activeConvo.participant_1 === user.id
+      ? activeConvo.participant_2
+      : activeConvo.participant_1;
+
+    const channelName = `typing-${activeConvo.id}`;
+    const channel = supabase.channel(channelName);
+
+    channel
+      .on("broadcast", { event: "typing" }, (payload) => {
+        if (payload.payload?.user_id === otherId) {
+          setOtherIsTyping(true);
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = setTimeout(() => setOtherIsTyping(false), 3000);
+        }
+      })
+      .subscribe();
+
+    typingChannelRef.current = channel;
+
+    return () => {
+      supabase.removeChannel(channel);
+      typingChannelRef.current = null;
+      setOtherIsTyping(false);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, [activeConvo?.id, user?.id]);
+
+  // Broadcast typing event on input change
+  const broadcastTyping = useCallback(() => {
+    if (!typingChannelRef.current || !user) return;
+    typingChannelRef.current.send({
+      type: "broadcast",
+      event: "typing",
+      payload: { user_id: user.id },
+    });
+  }, [user?.id]);
+
+  // Helper: is other user online
+  const isOtherOnline = useCallback((convo: Conversation) => {
+    if (!user) return false;
+    const otherId = convo.participant_1 === user.id ? convo.participant_2 : convo.participant_1;
+    return onlineUsers.has(otherId);
+  }, [user?.id, onlineUsers]);
 
   // Fetch conversations
   const { data: conversations = [] } = useQuery({
@@ -152,7 +236,7 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, otherIsTyping]);
 
   // Load AI suggestions when last received message changes
   useEffect(() => {
@@ -292,6 +376,22 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
     }
   };
 
+  // Typing dots animation component
+  const TypingIndicator = () => (
+    <div className="flex items-start gap-2 px-1">
+      <Avatar className="h-6 w-6 shrink-0">
+        <AvatarFallback className="bg-gradient-to-br from-accent/20 to-primary/20 text-foreground font-bold text-[8px]">
+          {getInitials(activeConvo?.other_name || "U")}
+        </AvatarFallback>
+      </Avatar>
+      <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1">
+        <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/50 animate-bounce [animation-delay:0ms]" />
+        <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/50 animate-bounce [animation-delay:150ms]" />
+        <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/50 animate-bounce [animation-delay:300ms]" />
+      </div>
+    </div>
+  );
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:w-[420px] p-0 flex flex-col">
@@ -330,75 +430,100 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
                 </div>
               ) : (
                 <div className="divide-y divide-border/50">
-                  {filteredConvos.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => setActiveConvo(c)}
-                      className={cn(
-                        "w-full flex items-center gap-3 p-4 text-left transition-colors hover:bg-muted/50",
-                        c.unread_count && c.unread_count > 0 && "bg-accent/5"
-                      )}
-                    >
-                      <Avatar className="h-10 w-10 shrink-0">
-                        <AvatarFallback className="bg-gradient-to-br from-accent/20 to-primary/20 text-foreground font-bold text-xs">
-                          {getInitials(c.other_name || "U")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className={cn("text-sm font-semibold truncate", c.unread_count && c.unread_count > 0 && "text-foreground")}>
-                            {c.other_name}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground shrink-0 ml-2">
-                            {c.last_message_at && formatMessageDate(c.last_message_at)}
-                          </span>
+                  {filteredConvos.map((c) => {
+                    const online = isOtherOnline(c);
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => setActiveConvo(c)}
+                        className={cn(
+                          "w-full flex items-center gap-3 p-4 text-left transition-colors hover:bg-muted/50",
+                          c.unread_count && c.unread_count > 0 && "bg-accent/5"
+                        )}
+                      >
+                        <div className="relative shrink-0">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-gradient-to-br from-accent/20 to-primary/20 text-foreground font-bold text-xs">
+                              {getInitials(c.other_name || "U")}
+                            </AvatarFallback>
+                          </Avatar>
+                          {/* Online indicator dot */}
+                          <span className={cn(
+                            "absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background transition-colors",
+                            online ? "bg-emerald-500" : "bg-muted-foreground/30"
+                          )} />
                         </div>
-                        <div className="flex items-center justify-between mt-0.5">
-                          <p className={cn(
-                            "text-xs truncate",
-                            c.unread_count && c.unread_count > 0 ? "text-foreground font-medium" : "text-muted-foreground"
-                          )}>
-                            {c.last_message_text || "Nouvelle conversation"}
-                          </p>
-                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                            {c.other_role && (
-                              <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 border-0", roleColor(c.other_role))}>
-                                {roleLabel(c.other_role)}
-                              </Badge>
-                            )}
-                            {c.unread_count && c.unread_count > 0 && (
-                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
-                                {c.unread_count}
-                              </span>
-                            )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className={cn("text-sm font-semibold truncate", c.unread_count && c.unread_count > 0 && "text-foreground")}>
+                              {c.other_name}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground shrink-0 ml-2">
+                              {c.last_message_at && formatMessageDate(c.last_message_at)}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between mt-0.5">
+                            <p className={cn(
+                              "text-xs truncate",
+                              c.unread_count && c.unread_count > 0 ? "text-foreground font-medium" : "text-muted-foreground"
+                            )}>
+                              {c.last_message_text || "Nouvelle conversation"}
+                            </p>
+                            <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                              {c.other_role && (
+                                <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 border-0", roleColor(c.other_role))}>
+                                  {roleLabel(c.other_role)}
+                                </Badge>
+                              )}
+                              {c.unread_count && c.unread_count > 0 && (
+                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                                  {c.unread_count}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </ScrollArea>
           </>
         ) : (
           <>
-            {/* Chat header */}
+            {/* Chat header with online status */}
             <div className="flex items-center gap-3 p-4 border-b">
               <Button variant="ghost" size="icon" onClick={() => setActiveConvo(null)} className="shrink-0">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <Avatar className="h-9 w-9 shrink-0">
-                <AvatarFallback className="bg-gradient-to-br from-accent/20 to-primary/20 text-foreground font-bold text-xs">
-                  {getInitials(activeConvo.other_name || "U")}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative shrink-0">
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback className="bg-gradient-to-br from-accent/20 to-primary/20 text-foreground font-bold text-xs">
+                    {getInitials(activeConvo.other_name || "U")}
+                  </AvatarFallback>
+                </Avatar>
+                <span className={cn(
+                  "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background transition-colors",
+                  isOtherOnline(activeConvo) ? "bg-emerald-500" : "bg-muted-foreground/30"
+                )} />
+              </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold truncate">{activeConvo.other_name}</p>
-                {activeConvo.other_role && (
-                  <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 border-0 mt-0.5", roleColor(activeConvo.other_role))}>
-                    {roleLabel(activeConvo.other_role)}
-                  </Badge>
-                )}
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  {activeConvo.other_role && (
+                    <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 border-0", roleColor(activeConvo.other_role))}>
+                      {roleLabel(activeConvo.other_role)}
+                    </Badge>
+                  )}
+                  {isOtherOnline(activeConvo) ? (
+                    <span className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                      <Circle className="h-1.5 w-1.5 fill-current" /> En ligne
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground">Hors ligne</span>
+                  )}
+                </div>
               </div>
               <Badge variant="outline" className="text-[9px] gap-1 text-accent border-accent/30">
                 <Sparkles className="h-3 w-3" /> IA
@@ -475,6 +600,9 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
                   );
                 })
               )}
+
+              {/* Typing indicator */}
+              {otherIsTyping && <TypingIndicator />}
             </div>
 
             {/* AI Suggestions */}
@@ -516,7 +644,10 @@ export function MessagingDrawer({ open, onOpenChange }: MessagingDrawerProps) {
                 <Input
                   placeholder="Votre message..."
                   value={messageText}
-                  onChange={(e) => setMessageText(e.target.value)}
+                  onChange={(e) => {
+                    setMessageText(e.target.value);
+                    broadcastTyping();
+                  }}
                   className="flex-1 h-10 text-sm bg-muted/50"
                   autoFocus
                 />
