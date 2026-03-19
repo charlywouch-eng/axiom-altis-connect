@@ -153,6 +153,7 @@ export default function FicheMetierAuxiliairePuericulture() {
 
         <footer className="border-t py-8 text-center text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} AXIOM & ALTIS · <Link to="/rgpd" className="underline">Politique de confidentialité</Link> · <a href="mailto:contact@axiom-talents.com" className="inline-flex items-center gap-1 underline"><Mail className="h-3 w-3" />contact@axiom-talents.com</a></p>
+          <CesedaLegalNotice />
         </footer>
       </div>
     </>
