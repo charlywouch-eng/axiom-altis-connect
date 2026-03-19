@@ -37,3 +37,7 @@ project_id = "wfolueffkdzknuowwecf"
     verify_jwt = false
   [functions.competences-rome]
     verify_jwt = false
+  [functions.france-travail-formations]
+    verify_jwt = false
+  [functions.france-travail-agences]
+    verify_jwt = false

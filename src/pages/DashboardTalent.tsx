@@ -74,6 +74,9 @@ import AvatarCropModal from "@/components/dashboard/AvatarCropModal";
 import OpportunitesTab from "@/components/dashboard/OpportunitesTab";
 import CandidatureHistorySection from "@/components/dashboard/CandidatureHistorySection";
 import CandidatureFormDialog from "@/components/dashboard/CandidatureFormDialog";
+import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
+import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
+import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
@@ -788,9 +791,27 @@ export default function DashboardTalent() {
                     </CardContent>
                   </Card>
                 </motion.div>
+                {/* Formations Recommandées (Pack ALTIS) */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailFormationsCard romeCode={talentProfile?.rome_code || "F1703"} />
+                </motion.div>
+
+                {/* Agences France Travail */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailAgencesCard />
+                </motion.div>
               </TabsContent>
 
               <TabsContent value="opportunites" className="space-y-5 mt-0">
+                {/* Offres en temps réel France Travail */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailOffresCard
+                    romeCodes={[talentProfile?.rome_code || "F1703", "J1501", "G1602"]}
+                    title="Vos Opportunités en Temps Réel"
+                    count={6}
+                  />
+                </motion.div>
+
                 <OpportunitesTab
                   offersToDisplay={offersToDisplay}
                   ftOffers={ftOffers}

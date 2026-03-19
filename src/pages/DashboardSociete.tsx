@@ -54,6 +54,9 @@ const COUNTRY_FILTERS = [
 ] as const;
 
 import { getAvatarForTalent } from "@/lib/metierAvatars";
+import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
+import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
+import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -663,6 +666,20 @@ export default function DashboardSociete() {
               </CardContent>
             </Card>
           )}
+        </motion.div>
+
+        {/* ── Offres France Travail en temps réel ───── */}
+        <motion.div custom={3.8} variants={fadeUp}>
+          <FranceTravailOffresCard
+            romeCodes={["F1703", "J1501", "G1602"]}
+            title="Offres d'emploi en temps réel"
+            count={6}
+          />
+        </motion.div>
+
+        {/* ── Agences France Travail ────────────────── */}
+        <motion.div custom={3.9} variants={fadeUp}>
+          <FranceTravailAgencesCard />
         </motion.div>
 
         {/* ── Découvrir de nouveaux talents ─────────────── */}
