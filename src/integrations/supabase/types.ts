@@ -786,6 +786,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      ensure_conversation: {
+        Args: { _user_a: string; _user_b: string }
+        Returns: string
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
