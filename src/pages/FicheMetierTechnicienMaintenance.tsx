@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Settings, Briefcase, Wrench, ShieldCheck, ArrowRight, CheckCircle2,
-  MapPin, Euro, Clock, Zap, Plane, Home, GraduationCap,
+  MapPin, Euro, Clock, Zap, Plane, Home, Globe,
   FileCheck, AlertTriangle, ArrowLeft, Mail
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
