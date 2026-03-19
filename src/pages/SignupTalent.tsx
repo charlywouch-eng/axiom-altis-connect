@@ -213,15 +213,25 @@ export default function SignupTalent() {
           ) : (
           <>
           <form onSubmit={handleSignup} className="space-y-5">
-            {/* Full Name */}
-            <TextFormField
-              id="fullName" label="Nom complet" icon={User}
-              placeholder="Prénom Nom" value={form.fullName}
-              error={touched.fullName ? errors.fullName : undefined}
-              onChange={(v) => updateField("fullName", v)}
-              onBlur={() => markTouched("fullName")}
-              isValid={touched.fullName && !errors.fullName && form.fullName.length > 0}
-            />
+            {/* First Name + Last Name — side by side */}
+            <div className="grid grid-cols-2 gap-4">
+              <TextFormField
+                id="firstName" label="Prénom" icon={User}
+                placeholder="Prénom" value={form.firstName}
+                error={touched.firstName ? errors.firstName : undefined}
+                onChange={(v) => updateField("firstName", v)}
+                onBlur={() => markTouched("firstName")}
+                isValid={touched.firstName && !errors.firstName && form.firstName.length > 0}
+              />
+              <TextFormField
+                id="lastName" label="Nom" icon={User}
+                placeholder="Nom de famille" value={form.lastName}
+                error={touched.lastName ? errors.lastName : undefined}
+                onChange={(v) => updateField("lastName", v)}
+                onBlur={() => markTouched("lastName")}
+                isValid={touched.lastName && !errors.lastName && form.lastName.length > 0}
+              />
+            </div>
 
             {/* Email */}
             <TextFormField
