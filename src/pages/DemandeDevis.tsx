@@ -92,7 +92,7 @@ export default function DemandeDevis() {
         <title>Demande de devis — AXIOM ALTIS</title>
         <meta
           name="description"
-          content="Demandez un devis personnalisé pour recruter des talents qualifiés avec le Pack ALTIS : visa ANEF, billet A/R, logement meublé 1 mois et accompagnement administratif."
+          content="Demandez un devis personnalisé pour recruter des talents qualifiés avec le Pack ALTIS : formalités visa de travail (procédure ANEF), billet A/R, logement meublé 1 mois et accompagnement administratif."
         />
       </Helmet>
 
