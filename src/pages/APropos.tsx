@@ -124,6 +124,9 @@ export default function APropos() {
             <Link to="/a-propos" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               À propos
             </Link>
+            <Link to="/fiches-metiers" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
+              Fiches métiers
+            </Link>
             <Link to="/pricing" className="hidden md:inline text-sm font-medium text-white/50 hover:text-white/90 transition-colors px-3 py-1.5">
               Tarifs
             </Link>
