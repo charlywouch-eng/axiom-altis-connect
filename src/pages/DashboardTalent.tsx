@@ -1006,7 +1006,7 @@ export default function DashboardTalent() {
           <CandidatureFormDialog
             open={candidatureOpen}
             onOpenChange={setCandidatureOpen}
-            prefillName={profileData?.full_name || ""}
+            prefillName={profile?.full_name || ""}
           />
         </motion.div>
       </DashboardLayout>
