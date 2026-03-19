@@ -302,9 +302,10 @@ export default function DashboardSociete() {
                         <Button
                           size="sm"
                           className="w-full gap-1.5 text-xs bg-gradient-to-r from-accent to-primary text-white hover:opacity-90"
-                          onClick={() => handleAltis(c.full_name || "ce talent")}
+                          disabled={altisLoading === (c.id || c.full_name)}
+                          onClick={() => handleAltis(c.full_name || "ce talent", c.id)}
                         >
-                          <Sparkles className="h-3.5 w-3.5" /> Activer ALTIS (2 450 €)
+                          <Sparkles className="h-3.5 w-3.5" /> {altisLoading === (c.id || c.full_name) ? "Redirection…" : "Activer ALTIS (2 450 €)"}
                         </Button>
                         <Button
                           size="sm"
