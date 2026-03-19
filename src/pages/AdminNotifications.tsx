@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bell, Mail, Shield, Search, RefreshCw, Clock, CheckCircle, XCircle, Filter } from "lucide-react";
+import { Bell, Mail, Shield, Search, RefreshCw, CheckCircle, Filter } from "lucide-react";
 import { formatDistanceToNow, format, subDays, subHours } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
