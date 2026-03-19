@@ -383,7 +383,7 @@ export default function Index() {
       </section>
 
       {/* ── Stats Band ───────────────────────────────────────── */}
-      <section className="relative z-10 -mt-8 px-5 md:px-10" style={{ contentVisibility: "auto" as any, containIntrinsicSize: "0 200px" }}>
+      <section className="relative z-10 -mt-8 px-5 md:px-10">
         <div className="mx-auto max-w-4xl">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
@@ -416,7 +416,7 @@ export default function Index() {
       </Suspense>
 
       {/* ── Secteurs Grid ────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32" style={{ contentVisibility: "auto", containIntrinsicSize: "0 600px" }}>
+      <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
             Opportunités 2026
@@ -508,7 +508,7 @@ export default function Index() {
       </Suspense>
 
       {/* ── 4 Cartes Confiance ───────────────────────────────── */}
-      <section className="bg-muted/30 py-20 md:py-28" style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}>
+      <section className="bg-muted/30 py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-5 md:px-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
             <motion.h2 custom={0} variants={fadeUp} className="font-black text-3xl md:text-[38px] tracking-tight">
