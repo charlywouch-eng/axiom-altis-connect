@@ -754,7 +754,7 @@ export default function DashboardEntreprise() {
                       { step: 2, icon: Zap, label: "Matching IA", desc: "Algorithme AXIOM identifie les talents compatibles", color: "text-accent", bg: "bg-accent/10 border-accent/25" },
                       { step: 3, icon: Users, label: "Entretien", desc: "Shortlist de candidats · Entretiens vidéo", color: "text-[hsl(45,93%,47%)]", bg: "bg-[hsl(45,93%,47%)]/10 border-[hsl(45,93%,47%)]/25" },
                       { step: 4, icon: Handshake, label: "Signature", desc: "Promesse d'embauche + validation MINEFOP", color: "text-success", bg: "bg-success/10 border-success/25" },
-                      { step: 5, icon: Plane, label: "ALTIS activation", desc: "Visa ANEF + billet + logement meublé", color: "text-[hsl(189,94%,43%)]", bg: "bg-accent/10 border-accent/25" },
+                      { step: 5, icon: Plane, label: "ALTIS activation", desc: "Formalités visa de travail (ANEF) + billet + logement meublé", color: "text-[hsl(189,94%,43%)]", bg: "bg-accent/10 border-accent/25" },
                       { step: 6, icon: CheckCircle2, label: "Talent en poste", desc: "Opérationnel J+1 — suivi 3 mois", color: "text-primary", bg: "bg-primary/10 border-primary/25" },
                     ].map(({ step, icon: Icon, label, desc, color, bg }, i) => (
                       <motion.div
