@@ -37,9 +37,22 @@ const fadeUp = {
 export default function DashboardSociete() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string | null>(null);
+  const [altisLoading, setAltisLoading] = useState<string | null>(null);
+
+  // Handle return from Stripe
+  useEffect(() => {
+    const altisStatus = searchParams.get("altis");
+    const talentName = searchParams.get("talent");
+    if (altisStatus === "success") {
+      toast({ title: "🎉 Pack ALTIS activé", description: `Le Pack ALTIS pour ${talentName || "ce talent"} a été activé avec succès. Un conseiller vous recontacte sous 24h.` });
+    } else if (altisStatus === "canceled") {
+      toast({ title: "Paiement annulé", description: "Le paiement a été annulé.", variant: "destructive" });
+    }
+  }, [searchParams, toast]);
 
   // Fetch available talents
   const { data: talents } = useQuery({
