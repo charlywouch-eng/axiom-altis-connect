@@ -508,7 +508,7 @@ export default function Index() {
       </Suspense>
 
       {/* ── 4 Cartes Confiance ───────────────────────────────── */}
-      <section className="bg-muted/30 py-20 md:py-28" style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}>
+      <section className="bg-muted/30 py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-5 md:px-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
             <motion.h2 custom={0} variants={fadeUp} className="font-black text-3xl md:text-[38px] tracking-tight">
