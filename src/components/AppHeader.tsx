@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
+import { MessagingButton } from "@/components/messaging/MessagingButton";
 
 export function AppHeader() {
   const { user, role, signOut } = useAuth();
