@@ -117,11 +117,11 @@ export default function DashboardRecruteur() {
               <Zap className="h-3 w-3 mr-1" /> Espace Recruteur B2B
             </Badge>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-white leading-tight mb-2">
-              Votre cockpit de recrutement –{" "}
-              <span className="text-accent">Talents qualifiés prêts à intégrer votre équipe</span>
+              Votre cockpit RH –{" "}
+              <span className="text-accent">Recrutez des talents qualifiés en toute sérénité</span>
             </h1>
             <p className="text-sm text-white/50 max-w-xl">
-              Matching IA + conformité ROME + Pack ALTIS Zéro Stress · SaaS 499 €/mois + Pack ALTIS 2 450 €/talent
+              Matching IA · Conformité ROME · Talents certifiés prêts à intégrer votre équipe · Pack ALTIS Zéro Stress
             </p>
           </motion.div>
         </div>
@@ -197,6 +197,17 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
     },
   });
 
+  const { data: candidaturesCount } = useQuery({
+    queryKey: ["candidatures-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("candidatures")
+        .select("*", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
   const filtered = talents?.filter(t => {
     const matchSearch = !search ||
       t.full_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -214,7 +225,7 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
   return (
     <motion.div initial="hidden" animate="visible">
       {/* ── 3 Stat Cards ── */}
-      <motion.div custom={0} variants={fadeUp} className="grid gap-4 sm:grid-cols-3 mb-8">
+      <motion.div custom={0} variants={fadeUp} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20">
@@ -245,6 +256,17 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
             <div>
               <p className="text-xs text-white/40 uppercase tracking-wider">Offres en tension</p>
               <p className="font-display text-3xl font-bold text-white tabular-nums">{offersCount ?? "—"}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20">
+              <ClipboardList className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs text-white/40 uppercase tracking-wider">Candidatures en cours</p>
+              <p className="font-display text-3xl font-bold text-white tabular-nums">{candidaturesCount ?? "—"}</p>
             </div>
           </CardContent>
         </Card>
