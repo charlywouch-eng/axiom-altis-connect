@@ -754,7 +754,7 @@ function FacturationTab() {
       price: "1 200 €",
       priceSuffix: "/talent",
       description: "Intégration clé-en-main",
-      features: ["Visa & titre de séjour", "Billet d'avion A/R", "Accueil aéroport", "Logement 1er mois", "Accompagnement administratif"],
+      features: ["Formalités visa de travail", "Accueil & assistance aéroport", "Logement 1er mois", "Accompagnement administratif"],
       cta: "Demander un devis",
       highlight: false,
     },

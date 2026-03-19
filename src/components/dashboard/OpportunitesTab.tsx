@@ -239,7 +239,7 @@ export default function OpportunitesTab({
                                     </Badge>
                                   </TooltipTrigger>
                                   <TooltipContent className="max-w-xs text-xs">
-                                    Pack ALTIS disponible : formalités visa de travail (procédure ANEF) + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif (2 450 €)
+                                    Pack ALTIS disponible : formalités visa de travail (procédure ANEF) + accueil aéroport + logement meublé 1 mois + accompagnement administratif (2 450 €)
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>

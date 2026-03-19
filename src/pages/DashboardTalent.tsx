@@ -734,10 +734,9 @@ export default function DashboardTalent() {
                       <div className="grid gap-3 sm:grid-cols-2">
                         {[
                           { icon: Globe, label: "Formalités visa de travail – Procédure ANEF", desc: "Accompagnement complet des formalités visa de travail (ANEF + Préfecture, Code CESEDA)", status: "Terminé" },
-                          { icon: Plane, label: "Billet d'avion A/R", desc: "Vol aller-retour inclus · Réservation AXIOM", status: "Confirmé" },
-                          { icon: Building2, label: "Accueil aéroport", desc: "Accueil personnalisé dès l'arrivée en France", status: "Planifié" },
-                          { icon: Home, label: "Logement meublé 1 mois", desc: "Résidence partenaire J+1 · Tout équipé", status: "Actif" },
-                          { icon: GraduationCap, label: "Accompagnement administratif", desc: "Démarches préfecture · Inscription services publics", status: "En cours" },
+                          { icon: Plane, label: "Accueil & assistance aéroport", desc: "Accueil personnalisé et assistance dès votre arrivée en France", status: "Planifié" },
+                          { icon: Home, label: "Logement meublé 1 mois", desc: "Résidence partenaire équipée pour votre premier mois d'installation", status: "Actif" },
+                          { icon: GraduationCap, label: "Accompagnement administratif complet", desc: "Préfecture · Sécurité sociale · Ouverture de compte bancaire", status: "En cours" },
                         ].map(({ icon: Icon, label, desc, status }) => (
                           <div key={label} className="flex gap-3 p-3 rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors">
                             <div className="h-9 w-9 rounded-lg bg-primary/8 flex items-center justify-center shrink-0">
