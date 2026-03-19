@@ -81,8 +81,7 @@ export default function HowItWorksSection() {
 
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
+          animate="visible"
           className="relative grid gap-6 md:grid-cols-3 md:gap-8"
         >
           {/* Connecting line (desktop only) */}

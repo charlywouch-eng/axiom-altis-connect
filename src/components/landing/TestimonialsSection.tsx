@@ -97,8 +97,7 @@ export default function TestimonialsSection() {
 
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
+          animate="visible"
           className="grid gap-6 md:grid-cols-3"
         >
           {TESTIMONIALS.map((t, i) => (
