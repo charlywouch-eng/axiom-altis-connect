@@ -270,6 +270,137 @@ export default function DashboardSociete() {
           ))}
         </motion.div>
 
+        {/* ── Talents Francophones Recommandés ──────────── */}
+        <motion.div custom={1.5} variants={fadeUp}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
+              <Award className="h-5 w-5 text-accent" />
+              Talents Francophones Recommandés
+            </h2>
+            <Badge className="bg-accent/15 text-accent border-0 text-xs font-bold px-2.5 gap-1">
+              <Sparkles className="h-3 w-3" /> IA Matching
+            </Badge>
+          </div>
+
+          {/* Country filters */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {COUNTRY_FILTERS.map((cf) => (
+              <button
+                key={cf.label}
+                onClick={() => setCountryFilter(cf.value)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  countryFilter === cf.value
+                    ? "bg-accent text-accent-foreground shadow-md shadow-accent/20"
+                    : "bg-card border border-border/50 text-muted-foreground hover:border-accent/30 hover:text-foreground"
+                }`}
+              >
+                <span className="text-sm">{cf.flag}</span>
+                {cf.label}
+              </button>
+            ))}
+          </div>
+
+          {francoTalents.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {francoTalents.slice(0, 6).map((t, i) => (
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                >
+                  <Card className="group bg-gradient-to-br from-card to-card/80 border-border/50 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/5 transition-all duration-300 overflow-hidden">
+                    <CardContent className="p-0">
+                      {/* Photo header */}
+                      <div className="relative h-32 bg-gradient-to-br from-[hsl(222,47%,11%)] to-[hsl(199,89%,48%/0.3)]">
+                        <img
+                          src={TALENT_PHOTOS[i % TALENT_PHOTOS.length]}
+                          alt={t.full_name || "Talent"}
+                          className="w-full h-full object-cover opacity-70 group-hover:opacity-85 transition-opacity"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                        {/* Score badge */}
+                        <div className="absolute top-3 right-3 flex items-center gap-1 bg-card/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-lg">
+                          <Star className="h-3.5 w-3.5 text-accent" />
+                          <span className="font-display text-lg font-extrabold text-accent tabular-nums">
+                            {t.compliance_score}
+                          </span>
+                          <span className="text-[10px] text-accent/60">%</span>
+                        </div>
+                        {/* Country flag */}
+                        <div className="absolute top-3 left-3 bg-card/90 backdrop-blur-sm rounded-lg px-2.5 py-1 text-xs font-semibold text-foreground flex items-center gap-1.5 shadow-lg">
+                          <Globe className="h-3 w-3 text-accent" />
+                          {t.country}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-4 space-y-3">
+                        <div>
+                          <p className="font-bold text-foreground text-sm">{t.full_name || "Talent certifié"}</p>
+                          <p className="text-xs text-accent font-medium mt-0.5">
+                            {t.rome_label || "Professionnel qualifié"} {t.rome_code && `· ${t.rome_code}`}
+                          </p>
+                        </div>
+
+                        {/* Skills */}
+                        {t.skills && t.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {t.skills.slice(0, 3).map((s) => (
+                              <span key={s} className="text-[10px] bg-accent/10 text-accent rounded-full px-2 py-0.5 font-medium">{s}</span>
+                            ))}
+                            {t.skills.length > 3 && (
+                              <span className="text-[10px] bg-muted/50 text-muted-foreground rounded-full px-2 py-0.5">+{t.skills.length - 3}</span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Meta info */}
+                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                          {t.french_level && (
+                            <span className="flex items-center gap-1">
+                              🗣️ {t.french_level}
+                            </span>
+                          )}
+                          {t.experience_years != null && t.experience_years > 0 && (
+                            <span className="flex items-center gap-1">
+                              📅 {t.experience_years} ans
+                            </span>
+                          )}
+                        </div>
+
+                        {/* CTA */}
+                        <Button
+                          size="sm"
+                          className="w-full gap-2 text-xs bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-md shadow-accent/20"
+                          disabled={invitingId === t.user_id}
+                          onClick={() => handleInvite({ user_id: t.user_id, full_name: t.full_name })}
+                        >
+                          {invitingId === t.user_id ? (
+                            <>⏳ Envoi en cours…</>
+                          ) : (
+                            <><MessageSquare className="h-3.5 w-3.5" /> Inviter via AXIOM Connect</>
+                          )}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <Card className="bg-card border-border/50">
+              <CardContent className="p-8 text-center">
+                <Globe className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  {countryFilter ? `Aucun talent disponible pour ${countryFilter}.` : "Aucun talent francophone disponible."}
+                </p>
+                <p className="text-xs text-muted-foreground/60 mt-1">Les talents s'inscrivent chaque jour sur AXIOM.</p>
+              </CardContent>
+            </Card>
+          )}
+        </motion.div>
+
         {/* ── Search + Filters ─────────────────────────── */}
         <motion.div custom={2} variants={fadeUp} className="space-y-3">
           <div className="relative">
