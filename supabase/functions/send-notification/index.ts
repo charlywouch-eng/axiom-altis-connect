@@ -476,6 +476,39 @@ serve(async (req) => {
         break;
       }
 
+      case "profile_viewed": {
+        const { talent_user_id, recruiter_name } = payload;
+        // Check notifications enabled + anti-spam
+        const pvEnabled = await isNotificationEnabled(supabase, talent_user_id);
+        if (!pvEnabled) { console.log(`[NOTIFICATION] Notifications disabled for ${talent_user_id}`); break; }
+        const pvCanSend = await canSendNotification(supabase, talent_user_id, "profile_viewed");
+        if (!pvCanSend) { console.log(`[NOTIFICATION] Anti-spam: profile_viewed already sent today for ${talent_user_id}`); break; }
+
+        const { data: pvProfile } = await supabase.from("profiles").select("email, full_name").eq("id", talent_user_id).single();
+        if (!pvProfile?.email) { console.log(`[NOTIFICATION] No email for talent ${talent_user_id}`); break; }
+
+        const pvEmail = profileViewedEmail(pvProfile.full_name || "Talent");
+        await sendEmail(pvProfile.email, pvEmail.subject, pvEmail.html);
+        await logNotification(supabase, talent_user_id, "profile_viewed");
+        break;
+      }
+
+      case "sector_match": {
+        const { talent_user_id, match_count, top_sector } = payload;
+        const smEnabled = await isNotificationEnabled(supabase, talent_user_id);
+        if (!smEnabled) { console.log(`[NOTIFICATION] Notifications disabled for ${talent_user_id}`); break; }
+        const smCanSend = await canSendNotification(supabase, talent_user_id, "sector_match");
+        if (!smCanSend) { console.log(`[NOTIFICATION] Anti-spam: sector_match already sent today for ${talent_user_id}`); break; }
+
+        const { data: smProfile } = await supabase.from("profiles").select("email, full_name").eq("id", talent_user_id).single();
+        if (!smProfile?.email) { console.log(`[NOTIFICATION] No email for talent ${talent_user_id}`); break; }
+
+        const smEmail = sectorMatchEmail(smProfile.full_name || "Talent", match_count || 1, top_sector || "BTP");
+        await sendEmail(smProfile.email, smEmail.subject, smEmail.html);
+        await logNotification(supabase, talent_user_id, "sector_match");
+        break;
+      }
+
       default:
         throw new Error(`Unknown notification type: ${type}`);
     }
