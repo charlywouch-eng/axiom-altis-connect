@@ -15,7 +15,7 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.06, duration: 0.5, ease: easeOut } }),
 };
 
-const SECTEURS = ["Tous", "BTP", "Santé", "Restauration", "Industrie"] as const;
+const SECTEURS = ["Tous", "BTP", "Santé", "Restauration", "Transport", "Agriculture", "Industrie"] as const;
 
 const FICHES = [
   { to: "/fiches-metiers/f1703-macon", label: "Maçon qualifié", rome: "F1703", secteur: "BTP", tension: "Très haute", salaire: "1 900 – 2 800 €" },
@@ -30,6 +30,9 @@ const FICHES = [
   { to: "/fiches-metiers/g1602-cuisinier", label: "Cuisinier", rome: "G1602", secteur: "Restauration", tension: "Très haute", salaire: "1 800 – 2 800 €" },
   { to: "/fiches-metiers/g1603-serveur", label: "Serveur en restauration", rome: "G1603", secteur: "Restauration", tension: "Très haute", salaire: "1 700 – 2 300 €" },
   { to: "/fiches-metiers/g1501-agent-polyvalent-restauration", label: "Agent polyvalent restauration", rome: "G1501", secteur: "Restauration", tension: "Haute", salaire: "1 650 – 2 100 €" },
+  { to: "/fiches-metiers/n4101-chauffeur-routier", label: "Chauffeur routier", rome: "N4101", secteur: "Transport", tension: "Très haute", salaire: "2 000 – 3 200 €" },
+  { to: "/fiches-metiers/n1101-cariste", label: "Cariste", rome: "N1101", secteur: "Transport", tension: "Haute", salaire: "1 800 – 2 600 €" },
+  { to: "/fiches-metiers/a1101-ouvrier-agricole", label: "Ouvrier agricole polyvalent", rome: "A1101", secteur: "Agriculture", tension: "Haute", salaire: "1 700 – 2 300 €" },
   { to: "/fiches-metiers/i1308-technicien-maintenance", label: "Technicien de maintenance", rome: "I1308", secteur: "Industrie", tension: "Très haute", salaire: "2 100 – 3 200 €" },
 ];
 

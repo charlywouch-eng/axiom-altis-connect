@@ -223,6 +223,9 @@ const App = () => (
             <Route path="/fiches-metiers/g1602-cuisinier" element={<FicheMetierCuisinier />} />
             <Route path="/fiches-metiers/g1603-serveur" element={<FicheMetierServeur />} />
             <Route path="/fiches-metiers/g1501-agent-polyvalent-restauration" element={<FicheMetierAgentRestauration />} />
+            <Route path="/fiches-metiers/n4101-chauffeur-routier" element={<FicheMetierChauffeurRoutier />} />
+            <Route path="/fiches-metiers/n1101-cariste" element={<FicheMetierCariste />} />
+            <Route path="/fiches-metiers/a1101-ouvrier-agricole" element={<FicheMetierOuvrierAgricole />} />
             <Route
               path="/dashboard-recruteur"
               element={
