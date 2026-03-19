@@ -110,16 +110,30 @@ export default function OpportunitesTab({
 }: OpportunitesTabProps) {
   const { toast } = useToast();
 
-  const sortedOffers = [...offersToDisplay].sort((a, b) => {
-    const scoreA = (a.score as number) ?? 0;
-    const scoreB = (b.score as number) ?? 0;
-    const statusA = getAxiomReadyStatus(scoreA, visaStatus);
-    const statusB = getAxiomReadyStatus(scoreB, visaStatus);
-    const priority = (s: string | null) => s === "ready" ? 2 : s === "altis" ? 1 : 0;
-    const diff = priority(statusB) - priority(statusA);
-    if (diff !== 0) return diff;
-    return scoreB - scoreA;
-  });
+  const [sectorFilter, setSectorFilter] = useState<string>("all");
+  const [contractFilter, setContractFilter] = useState<string>("all");
+
+  const SECTOR_OPTIONS = ["all", "BTP", "Santé", "CHR", "Logistique"];
+  const CONTRACT_OPTIONS = ["all", "CDI", "CDD", "Saisonnier", "MIS"];
+
+  const sortedOffers = [...offersToDisplay]
+    .filter((o) => {
+      const sector = String(o.sector ?? "BTP");
+      const contract = String(o.contract ?? "CDI");
+      if (sectorFilter !== "all" && sector !== sectorFilter) return false;
+      if (contractFilter !== "all" && contract !== contractFilter) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      const scoreA = (a.score as number) ?? 0;
+      const scoreB = (b.score as number) ?? 0;
+      const statusA = getAxiomReadyStatus(scoreA, visaStatus);
+      const statusB = getAxiomReadyStatus(scoreB, visaStatus);
+      const priority = (s: string | null) => s === "ready" ? 2 : s === "altis" ? 1 : 0;
+      const diff = priority(statusB) - priority(statusA);
+      if (diff !== 0) return diff;
+      return scoreB - scoreA;
+    });
 
   const handlePostulerAxiom = (offerId: string, title: string) => {
     toast({
