@@ -556,6 +556,27 @@ export type Database = {
         }
         Relationships: []
       }
+      talent_notification_log: {
+        Row: {
+          created_at: string
+          id: string
+          notification_type: string
+          talent_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notification_type: string
+          talent_user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notification_type?: string
+          talent_user_id?: string
+        }
+        Relationships: []
+      }
       talent_profiles: {
         Row: {
           apostille_date: string | null
@@ -563,6 +584,7 @@ export type Database = {
           compliance_score: number
           country: string | null
           created_at: string
+          email_notifications_enabled: boolean
           experience_years: number | null
           french_level: string | null
           full_name: string | null
@@ -584,6 +606,7 @@ export type Database = {
           compliance_score?: number
           country?: string | null
           created_at?: string
+          email_notifications_enabled?: boolean
           experience_years?: number | null
           french_level?: string | null
           full_name?: string | null
@@ -605,6 +628,7 @@ export type Database = {
           compliance_score?: number
           country?: string | null
           created_at?: string
+          email_notifications_enabled?: boolean
           experience_years?: number | null
           french_level?: string | null
           full_name?: string | null

@@ -54,6 +54,7 @@ import {
   Shield,
   Download,
   Trash2,
+  Bell,
   
   RefreshCw,
   Award,
@@ -924,6 +925,20 @@ export default function DashboardTalent() {
                         </div>
                       )}
 
+                      {/* Notifications email */}
+                      <div className="rounded-xl border border-border/50 bg-muted/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                          <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <Bell className="h-4 w-4 text-accent" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">Notifications email</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Recevez un email quand un recruteur consulte votre profil ou quand de nouvelles opportunités correspondent à votre profil.</p>
+                          </div>
+                        </div>
+                        <NotificationToggle userId={user?.id} />
+                      </div>
+
                       {/* RGPD section */}
                       <div className="rounded-xl border border-border/50 bg-muted/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div className="flex items-start gap-3">
@@ -1020,5 +1035,54 @@ function ProfileField({ label, value }: { label: string; value?: string | null }
       <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-0.5 font-semibold">{label}</p>
       <p className="text-sm font-medium text-foreground">{value || <span className="text-muted-foreground italic">Non renseigné</span>}</p>
     </div>
+  );
+}
+
+/* ──────────── NOTIFICATION TOGGLE ──────────── */
+function NotificationToggle({ userId }: { userId?: string }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: enabled, isLoading } = useQuery({
+    queryKey: ["notification_pref", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("talent_profiles")
+        .select("email_notifications_enabled")
+        .eq("user_id", userId!)
+        .limit(1)
+        .single();
+      return data?.email_notifications_enabled ?? true;
+    },
+    enabled: !!userId,
+  });
+
+  const toggle = async () => {
+    if (!userId) return;
+    const newVal = !enabled;
+    const { error } = await supabase
+      .from("talent_profiles")
+      .update({ email_notifications_enabled: newVal } as any)
+      .eq("user_id", userId);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    queryClient.setQueryData(["notification_pref", userId], newVal);
+    toast({ title: newVal ? "Notifications activées" : "Notifications désactivées" });
+  };
+
+  if (isLoading || enabled === undefined) return null;
+
+  return (
+    <Button
+      size="sm"
+      variant={enabled ? "default" : "outline"}
+      className={`gap-1.5 text-xs shrink-0 ${enabled ? "bg-accent text-accent-foreground hover:bg-accent/90" : ""}`}
+      onClick={toggle}
+    >
+      <Bell className="h-3.5 w-3.5" />
+      {enabled ? "Activé" : "Désactivé"}
+    </Button>
   );
 }

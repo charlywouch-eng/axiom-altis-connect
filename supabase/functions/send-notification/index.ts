@@ -182,6 +182,106 @@ function incompleteProfileEmail(talentName: string, _email: string) {
   };
 }
 
+// ─── NEW: Profile viewed by recruiter ───────────────────────
+function profileViewedEmail(talentName: string) {
+  const body = `
+    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
+      Bonjour <strong>${talentName}</strong>,
+    </p>
+    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
+      Bonne nouvelle ! <strong>Un recruteur français vient de consulter votre profil complet</strong> sur AXIOM × ALTIS.
+    </p>
+    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
+      C'est un signal très positif : cela signifie que votre parcours, vos compétences et vos qualifications ont retenu son attention parmi notre vivier de talents certifiés.
+    </p>
+    <div style="background:#f0f9ff;border-left:4px solid #1E40AF;padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:24px;">
+      <p style="margin:0 0 8px;font-weight:700;color:#0F172A;font-size:15px;">💡 Nos conseils pour maximiser vos chances :</p>
+      <ul style="color:#475569;font-size:14px;line-height:1.8;padding-left:20px;margin:0;">
+        <li>Vérifiez que votre profil est <strong>100 % complet</strong> (photo, diplômes, compétences)</li>
+        <li>Ajoutez vos <strong>certifications MINEFOP</strong> si ce n'est pas encore fait</li>
+        <li>Précisez votre <strong>disponibilité</strong> et votre <strong>mobilité</strong></li>
+      </ul>
+    </div>
+    <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:8px 0 24px;">
+      <a href="${SITE_URL}/dashboard-talent?tab=profil" style="display:inline-block;background:linear-gradient(135deg,#1E40AF,#06B6D4);color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;">
+        Optimiser mon profil →
+      </a>
+    </td></tr></table>
+    <p style="color:#94a3b8;font-size:12px;text-align:center;margin:0;">
+      Pour des raisons de confidentialité, nous ne communiquons pas l'identité du recruteur.
+    </p>`;
+  return {
+    subject: "👀 Un recruteur a consulté votre profil AXIOM × ALTIS",
+    html: wrapEmail("Profil consulté", "Un recruteur vient de consulter votre profil complet", body),
+  };
+}
+
+// ─── NEW: Sector match (score IA > 80%) ─────────────────────
+function sectorMatchEmail(talentName: string, matchCount: number, topSector: string) {
+  const body = `
+    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
+      Bonjour <strong>${talentName}</strong>,
+    </p>
+    <p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
+      Notre algorithme de matching vient de détecter <strong>${matchCount} nouvelle${matchCount > 1 ? 's' : ''} opportunité${matchCount > 1 ? 's' : ''}</strong> avec un score de compatibilité supérieur à 80 % dans le secteur <strong>${topSector}</strong>.
+    </p>
+    <div style="background:#f0fdf4;border-left:4px solid #16a34a;padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:24px;">
+      <p style="margin:0 0 8px;font-weight:700;color:#0F172A;font-size:15px;">🎯 Votre profil correspond à de nouvelles opportunités</p>
+      <p style="margin:0;color:#475569;font-size:14px;line-height:1.6;">
+        Ces offres ont été sélectionnées par notre IA en fonction de vos compétences, votre expérience et votre niveau de qualification. Les recruteurs recherchent activement des profils comme le vôtre.
+      </p>
+    </div>
+    <div style="background:#f8fafc;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;border:1px solid #e2e8f0;">
+      <p style="color:#94a3b8;font-size:12px;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">Score de compatibilité</p>
+      <p style="color:#16a34a;font-size:32px;font-weight:700;margin:0;">80%+</p>
+      <p style="color:#64748b;font-size:13px;margin:4px 0 0;">sur ${matchCount} offre${matchCount > 1 ? 's' : ''} active${matchCount > 1 ? 's' : ''}</p>
+    </div>
+    <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:8px 0 24px;">
+      <a href="${SITE_URL}/dashboard-talent?tab=opportunites" style="display:inline-block;background:linear-gradient(135deg,#1E40AF,#06B6D4);color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;">
+        Voir mes opportunités →
+      </a>
+    </td></tr></table>
+    <p style="color:#94a3b8;font-size:12px;text-align:center;margin:0;">
+      Vous recevez cet email car les notifications sont activées. Vous pouvez les désactiver dans les paramètres de votre profil.
+    </p>`;
+  return {
+    subject: `🎯 ${matchCount} nouvelle${matchCount > 1 ? 's' : ''} opportunité${matchCount > 1 ? 's' : ''} compatible${matchCount > 1 ? 's' : ''} – Score IA > 80 %`,
+    html: wrapEmail("Nouvelles opportunités", `${matchCount} offre(s) avec un score > 80% dans ${topSector}`, body),
+  };
+}
+
+// ─── Anti-spam: check if talent received this type today ─────
+async function canSendNotification(supabase: any, talentUserId: string, notificationType: string): Promise<boolean> {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const { data } = await supabase
+    .from("talent_notification_log")
+    .select("id")
+    .eq("talent_user_id", talentUserId)
+    .eq("notification_type", notificationType)
+    .gte("created_at", today.toISOString())
+    .limit(1);
+  return !data || data.length === 0;
+}
+
+async function logNotification(supabase: any, talentUserId: string, notificationType: string) {
+  await supabase.from("talent_notification_log").insert({
+    talent_user_id: talentUserId,
+    notification_type: notificationType,
+  });
+}
+
+// ─── Check if talent has notifications enabled ───────────────
+async function isNotificationEnabled(supabase: any, talentUserId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from("talent_profiles")
+    .select("email_notifications_enabled")
+    .eq("user_id", talentUserId)
+    .limit(1)
+    .single();
+  return data?.email_notifications_enabled !== false;
+}
+
 /** Send via Resend using demo domain (delivered@resend.dev) — no DNS needed */
 async function sendEmail(to: string, subject: string, html: string) {
   if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
@@ -373,6 +473,39 @@ serve(async (req) => {
           "✅ Test démo AXIOM – Fallback Gmail OK",
           testHtml
         );
+        break;
+      }
+
+      case "profile_viewed": {
+        const { talent_user_id, recruiter_name } = payload;
+        // Check notifications enabled + anti-spam
+        const pvEnabled = await isNotificationEnabled(supabase, talent_user_id);
+        if (!pvEnabled) { console.log(`[NOTIFICATION] Notifications disabled for ${talent_user_id}`); break; }
+        const pvCanSend = await canSendNotification(supabase, talent_user_id, "profile_viewed");
+        if (!pvCanSend) { console.log(`[NOTIFICATION] Anti-spam: profile_viewed already sent today for ${talent_user_id}`); break; }
+
+        const { data: pvProfile } = await supabase.from("profiles").select("email, full_name").eq("id", talent_user_id).single();
+        if (!pvProfile?.email) { console.log(`[NOTIFICATION] No email for talent ${talent_user_id}`); break; }
+
+        const pvEmail = profileViewedEmail(pvProfile.full_name || "Talent");
+        await sendEmail(pvProfile.email, pvEmail.subject, pvEmail.html);
+        await logNotification(supabase, talent_user_id, "profile_viewed");
+        break;
+      }
+
+      case "sector_match": {
+        const { talent_user_id, match_count, top_sector } = payload;
+        const smEnabled = await isNotificationEnabled(supabase, talent_user_id);
+        if (!smEnabled) { console.log(`[NOTIFICATION] Notifications disabled for ${talent_user_id}`); break; }
+        const smCanSend = await canSendNotification(supabase, talent_user_id, "sector_match");
+        if (!smCanSend) { console.log(`[NOTIFICATION] Anti-spam: sector_match already sent today for ${talent_user_id}`); break; }
+
+        const { data: smProfile } = await supabase.from("profiles").select("email, full_name").eq("id", talent_user_id).single();
+        if (!smProfile?.email) { console.log(`[NOTIFICATION] No email for talent ${talent_user_id}`); break; }
+
+        const smEmail = sectorMatchEmail(smProfile.full_name || "Talent", match_count || 1, top_sector || "BTP");
+        await sendEmail(smProfile.email, smEmail.subject, smEmail.html);
+        await logNotification(supabase, talent_user_id, "sector_match");
         break;
       }
 
