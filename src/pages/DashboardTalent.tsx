@@ -531,7 +531,7 @@ export default function DashboardTalent() {
                 <p className="text-[10px] text-muted-foreground/50 text-center">
                   🔒 Paiement sécurisé Stripe · Accès immédiat après paiement
                 </p>
-              </div>
+              </motion.div>
             )}
           </motion.div>
 
