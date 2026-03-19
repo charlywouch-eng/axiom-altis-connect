@@ -24,7 +24,7 @@ const FAQ_ITEMS = [
     icon: Globe,
     question: "Que comprend exactement le Pack ALTIS à 2 450 € ?",
     answer:
-      "Le Pack ALTIS couvre 5 services clés : visa ANEF & légalisation des diplômes (apostille MINREX), billet d'avion aller-retour, accueil personnalisé à l'aéroport d'arrivée, logement meublé pendant 1 mois dans une résidence partenaire, et accompagnement administratif complet (préfecture, sécurité sociale, ouverture de compte).",
+      "Le Pack ALTIS couvre 5 services clés : formalités visa de travail – procédure ANEF (nous vous accompagnons dans toutes les démarches, seules les autorités françaises ANEF + Préfecture étant habilitées à délivrer un visa de travail, Code CESEDA – Articles L.313-10 et R.313-10), billet d'avion aller-retour, accueil personnalisé à l'aéroport d'arrivée, logement meublé pendant 1 mois dans une résidence partenaire, et accompagnement administratif complet (préfecture, sécurité sociale, ouverture de compte).",
   },
   {
     icon: Clock,
