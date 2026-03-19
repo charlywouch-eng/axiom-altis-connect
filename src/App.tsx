@@ -30,6 +30,7 @@ import AdminLeads from "./pages/AdminLeads";
 import AdminQuotes from "./pages/AdminQuotes";
 import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminNotifications from "./pages/AdminNotifications";
+import AdminCandidatures from "./pages/AdminCandidatures";
 import Billing from "./pages/Billing";
 import MetierDetail from "./pages/MetierDetail";
 import MetiersEnTension from "./pages/MetiersEnTension";
@@ -225,6 +226,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminNotifications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/candidatures"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminCandidatures />
                 </ProtectedRoute>
               }
             />
