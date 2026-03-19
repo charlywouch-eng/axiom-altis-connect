@@ -214,6 +214,28 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
                         <Input id="ct" className="pl-10" value={city} onChange={e => setCity(e.target.value)} placeholder="Douala, Yaoundé..." />
                       </div>
                     </div>
+                    <div>
+                      <Label>Années d'expérience professionnelle *</Label>
+                      <Select value={experienceYears} onValueChange={setExperienceYears}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez votre expérience" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0-2">0 – 2 ans</SelectItem>
+                          <SelectItem value="2-5">2 – 5 ans</SelectItem>
+                          <SelectItem value="5-10">5 – 10 ans</SelectItem>
+                          <SelectItem value="10+">10+ ans</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {experienceYears && (experienceYears === "5-10" || experienceYears === "10+") && (
+                        <div className="mt-1.5 flex items-center gap-1.5">
+                          <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 text-[10px] px-2 py-0.5 font-bold gap-1">
+                            <Award className="h-2.5 w-2.5" /> Profil Expérimenté
+                          </Badge>
+                          <span className="text-[10px] text-muted-foreground">Score IA boosté</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
