@@ -141,6 +141,8 @@ export default function FicheMetierMacon() {
           </div>
         </motion.section>
 
+        <MotivationalQuote quote="Vos mains ont déjà construit et réparé tant de choses. Elles ont toute leur place ici." />
+
         {/* Content */}
         <main className="mx-auto max-w-6xl px-4 pb-24">
           <div className="grid gap-8 lg:grid-cols-3">
