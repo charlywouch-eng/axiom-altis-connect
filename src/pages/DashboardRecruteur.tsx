@@ -197,7 +197,18 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
     },
   });
 
-  const filtered = talents?.filter(t => {
+  const { data: candidaturesCount } = useQuery({
+    queryKey: ["candidatures-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("candidatures")
+        .select("*", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+
     const matchSearch = !search ||
       t.full_name?.toLowerCase().includes(search.toLowerCase()) ||
       t.rome_code?.toLowerCase().includes(search.toLowerCase()) ||
