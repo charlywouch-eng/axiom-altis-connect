@@ -21,6 +21,7 @@ const talentLinks = [
 
 const entrepriseLinks = [
   { title: "Accueil", url: "/dashboard-entreprise", icon: Home },
+  { title: "Espace Société", url: "/dashboard-societe", icon: Briefcase },
   { title: "Mes offres", url: "/dashboard-entreprise?tab=offres", icon: Briefcase },
   { title: "Candidats", url: "/dashboard-entreprise/candidats", icon: Users },
   { title: "Mon profil", url: "/dashboard-entreprise/profil", icon: UserCircle },
