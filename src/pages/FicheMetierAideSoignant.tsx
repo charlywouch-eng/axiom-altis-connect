@@ -52,10 +52,10 @@ const CONDITIONS = [
 ];
 
 const ALTIS_SERVICES = [
-  { icon: Plane, text: "Accompagnement pour la demande de visa accéléré" },
-  { icon: Plane, text: "Organisation du billet d'avion" },
-  { icon: Home, text: "Accueil à l'arrivée et logement meublé pour le premier mois" },
-  { icon: GraduationCap, text: "Mise en relation avec des formations aux normes françaises, selon vos besoins" },
+  { icon: Globe, text: "Formalités visa de travail – Procédure ANEF" },
+  { icon: Plane, text: "Accueil & assistance à l'aéroport" },
+  { icon: Home, text: "Logement meublé pour le premier mois" },
+  { icon: FileCheck, text: "Accompagnement administratif complet" },
 ];
 
 export default function FicheMetierAideSoignant() {
