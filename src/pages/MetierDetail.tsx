@@ -626,6 +626,58 @@ export default function MetierDetail() {
                 </Card>
               </motion.div>
 
+              {/* Marché du travail stats */}
+              {marcheData && marcheData.source !== "unavailable" && (
+                <motion.div initial="hidden" animate="visible" custom={3.5} variants={fadeUp}>
+                  <Card className="border-primary/20">
+                    <CardContent className="p-6 space-y-4">
+                      <h3 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wider text-primary">
+                        <BarChart3 className="h-4 w-4" /> Marché du travail
+                      </h3>
+                      {marcheData.tensions && Array.isArray(marcheData.tensions) && marcheData.tensions.length > 0 && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Tension métier</p>
+                          <div className="flex items-center gap-2">
+                            <Target className="h-4 w-4 text-destructive" />
+                            <p className="font-semibold text-sm text-foreground">
+                              {(marcheData.tensions[0] as Record<string, unknown>)?.libelle ||
+                                (marcheData.tensions[0] as Record<string, unknown>)?.indicateur ||
+                                "Données disponibles"}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {marcheData.salaires && Array.isArray(marcheData.salaires) && marcheData.salaires.length > 0 && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Salaire médian proposé</p>
+                          <div className="flex items-center gap-2">
+                            <Banknote className="h-4 w-4 text-success" />
+                            <p className="font-semibold text-sm text-foreground">
+                              {(marcheData.salaires[0] as Record<string, unknown>)?.salaireMedian ||
+                                (marcheData.salaires[0] as Record<string, unknown>)?.libelle ||
+                                "Voir données"}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {marcheData.bmo && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Besoins en main d'œuvre (BMO)</p>
+                          <p className="text-sm font-medium text-foreground">
+                            {(marcheData.bmo as Record<string, unknown>)?.projetsRecrutement || 
+                              (marcheData.bmo as Record<string, unknown>)?.totalProjets || 
+                              "Données BMO disponibles"}
+                          </p>
+                        </div>
+                      )}
+                      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1 w-full justify-center py-1">
+                        <Globe className="h-3 w-3" /> API Marché du travail · France Travail
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
               <motion.div initial="hidden" animate="visible" custom={4} variants={fadeUp}>
                 <Link to="/dashboard-entreprise" className="block">
                   <Button className="w-full bg-success text-success-foreground hover:bg-success/90 border-0 py-6 text-base font-semibold rounded-xl shadow-lg shadow-success/20">
