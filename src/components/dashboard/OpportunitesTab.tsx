@@ -187,6 +187,59 @@ export default function OpportunitesTab({
         </div>
       </motion.div>
 
+      {/* ── Filtres ────────────────────────────────── */}
+      <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Filter className="h-3.5 w-3.5" />
+          <span className="font-medium">Filtrer :</span>
+        </div>
+
+        {/* Sector filter */}
+        <div className="flex flex-wrap gap-1.5">
+          {SECTOR_OPTIONS.map((s) => (
+            <button
+              key={s}
+              onClick={() => setSectorFilter(s)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                sectorFilter === s
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-muted/50 text-muted-foreground border-border/50 hover:bg-muted hover:border-border"
+              }`}
+            >
+              {s === "all" ? "Tous secteurs" : s}
+            </button>
+          ))}
+        </div>
+
+        <div className="h-5 w-px bg-border/50 hidden sm:block" />
+
+        {/* Contract filter */}
+        <div className="flex flex-wrap gap-1.5">
+          {CONTRACT_OPTIONS.map((c) => (
+            <button
+              key={c}
+              onClick={() => setContractFilter(c)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                contractFilter === c
+                  ? "bg-accent text-accent-foreground border-accent shadow-sm"
+                  : "bg-muted/50 text-muted-foreground border-border/50 hover:bg-muted hover:border-border"
+              }`}
+            >
+              {c === "all" ? "Tous contrats" : c}
+            </button>
+          ))}
+        </div>
+
+        {(sectorFilter !== "all" || contractFilter !== "all") && (
+          <button
+            onClick={() => { setSectorFilter("all"); setContractFilter("all"); }}
+            className="text-[11px] text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+          >
+            Réinitialiser
+          </button>
+        )}
+      </motion.div>
+
       {/* ── Offres recommandées ──────────────────────── */}
       <motion.div variants={itemVariants}>
         <div className="flex items-center justify-between mb-4">
