@@ -33,12 +33,6 @@ const FAQ_ITEMS = [
       "En moyenne 8 à 12 semaines entre la signature et l'arrivée du talent en France. La phase formalités visa de travail (procédure ANEF) représente la majorité du délai. Nous anticipons les démarches administratives en parallèle pour optimiser le calendrier.",
   },
   {
-    icon: Plane,
-    question: "Le billet d'avion est-il vraiment inclus aller-retour ?",
-    answer:
-      "Oui, le Pack ALTIS inclut un billet aller-retour en classe économique. La réservation est gérée par AXIOM auprès de compagnies partenaires. En cas de non-renouvellement du contrat, le retour est couvert.",
-  },
-  {
     icon: Home,
     question: "Comment fonctionne le logement meublé 1 mois ?",
     answer:
