@@ -13,7 +13,7 @@ const FT_TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/acces
 async function getFranceTravailToken(
   clientId: string,
   clientSecret: string
-): Promise<string> {
+): Promise<string | null> {
   const scopes = ["api_labonneboitev1", "api_labonneboitev1 o2dsoffre"];
 
   console.log(`LBB auth attempt — clientId prefix: ${clientId.substring(0, 8)}...`);
@@ -43,9 +43,8 @@ async function getFranceTravailToken(
     console.log(`LBB scope "${scope}" failed [${response.status}]: ${text}`);
   }
 
-  throw new Error(
-    "La Bonne Boite: all scope combinations failed. Check credentials on francetravail.io."
-  );
+  console.warn("La Bonne Boite: all scope combinations failed — returning empty results gracefully.");
+  return null;
 }
 
 // ROME codes for BTP / Santé / CHR sectors
@@ -96,8 +95,15 @@ serve(async (req) => {
       );
     }
 
-    // Get OAuth2 token
+    // Get OAuth2 token — may return null if API not subscribed
     const token = await getFranceTravailToken(clientId, clientSecret);
+
+    if (!token) {
+      return new Response(
+        JSON.stringify({ companies: [], total: 0 }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
 
     // Query LBB for each ROME code and aggregate results
     const allCompanies: Record<string, unknown>[] = [];
