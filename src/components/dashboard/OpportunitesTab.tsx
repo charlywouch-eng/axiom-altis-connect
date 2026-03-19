@@ -24,6 +24,7 @@ import {
   Sparkles,
   Rocket,
   TrendingUp,
+  Filter,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
