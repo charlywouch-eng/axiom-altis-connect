@@ -471,6 +471,37 @@ export default function Index() {
         </motion.div>
       </section>
 
+      {/* ── Notre Mission ────────────────────────────────────── */}
+      <section className="relative overflow-hidden py-20 md:py-28">
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,8%)] via-[hsl(217,33%,12%)] to-[hsl(199,89%,48%/0.08)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,hsl(var(--accent)/0.06),transparent_70%)]" />
+        <div className="relative z-10 mx-auto max-w-4xl px-5 md:px-10 text-center">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
+              Notre Mission
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="font-black text-2xl md:text-[38px] leading-tight tracking-tight text-white">
+              AXIOM Talent Passport™
+            </motion.h2>
+            <motion.p custom={2} variants={fadeUp} className="mt-6 text-base md:text-lg text-white/60 leading-relaxed max-w-3xl mx-auto">
+              La première plateforme certifiée qui <strong className="text-accent">pré-approuve, match via IA et relocalise physiquement</strong> des talents africains qualifiés en CDI France en <strong className="text-white/90">45–60 jours</strong>.
+            </motion.p>
+            <motion.div custom={3} variants={fadeUp} className="mt-8 flex justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/25 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground"
+              >
+                <Link to="/signup-light">
+                  Commencer mon évaluation gratuite
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── How It Works ─────────────────────────────────────── */}
       <Suspense fallback={null}>
         <HowItWorksSection />
