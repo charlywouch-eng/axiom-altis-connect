@@ -7,13 +7,12 @@ const corsHeaders = {
 };
 
 const FT_TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire";
+const FORMATIONS_URL = "https://api.francetravail.io/partenaire/openformation/v1/formations";
 
 async function getToken(clientId: string, clientSecret: string): Promise<string | null> {
   const scopes = [
-    "api_formationsv1",
-    "api_catalogueformationsv1",
-    "api_offresdemploiv2 o2dsoffre",
-    "o2dsoffre",
+    "api_openformationv1 o2dsoffre",
+    "api_openformationv1",
   ];
 
   for (const scope of scopes) {
@@ -67,11 +66,9 @@ serve(async (req) => {
 
     const token = await getToken(clientId, clientSecret);
 
-    // If token fails, return fallback data
     if (!token) {
-      console.log("Formations: auth failed, returning fallback data");
-      const fallback = getFallbackFormations(romeCode);
-      return new Response(JSON.stringify({ formations: fallback, source: "fallback" }), {
+      console.log("Formations: auth failed, returning fallback");
+      return new Response(JSON.stringify({ formations: getFallbackFormations(romeCode), source: "fallback" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -79,86 +76,47 @@ serve(async (req) => {
 
     let formations: Array<Record<string, unknown>> = [];
 
-    // Strategy 1: Try the official Catalogue Formation API
-    const catalogueUrls = [
-      `https://api.francetravail.io/partenaire/formations/v1/formations?codeRome=${romeCode}&nombre=${Math.min(count, 10)}`,
-      `https://api.francetravail.io/partenaire/catalogueformation/v1/formations?codeRome=${romeCode}&nombre=${Math.min(count, 10)}`,
-    ];
+    // Try the Open Formation API
+    try {
+      const params = new URLSearchParams({
+        codeRome: romeCode,
+        nombre: String(Math.min(count, 10)),
+      });
+      if (region) params.set("codeRegion", region);
 
-    if (region) {
-      catalogueUrls[0] += `&codeRegion=${region}`;
-      catalogueUrls[1] += `&codeRegion=${region}`;
-    }
+      const url = `${FORMATIONS_URL}?${params.toString()}`;
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
 
-    for (const url of catalogueUrls) {
-      try {
-        const res = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
-        
-        console.log(`Formations API [${url.split('/partenaire/')[1]?.split('?')[0]}] status: ${res.status}`);
-        
-        if (res.ok) {
-          const data = await res.json();
-          const results = Array.isArray(data) ? data : data.resultats || data.results || data.formations || [];
-          formations = results.slice(0, count).map((f: Record<string, unknown>) => ({
-            id: f.id || f.idFormation || crypto.randomUUID(),
-            title: f.intitule || f.intituleFormation || f.title || "Formation professionnelle",
-            organism: f.organisme || f.nomOrganisme || f.organism || "Organisme certifié",
-            city: f.ville || f.lieuFormation || f.city || "",
-            region: f.region || f.nomRegion || "",
-            duration: f.duree || f.dureeEnHeures ? `${f.dureeEnHeures}h` : f.duration || "Variable",
-            startDate: f.dateDebut || f.startDate || null,
-            cpf: f.cpf ?? f.eligibleCPF ?? true,
-            url: f.url || f.urlFormation || null,
-            romeCode,
-          }));
-          if (formations.length > 0) break;
-        }
-      } catch (e) {
-        console.log(`Catalogue Formation API error:`, e);
+      console.log(`Open Formation API status: ${res.status}`);
+
+      if (res.ok) {
+        const data = await res.json();
+        const results = Array.isArray(data) ? data : data.resultats || data.results || data.formations || [];
+        formations = results.slice(0, count).map((f: Record<string, unknown>) => ({
+          id: f.id || f.idFormation || crypto.randomUUID(),
+          title: f.intitule || f.intituleFormation || f.title || "Formation professionnelle",
+          organism: f.organisme || f.nomOrganisme || f.organism || "Organisme certifié",
+          city: f.ville || f.lieuFormation || f.city || "",
+          region: f.region || f.nomRegion || "",
+          duration: f.duree || (f.dureeEnHeures ? `${f.dureeEnHeures}h` : null) || f.duration || "Variable",
+          startDate: f.dateDebut || f.startDate || null,
+          cpf: f.cpf ?? f.eligibleCPF ?? true,
+          url: f.url || f.urlFormation || null,
+          romeCode,
+        }));
+      } else {
+        const errText = await res.text();
+        console.log(`Open Formation error: ${errText.substring(0, 200)}`);
       }
+    } catch (e) {
+      console.log("Open Formation API error:", e);
     }
 
-    // Strategy 2: Search offers with "formation" keyword as proxy
-    if (formations.length === 0) {
-      try {
-        const offresUrl = `https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?codeROME=${romeCode}&typeContrat=FPR,MIS&range=0-${Math.min(count, 5) - 1}`;
-        const res = await fetch(offresUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          const results = data.resultats || [];
-          formations = results.slice(0, count).map((f: Record<string, unknown>) => {
-            const entreprise = f.entreprise as Record<string, unknown> | undefined;
-            const lieuTravail = f.lieuTravail as Record<string, unknown> | undefined;
-            return {
-              id: f.id || crypto.randomUUID(),
-              title: (f.intitule as string) || "Formation professionnelle",
-              organism: (entreprise?.nom as string) || "Organisme",
-              city: (lieuTravail?.libelle as string) || "",
-              duration: (f.dureeTravailLibelleConverti as string) || "Variable",
-              cpf: true,
-              url: (f.origineOffre as Record<string, unknown>)?.urlOrigine as string || null,
-              romeCode,
-            };
-          });
-          console.log(`Found ${formations.length} training-related offers as proxy`);
-        }
-      } catch (e) {
-        console.log("Offres proxy for formations failed:", e);
-      }
-    }
-
-    // Fallback if nothing worked
     if (formations.length === 0) {
       formations = getFallbackFormations(romeCode);
       return new Response(JSON.stringify({ formations, source: "fallback" }), {
@@ -189,7 +147,7 @@ function getFallbackFormations(romeCode: string): Array<Record<string, unknown>>
       { id: "fallback-3", title: "Habilitation Travaux en Hauteur", organism: "OPPBTP", city: "Marseille", duration: "5 jours", cpf: true, romeCode, url: "https://www.oppbtp.fr" },
     ],
     J: [
-      { id: "fallback-1", title: "DEAS – Diplôme d'État d'Aide-Soignant", organism: "IFAS", city: "Paris", duration: "12 mois", cpf: true, romeCode, url: "https://www.ifas.fr" },
+      { id: "fallback-1", title: "DEAS – Diplôme d'État d'Aide-Soignant", organism: "IFAS", city: "Paris", duration: "12 mois", cpf: true, romeCode, url: null },
       { id: "fallback-2", title: "Formation Gestes et Soins d'Urgence (AFGSU)", organism: "CESU", city: "Lyon", duration: "3 jours", cpf: true, romeCode, url: null },
       { id: "fallback-3", title: "VAE Aide-Soignant", organism: "ANFH", city: "Bordeaux", duration: "Variable", cpf: true, romeCode, url: null },
     ],
