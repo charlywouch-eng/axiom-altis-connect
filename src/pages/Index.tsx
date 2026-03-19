@@ -386,7 +386,7 @@ export default function Index() {
       <section className="relative z-10 -mt-8 px-5 md:px-10">
         <div className="mx-auto max-w-4xl">
           <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true }}
+            initial="hidden" animate="visible"
             className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-accent/20 to-success/20 shadow-2xl shadow-primary/10 ring-1 ring-white/10"
           >
             {[
@@ -417,7 +417,7 @@ export default function Index() {
 
       {/* ── Secteurs Grid ────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
+        <motion.div initial="hidden" animate="visible" className="text-center mb-14">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
             Opportunités 2026
           </motion.p>
@@ -430,7 +430,7 @@ export default function Index() {
         </motion.div>
 
         <motion.div
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
+          initial="hidden" animate="visible"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"
         >
           {SECTEURS.map((s, i) => (
@@ -460,7 +460,7 @@ export default function Index() {
           ))}
         </motion.div>
 
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mt-10">
+        <motion.div initial="hidden" animate="visible" className="text-center mt-10">
           <motion.div custom={0} variants={fadeUp}>
             <Link to="/metiers-en-tension">
               <Button variant="outline" className="rounded-xl border-primary/25 text-primary hover:bg-primary/5 font-semibold">
@@ -476,7 +476,7 @@ export default function Index() {
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,8%)] via-[hsl(217,33%,12%)] to-[hsl(199,89%,48%/0.08)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,hsl(var(--accent)/0.06),transparent_70%)]" />
         <div className="relative z-10 mx-auto max-w-4xl px-5 md:px-10 text-center">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div initial="hidden" animate="visible">
             <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
               Notre Mission
             </motion.p>
@@ -510,7 +510,7 @@ export default function Index() {
       {/* ── 4 Cartes Confiance ───────────────────────────────── */}
       <section className="bg-muted/30 py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-5 md:px-10">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
+          <motion.div initial="hidden" animate="visible" className="text-center mb-12">
             <motion.h2 custom={0} variants={fadeUp} className="font-black text-3xl md:text-[38px] tracking-tight">
               Pourquoi <span className="text-gradient-primary">AXIOM × ALTIS</span> ?
             </motion.h2>
@@ -520,7 +520,7 @@ export default function Index() {
           </motion.div>
 
           <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
+            initial="hidden" animate="visible"
             className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
           >
             {TRUST_CARDS.map((card, i) => {
@@ -564,7 +564,7 @@ export default function Index() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl pointer-events-none" />
 
         <div className="relative z-[2] mx-auto max-w-2xl px-5 py-24 text-center md:px-10 md:py-28">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <motion.div initial="hidden" animate="visible">
             <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
               Prêt à commencer ?
             </motion.p>
