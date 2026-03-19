@@ -514,6 +514,7 @@ export type Database = {
           country: string | null
           created_at: string
           email: string
+          first_name: string | null
           french_level: string | null
           full_name: string | null
           id: string
@@ -525,6 +526,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           email: string
+          first_name?: string | null
           french_level?: string | null
           full_name?: string | null
           id: string
@@ -536,6 +538,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           email?: string
+          first_name?: string | null
           french_level?: string | null
           full_name?: string | null
           id?: string
