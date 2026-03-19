@@ -43,9 +43,8 @@ async function getFranceTravailToken(
     console.log(`LBB scope "${scope}" failed [${response.status}]: ${text}`);
   }
 
-  throw new Error(
-    "La Bonne Boite: all scope combinations failed. Check credentials on francetravail.io."
-  );
+  console.warn("La Bonne Boite: all scope combinations failed — returning empty results gracefully.");
+  return null;
 }
 
 // ROME codes for BTP / Santé / CHR sectors
