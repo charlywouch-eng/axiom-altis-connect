@@ -913,11 +913,11 @@ function CandidaturesTab() {
     c.competences?.some((comp: string) => comp.toLowerCase().includes(search.toLowerCase()))
   ) ?? [];
 
-  const handleContact = (id: string) => {
+  const handleContact = (_id: string) => {
     toast({ title: "Contact initié", description: "Un email de prise de contact a été envoyé au candidat." });
   };
 
-  const handleActivateAltis = (id: string) => {
+  const handleActivateAltis = (_id: string) => {
     toast({ title: "Pack ALTIS activé", description: "Les formalités visa + accueil seront lancées pour ce candidat." });
   };
 
