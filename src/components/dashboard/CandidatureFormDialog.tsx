@@ -55,6 +55,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
   const [fullName, setFullName] = useState(prefillName || "");
   const [phone, setPhone] = useState(prefillPhone || "");
   const [city, setCity] = useState("");
+  const [experienceYears, setExperienceYears] = useState("");
 
   // Section 2
   const [experiences, setExperiences] = useState<Experience[]>([
@@ -94,7 +95,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
   };
 
   const canProceed = () => {
-    if (step === 0) return fullName.trim().length >= 2;
+    if (step === 0) return fullName.trim().length >= 2 && experienceYears.length > 0;
     if (step === 1) return experiences.some(e => e.poste.trim());
     if (step === 2) return formations.some(f => f.diplome.trim());
     if (step === 3) return competences.length > 0;
@@ -106,6 +107,9 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
     if (!user) return;
     setSubmitting(true);
     try {
+      // Compute a simple compliance score boost for experience
+      const expBonus = experienceYears === "10+" ? 20 : experienceYears === "5-10" ? 15 : experienceYears === "2-5" ? 10 : 5;
+
       const { error } = await supabase.from("candidatures" as any).insert({
         talent_user_id: user.id,
         full_name: fullName.trim(),
@@ -118,9 +122,15 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
         contract_type: contractType || null,
         mobility: mobility || null,
         desired_salary: desiredSalary || null,
+        compliance_score: expBonus,
         status: "submitted",
       } as any);
       if (error) throw error;
+
+      // Also update talent_profiles experience_years
+      const expYearsNum = experienceYears === "10+" ? 12 : experienceYears === "5-10" ? 7 : experienceYears === "2-5" ? 3 : 1;
+      await supabase.from("talent_profiles").update({ experience_years: expYearsNum } as any).eq("user_id", user.id);
+
       toast.success("Candidature envoyée ! Votre CV est maintenant visible par les recruteurs.");
       onOpenChange(false);
       onSuccess?.();
@@ -212,6 +222,28 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input id="ct" className="pl-10" value={city} onChange={e => setCity(e.target.value)} placeholder="Douala, Yaoundé..." />
                       </div>
+                    </div>
+                    <div>
+                      <Label>Années d'expérience professionnelle *</Label>
+                      <Select value={experienceYears} onValueChange={setExperienceYears}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez votre expérience" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0-2">0 – 2 ans</SelectItem>
+                          <SelectItem value="2-5">2 – 5 ans</SelectItem>
+                          <SelectItem value="5-10">5 – 10 ans</SelectItem>
+                          <SelectItem value="10+">10+ ans</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {experienceYears && (experienceYears === "5-10" || experienceYears === "10+") && (
+                        <div className="mt-1.5 flex items-center gap-1.5">
+                          <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 text-[10px] px-2 py-0.5 font-bold gap-1">
+                            <Award className="h-2.5 w-2.5" /> Profil Expérimenté
+                          </Badge>
+                          <span className="text-[10px] text-muted-foreground">Score IA boosté</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
