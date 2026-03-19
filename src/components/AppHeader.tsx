@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export function AppHeader() {
   const { user, role, signOut } = useAuth();
@@ -50,6 +51,7 @@ export function AppHeader() {
           <p className="text-sm font-medium">{user?.email}</p>
           <p className="text-xs capitalize text-muted-foreground">{role}</p>
         </div>
+        <NotificationBell />
         <ThemeToggle />
         <Button variant="ghost" size="icon" onClick={signOut} title="Se déconnecter" className="hover:bg-destructive/10 hover:text-destructive">
           <LogOut className="h-4 w-4" />
