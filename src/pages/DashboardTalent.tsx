@@ -112,7 +112,7 @@ interface TimelineStep {
 const MOCK_TIMELINE: TimelineStep[] = [
   { label: "Offre acceptée", icon: Briefcase, status: "done", date: "12 jan. 2026" },
   { label: "Visa en cours", icon: Globe, status: "done", date: "28 jan. 2026", badge: { label: "CERTIFIÉ MINEFOP", color: "gold" }, tooltipText: "Diplôme CQP/DQP audité + Delta ROME comblé – Garantie opérationnel jour 1.", upsell: "Déblocage complet 29 € – Visibilité prioritaire recruteurs" },
-  { label: "Billet réservé", icon: Plane, status: "done", date: "5 fév. 2026" },
+  { label: "Accueil aéroport", icon: Plane, status: "done", date: "5 fév. 2026" },
   { label: "Logement trouvé", icon: Home, status: "done", date: "14 fév. 2026" },
   { label: "Formation démarrée", icon: GraduationCap, status: "active", tag: "Classes Miroirs – Module normes FR validé AXIOM", date: "En cours" },
   { label: "En poste", icon: Building2, status: "pending", date: "Estimé mars 2026" },
