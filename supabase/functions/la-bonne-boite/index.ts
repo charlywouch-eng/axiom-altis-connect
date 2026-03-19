@@ -14,7 +14,12 @@ async function getFranceTravailToken(
   clientId: string,
   clientSecret: string
 ): Promise<string | null> {
-  const scopes = ["api_labonneboitev1", "api_labonneboitev1 o2dsoffre"];
+  const scopes = [
+    "api_labonneboitev1",
+    "api_labonneboitev1 o2dsoffre",
+    "labonneboite",
+    "labonneboite o2dsoffre",
+  ];
 
   console.log(`LBB auth attempt — clientId prefix: ${clientId.substring(0, 8)}...`);
 
