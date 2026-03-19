@@ -52,10 +52,10 @@ const CONDITIONS = [
 ];
 
 const ALTIS_SERVICES = [
-  { icon: Globe, text: "Formalités visa de travail – Procédure ANEF" },
-  { icon: Plane, text: "Accueil & assistance à l'aéroport" },
-  { icon: Home, text: "Logement meublé pour le premier mois" },
-  { icon: FileCheck, text: "Accompagnement administratif complet" },
+  { icon: Globe, text: "Formalités visa de travail – Procédure ANEF : Nous vous accompagnons dans toutes les démarches selon la réglementation de l'ANEF." },
+  { icon: Plane, text: "Accueil & Assistance à l'aéroport : Accueil personnalisé dès votre arrivée en France." },
+  { icon: Home, text: "Logement meublé 1 mois : Résidence partenaire équipée pour votre premier mois d'installation." },
+  { icon: FileCheck, text: "Accompagnement administratif complet : Soutien aux démarches (préfecture, sécurité sociale, ouverture de compte bancaire, etc.)." },
 ];
 
 export default function FicheMetierTechnicienMaintenance() {
@@ -93,7 +93,7 @@ export default function FicheMetierTechnicienMaintenance() {
 
         <motion.section initial="hidden" animate="visible" className="relative overflow-hidden">
           <div className="absolute inset-0">
-            <img src={heroImg} alt="Technicien de maintenance industrielle" className="h-full w-full object-cover opacity-20" loading="eager" />
+            <img src={heroImg} alt="Technicien de maintenance africain souriant dans un atelier industriel multiculturel en France" className="h-full w-full object-cover opacity-20" loading="eager" />
             <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/90 to-background" />
           </div>
           <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 md:pt-24 md:pb-20">
