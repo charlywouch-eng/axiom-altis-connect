@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
+import { MotivationalQuote } from "@/components/MotivationalQuote";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -89,6 +90,8 @@ export default function FicheMetierCouvreur() {
             </motion.div>
           </div>
         </motion.section>
+
+        <MotivationalQuote quote="Votre courage et votre maîtrise des hauteurs font de vous un professionnel indispensable sur les chantiers français." />
 
         <div className="mx-auto max-w-6xl px-4 py-12 grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">

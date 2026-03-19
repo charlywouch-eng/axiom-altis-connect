@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
+import { MotivationalQuote } from "@/components/MotivationalQuote";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -139,6 +140,8 @@ export default function FicheMetierMacon() {
             </motion.p>
           </div>
         </motion.section>
+
+        <MotivationalQuote quote="Vos mains ont déjà construit et réparé tant de choses. Elles ont toute leur place ici." />
 
         {/* Content */}
         <main className="mx-auto max-w-6xl px-4 pb-24">
