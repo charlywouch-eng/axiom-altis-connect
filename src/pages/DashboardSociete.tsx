@@ -105,8 +105,22 @@ export default function DashboardSociete() {
     toast({ title: "Demande envoyée", description: `Votre demande de contact pour ${name} a été transmise.` });
   };
 
-  const handleAltis = (name: string) => {
-    toast({ title: "Pack ALTIS", description: `Activation du Pack ALTIS pour ${name} — un conseiller vous recontacte sous 24h.` });
+  const handleAltis = async (name: string, candidatureId?: string) => {
+    setAltisLoading(candidatureId || name);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment-altis", {
+        body: { talentName: name, candidatureId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      toast({ title: "Erreur", description: msg, variant: "destructive" });
+    } finally {
+      setAltisLoading(null);
+    }
   };
 
   const stats = [
