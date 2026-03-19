@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,9 +37,22 @@ const fadeUp = {
 export default function DashboardSociete() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string | null>(null);
+  const [altisLoading, setAltisLoading] = useState<string | null>(null);
+
+  // Handle return from Stripe
+  useEffect(() => {
+    const altisStatus = searchParams.get("altis");
+    const talentName = searchParams.get("talent");
+    if (altisStatus === "success") {
+      toast({ title: "🎉 Pack ALTIS activé", description: `Le Pack ALTIS pour ${talentName || "ce talent"} a été activé avec succès. Un conseiller vous recontacte sous 24h.` });
+    } else if (altisStatus === "canceled") {
+      toast({ title: "Paiement annulé", description: "Le paiement a été annulé.", variant: "destructive" });
+    }
+  }, [searchParams, toast]);
 
   // Fetch available talents
   const { data: talents } = useQuery({
@@ -91,8 +105,22 @@ export default function DashboardSociete() {
     toast({ title: "Demande envoyée", description: `Votre demande de contact pour ${name} a été transmise.` });
   };
 
-  const handleAltis = (name: string) => {
-    toast({ title: "Pack ALTIS", description: `Activation du Pack ALTIS pour ${name} — un conseiller vous recontacte sous 24h.` });
+  const handleAltis = async (name: string, candidatureId?: string) => {
+    setAltisLoading(candidatureId || name);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment-altis", {
+        body: { talentName: name, candidatureId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      toast({ title: "Erreur", description: msg, variant: "destructive" });
+    } finally {
+      setAltisLoading(null);
+    }
   };
 
   const stats = [
@@ -274,9 +302,10 @@ export default function DashboardSociete() {
                         <Button
                           size="sm"
                           className="w-full gap-1.5 text-xs bg-gradient-to-r from-accent to-primary text-white hover:opacity-90"
-                          onClick={() => handleAltis(c.full_name || "ce talent")}
+                          disabled={altisLoading === (c.id || c.full_name)}
+                          onClick={() => handleAltis(c.full_name || "ce talent", c.id)}
                         >
-                          <Sparkles className="h-3.5 w-3.5" /> Activer ALTIS (2 450 €)
+                          <Sparkles className="h-3.5 w-3.5" /> {altisLoading === (c.id || c.full_name) ? "Redirection…" : "Activer ALTIS (2 450 €)"}
                         </Button>
                         <Button
                           size="sm"
