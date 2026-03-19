@@ -95,8 +95,15 @@ serve(async (req) => {
       );
     }
 
-    // Get OAuth2 token
+    // Get OAuth2 token — may return null if API not subscribed
     const token = await getFranceTravailToken(clientId, clientSecret);
+
+    if (!token) {
+      return new Response(
+        JSON.stringify({ companies: [], total: 0 }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
 
     // Query LBB for each ROME code and aggregate results
     const allCompanies: Record<string, unknown>[] = [];
