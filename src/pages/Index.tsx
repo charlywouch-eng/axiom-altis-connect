@@ -422,10 +422,10 @@ export default function Index() {
             Opportunités 2026
           </motion.p>
           <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[42px] leading-tight tracking-tight">
-            Les <span className="text-gradient-primary">secteurs qui recrutent</span> en France vous attendent
+            Les <span className="text-gradient-primary">secteurs qui recrutent</span> en France
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
-            Construction · Santé · Restauration · Logistique · Industrie et bien d'autres domaines où votre talent peut s'épanouir
+            Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où votre talent peut s'épanouir
           </motion.p>
         </motion.div>
 
