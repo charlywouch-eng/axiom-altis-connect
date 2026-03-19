@@ -42,7 +42,8 @@ const suggestedSkills = [
 ];
 
 const signupSchema = z.object({
-  fullName: z.string().trim().min(2, "Minimum 2 caractères").max(100, "Maximum 100 caractères"),
+  firstName: z.string().trim().min(2, "Minimum 2 caractères").max(50, "Maximum 50 caractères"),
+  lastName: z.string().trim().min(2, "Minimum 2 caractères").max(50, "Maximum 50 caractères"),
   email: z.string().trim().email("Adresse email invalide").max(255, "Maximum 255 caractères"),
   country: z.string().min(1, "Sélectionnez un pays"),
   frenchLevel: z.string().min(1, "Sélectionnez un niveau"),
@@ -58,7 +59,8 @@ export default function SignupTalent() {
   const { session, loading } = useAuth();
   const { toast } = useToast();
   const [form, setForm] = useState<FormData>({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     country: "",
     frenchLevel: "",
@@ -119,7 +121,7 @@ export default function SignupTalent() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     const allTouched: TouchedFields = {
-      fullName: true, email: true,
+      firstName: true, lastName: true, email: true,
       country: true, frenchLevel: true, experienceYears: true, skills: true,
     };
     setTouched(allTouched);
@@ -133,7 +135,8 @@ export default function SignupTalent() {
       options: {
         emailRedirectTo: window.location.origin,
         data: {
-          full_name: form.fullName.trim(),
+          first_name: form.firstName.trim(),
+          full_name: `${form.firstName.trim()} ${form.lastName.trim()}`,
           role: "talent",
           country: form.country,
           french_level: form.frenchLevel,
@@ -210,15 +213,25 @@ export default function SignupTalent() {
           ) : (
           <>
           <form onSubmit={handleSignup} className="space-y-5">
-            {/* Full Name */}
-            <TextFormField
-              id="fullName" label="Nom complet" icon={User}
-              placeholder="Prénom Nom" value={form.fullName}
-              error={touched.fullName ? errors.fullName : undefined}
-              onChange={(v) => updateField("fullName", v)}
-              onBlur={() => markTouched("fullName")}
-              isValid={touched.fullName && !errors.fullName && form.fullName.length > 0}
-            />
+            {/* First Name + Last Name — side by side */}
+            <div className="grid grid-cols-2 gap-4">
+              <TextFormField
+                id="firstName" label="Prénom" icon={User}
+                placeholder="Prénom" value={form.firstName}
+                error={touched.firstName ? errors.firstName : undefined}
+                onChange={(v) => updateField("firstName", v)}
+                onBlur={() => markTouched("firstName")}
+                isValid={touched.firstName && !errors.firstName && form.firstName.length > 0}
+              />
+              <TextFormField
+                id="lastName" label="Nom" icon={User}
+                placeholder="Nom de famille" value={form.lastName}
+                error={touched.lastName ? errors.lastName : undefined}
+                onChange={(v) => updateField("lastName", v)}
+                onBlur={() => markTouched("lastName")}
+                isValid={touched.lastName && !errors.lastName && form.lastName.length > 0}
+              />
+            </div>
 
             {/* Email */}
             <TextFormField
