@@ -1211,10 +1211,10 @@ export default function SignupLight() {
                 <Award className="h-8 w-8 text-accent" />
               </div>
               <DialogTitle className="font-black text-xl text-white">
-                Débloquez votre analyse complète
+                Votre score IA complet est prêt.
               </DialogTitle>
-              <DialogDescription className="text-sm text-white/50">
-                Votre score de {score}% indique un excellent potentiel. Choisissez votre formule :
+              <DialogDescription className="text-sm leading-relaxed text-white/50">
+                Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).
               </DialogDescription>
             </DialogHeader>
 
