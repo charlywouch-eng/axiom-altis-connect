@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -26,6 +26,8 @@ import {
   Briefcase,
   CalendarDays,
   CircleDot,
+  MessageSquare,
+  Award,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -40,6 +42,24 @@ import { fr } from "date-fns/locale";
 const TENSION_FILTERS = ["Tous", "Très haute", "Haute", "Croissante"] as const;
 const SECTOR_FILTERS = ["BTP", "Santé", "CHR", "Logistique", "Industrie"] as const;
 
+const COUNTRY_FILTERS = [
+  { label: "Tous", flag: "🌍", value: null },
+  { label: "Sénégal", flag: "🇸🇳", value: "Sénégal" },
+  { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
+  { label: "Mali", flag: "🇲🇱", value: "Mali" },
+  { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
+  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+] as const;
+
+const TALENT_PHOTOS = [
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face",
+];
+
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.45 } }),
@@ -48,11 +68,14 @@ const fadeUp = {
 export default function DashboardSociete() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const qc = useQueryClient();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string | null>(null);
   const [altisLoading, setAltisLoading] = useState<string | null>(null);
+  const [countryFilter, setCountryFilter] = useState<string | null>(null);
+  const [invitingId, setInvitingId] = useState<string | null>(null);
 
   // Handle return from Stripe
   useEffect(() => {
