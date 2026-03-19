@@ -36,7 +36,9 @@ const COUNTRY_FILTERS_REC = [
   { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
   { label: "Mali", flag: "🇲🇱", value: "Mali" },
   { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
-  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+  { label: "Cameroun", flag: "🇨🇲", value: "Cameroun" },
+  { label: "Togo", flag: "🇹🇬", value: "Togo" },
+  { label: "Bénin", flag: "🇧🇯", value: "Bénin" },
 ] as const;
 
 
@@ -526,6 +528,7 @@ function FrancoTalentsSection({
       country.includes("côte d'ivoire") || country.includes("cote d'ivoire") ||
       country.includes("mali") ||
       country.includes("burkina") ||
+      country.includes("cameroun") || country.includes("cameroon") ||
       country.includes("togo") || country.includes("bénin") || country.includes("benin");
     if (!isFranco) return false;
     if (!countryFilter) return true;
@@ -573,7 +576,7 @@ function FrancoTalentsSection({
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-xl font-bold text-white flex items-center gap-2">
           <Award className="h-5 w-5 text-accent" />
-          Talents Francophones Recommandés
+          Talents Francophones &amp; Diaspora Recommandés
         </h2>
         <Badge className="bg-accent/15 text-accent border-0 text-xs font-bold px-2.5 gap-1">
           <Sparkles className="h-3 w-3" /> IA Matching
