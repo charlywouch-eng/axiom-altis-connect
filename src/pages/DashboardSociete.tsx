@@ -48,7 +48,7 @@ const COUNTRY_FILTERS = [
   { label: "Côte d'Ivoire", flag: "🇨🇮", value: "Côte d'Ivoire" },
   { label: "Mali", flag: "🇲🇱", value: "Mali" },
   { label: "Burkina Faso", flag: "🇧🇫", value: "Burkina Faso" },
-  { label: "Togo/Bénin", flag: "🇹🇬", value: "Togo" },
+  { label: "Cameroun", flag: "🇨🇲", value: "Cameroun" },
 ] as const;
 
 import { getAvatarForTalent } from "@/lib/metierAvatars";
