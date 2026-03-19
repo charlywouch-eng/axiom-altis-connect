@@ -68,8 +68,7 @@ export default function TestimonialsSection() {
       <div className="relative mx-auto max-w-6xl px-5 md:px-10">
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          animate="visible"
           className="text-center mb-14"
         >
           <motion.p
@@ -98,8 +97,7 @@ export default function TestimonialsSection() {
 
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
+          animate="visible"
           className="grid gap-6 md:grid-cols-3"
         >
           {TESTIMONIALS.map((t, i) => (
