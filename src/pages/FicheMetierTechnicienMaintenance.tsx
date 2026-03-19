@@ -141,15 +141,15 @@ export default function FicheMetierTechnicienMaintenance() {
               <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 <Card className="border-accent/20 bg-accent/5 overflow-hidden">
                   <div className="bg-accent/10 px-6 py-4 border-b border-accent/10">
-                    <motion.h3 custom={0} variants={fadeUp} className="font-display text-lg font-bold flex items-center gap-2"><FileCheck className="h-5 w-5 text-accent" /> Accompagnement AXIOM & ALTIS</motion.h3>
+                    <motion.h3 custom={0} variants={fadeUp} className="font-display text-lg font-bold flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-accent" /> Pack ALTIS Zéro Stress</motion.h3>
                   </div>
                   <CardContent className="p-6 space-y-5">
                     <motion.div custom={1} variants={fadeUp}>
-                      <h4 className="text-sm font-semibold mb-3">Pack ALTIS Zéro Stress</h4>
-                      <ul className="space-y-2.5">{ALTIS_SERVICES.map((s, i) => (<li key={i} className="flex items-start gap-2.5"><s.icon className="mt-0.5 h-4 w-4 shrink-0 text-accent" /><span className="text-sm text-muted-foreground leading-relaxed">{s.text}</span></li>))}</ul>
+                      <p className="text-sm text-muted-foreground leading-relaxed">Le Pack ALTIS Zéro Stress vous accompagne dans les formalités pour l'obtention de votre visa de travail selon la réglementation de l'ANEF.</p>
+                      <ul className="mt-3 space-y-2.5">{ALTIS_SERVICES.map((s, i) => (<li key={i} className="flex items-start gap-2.5"><s.icon className="mt-0.5 h-4 w-4 shrink-0 text-accent" /><span className="text-sm text-muted-foreground leading-relaxed">{s.text}</span></li>))}</ul>
                     </motion.div>
                     <Separator className="bg-accent/10" />
-                    <motion.div custom={2} variants={fadeUp}><p className="text-sm text-muted-foreground leading-relaxed">Avec ALTIS, vous arrivez en France prêt à démarrer, une fois les éventuelles validations ou formations réalisées par l'employeur.</p></motion.div>
+                    <motion.div custom={2} variants={fadeUp}><p className="text-sm text-muted-foreground leading-relaxed italic">Avec ALTIS, vous arrivez en France prêt à démarrer rapidement, une fois les éventuelles validations ou formations réalisées par l'employeur.</p></motion.div>
                     <motion.div custom={3} variants={fadeUp}>
                       <Card className="border-accent/30 bg-accent/5 mb-4"><CardContent className="p-4">
                         <p className="text-sm font-medium text-accent leading-relaxed">⚙️ Votre expertise technique est une richesse que l'industrie française recherche activement. Diagnostiquer, réparer, optimiser — vos compétences sont universelles et très valorisées. Le monde industriel français vous attend.</p>

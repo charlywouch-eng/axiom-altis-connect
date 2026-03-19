@@ -207,13 +207,13 @@ export default function FicheMetierMacon() {
                 <Card className="border-accent/20 bg-accent/5 overflow-hidden">
                   <div className="bg-accent/10 px-6 py-4 border-b border-accent/10">
                     <motion.h3 custom={0} variants={fadeUp} className="font-display text-lg font-bold flex items-center gap-2">
-                      <FileCheck className="h-5 w-5 text-accent" /> Accompagnement AXIOM & ALTIS
+                      <ShieldCheck className="h-5 w-5 text-accent" /> Pack ALTIS Zéro Stress
                     </motion.h3>
                   </div>
                   <CardContent className="p-6 space-y-5">
                     <motion.div custom={1} variants={fadeUp}>
-                      <h4 className="text-sm font-semibold mb-3">Pack ALTIS Zéro Stress</h4>
-                      <ul className="space-y-2.5">
+                      <p className="text-sm text-muted-foreground leading-relaxed">Le Pack ALTIS Zéro Stress vous accompagne dans les formalités pour l'obtention de votre visa de travail selon la réglementation de l'ANEF.</p>
+                      <ul className="mt-3 space-y-2.5">
                         {ALTIS_SERVICES.map((s, i) => (
                           <li key={i} className="flex items-start gap-2.5">
                             <s.icon className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
@@ -226,8 +226,8 @@ export default function FicheMetierMacon() {
                     <Separator className="bg-accent/10" />
 
                     <motion.div custom={2} variants={fadeUp}>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        L'accompagnement ALTIS facilite l'arrivée en France et soutient la prise de fonction, une fois les éventuelles validations ou formations réalisées par l'employeur.
+                      <p className="text-sm text-muted-foreground leading-relaxed italic">
+                        Avec ALTIS, vous arrivez en France prêt à démarrer rapidement, une fois les éventuelles validations ou formations réalisées par l'employeur.
                       </p>
                     </motion.div>
 
