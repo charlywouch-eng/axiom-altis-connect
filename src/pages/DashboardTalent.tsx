@@ -733,7 +733,7 @@ export default function DashboardTalent() {
                     <CardContent>
                       <div className="grid gap-3 sm:grid-cols-2">
                         {[
-                          { icon: Globe, label: "Visa ANEF & Légalisation", desc: "Apostille MINREX · Titre de séjour accompagné", status: "Terminé" },
+                          { icon: Globe, label: "Formalités visa de travail – Procédure ANEF", desc: "Accompagnement complet des formalités visa de travail (ANEF + Préfecture, Code CESEDA)", status: "Terminé" },
                           { icon: Plane, label: "Billet d'avion A/R", desc: "Vol aller-retour inclus · Réservation AXIOM", status: "Confirmé" },
                           { icon: Building2, label: "Accueil aéroport", desc: "Accueil personnalisé dès l'arrivée en France", status: "Planifié" },
                           { icon: Home, label: "Logement meublé 1 mois", desc: "Résidence partenaire J+1 · Tout équipé", status: "Actif" },

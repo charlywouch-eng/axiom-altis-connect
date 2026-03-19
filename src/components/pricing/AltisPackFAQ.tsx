@@ -24,13 +24,13 @@ const FAQ_ITEMS = [
     icon: Globe,
     question: "Que comprend exactement le Pack ALTIS à 2 450 € ?",
     answer:
-      "Le Pack ALTIS couvre 5 services clés : visa ANEF & légalisation des diplômes (apostille MINREX), billet d'avion aller-retour, accueil personnalisé à l'aéroport d'arrivée, logement meublé pendant 1 mois dans une résidence partenaire, et accompagnement administratif complet (préfecture, sécurité sociale, ouverture de compte).",
+      "Le Pack ALTIS couvre 5 services clés : formalités visa de travail – procédure ANEF (nous vous accompagnons dans toutes les démarches, seules les autorités françaises ANEF + Préfecture étant habilitées à délivrer un visa de travail, Code CESEDA – Articles L.313-10 et R.313-10), billet d'avion aller-retour, accueil personnalisé à l'aéroport d'arrivée, logement meublé pendant 1 mois dans une résidence partenaire, et accompagnement administratif complet (préfecture, sécurité sociale, ouverture de compte).",
   },
   {
     icon: Clock,
     question: "Combien de temps dure le processus complet ?",
     answer:
-      "En moyenne 8 à 12 semaines entre la signature et l'arrivée du talent en France. La phase visa ANEF représente la majorité du délai. Nous anticipons les démarches administratives en parallèle pour optimiser le calendrier.",
+      "En moyenne 8 à 12 semaines entre la signature et l'arrivée du talent en France. La phase formalités visa de travail (procédure ANEF) représente la majorité du délai. Nous anticipons les démarches administratives en parallèle pour optimiser le calendrier.",
   },
   {
     icon: Plane,
@@ -89,7 +89,7 @@ export function AltisPackFAQ({ animationCustomStart = 4 }: AltisPackFAQProps) {
           Pack ALTIS — tout savoir
         </h2>
         <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
-          Visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif — 2 450 €/talent.
+          Formalités visa de travail (procédure ANEF) + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif — 2 450 €/talent.
         </p>
       </div>
 

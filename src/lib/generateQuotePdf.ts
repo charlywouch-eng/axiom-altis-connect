@@ -230,7 +230,7 @@ export function generateQuotePdf(data: QuoteData): jsPDF {
   doc.setFontSize(8);
   doc.setTextColor(...grey);
   const packDetails = [
-    "• Visa ANEF : prise en charge complète de la procédure",
+    "• Formalités visa de travail – Procédure ANEF : accompagnement complet des démarches (ANEF + Préfecture, Code CESEDA)",
     "• Billet A/R : vol aller-retour Cameroun ↔ France",
     "• Accueil aéroport : transfert et accompagnement à l'arrivée",
     "• Logement meublé : 1 mois d'hébergement inclus",

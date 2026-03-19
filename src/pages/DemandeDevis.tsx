@@ -92,7 +92,7 @@ export default function DemandeDevis() {
         <title>Demande de devis — AXIOM ALTIS</title>
         <meta
           name="description"
-          content="Demandez un devis personnalisé pour recruter des talents qualifiés avec le Pack ALTIS : visa ANEF, billet A/R, logement meublé 1 mois et accompagnement administratif."
+          content="Demandez un devis personnalisé pour recruter des talents qualifiés avec le Pack ALTIS : formalités visa de travail (procédure ANEF), billet A/R, logement meublé 1 mois et accompagnement administratif."
         />
       </Helmet>
 
@@ -148,7 +148,7 @@ export default function DemandeDevis() {
                   Demander un devis
                 </h1>
                 <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-                  Pack ALTIS — visa ANEF + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif — à partir de 2 450 €/talent.
+                  Pack ALTIS — formalités visa de travail (procédure ANEF) + billet A/R + accueil aéroport + logement meublé 1 mois + accompagnement administratif — à partir de 2 450 €/talent.
                 </p>
               </motion.div>
 
