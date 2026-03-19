@@ -650,6 +650,7 @@ export default function Leads() {
           <Link to="/rgpd-light" className="underline" style={{ color: "hsl(215,25%,42%)" }}>RGPD</Link>{" "}
           · rgpd@axiom-talents.com · Données conservées 24 mois
         </p>
+        <CesedaLegalNotice />
       </footer>
     </div>
   );

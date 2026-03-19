@@ -600,6 +600,7 @@ export default function Index() {
             © 2026 AXIOM × ALTIS Mobility · SIRET en cours d'immatriculation ·{" "}
             <Link to="/rgpd" className="hover:text-muted-foreground transition-colors">Politique de confidentialité</Link>
           </div>
+          <CesedaLegalNotice />
         </div>
       </footer>
     </div>

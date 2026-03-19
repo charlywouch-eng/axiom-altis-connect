@@ -291,7 +291,8 @@ export default function MetiersEnTension() {
 
       {/* Footer minimal */}
       <footer className="border-t bg-card px-6 py-8 text-center text-sm text-muted-foreground">
-        © 2026 AXIOM × ALTIS Mobility · <a href="mailto:contact@axiom-talents.com" className="hover:text-foreground transition-colors">contact@axiom-talents.com</a>
+        <p>© 2026 AXIOM × ALTIS Mobility · <a href="mailto:contact@axiom-talents.com" className="hover:text-foreground transition-colors">contact@axiom-talents.com</a></p>
+        <CesedaLegalNotice />
       </footer>
     </div>
   );

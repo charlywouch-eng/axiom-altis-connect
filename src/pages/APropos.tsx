@@ -374,6 +374,7 @@ export default function APropos() {
           <div className="mt-5 border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
             © 2026 AXIOM × ALTIS Mobility — Tous droits réservés
           </div>
+          <CesedaLegalNotice />
         </div>
       </footer>
     </div>
