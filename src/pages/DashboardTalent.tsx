@@ -134,7 +134,7 @@ const MOCK_RECOMMENDED_OFFERS = [
 
 
 const MOCK_PROFILE_DATA = {
-  full_name: "Test Cameroon",
+  full_name: "",
   country: "Cameroun",
   french_level: "Avancé (B2)",
   skills: ["Maçonnerie", "Plomberie"],
