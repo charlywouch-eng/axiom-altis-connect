@@ -55,6 +55,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
   const [fullName, setFullName] = useState(prefillName || "");
   const [phone, setPhone] = useState(prefillPhone || "");
   const [city, setCity] = useState("");
+  const [experienceYears, setExperienceYears] = useState("");
 
   // Section 2
   const [experiences, setExperiences] = useState<Experience[]>([
