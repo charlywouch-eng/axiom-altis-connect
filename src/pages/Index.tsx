@@ -383,7 +383,7 @@ export default function Index() {
       </section>
 
       {/* ── Stats Band ───────────────────────────────────────── */}
-      <section className="relative z-10 -mt-8 px-5 md:px-10" style={{ contentVisibility: "auto" as any, containIntrinsicSize: "0 200px" }}>
+      <section className="relative z-10 -mt-8 px-5 md:px-10">
         <div className="mx-auto max-w-4xl">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
