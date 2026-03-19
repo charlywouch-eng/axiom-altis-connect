@@ -371,9 +371,36 @@ export default function Signup() {
 
                         {/* Form */}
                         <form onSubmit={handleSignup} className="space-y-4">
+                          {/* First Name + Last Name */}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                              <Label htmlFor="firstName" className="text-sm font-medium">Prénom</Label>
+                              <Input
+                                id="firstName"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                placeholder="Prénom"
+                                required
+                                className="h-11 rounded-xl"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label htmlFor="lastName" className="text-sm font-medium">Nom</Label>
+                              <Input
+                                id="lastName"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                placeholder="Nom de famille"
+                                required
+                                className="h-11 rounded-xl"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Email */}
                           <div className="space-y-1.5">
                             <Label htmlFor="email" className="text-sm font-medium">
-                              Email
+                              Email professionnel
                             </Label>
                             <div className="relative">
                               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
@@ -382,7 +409,7 @@ export default function Signup() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="vous@email.com"
+                                placeholder="vous@entreprise.com"
                                 required
                                 className="pl-9 h-11 rounded-xl"
                               />
