@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { ArrowRight, ArrowLeft, Search, ShieldCheck, Euro } from "lucide-react";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -5,6 +5,7 @@ import { trackGA4 } from "@/lib/ga4";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";

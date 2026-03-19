@@ -13,6 +13,7 @@ import {
   Users, Globe, ArrowLeft, Zap,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const fadeUp = {

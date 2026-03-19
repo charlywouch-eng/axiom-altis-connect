@@ -16,6 +16,7 @@ import { FullPageLoader } from "@/components/FullPageLoader";
 import { Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
