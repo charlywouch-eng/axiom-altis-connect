@@ -664,9 +664,9 @@ export default function MetierDetail() {
                         <div>
                           <p className="text-xs text-muted-foreground mb-1">Besoins en main d'œuvre (BMO)</p>
                           <p className="text-sm font-medium text-foreground">
-                            {(marcheData.bmo as Record<string, unknown>)?.projetsRecrutement || 
+                            {String((marcheData.bmo as Record<string, unknown>)?.projetsRecrutement || 
                               (marcheData.bmo as Record<string, unknown>)?.totalProjets || 
-                              "Données BMO disponibles"}
+                              "Données BMO disponibles")}
                           </p>
                         </div>
                       )}
