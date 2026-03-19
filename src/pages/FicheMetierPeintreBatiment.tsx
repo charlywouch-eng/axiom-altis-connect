@@ -52,10 +52,10 @@ const CONDITIONS = [
 ];
 
 const ALTIS_SERVICES = [
-  { icon: Globe, text: "Formalités visa de travail – Procédure ANEF" },
-  { icon: Plane, text: "Accueil & assistance à l'aéroport" },
-  { icon: Home, text: "Logement meublé pour le premier mois" },
-  { icon: FileCheck, text: "Accompagnement administratif complet" },
+  { icon: Globe, text: "Formalités visa de travail – Procédure ANEF : Nous vous accompagnons dans toutes les démarches selon la réglementation de l'ANEF." },
+  { icon: Plane, text: "Accueil & Assistance à l'aéroport : Accueil personnalisé dès votre arrivée en France." },
+  { icon: Home, text: "Logement meublé 1 mois : Résidence partenaire équipée pour votre premier mois d'installation." },
+  { icon: FileCheck, text: "Accompagnement administratif complet : Soutien aux démarches (préfecture, sécurité sociale, ouverture de compte bancaire, etc.)." },
 ];
 
 export default function FicheMetierPeintreBatiment() {
