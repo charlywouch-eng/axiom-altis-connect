@@ -23,8 +23,19 @@ import {
   MapPin,
   Globe,
   ChevronRight,
+  Briefcase,
+  CalendarDays,
+  CircleDot,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const TENSION_FILTERS = ["Tous", "Très haute", "Haute", "Croissante"] as const;
 const SECTOR_FILTERS = ["BTP", "Santé", "CHR", "Logistique", "Industrie"] as const;
@@ -327,6 +338,122 @@ export default function DashboardSociete() {
                 <ClipboardList className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground">Aucune candidature reçue pour le moment.</p>
                 <p className="text-xs text-muted-foreground/60 mt-1">Les talents certifiés postuleront bientôt à vos offres.</p>
+              </CardContent>
+            </Card>
+          )}
+        </motion.div>
+
+        {/* ── Mes Recrutements (Accordéon) ──────────────── */}
+        <motion.div custom={3.5} variants={fadeUp}>
+          <h2 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+            <Briefcase className="h-5 w-5 text-accent" />
+            Mes Recrutements
+          </h2>
+
+          {candidatures && candidatures.length > 0 ? (
+            <Card className="bg-card border-border/50">
+              <CardContent className="p-0">
+                <Accordion type="single" collapsible className="w-full">
+                  {candidatures.map((c, i) => {
+                    const statusMap: Record<string, { label: string; color: string }> = {
+                      submitted: { label: "Dossier soumis", color: "bg-blue-500/15 text-blue-400 border-blue-500/30" },
+                      in_review: { label: "En cours d'analyse", color: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
+                      interview: { label: "Entretien planifié", color: "bg-purple-500/15 text-purple-400 border-purple-500/30" },
+                      altis_active: { label: "Pack ALTIS activé", color: "bg-accent/15 text-accent border-accent/30" },
+                      hired: { label: "Recruté ✓", color: "bg-green-500/15 text-green-400 border-green-500/30" },
+                      rejected: { label: "Non retenu", color: "bg-red-500/15 text-red-400 border-red-500/30" },
+                    };
+                    const st = statusMap[c.status] || statusMap.submitted;
+                    const altisEstimate = "2 450 €";
+
+                    return (
+                      <AccordionItem key={c.id} value={c.id} className="border-border/30">
+                        <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-muted/30 transition-colors">
+                          <div className="flex items-center gap-4 w-full pr-4">
+                            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                              {(c.full_name || "T")[0].toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0 text-left">
+                              <p className="font-semibold text-foreground text-sm truncate">{c.full_name || "Talent"}</p>
+                              <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                                <CalendarDays className="h-3 w-3" />
+                                {format(new Date(c.created_at), "dd MMM yyyy", { locale: fr })}
+                              </p>
+                            </div>
+                            <Badge className={`text-[10px] border font-semibold px-2 py-0.5 shrink-0 ${st.color}`}>
+                              <CircleDot className="h-3 w-3 mr-1" />
+                              {st.label}
+                            </Badge>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="px-5 pb-5">
+                          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mt-2">
+                            <div className="bg-muted/30 rounded-xl p-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Talent</p>
+                              <p className="text-sm font-semibold text-foreground">{c.full_name || "—"}</p>
+                              {c.city && <p className="text-xs text-muted-foreground mt-0.5">{c.city}</p>}
+                            </div>
+                            <div className="bg-muted/30 rounded-xl p-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Statut</p>
+                              <Badge className={`text-xs border font-semibold ${st.color}`}>{st.label}</Badge>
+                            </div>
+                            <div className="bg-muted/30 rounded-xl p-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Date de candidature</p>
+                              <p className="text-sm font-semibold text-foreground">
+                                {format(new Date(c.created_at), "dd MMMM yyyy", { locale: fr })}
+                              </p>
+                            </div>
+                            <div className="bg-muted/30 rounded-xl p-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Coût ALTIS estimé</p>
+                              <p className="text-sm font-extrabold text-accent">{altisEstimate}</p>
+                            </div>
+                          </div>
+
+                          {c.competences && c.competences.length > 0 && (
+                            <div className="mt-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">Compétences</p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {c.competences.map((s: string) => (
+                                  <Badge key={s} variant="outline" className="text-[10px] px-2 py-0.5 border-border/50 text-muted-foreground">{s}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex gap-2 mt-4">
+                            <Button
+                              size="sm"
+                              className="gap-1.5 text-xs bg-gradient-to-r from-accent to-primary text-white hover:opacity-90"
+                              disabled={altisLoading === c.id}
+                              onClick={() => handleAltis(c.full_name || "ce talent", c.id)}
+                            >
+                              <Sparkles className="h-3.5 w-3.5" /> {altisLoading === c.id ? "Redirection…" : "Activer Pack ALTIS"}
+                            </Button>
+                            <Button size="sm" variant="outline" className="gap-1.5 text-xs border-accent/30 text-accent hover:bg-accent/10">
+                              <Eye className="h-3.5 w-3.5" /> Voir le dossier
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                              onClick={() => handleContact(c.full_name || "ce talent")}
+                            >
+                              <Phone className="h-3.5 w-3.5" /> Contacter
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="bg-card border-border/50">
+              <CardContent className="p-8 text-center">
+                <Briefcase className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">Aucun recrutement en cours.</p>
+                <p className="text-xs text-muted-foreground/60 mt-1">Vos recrutements ALTIS apparaîtront ici.</p>
               </CardContent>
             </Card>
           )}
