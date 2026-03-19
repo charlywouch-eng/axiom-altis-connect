@@ -653,9 +653,9 @@ export default function MetierDetail() {
                           <div className="flex items-center gap-2">
                             <Banknote className="h-4 w-4 text-success" />
                             <p className="font-semibold text-sm text-foreground">
-                              {(marcheData.salaires[0] as Record<string, unknown>)?.salaireMedian ||
+                              {String((marcheData.salaires[0] as Record<string, unknown>)?.salaireMedian ||
                                 (marcheData.salaires[0] as Record<string, unknown>)?.libelle ||
-                                "Voir données"}
+                                "Voir données")}
                             </p>
                           </div>
                         </div>
