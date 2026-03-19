@@ -249,7 +249,7 @@ export default function Index() {
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Dans les secteurs les plus demandés : <strong className="text-white/85">construction, santé, restauration, maintenance</strong> et bien plus encore.
+                Des opportunités réelles dans les secteurs qui recrutent le plus — <strong className="text-accent">Matching IA + Accompagnement ALTIS complet</strong>
               </motion.p>
 
               {/* Proof points */}
@@ -267,10 +267,10 @@ export default function Index() {
                 <Button
                   asChild
                   size="lg"
-                  className="w-[90%] max-w-md sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-gradient-cta hover:opacity-90 hover:scale-[1.03] border-0 group text-white btn-ripple animate-micro-pulse transition-transform duration-200 mx-auto"
+                  className="w-[90%] max-w-md sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground btn-ripple animate-micro-pulse transition-transform duration-200 mx-auto"
                 >
                   <Link to="/signup-light">
-                    Commencer gratuitement
+                    Commencer mon évaluation gratuite
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
@@ -415,17 +415,17 @@ export default function Index() {
         <PartnersCarousel />
       </Suspense>
 
-      {/* ── 9 Secteurs Grid ──────────────────────────────────── */}
+      {/* ── Secteurs Grid ────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32" style={{ contentVisibility: "auto", containIntrinsicSize: "0 600px" }}>
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
             Opportunités 2026
           </motion.p>
           <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[42px] leading-tight tracking-tight">
-            Les <span className="text-gradient-primary">secteurs qui recrutent le plus</span> en France vous attendent
+            Les <span className="text-gradient-primary">secteurs qui recrutent</span> en France vous attendent
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
-            Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où votre talent peut s'épanouir
+            Construction · Santé · Restauration · Logistique · Industrie et bien d'autres domaines où votre talent peut s'épanouir
           </motion.p>
         </motion.div>
 
@@ -438,7 +438,8 @@ export default function Index() {
               key={s.rome}
               custom={i}
               variants={scaleIn}
-              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30 ${s.color}`}
+              whileHover={{ y: -8, scale: 1.03, transition: { duration: 0.25 } }}
+              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:shadow-xl hover:border-accent/30 ${s.color}`}
             >
               <div className="absolute inset-0 rounded-2xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative">
@@ -468,6 +469,37 @@ export default function Index() {
             </Link>
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* ── Notre Mission ────────────────────────────────────── */}
+      <section className="relative overflow-hidden py-20 md:py-28">
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,8%)] via-[hsl(217,33%,12%)] to-[hsl(199,89%,48%/0.08)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,hsl(var(--accent)/0.06),transparent_70%)]" />
+        <div className="relative z-10 mx-auto max-w-4xl px-5 md:px-10 text-center">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
+              Notre Mission
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="font-black text-2xl md:text-[38px] leading-tight tracking-tight text-white">
+              AXIOM Talent Passport™
+            </motion.h2>
+            <motion.p custom={2} variants={fadeUp} className="mt-6 text-base md:text-lg text-white/60 leading-relaxed max-w-3xl mx-auto">
+              La première plateforme certifiée qui <strong className="text-accent">pré-approuve, match via IA et relocalise physiquement</strong> des talents africains qualifiés en CDI France en <strong className="text-white/90">45–60 jours</strong>.
+            </motion.p>
+            <motion.div custom={3} variants={fadeUp} className="mt-8 flex justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/25 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground"
+              >
+                <Link to="/signup-light">
+                  Commencer mon évaluation gratuite
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       {/* ── How It Works ─────────────────────────────────────── */}
@@ -546,10 +578,10 @@ export default function Index() {
              <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center relative z-10">
               <Button
                 size="lg"
-                className="w-[90%] max-w-md sm:w-auto text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-gradient-cta hover:opacity-90 border-0 group text-white mx-auto sm:mx-0"
+                className="w-[90%] max-w-md sm:w-auto text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-accent hover:bg-accent/90 border-0 group text-accent-foreground mx-auto sm:mx-0"
                 onClick={() => navigate("/signup-light")}
               >
-                Commencer gratuitement <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                Commencer mon évaluation gratuite <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
               <Button
                 size="lg"
