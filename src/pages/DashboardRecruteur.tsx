@@ -221,7 +221,15 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
                     </div>
                     <Button
                       size="sm"
-                      onClick={() => onSelectTalent(talent)}
+                      onClick={() => {
+                        onSelectTalent(talent);
+                        // Fire profile_viewed notification (fire-and-forget)
+                        if (talent.user_id && session?.access_token) {
+                          supabase.functions.invoke("send-notification", {
+                            body: { type: "profile_viewed", payload: { talent_user_id: talent.user_id } },
+                          }).catch(() => {});
+                        }
+                      }}
                       className="bg-accent text-accent-foreground hover:bg-accent/90 border-0 text-xs"
                     >
                       Voir dossier
