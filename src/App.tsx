@@ -47,6 +47,9 @@ import FicheMetierCarreleur from "./pages/FicheMetierCarreleur";
 import FicheMetierCuisinier from "./pages/FicheMetierCuisinier";
 import FicheMetierServeur from "./pages/FicheMetierServeur";
 import FicheMetierAgentRestauration from "./pages/FicheMetierAgentRestauration";
+import FicheMetierChauffeurRoutier from "./pages/FicheMetierChauffeurRoutier";
+import FicheMetierCariste from "./pages/FicheMetierCariste";
+import FicheMetierOuvrierAgricole from "./pages/FicheMetierOuvrierAgricole";
 import FichesMetiersIndex from "./pages/FichesMetiersIndex";
 
 import Rgpd from "./pages/Rgpd";
