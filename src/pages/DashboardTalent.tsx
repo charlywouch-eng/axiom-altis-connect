@@ -803,6 +803,15 @@ export default function DashboardTalent() {
               </TabsContent>
 
               <TabsContent value="opportunites" className="space-y-5 mt-0">
+                {/* Offres en temps réel France Travail */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailOffresCard
+                    romeCodes={[talentProfile?.rome_code || "F1703", "J1501", "G1602"]}
+                    title="Vos Opportunités en Temps Réel"
+                    count={6}
+                  />
+                </motion.div>
+
                 <OpportunitesTab
                   offersToDisplay={offersToDisplay}
                   ftOffers={ftOffers}
