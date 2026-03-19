@@ -640,9 +640,9 @@ export default function MetierDetail() {
                           <div className="flex items-center gap-2">
                             <Target className="h-4 w-4 text-destructive" />
                             <p className="font-semibold text-sm text-foreground">
-                              {(marcheData.tensions[0] as Record<string, unknown>)?.libelle ||
+                              {String((marcheData.tensions[0] as Record<string, unknown>)?.libelle ||
                                 (marcheData.tensions[0] as Record<string, unknown>)?.indicateur ||
-                                "Données disponibles"}
+                                "Données disponibles")}
                             </p>
                           </div>
                         </div>
