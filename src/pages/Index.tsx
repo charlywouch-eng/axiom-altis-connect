@@ -270,7 +270,7 @@ export default function Index() {
                   className="w-[90%] max-w-md sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground btn-ripple animate-micro-pulse transition-transform duration-200 mx-auto"
                 >
                   <Link to="/signup-light">
-                    Commencer mon évaluation gratuite
+                    Commencer
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
