@@ -64,7 +64,17 @@ import ResetPassword from "./pages/ResetPassword";
 import DemandeDevis from "./pages/DemandeDevis";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 0,
+    },
+  },
+});
 
 const App = () => (
   <HelmetProvider>

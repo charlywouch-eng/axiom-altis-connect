@@ -435,7 +435,7 @@ export default function DashboardTalent() {
     }
   };
 
-  const displayName = profile?.full_name || MOCK_PROFILE_DATA.full_name;
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Talent";
   const displayCountry = profile?.country || MOCK_PROFILE_DATA.country;
   const displayFrench = profile?.french_level || MOCK_PROFILE_DATA.french_level;
   const offersToDisplay = ftOffers && ftOffers.length > 0 ? ftOffers : MOCK_RECOMMENDED_OFFERS;
@@ -554,10 +554,13 @@ export default function DashboardTalent() {
                       </Badge>
                     )}
                   </div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1">
-                    Bonjour, {displayName.split(" ")[0]}
-                  </h1>
-                  <p className="text-sm text-white/70 mb-4">
+                   <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1">
+                     Bonjour, {displayName.split(" ")[0]} 👋
+                   </h1>
+                   <p className="text-sm font-medium mb-4" style={{ color: "hsl(var(--accent))" }}>
+                     Votre parcours vers la France commence ici.
+                   </p>
+                   <p className="text-sm text-white/70 mb-4">
                     {displayCountry} · {displayFrench} · Code ROME {MOCK_PROFILE_DATA.rome.map(r => `${r.code} / ${r.label}`).join(" / ")}
                   </p>
                   <div className="flex flex-wrap items-center gap-3">
