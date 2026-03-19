@@ -95,7 +95,7 @@ export default function FicheMetierInfirmier() {
 
         <motion.section initial="hidden" animate="visible" className="relative overflow-hidden">
           <div className="absolute inset-0">
-            <img src={heroImg} alt="Infirmier diplômé en milieu hospitalier" className="h-full w-full object-cover opacity-20" loading="eager" />
+            <img src={heroImg} alt="Infirmier africain souriant intégré dans une équipe soignante multiculturelle en France" className="h-full w-full object-cover opacity-20" loading="eager" />
             <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/90 to-background" />
           </div>
           <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 md:pt-24 md:pb-20">
