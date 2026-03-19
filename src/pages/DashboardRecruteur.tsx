@@ -250,6 +250,48 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
         </Card>
       </motion.div>
 
+      {/* ── Outils IA Section ── */}
+      <motion.div custom={0.5} variants={fadeUp} className="mb-10">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/20">
+            <Sparkles className="h-5 w-5 text-accent" />
+          </div>
+          <div>
+            <h2 className="font-display text-lg font-bold text-white">Vos Outils IA</h2>
+            <p className="text-xs text-white/40">Gagnez du temps et de la précision</p>
+          </div>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            { icon: Brain, title: "Matching IA Prédictif", desc: "Score de compatibilité en temps réel", cta: "Lancer un matching" },
+            { icon: TrendingUp, title: "Score de Rétention", desc: "Prédiction du risque de départ 6-24 mois", cta: "Analyser ce candidat" },
+            { icon: FileText, title: "Génération Description", desc: "Description optimisée ROME en 10 secondes", cta: "Générer" },
+            { icon: ClipboardList, title: "Analyse CV Instantanée", desc: "Extraction compétences + conformité MINEFOP", cta: "Analyser CV" },
+            { icon: Zap, title: "Chatbot Screening", desc: "Conversation IA avec le candidat", cta: "Lancer le screening" },
+          ].map((tool, i) => (
+            <motion.div key={tool.title} custom={i + 1} variants={fadeUp}>
+              <Card className="bg-gradient-to-br from-[hsl(222,33%,14%)] to-[hsl(222,33%,10%)] border-white/10 hover:border-accent/40 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/10 h-full">
+                <CardContent className="p-4 flex flex-col h-full">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 mb-3">
+                    <tool.icon className="h-5 w-5 text-accent" />
+                  </div>
+                  <h3 className="font-display text-sm font-bold text-white mb-1">{tool.title}</h3>
+                  <p className="text-[11px] text-white/40 flex-1 mb-3">{tool.desc}</p>
+                  <Button
+                    size="sm"
+                    onClick={() => toast({ title: tool.title, description: "Fonctionnalité bientôt disponible dans votre abonnement Premium." })}
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-xs gap-1.5"
+                  >
+                    {tool.cta}
+                    <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* ── Search Bar ── */}
       <motion.div custom={1} variants={fadeUp} className="mb-5">
         <div className="relative">
