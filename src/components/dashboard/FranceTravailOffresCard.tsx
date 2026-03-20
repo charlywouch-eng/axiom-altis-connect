@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +27,7 @@ interface Props {
   className?: string;
   showScoreIA?: boolean;
   showAxiomReady?: boolean;
+  onOffersLoaded?: (count: number) => void;
 }
 
 export default function FranceTravailOffresCard({
@@ -35,6 +37,7 @@ export default function FranceTravailOffresCard({
   className,
   showScoreIA = false,
   showAxiomReady = false,
+  onOffersLoaded,
 }: Props) {
   // Generate deterministic score per offer
   const getScoreIA = (offerId: string) => {
@@ -82,6 +85,12 @@ export default function FranceTravailOffresCard({
     staleTime: 5 * 60 * 1000,
   });
 
+  const offers = data || [];
+
+  useEffect(() => {
+    if (!isLoading && onOffersLoaded) onOffersLoaded(offers.length);
+  }, [offers.length, isLoading, onOffersLoaded]);
+
   if (isLoading) {
     return (
       <Card className={`overflow-hidden border-accent/20 ${className}`}>
@@ -95,8 +104,6 @@ export default function FranceTravailOffresCard({
       </Card>
     );
   }
-
-  const offers = data || [];
 
   return (
     <Card className={`overflow-hidden border-accent/20 shadow-sm ${className}`}>

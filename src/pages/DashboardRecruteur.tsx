@@ -57,6 +57,7 @@ export default function DashboardRecruteur() {
   const [matchQuery, setMatchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("talents");
   const [offresSector, setOffresSector] = useState<string>("all");
+  const [ftOffersCount, setFtOffersCount] = useState<number | null>(null);
 
   if (loading) return null;
   if (!session) return <Navigate to="/login" replace />;
@@ -92,6 +93,9 @@ export default function DashboardRecruteur() {
               </TabsTrigger>
               <TabsTrigger value="offres-ft" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
                 <Briefcase className="h-4 w-4" /> Offres France Travail
+                {ftOffersCount != null && ftOffersCount > 0 && (
+                  <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent/20 px-1.5 text-[10px] font-bold text-accent tabular-nums">{ftOffersCount}</span>
+                )}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -153,7 +157,7 @@ export default function DashboardRecruteur() {
         {activeTab === "matching" && <MatchingTab query={matchQuery} setQuery={setMatchQuery} />}
         {activeTab === "facturation" && <FacturationTab />}
         {activeTab === "candidatures" && <CandidaturesTab />}
-        {activeTab === "offres-ft" && <OffresFranceTravailTab offresSector={offresSector} setOffresSector={setOffresSector} />}
+        {activeTab === "offres-ft" && <OffresFranceTravailTab offresSector={offresSector} setOffresSector={setOffresSector} onOffersLoaded={setFtOffersCount} />}
       </main>
 
       {/* Talent Dossier Modal */}
@@ -1443,9 +1447,11 @@ const ROME_SECTOR_MAP: Record<string, { label: string; codes: string[] }> = {
 function OffresFranceTravailTab({
   offresSector,
   setOffresSector,
+  onOffersLoaded,
 }: {
   offresSector: string;
   setOffresSector: (v: string) => void;
+  onOffersLoaded?: (count: number) => void;
 }) {
   const sector = ROME_SECTOR_MAP[offresSector] || ROME_SECTOR_MAP.all;
 
@@ -1488,6 +1494,7 @@ function OffresFranceTravailTab({
           count={9}
           showScoreIA
           showAxiomReady
+          onOffersLoaded={onOffersLoaded}
         />
       </motion.div>
     </motion.div>
