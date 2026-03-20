@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Briefcase, MapPin, ExternalLink, TrendingUp, Flame, Zap } from "lucide-react";
+import { Briefcase, MapPin, ExternalLink, TrendingUp, Flame, Zap, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface FTOffer {
@@ -25,6 +25,7 @@ interface Props {
   count?: number;
   className?: string;
   showScoreIA?: boolean;
+  showAxiomReady?: boolean;
 }
 
 export default function FranceTravailOffresCard({
@@ -33,6 +34,7 @@ export default function FranceTravailOffresCard({
   count = 6,
   className,
   showScoreIA = false,
+  showAxiomReady = false,
 }: Props) {
   // Generate deterministic score per offer
   const getScoreIA = (offerId: string) => {
@@ -43,6 +45,9 @@ export default function FranceTravailOffresCard({
     }
     return 65 + Math.abs(hash % 30); // 65-94
   };
+
+  const isAxiomReady = (offerId: string) => getScoreIA(offerId) >= 80;
+
   const { data, isLoading } = useQuery({
     queryKey: ["ft-offres-card", romeCodes.join(",")],
     queryFn: async () => {
@@ -107,81 +112,93 @@ export default function FranceTravailOffresCard({
           </Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Offres d'emploi France Travail actualisées en continu
+          Offres d'emploi France Travail actualisées en continu via l'API v2
         </p>
       </CardHeader>
       <CardContent>
         {offers.length > 0 ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {offers.map((o, i) => (
-              <motion.div
-                key={o.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06 }}
-              >
-                <div className="group p-4 rounded-xl border border-border/50 bg-gradient-to-br from-card to-muted/20 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300 space-y-2.5 h-full flex flex-col">
-                    <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground leading-tight line-clamp-2">{o.title}</p>
-                      <p className="text-xs text-accent font-medium mt-0.5">{o.company}</p>
-                    </div>
-                    <div className="shrink-0 flex flex-col items-end gap-1">
-                      {showScoreIA && (
-                        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 border border-accent/30">
-                          <Zap className="h-2.5 w-2.5 text-accent" />
-                          <span className="text-[10px] font-bold text-accent">{getScoreIA(o.id)}%</span>
+            {offers.map((o, i) => {
+              const score = getScoreIA(o.id);
+              const ready = isAxiomReady(o.id);
+              return (
+                <motion.div
+                  key={o.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                >
+                  <div className={`group relative p-4 rounded-xl border bg-gradient-to-br from-card to-muted/20 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300 space-y-2.5 h-full flex flex-col ${ready && showAxiomReady ? 'border-accent/40 ring-1 ring-accent/20' : 'border-border/50 hover:border-accent/30'}`}>
+                    {/* Score IA overlay */}
+                    {showScoreIA && (
+                      <div className="absolute -top-2 -right-2 z-10">
+                        <div className={`relative flex items-center justify-center h-12 w-12 rounded-full shadow-lg ${score >= 85 ? 'bg-gradient-to-br from-accent to-primary' : score >= 75 ? 'bg-gradient-to-br from-accent/90 to-accent/60' : 'bg-gradient-to-br from-muted-foreground/60 to-muted-foreground/40'}`}>
+                          <span className="text-[11px] font-black text-white leading-none">{score}%</span>
                         </div>
-                      )}
-                      <Badge className="text-[9px] bg-destructive/10 text-destructive border-destructive/20 gap-0.5">
-                        <Flame className="h-2.5 w-2.5" /> Tension
+                      </div>
+                    )}
+
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground leading-tight line-clamp-2">{o.title}</p>
+                        <p className="text-xs text-accent font-medium mt-0.5">{o.company}</p>
+                      </div>
+                      <div className="shrink-0 flex flex-col items-end gap-1">
+                        {showAxiomReady && ready && (
+                          <Badge className="text-[9px] bg-accent/15 text-accent border-accent/30 gap-0.5 font-bold">
+                            <ShieldCheck className="h-2.5 w-2.5" /> AXIOM READY
+                          </Badge>
+                        )}
+                        <Badge className="text-[9px] bg-destructive/10 text-destructive border-destructive/20 gap-0.5">
+                          <Flame className="h-2.5 w-2.5" /> Tension
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                      <span className="flex items-center gap-0.5">
+                        <MapPin className="h-2.5 w-2.5" /> {o.location || "France"}
+                      </span>
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-border/50">
+                        {o.contract}
                       </Badge>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-                    <span className="flex items-center gap-0.5">
-                      <MapPin className="h-2.5 w-2.5" /> {o.location || "France"}
-                    </span>
-                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-border/50">
-                      {o.contract}
-                    </Badge>
-                  </div>
+                    {o.salary && (
+                      <p className="text-xs font-medium text-success flex items-center gap-1">
+                        <TrendingUp className="h-3 w-3" /> {o.salary}
+                      </p>
+                    )}
 
-                  {o.salary && (
-                    <p className="text-xs font-medium text-success flex items-center gap-1">
-                      <TrendingUp className="h-3 w-3" /> {o.salary}
-                    </p>
-                  )}
+                    {o.skills && o.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {o.skills.slice(0, 3).map((s) => (
+                          <span key={s} className="text-[9px] bg-accent/8 text-accent rounded-full px-2 py-0.5 font-medium">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
-                  {o.skills && o.skills.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {o.skills.slice(0, 3).map((s) => (
-                        <span key={s} className="text-[9px] bg-accent/8 text-accent rounded-full px-2 py-0.5 font-medium">
-                          {s}
-                        </span>
-                      ))}
+                    <div className="mt-auto pt-2">
+                      <Button
+                        size="sm"
+                        className="w-full h-8 text-[11px] gap-1.5 bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-sm"
+                        onClick={() => window.open(o.url, "_blank")}
+                      >
+                        <ExternalLink className="h-3 w-3" /> Postuler sur France Travail
+                      </Button>
                     </div>
-                  )}
-
-                  <div className="mt-auto pt-2">
-                    <Button
-                      size="sm"
-                      className="w-full h-8 text-[11px] gap-1.5 bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-sm"
-                      onClick={() => window.open(o.url, "_blank")}
-                    >
-                      <ExternalLink className="h-3 w-3" /> Postuler sur France Travail
-                    </Button>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-6">
             <Briefcase className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
             <p className="text-sm text-muted-foreground">Aucune offre disponible actuellement.</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">Les offres sont actualisées en continu.</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">Les offres sont actualisées en continu via l'API v2.</p>
           </div>
         )}
       </CardContent>
