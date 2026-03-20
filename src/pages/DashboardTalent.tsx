@@ -878,6 +878,7 @@ export default function DashboardTalent() {
                     title="Vos Opportunités en Temps Réel"
                     count={6}
                     showScoreIA
+                    showAxiomReady
                   />
                 </motion.div>
 
