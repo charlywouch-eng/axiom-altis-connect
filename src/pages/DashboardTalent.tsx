@@ -77,6 +77,7 @@ import CandidatureFormDialog from "@/components/dashboard/CandidatureFormDialog"
 import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
 import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
+import FranceTravailEventsCard from "@/components/dashboard/FranceTravailEventsCard";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
