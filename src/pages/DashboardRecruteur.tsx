@@ -1447,9 +1447,11 @@ const ROME_SECTOR_MAP: Record<string, { label: string; codes: string[] }> = {
 function OffresFranceTravailTab({
   offresSector,
   setOffresSector,
+  onOffersLoaded,
 }: {
   offresSector: string;
   setOffresSector: (v: string) => void;
+  onOffersLoaded?: (count: number) => void;
 }) {
   const sector = ROME_SECTOR_MAP[offresSector] || ROME_SECTOR_MAP.all;
 
@@ -1492,6 +1494,7 @@ function OffresFranceTravailTab({
           count={9}
           showScoreIA
           showAxiomReady
+          onOffersLoaded={onOffersLoaded}
         />
       </motion.div>
     </motion.div>
