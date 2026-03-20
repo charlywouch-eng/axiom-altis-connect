@@ -24,6 +24,7 @@ interface Props {
   title?: string;
   count?: number;
   className?: string;
+  showScoreIA?: boolean;
 }
 
 export default function FranceTravailOffresCard({
