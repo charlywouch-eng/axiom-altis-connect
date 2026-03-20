@@ -77,6 +77,7 @@ import CandidatureFormDialog from "@/components/dashboard/CandidatureFormDialog"
 import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
 import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
+import FranceTravailEventsCard from "@/components/dashboard/FranceTravailEventsCard";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
@@ -862,6 +863,11 @@ export default function DashboardTalent() {
                 <motion.div variants={itemVariants}>
                   <FranceTravailAgencesCard />
                 </motion.div>
+
+                {/* Événements emploi */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailEventsCard />
+                </motion.div>
               </TabsContent>
 
               <TabsContent value="opportunites" className="space-y-5 mt-0">
@@ -871,6 +877,7 @@ export default function DashboardTalent() {
                     romeCodes={[talentProfile?.rome_code || "F1703", "J1501", "G1602"]}
                     title="Vos Opportunités en Temps Réel"
                     count={6}
+                    showScoreIA
                   />
                 </motion.div>
 

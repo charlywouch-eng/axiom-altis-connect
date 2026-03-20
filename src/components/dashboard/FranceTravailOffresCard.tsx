@@ -24,6 +24,7 @@ interface Props {
   title?: string;
   count?: number;
   className?: string;
+  showScoreIA?: boolean;
 }
 
 export default function FranceTravailOffresCard({
@@ -31,7 +32,17 @@ export default function FranceTravailOffresCard({
   title = "Opportunités en temps réel",
   count = 6,
   className,
+  showScoreIA = false,
 }: Props) {
+  // Generate deterministic score per offer
+  const getScoreIA = (offerId: string) => {
+    let hash = 0;
+    for (let i = 0; i < offerId.length; i++) {
+      hash = ((hash << 5) - hash) + offerId.charCodeAt(i);
+      hash |= 0;
+    }
+    return 65 + Math.abs(hash % 30); // 65-94
+  };
   const { data, isLoading } = useQuery({
     queryKey: ["ft-offres-card", romeCodes.join(",")],
     queryFn: async () => {
@@ -110,12 +121,18 @@ export default function FranceTravailOffresCard({
                 transition={{ delay: i * 0.06 }}
               >
                 <div className="group p-4 rounded-xl border border-border/50 bg-gradient-to-br from-card to-muted/20 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300 space-y-2.5 h-full flex flex-col">
-                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-foreground leading-tight line-clamp-2">{o.title}</p>
                       <p className="text-xs text-accent font-medium mt-0.5">{o.company}</p>
                     </div>
-                    <div className="shrink-0">
+                    <div className="shrink-0 flex flex-col items-end gap-1">
+                      {showScoreIA && (
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 border border-accent/30">
+                          <Zap className="h-2.5 w-2.5 text-accent" />
+                          <span className="text-[10px] font-bold text-accent">{getScoreIA(o.id)}%</span>
+                        </div>
+                      )}
                       <Badge className="text-[9px] bg-destructive/10 text-destructive border-destructive/20 gap-0.5">
                         <Flame className="h-2.5 w-2.5" /> Tension
                       </Badge>

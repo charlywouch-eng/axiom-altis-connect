@@ -57,6 +57,7 @@ import { getAvatarForTalent } from "@/lib/metierAvatars";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
 import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
 import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
+import FranceTravailEventsCard from "@/components/dashboard/FranceTravailEventsCard";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -674,12 +675,23 @@ export default function DashboardSociete() {
             romeCodes={["F1703", "J1501", "G1602"]}
             title="Offres d'emploi en temps réel"
             count={6}
+            showScoreIA
           />
+        </motion.div>
+
+        {/* ── Formations Recommandées ──────────────── */}
+        <motion.div custom={3.85} variants={fadeUp}>
+          <FranceTravailFormationsCard romeCode="F1703" />
         </motion.div>
 
         {/* ── Agences France Travail ────────────────── */}
         <motion.div custom={3.9} variants={fadeUp}>
           <FranceTravailAgencesCard />
+        </motion.div>
+
+        {/* ── Événements emploi ──────────────────────── */}
+        <motion.div custom={3.95} variants={fadeUp}>
+          <FranceTravailEventsCard />
         </motion.div>
 
         {/* ── Découvrir de nouveaux talents ─────────────── */}
