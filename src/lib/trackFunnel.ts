@@ -5,6 +5,7 @@ type FunnelEvent =
   | "lead_score_viewed"
   | "lead_payment_clicked"
   | "payment_success"
+  | "pack_altis_payment_success"
   | "signup_started"
   | "signup_completed";
 

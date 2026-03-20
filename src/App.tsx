@@ -278,6 +278,7 @@ const App = () => (
             <Route path="/rgpd-light" element={<RgpdLight />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/pack-altis-success" element={<PackAltisSuccess />} />
             <Route
               path="/admin/leads"
               element={
