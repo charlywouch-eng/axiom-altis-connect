@@ -689,6 +689,11 @@ export default function DashboardSociete() {
           <FranceTravailAgencesCard />
         </motion.div>
 
+        {/* ── Événements emploi ──────────────────────── */}
+        <motion.div custom={3.95} variants={fadeUp}>
+          <FranceTravailEventsCard />
+        </motion.div>
+
         {/* ── Découvrir de nouveaux talents ─────────────── */}
         <motion.div custom={4} variants={fadeUp}>
           <h2 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
