@@ -41,3 +41,5 @@ project_id = "wfolueffkdzknuowwecf"
     verify_jwt = false
   [functions.france-travail-agences]
     verify_jwt = false
+  [functions.france-travail-events]
+    verify_jwt = false
