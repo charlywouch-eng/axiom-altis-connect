@@ -93,6 +93,9 @@ export default function DashboardRecruteur() {
               </TabsTrigger>
               <TabsTrigger value="offres-ft" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
                 <Briefcase className="h-4 w-4" /> Offres France Travail
+                {ftOffersCount != null && ftOffersCount > 0 && (
+                  <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent/20 px-1.5 text-[10px] font-bold text-accent tabular-nums">{ftOffersCount}</span>
+                )}
               </TabsTrigger>
             </TabsList>
           </Tabs>
