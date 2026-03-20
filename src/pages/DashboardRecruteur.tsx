@@ -1428,3 +1428,68 @@ function CandidaturesTab() {
     </motion.div>
   );
 }
+
+/* ──────────── OFFRES FRANCE TRAVAIL TAB ──────────── */
+const ROME_SECTOR_MAP: Record<string, { label: string; codes: string[] }> = {
+  all: { label: "Tous les secteurs", codes: ["F1703", "J1501", "G1602", "N1101", "A1101", "I1304"] },
+  btp: { label: "BTP", codes: ["F1703", "F1604", "F1701"] },
+  sante: { label: "Santé", codes: ["J1501", "J1502", "J1301"] },
+  chr: { label: "CHR", codes: ["G1602", "G1601", "G1603"] },
+  logistique: { label: "Logistique", codes: ["N1101", "N1103", "N4105"] },
+  agriculture: { label: "Agriculture", codes: ["A1101", "A1201", "A1402"] },
+  industrie: { label: "Industrie", codes: ["I1304", "H2901", "H3302"] },
+};
+
+function OffresFranceTravailTab({
+  offresSector,
+  setOffresSector,
+}: {
+  offresSector: string;
+  setOffresSector: (v: string) => void;
+}) {
+  const sector = ROME_SECTOR_MAP[offresSector] || ROME_SECTOR_MAP.all;
+
+  return (
+    <motion.div initial="hidden" animate="visible" className="space-y-6">
+      {/* Sector filter pills */}
+      <motion.div custom={0} variants={fadeUp}>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/20">
+            <Briefcase className="h-5 w-5 text-accent" />
+          </div>
+          <div>
+            <h2 className="font-display text-lg font-bold text-white">Offres France Travail</h2>
+            <p className="text-xs text-white/40">API Offres d'emploi v2 – Temps réel avec Score IA</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {Object.entries(ROME_SECTOR_MAP).map(([key, val]) => (
+            <button
+              key={key}
+              onClick={() => setOffresSector(key)}
+              className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+                offresSector === key
+                  ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                  : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border border-white/10"
+              }`}
+            >
+              {val.label}
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Offers grid */}
+      <motion.div custom={1} variants={fadeUp}>
+        <FranceTravailOffresCard
+          key={offresSector}
+          romeCodes={sector.codes}
+          title={`Opportunités ${sector.label}`}
+          count={9}
+          showScoreIA
+          showAxiomReady
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
