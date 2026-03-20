@@ -26,6 +26,7 @@ interface Props {
   className?: string;
   showScoreIA?: boolean;
   showAxiomReady?: boolean;
+  onOffersLoaded?: (count: number) => void;
 }
 
 export default function FranceTravailOffresCard({
@@ -35,6 +36,7 @@ export default function FranceTravailOffresCard({
   className,
   showScoreIA = false,
   showAxiomReady = false,
+  onOffersLoaded,
 }: Props) {
   // Generate deterministic score per offer
   const getScoreIA = (offerId: string) => {
