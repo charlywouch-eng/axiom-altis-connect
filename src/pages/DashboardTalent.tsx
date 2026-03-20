@@ -863,6 +863,11 @@ export default function DashboardTalent() {
                 <motion.div variants={itemVariants}>
                   <FranceTravailAgencesCard />
                 </motion.div>
+
+                {/* Événements emploi */}
+                <motion.div variants={itemVariants}>
+                  <FranceTravailEventsCard />
+                </motion.div>
               </TabsContent>
 
               <TabsContent value="opportunites" className="space-y-5 mt-0">
