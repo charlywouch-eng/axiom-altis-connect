@@ -59,7 +59,9 @@ serve(async (req) => {
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: [{ price: priceConfig.id, quantity: 1 }],
       mode: "payment",
-      success_url: `${origin}/payment-success?${successParams.toString()}`,
+      success_url: tier === "full"
+        ? `${origin}/pack-altis-success?session_id={CHECKOUT_SESSION_ID}`
+        : `${origin}/payment-success?${successParams.toString()}`,
       cancel_url: `${origin}${cancelPage}?canceled=true`,
       metadata: {
         payment_type: priceConfig.payment_type,
