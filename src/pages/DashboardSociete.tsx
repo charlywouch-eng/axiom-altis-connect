@@ -676,6 +676,7 @@ export default function DashboardSociete() {
             title="Offres d'emploi en temps réel"
             count={6}
             showScoreIA
+            showAxiomReady
           />
         </motion.div>
 
