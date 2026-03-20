@@ -85,6 +85,12 @@ export default function FranceTravailOffresCard({
     staleTime: 5 * 60 * 1000,
   });
 
+  const offers = data || [];
+
+  useEffect(() => {
+    if (!isLoading && onOffersLoaded) onOffersLoaded(offers.length);
+  }, [offers.length, isLoading, onOffersLoaded]);
+
   if (isLoading) {
     return (
       <Card className={`overflow-hidden border-accent/20 ${className}`}>
@@ -98,12 +104,6 @@ export default function FranceTravailOffresCard({
       </Card>
     );
   }
-
-  const offers = data || [];
-
-  useEffect(() => {
-    if (!isLoading && onOffersLoaded) onOffersLoaded(offers.length);
-  }, [offers.length, isLoading, onOffersLoaded]);
 
   return (
     <Card className={`overflow-hidden border-accent/20 shadow-sm ${className}`}>
