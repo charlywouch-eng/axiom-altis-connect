@@ -57,6 +57,7 @@ import { getAvatarForTalent } from "@/lib/metierAvatars";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
 import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
 import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFormationsCard";
+import FranceTravailEventsCard from "@/components/dashboard/FranceTravailEventsCard";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
