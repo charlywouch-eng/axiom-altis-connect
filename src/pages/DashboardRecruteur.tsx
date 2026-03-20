@@ -20,6 +20,7 @@ import {
   TrendingUp, Sparkles, Phone, Award, Star, MessageSquare
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
+import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
 
 import avatarSante from "@/assets/talent-sante.jpg";
 import avatarBtp from "@/assets/talent-btp.jpg";
