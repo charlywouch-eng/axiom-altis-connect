@@ -153,6 +153,7 @@ export default function DashboardRecruteur() {
         {activeTab === "matching" && <MatchingTab query={matchQuery} setQuery={setMatchQuery} />}
         {activeTab === "facturation" && <FacturationTab />}
         {activeTab === "candidatures" && <CandidaturesTab />}
+        {activeTab === "offres-ft" && <OffresFranceTravailTab offresSector={offresSector} setOffresSector={setOffresSector} />}
       </main>
 
       {/* Talent Dossier Modal */}
