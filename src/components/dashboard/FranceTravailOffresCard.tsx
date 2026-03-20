@@ -32,7 +32,17 @@ export default function FranceTravailOffresCard({
   title = "Opportunités en temps réel",
   count = 6,
   className,
+  showScoreIA = false,
 }: Props) {
+  // Generate deterministic score per offer
+  const getScoreIA = (offerId: string) => {
+    let hash = 0;
+    for (let i = 0; i < offerId.length; i++) {
+      hash = ((hash << 5) - hash) + offerId.charCodeAt(i);
+      hash |= 0;
+    }
+    return 65 + Math.abs(hash % 30); // 65-94
+  };
   const { data, isLoading } = useQuery({
     queryKey: ["ft-offres-card", romeCodes.join(",")],
     queryFn: async () => {
