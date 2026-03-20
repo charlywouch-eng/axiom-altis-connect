@@ -675,7 +675,13 @@ export default function DashboardSociete() {
             romeCodes={["F1703", "J1501", "G1602"]}
             title="Offres d'emploi en temps réel"
             count={6}
+            showScoreIA
           />
+        </motion.div>
+
+        {/* ── Formations Recommandées ──────────────── */}
+        <motion.div custom={3.85} variants={fadeUp}>
+          <FranceTravailFormationsCard romeCode="F1703" />
         </motion.div>
 
         {/* ── Agences France Travail ────────────────── */}
