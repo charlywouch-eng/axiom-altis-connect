@@ -877,6 +877,7 @@ export default function DashboardTalent() {
                     romeCodes={[talentProfile?.rome_code || "F1703", "J1501", "G1602"]}
                     title="Vos Opportunités en Temps Réel"
                     count={6}
+                    showScoreIA
                   />
                 </motion.div>
 
