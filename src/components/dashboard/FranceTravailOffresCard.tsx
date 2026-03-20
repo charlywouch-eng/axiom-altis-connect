@@ -100,6 +100,10 @@ export default function FranceTravailOffresCard({
 
   const offers = data || [];
 
+  useEffect(() => {
+    if (!isLoading && onOffersLoaded) onOffersLoaded(offers.length);
+  }, [offers.length, isLoading, onOffersLoaded]);
+
   return (
     <Card className={`overflow-hidden border-accent/20 shadow-sm ${className}`}>
       <div className="h-1 w-full bg-gradient-to-r from-accent via-primary to-accent/40" />
