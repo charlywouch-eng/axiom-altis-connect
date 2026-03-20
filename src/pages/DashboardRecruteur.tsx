@@ -56,6 +56,7 @@ export default function DashboardRecruteur() {
   const [selectedTalent, setSelectedTalent] = useState<any>(null);
   const [matchQuery, setMatchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("talents");
+  const [offresSector, setOffresSector] = useState<string>("all");
 
   if (loading) return null;
   if (!session) return <Navigate to="/login" replace />;
