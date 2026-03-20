@@ -59,6 +59,7 @@ import Rgpd from "./pages/Rgpd";
 import RgpdLight from "./pages/RgpdLight";
 import Leads from "./pages/Leads";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import PackAltisSuccess from "./pages/PackAltisSuccess";
 import Pricing from "./pages/Pricing";
 import APropos from "./pages/APropos";
 import Pitch from "./pages/Pitch";
@@ -277,6 +278,7 @@ const App = () => (
             <Route path="/rgpd-light" element={<RgpdLight />} />
             <Route path="/leads" element={<Leads />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/pack-altis-success" element={<PackAltisSuccess />} />
             <Route
               path="/admin/leads"
               element={
