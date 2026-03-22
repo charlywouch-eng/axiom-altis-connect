@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,8 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Briefcase, Globe, TrendingUp, Search, GraduationCap } from "lucide-react";
+import { Users, Briefcase, Globe, Search, GraduationCap, CreditCard, Star, TrendingUp } from "lucide-react";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminDashboard() {
   return (
@@ -26,6 +27,8 @@ export default function AdminDashboard() {
 
 function AdminContent() {
   const [search, setSearch] = useState("");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Real talent count from talent_profiles
   const { data: talentProfiles = [], isLoading: loadingTalents } = useQuery({
@@ -39,6 +42,43 @@ function AdminContent() {
       return data || [];
     },
   });
+
+  // Premium payments (Pack ALTIS activés)
+  const { data: premiumTalents = [] } = useQuery({
+    queryKey: ["admin_premium_talents"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("talent_profiles")
+        .select("id, user_id, full_name, premium_unlocked_at, is_premium")
+        .eq("is_premium", true)
+        .order("premium_unlocked_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Realtime: listen for new premium activations
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-premium-watch")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "talent_profiles", filter: "is_premium=eq.true" },
+        (payload) => {
+          const newRow = payload.new as any;
+          if (newRow.is_premium && payload.old && !(payload.old as any).is_premium) {
+            toast({
+              title: "💰 Nouveau Pack ALTIS activé !",
+              description: `${newRow.full_name || "Un talent"} vient d'activer le Pack ALTIS (29 €)`,
+            });
+            queryClient.invalidateQueries({ queryKey: ["admin_premium_talents"] });
+            queryClient.invalidateQueries({ queryKey: ["admin_talent_profiles"] });
+          }
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient, toast]);
 
   // Real offer count
   const { data: offerStats } = useQuery({
@@ -91,6 +131,7 @@ function AdminContent() {
   const avgScore = talentProfiles.length > 0
     ? Math.round(talentProfiles.reduce((sum, t) => sum + (t.score || 0), 0) / talentProfiles.length)
     : 0;
+  const estimatedRevenue = premiumTalents.length * 29;
 
   const filtered = profiles.filter((t) => {
     const q = search.toLowerCase();
@@ -142,6 +183,79 @@ function AdminContent() {
           subtitle="Partenaires actifs"
         />
       </div>
+
+      {/* Pack ALTIS Payments */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="border-accent/30 bg-accent/5">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="rounded-full bg-accent/20 p-3">
+              <CreditCard className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Pack ALTIS activés</p>
+              <p className="text-3xl font-bold font-display">{premiumTalents.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-accent/30 bg-accent/5">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="rounded-full bg-accent/20 p-3">
+              <TrendingUp className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Revenus Pack ALTIS</p>
+              <p className="text-3xl font-bold font-display">{estimatedRevenue} €</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-accent/30 bg-accent/5">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="rounded-full bg-accent/20 p-3">
+              <Star className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Taux premium</p>
+              <p className="text-3xl font-bold font-display">
+                {talentProfiles.length > 0 ? Math.round((premiumTalents.length / talentProfiles.length) * 100) : 0}%
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Pack ALTIS Activations */}
+      {premiumTalents.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-accent" />
+              Dernières activations Pack ALTIS
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {premiumTalents.slice(0, 5).map((t) => (
+                <div key={t.id} className="flex items-center justify-between rounded-lg border border-border/50 p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2.5 w-2.5 rounded-full bg-accent animate-pulse" />
+                    <span className="font-medium">{t.full_name || "Talent"}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge className="bg-accent/15 text-accent border-accent/30 hover:bg-accent/20">
+                      ⭐ Premium
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {t.premium_unlocked_at
+                        ? new Date(t.premium_unlocked_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+                        : "—"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Secondary stats */}
       <div className="grid gap-4 sm:grid-cols-3">
