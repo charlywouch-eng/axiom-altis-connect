@@ -66,7 +66,7 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
     let customerId: string | undefined;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
@@ -76,7 +76,7 @@ serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
+      customer_email: customerId ? undefined : userEmail,
       line_items: [
         {
           price: priceConfig.id,
@@ -89,7 +89,7 @@ serve(async (req) => {
         : `${origin}/dashboard-talent?premium=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/dashboard-talent?canceled=true`,
       metadata: {
-        user_id: user.id,
+        user_id: userId,
         payment_type: priceConfig.payment_type,
       },
     });
