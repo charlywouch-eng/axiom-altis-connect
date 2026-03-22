@@ -80,6 +80,12 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
   const [mobility, setMobility] = useState("");
   const [desiredSalary, setDesiredSalary] = useState("");
 
+  // Section 6 — Experience Passport
+  const [attestations, setAttestations] = useState<AttestationFile[]>([]);
+  const [minrexConsent, setMinrexConsent] = useState(false);
+  const [employerVerification, setEmployerVerification] = useState(false);
+  const [passportRgpd, setPassportRgpd] = useState(false);
+
   const addCompetence = () => {
     const v = compInput.trim();
     if (v && !competences.includes(v)) {
