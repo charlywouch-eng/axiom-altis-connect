@@ -106,7 +106,7 @@ export default function Billing() {
   const prevMonthTotal = monthlyData[monthlyData.length - 2]?.total ?? 0;
   const trend = prevMonthTotal === 0 ? 0 : ((currentMonthTotal - prevMonthTotal) / prevMonthTotal) * 100;
 
-
+  useEffect(() => {
     const handlePaymentResult = async () => {
       const offerId = searchParams.get("offer");
       if (searchParams.get("success") === "true") {
