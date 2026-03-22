@@ -402,6 +402,20 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
                   </div>
                 </div>
               )}
+
+              {/* ── STEP 5: Experience Passport */}
+              {step === 5 && (
+                <ExperiencePassportSection
+                  attestations={attestations}
+                  onAttestationsChange={setAttestations}
+                  minrexConsent={minrexConsent}
+                  onMinrexConsentChange={setMinrexConsent}
+                  employerVerification={employerVerification}
+                  onEmployerVerificationChange={setEmployerVerification}
+                  rgpdConsent={passportRgpd}
+                  onRgpdConsentChange={setPassportRgpd}
+                />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -413,7 +427,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
             {step === 0 ? "Annuler" : "Précédent"}
           </Button>
 
-          {step < 4 ? (
+          {step < 5 ? (
             <Button size="sm" onClick={() => setStep(step + 1)} disabled={!canProceed()} className="gap-1 text-xs bg-accent text-accent-foreground hover:bg-accent/90">
               Suivant <ChevronRight className="h-3.5 w-3.5" />
             </Button>
