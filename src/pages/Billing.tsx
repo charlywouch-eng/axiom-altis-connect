@@ -15,15 +15,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreditCard, CheckCircle, XCircle, ExternalLink } from "lucide-react";
+import { CreditCard, CheckCircle, XCircle, ExternalLink, FileText, RefreshCw, Receipt } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const MOCK_INVOICES = [
-  { id: "INV-001", date: "2026-01-15", description: "Success Fee – Dev Full-Stack", amount: 3500, status: "paid" },
-  { id: "INV-002", date: "2026-02-01", description: "Success Fee – Designer UX", amount: 3500, status: "pending" },
-];
+interface StripeInvoice {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  status: string;
+  pdf_url: string | null;
+  hosted_url: string | null;
+}
+
+interface StripePayment {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  status: string;
+  receipt_url: string | null;
+}
 
 export default function Billing() {
   const { user } = useAuth();
@@ -45,13 +60,35 @@ export default function Billing() {
     enabled: !!user,
   });
 
+  const {
+    data: billingData,
+    isLoading: billingLoading,
+    refetch: refetchBilling,
+  } = useQuery({
+    queryKey: ["stripe-invoices", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("list-invoices");
+      if (error) throw error;
+      return data as { invoices: StripeInvoice[]; payments: StripePayment[] };
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+
+  const invoices = billingData?.invoices ?? [];
+  const payments = billingData?.payments ?? [];
+  const allTransactions = [
+    ...invoices.map((inv) => ({ ...inv, type: "invoice" as const })),
+    ...payments.map((p) => ({ ...p, type: "payment" as const, pdf_url: null, hosted_url: null, receipt_url: p.receipt_url })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   useEffect(() => {
     const handlePaymentResult = async () => {
       const offerId = searchParams.get("offer");
       if (searchParams.get("success") === "true") {
         toast({ title: "Paiement réussi ✓", description: "Le success fee a été enregistré." });
+        refetchBilling();
 
-        // Update offer status to "filled" if an offer ID was provided
         if (offerId && user) {
           try {
             await supabase
@@ -74,7 +111,8 @@ export default function Billing() {
       }
     };
     handlePaymentResult();
-  }, [searchParams, toast, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handlePay = async (offerId?: string) => {
     setPaying(true);
@@ -93,10 +131,54 @@ export default function Billing() {
     }
   };
 
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const statusBadge = (status: string) => {
+    switch (status) {
+      case "paid":
+        return (
+          <Badge className="bg-accent text-accent-foreground">
+            <CheckCircle className="mr-1 h-3 w-3" /> Payée
+          </Badge>
+        );
+      case "pending":
+      case "open":
+        return (
+          <Badge variant="outline">
+            <XCircle className="mr-1 h-3 w-3" /> En attente
+          </Badge>
+        );
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
   return (
     <DashboardLayout sidebarVariant="entreprise">
       <div className="space-y-6">
-        <h2 className="font-display text-2xl font-bold">Facturation</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-2xl font-bold">Facturation</h2>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => refetchBilling()}>
+              <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+              Actualiser
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleManageSubscription}>
+              <ExternalLink className="mr-1.5 h-3.5 w-3.5" />
+              Gérer l'abonnement
+            </Button>
+          </div>
+        </div>
 
         {/* Pay success fee */}
         <Card>
@@ -132,48 +214,74 @@ export default function Billing() {
           </CardContent>
         </Card>
 
-        {/* Invoice history */}
+        {/* Real invoice & payment history */}
         <Card>
           <CardHeader>
-            <CardTitle>Historique des factures</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Receipt className="h-5 w-5" />
+              Historique des factures et paiements
+            </CardTitle>
+            <CardDescription>
+              Transactions Stripe en temps réel liées à votre compte.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Réf.</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Montant</TableHead>
-                  <TableHead>Statut</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {MOCK_INVOICES.map((inv) => (
-                  <TableRow key={inv.id}>
-                    <TableCell className="font-mono text-xs">{inv.id}</TableCell>
-                    <TableCell>
-                      {format(new Date(inv.date), "dd MMM yyyy", { locale: fr })}
-                    </TableCell>
-                    <TableCell>{inv.description}</TableCell>
-                    <TableCell className="text-right font-medium">
-                      {inv.amount.toLocaleString("fr-FR")} €
-                    </TableCell>
-                    <TableCell>
-                      {inv.status === "paid" ? (
-                        <Badge className="bg-accent text-accent-foreground">
-                          <CheckCircle className="mr-1 h-3 w-3" /> Payée
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">
-                          <XCircle className="mr-1 h-3 w-3" /> En attente
-                        </Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
+            {billingLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+            ) : allTransactions.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">
+                Aucune transaction trouvée. Vos factures apparaîtront ici après votre premier paiement.
+              </p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Réf.</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead className="text-right">Montant</TableHead>
+                    <TableHead>Statut</TableHead>
+                    <TableHead className="text-right">Document</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {allTransactions.map((tx, idx) => (
+                    <TableRow key={`${tx.type}-${tx.id}-${idx}`}>
+                      <TableCell className="font-mono text-xs">{tx.id}</TableCell>
+                      <TableCell>
+                        {format(new Date(tx.date), "dd MMM yyyy", { locale: fr })}
+                      </TableCell>
+                      <TableCell>{tx.description}</TableCell>
+                      <TableCell className="text-right font-medium">
+                        {tx.amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+                      </TableCell>
+                      <TableCell>{statusBadge(tx.status)}</TableCell>
+                      <TableCell className="text-right">
+                        {tx.type === "invoice" && tx.pdf_url ? (
+                          <Button variant="ghost" size="sm" asChild>
+                            <a href={tx.pdf_url} target="_blank" rel="noopener noreferrer">
+                              <FileText className="mr-1 h-3.5 w-3.5" /> PDF
+                            </a>
+                          </Button>
+                        ) : tx.type === "payment" && (tx as any).receipt_url ? (
+                          <Button variant="ghost" size="sm" asChild>
+                            <a href={(tx as any).receipt_url} target="_blank" rel="noopener noreferrer">
+                              <Receipt className="mr-1 h-3.5 w-3.5" /> Reçu
+                            </a>
+                          </Button>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </div>
