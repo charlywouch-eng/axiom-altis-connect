@@ -108,6 +108,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
     if (step === 2) return formations.some(f => f.diplome.trim());
     if (step === 3) return competences.length > 0;
     if (step === 4) return contractType.trim().length > 0;
+    if (step === 5) return passportRgpd && minrexConsent;
     return true;
   };
 
