@@ -4,7 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
@@ -346,18 +346,34 @@ serve(async (req) => {
     }
     const token = authHeader.replace("Bearer ", "");
 
-    // Allow internal calls from DB triggers that pass the anon key or service role key
-    const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const isInternalCall = token === SERVICE_KEY || token === ANON_KEY;
+    // SECURITY: Only accept service_role key for internal/trigger calls
+    // The anon key is public and MUST NOT grant access to notification sending
+    const isInternalCall = token === SERVICE_KEY;
 
     if (!isInternalCall) {
       // Validate as user JWT
+      const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
       const anonClient = createClient(SUPABASE_URL, ANON_KEY);
       const { data: userData, error: userError } = await anonClient.auth.getUser(token);
       if (userError || !userData.user) {
         return new Response(
           JSON.stringify({ error: "Non autorisé" }),
           { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Only admins can trigger notifications via API
+      const roleClient = createClient(SUPABASE_URL, SERVICE_KEY);
+      const { data: roleData } = await roleClient
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userData.user.id)
+        .single();
+      
+      if (!roleData || roleData.role !== "admin") {
+        return new Response(
+          JSON.stringify({ error: "Accès réservé aux administrateurs" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
     }
