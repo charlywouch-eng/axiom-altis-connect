@@ -57,8 +57,8 @@ export default function AdminEmailLogs() {
   const { data: logs, isLoading, refetch } = useQuery({
     queryKey: ["email_send_log", timeRange, statusFilter],
     queryFn: async () => {
-      let q = supabase
-        .from("email_send_log" as any)
+      let q = (supabase as any)
+        .from("email_send_log")
         .select("*")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
