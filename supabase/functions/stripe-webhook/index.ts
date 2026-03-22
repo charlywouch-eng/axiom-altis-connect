@@ -77,6 +77,33 @@ serve(async (req) => {
           if (error) { console.error("Error inserting premium talent profile:", error); throw error; }
         }
         console.log(`Premium unlocked for user ${user_id}`);
+
+        // Send Pack ALTIS confirmation email for full (29€) tier
+        if (payment_type === "deblocage_complet") {
+          const customerEmail = session.customer_details?.email || session.customer_email;
+          if (customerEmail) {
+            // Fetch talent name for personalization
+            const { data: talentData } = await supabaseClient
+              .from("talent_profiles")
+              .select("full_name")
+              .eq("user_id", user_id)
+              .maybeSingle();
+
+            const { error: emailError } = await supabaseClient.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "pack-altis-confirmation",
+                recipientEmail: customerEmail,
+                idempotencyKey: `pack-altis-confirm-${session.id}`,
+                templateData: { name: talentData?.full_name || undefined },
+              },
+            });
+            if (emailError) {
+              console.error("Failed to send Pack ALTIS confirmation email:", emailError);
+            } else {
+              console.log(`Pack ALTIS confirmation email queued for ${customerEmail}`);
+            }
+          }
+        }
       }
 
       // ── Paiement lead (pas de user_id) — stocker le flag par email ──
