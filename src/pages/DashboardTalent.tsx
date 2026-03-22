@@ -204,15 +204,25 @@ export default function DashboardTalent() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (params.get("premium") === "true") {
+    if (params.get("premium") === "true" && params.get("session_id")) {
+      // Full pack (29€) payment success
+      queryClient.invalidateQueries({ queryKey: ["talent_profile", user?.id] });
+      toast({ title: "🎉 Pack ALTIS activé !", description: "Préparation dossier commencée · Badge Profil Vérifié Premium débloqué." });
+      window.history.replaceState({}, "", "/dashboard-talent");
+    } else if (params.get("premium") === "true") {
+      queryClient.invalidateQueries({ queryKey: ["talent_profile", user?.id] });
       toast({ title: "🎉 Analyse Complète débloquée !", description: "Score détaillé, offres France Travail et parcours ALTIS maintenant accessibles." });
+      window.history.replaceState({}, "", "/dashboard-talent");
+    }
+    if (params.get("canceled") === "true") {
+      toast({ title: "Paiement annulé", description: "Vous pouvez réessayer à tout moment.", variant: "destructive" });
       window.history.replaceState({}, "", "/dashboard-talent");
     }
     const tab = params.get("tab");
     if (tab && ["dashboard", "parcours", "opportunites", "profil"].includes(tab)) {
       setActiveTab(tab);
     }
-  }, [location.search, toast]);
+  }, [location.search, toast, queryClient, user?.id]);
 
   useEffect(() => {
     const pending = localStorage.getItem("axiom_pending_profile");
