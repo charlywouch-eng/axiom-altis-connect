@@ -21,8 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Mail, CheckCircle2, XCircle, Clock, RefreshCw } from "lucide-react";
-import { format } from "date-fns";
+import { format, eachDayOfInterval } from "date-fns";
 import { fr } from "date-fns/locale";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 
 const TIME_RANGES = [
   { label: "24 heures", value: "24h", hours: 24 },
@@ -122,6 +123,54 @@ export default function AdminEmailLogs() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Chart */}
+        {logs && logs.length > 0 && (() => {
+          const sinceDate = new Date(since);
+          const days = eachDayOfInterval({ start: sinceDate, end: new Date() });
+          const chartData = days.map((day) => {
+            const dayStr = format(day, "yyyy-MM-dd");
+            const dayLogs = logs.filter((l) => l.created_at.startsWith(dayStr));
+            return {
+              date: format(day, "dd MMM", { locale: fr }),
+              envoyés: dayLogs.filter((l) => l.status === "sent").length,
+              échoués: dayLogs.filter((l) => l.status === "failed").length,
+            };
+          });
+          return (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Évolution des envois par jour</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="gradSent" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="gradFailed" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                      <RechartsTooltip
+                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                      />
+                      <Area type="monotone" dataKey="envoyés" stroke="hsl(var(--accent))" fill="url(#gradSent)" strokeWidth={2} />
+                      <Area type="monotone" dataKey="échoués" stroke="hsl(var(--destructive))" fill="url(#gradFailed)" strokeWidth={2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3">
