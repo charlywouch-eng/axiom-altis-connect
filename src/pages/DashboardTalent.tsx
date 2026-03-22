@@ -204,15 +204,25 @@ export default function DashboardTalent() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (params.get("premium") === "true") {
+    if (params.get("premium") === "true" && params.get("session_id")) {
+      // Full pack (29€) payment success
+      queryClient.invalidateQueries({ queryKey: ["talent_profile", user?.id] });
+      toast({ title: "🎉 Pack ALTIS activé !", description: "Préparation dossier commencée · Badge Profil Vérifié Premium débloqué." });
+      window.history.replaceState({}, "", "/dashboard-talent");
+    } else if (params.get("premium") === "true") {
+      queryClient.invalidateQueries({ queryKey: ["talent_profile", user?.id] });
       toast({ title: "🎉 Analyse Complète débloquée !", description: "Score détaillé, offres France Travail et parcours ALTIS maintenant accessibles." });
+      window.history.replaceState({}, "", "/dashboard-talent");
+    }
+    if (params.get("canceled") === "true") {
+      toast({ title: "Paiement annulé", description: "Vous pouvez réessayer à tout moment.", variant: "destructive" });
       window.history.replaceState({}, "", "/dashboard-talent");
     }
     const tab = params.get("tab");
     if (tab && ["dashboard", "parcours", "opportunites", "profil"].includes(tab)) {
       setActiveTab(tab);
     }
-  }, [location.search, toast]);
+  }, [location.search, toast, queryClient, user?.id]);
 
   useEffect(() => {
     const pending = localStorage.getItem("axiom_pending_profile");
@@ -457,17 +467,17 @@ export default function DashboardTalent() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-foreground flex items-center gap-2">
-                      Compte Premium Actif
+                      Profil Vérifié Premium
                       <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0 text-[10px] px-2 py-0.5 font-bold gap-1 shadow-sm">
                         <Star className="h-2.5 w-2.5" /> PREMIUM
                       </Badge>
                     </p>
-                    <p className="text-xs text-muted-foreground">Score détaillé · Offres illimitées · Parcours ALTIS complet · Priorité recruteurs ×3</p>
+                    <p className="text-xs text-muted-foreground">Pack ALTIS activé · Préparation dossier commencée · Priorité recruteurs ×3</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 bg-success/10 rounded-lg px-3 py-1.5">
                   <CheckCircle2 className="h-4 w-4 text-success" />
-                  <span className="text-xs font-semibold text-success">Débloqué</span>
+                  <span className="text-xs font-semibold text-success">Service complet activé ✓</span>
                 </div>
               </div>
             ) : (
