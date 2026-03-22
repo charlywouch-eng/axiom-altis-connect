@@ -437,6 +437,76 @@ export default function Index() {
         </div>
       </section>
 
+      {/* ── Partenariat Officiel MINEFOP ─────────────────────── */}
+      <section className="mx-auto max-w-5xl px-5 py-20 md:px-10 md:py-28">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} className="text-center mb-12">
+          <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
+            Nos partenariats officiels
+          </motion.p>
+          <motion.h2 custom={1} variants={fadeUp} className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground leading-tight">
+            Partenariat Officiel avec le{" "}
+            <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">MINEFOP – Cameroun</span>
+          </motion.h2>
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }} className="mb-12">
+          <motion.p custom={2} variants={fadeUp} className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto text-center">
+            Nous travaillons en étroite collaboration avec le Ministère de l'Emploi et de la Formation Professionnelle du Cameroun.
+            Chaque talent est formé selon les programmes <strong className="text-foreground">CQP/DQP officiels</strong>, audités et complétés par nos{" "}
+            <strong className="text-foreground">Classes Miroirs</strong> pour correspondre parfaitement aux exigences françaises (Codes ROME).
+            <br className="hidden sm:block" />
+            <span className="mt-2 inline-block">
+              Résultat : le badge <strong className="text-accent">« AXIOM READY »</strong> garanti aux entreprises.
+            </span>
+          </motion.p>
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }} className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {[
+            {
+              icon: Building2,
+              title: "MINEFOP",
+              desc: "Ministère de l'Emploi et de la Formation Professionnelle – Cameroun",
+              color: "text-primary",
+              bg: "bg-primary/10",
+              border: "border-primary/20",
+            },
+            {
+              icon: FileCheck,
+              title: "Certification CQP/DQP",
+              desc: "Programmes officiels audités et alignés sur les standards français",
+              color: "text-accent",
+              bg: "bg-accent/10",
+              border: "border-accent/20",
+            },
+            {
+              icon: Award,
+              title: "AXIOM READY",
+              desc: "Badge qualité garanti : talent formé, vérifié, prêt à travailler en France",
+              color: "text-success",
+              bg: "bg-success/10",
+              border: "border-success/20",
+            },
+          ].map((card, i) => {
+            const CardIcon = card.icon;
+            return (
+              <motion.div
+                key={card.title}
+                custom={i}
+                variants={scaleIn}
+                className={`group rounded-2xl border ${card.border} bg-card p-6 text-center transition-all duration-300 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-1`}
+              >
+                <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${card.bg} transition-colors group-hover:scale-110`}>
+                  <CardIcon className={`h-7 w-7 ${card.color}`} />
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-2">{card.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </section>
+
       {/* ── Partners ─────────────────────────────────────────── */}
       <Suspense fallback={null}>
         <PartnersCarousel />
