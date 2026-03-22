@@ -32,6 +32,9 @@ function buildAltisEmailHtml(talentName: string): string {
 </div></body></html>`;
 }
 
+const FROM_PROD = "AXIOM × ALTIS <contact@axiom-talents.com>";
+const FROM_FALLBACK = "AXIOM × ALTIS <delivered@resend.dev>";
+
 async function sendResendEmail(
   resendKey: string,
   to: string,
@@ -44,20 +47,23 @@ async function sendResendEmail(
   console.log(`[RESEND] Template utilisé : altis-activation-29`);
   console.log(`[RESEND] Nom talent : ${talentName}`);
 
-  try {
-    const resendRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "AXIOM × ALTIS <contact@axiom-talents.com>",
-        to: [to],
-        subject: "✅ Votre Pack ALTIS Zéro Stress est activé !",
-        html: emailHtml,
-      }),
-    });
+  // Try production domain first, fallback to resend.dev if 403
+  for (const fromAddr of [FROM_PROD, FROM_FALLBACK]) {
+    console.log(`[RESEND] Essai avec expéditeur: ${fromAddr}`);
+    try {
+      const resendRes = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromAddr,
+          to: [to],
+          subject: "✅ Votre Pack ALTIS Zéro Stress est activé !",
+          html: emailHtml,
+        }),
+      });
 
     const resBody = await resendRes.text();
 
