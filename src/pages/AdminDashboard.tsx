@@ -27,6 +27,8 @@ export default function AdminDashboard() {
 
 function AdminContent() {
   const [search, setSearch] = useState("");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Real talent count from talent_profiles
   const { data: talentProfiles = [], isLoading: loadingTalents } = useQuery({
@@ -40,6 +42,43 @@ function AdminContent() {
       return data || [];
     },
   });
+
+  // Premium payments (Pack ALTIS activés)
+  const { data: premiumTalents = [] } = useQuery({
+    queryKey: ["admin_premium_talents"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("talent_profiles")
+        .select("id, user_id, full_name, premium_unlocked_at, is_premium")
+        .eq("is_premium", true)
+        .order("premium_unlocked_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Realtime: listen for new premium activations
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-premium-watch")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "talent_profiles", filter: "is_premium=eq.true" },
+        (payload) => {
+          const newRow = payload.new as any;
+          if (newRow.is_premium && payload.old && !(payload.old as any).is_premium) {
+            toast({
+              title: "💰 Nouveau Pack ALTIS activé !",
+              description: `${newRow.full_name || "Un talent"} vient d'activer le Pack ALTIS (29 €)`,
+            });
+            queryClient.invalidateQueries({ queryKey: ["admin_premium_talents"] });
+            queryClient.invalidateQueries({ queryKey: ["admin_talent_profiles"] });
+          }
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient, toast]);
 
   // Real offer count
   const { data: offerStats } = useQuery({
@@ -92,6 +131,7 @@ function AdminContent() {
   const avgScore = talentProfiles.length > 0
     ? Math.round(talentProfiles.reduce((sum, t) => sum + (t.score || 0), 0) / talentProfiles.length)
     : 0;
+  const estimatedRevenue = premiumTalents.length * 29;
 
   const filtered = profiles.filter((t) => {
     const q = search.toLowerCase();
