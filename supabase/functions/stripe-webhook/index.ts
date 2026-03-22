@@ -145,11 +145,32 @@ serve(async (req) => {
                 });
                 if (resendRes.ok) {
                   console.log(`Pack ALTIS confirmation email sent via Resend to ${customerEmail}`);
+                  await supabaseClient.from("email_send_log").insert({
+                    template_name: "pack-altis-confirmation",
+                    recipient_email: customerEmail,
+                    status: "sent",
+                    metadata: { user_id, session_id: session.id, talent_name: talentName },
+                  });
                 } else {
-                  console.error(`Resend error: ${resendRes.status} ${await resendRes.text()}`);
+                  const errText = await resendRes.text();
+                  console.error(`Resend error: ${resendRes.status} ${errText}`);
+                  await supabaseClient.from("email_send_log").insert({
+                    template_name: "pack-altis-confirmation",
+                    recipient_email: customerEmail,
+                    status: "failed",
+                    error_message: `${resendRes.status}: ${errText}`,
+                    metadata: { user_id, session_id: session.id },
+                  });
                 }
               } catch (emailErr) {
                 console.error("Failed to send Resend email:", emailErr);
+                await supabaseClient.from("email_send_log").insert({
+                  template_name: "pack-altis-confirmation",
+                  recipient_email: customerEmail,
+                  status: "failed",
+                  error_message: emailErr?.message || String(emailErr),
+                  metadata: { user_id, session_id: session.id },
+                });
               }
             } else {
               console.warn("RESEND_API_KEY not configured, skipping confirmation email");
