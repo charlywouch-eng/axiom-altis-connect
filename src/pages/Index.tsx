@@ -419,8 +419,8 @@ export default function Index() {
             {[
               { end: 500, suffix: "+", label: "Talents qualifiés", icon: Users },
               { end: 98, suffix: "%", label: "Taux de rétention", icon: BarChart3 },
-              { end: 15, suffix: "", label: "Pays d'origine", icon: Globe },
-              { end: 30, suffix: "j", label: "Délai moyen", icon: Clock },
+              { text: "Multi-pays", label: "Couverture Afrique", icon: Globe },
+              { text: "Express", label: "Délai de placement", icon: Clock },
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
@@ -428,7 +428,7 @@ export default function Index() {
                   <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
                     <Icon className="h-[18px] w-[18px] text-accent" />
                   </div>
-                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
+                  {'text' in stat ? <p className="text-3xl font-bold font-display tracking-tight text-foreground">{stat.text}</p> : <AnimatedCounter end={stat.end!} suffix={stat.suffix!} />}
                   <p className="mt-1 text-xs text-muted-foreground font-medium">{stat.label}</p>
                 </motion.div>
               );
