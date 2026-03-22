@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,8 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Briefcase, Globe, TrendingUp, Search, GraduationCap } from "lucide-react";
+import { Users, Briefcase, Globe, Search, GraduationCap, CreditCard, Star, TrendingUp } from "lucide-react";
 import { PremiumStatCard } from "@/components/PremiumStatCard";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminDashboard() {
   return (
