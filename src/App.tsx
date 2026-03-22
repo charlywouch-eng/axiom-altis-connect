@@ -298,6 +298,7 @@ const App = () => (
                   <AdminEmailLogs />
                 </ProtectedRoute>
               }
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <CookieConsentBanner />
