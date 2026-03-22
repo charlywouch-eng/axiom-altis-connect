@@ -52,7 +52,7 @@ async function sendResendEmail(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "AXIOM × ALTIS <notify@axiom-talents.com>",
+        from: "AXIOM × ALTIS <delivered@resend.dev>",
         to: [to],
         subject: "✅ Votre Pack ALTIS Zéro Stress est activé !",
         html: emailHtml,
