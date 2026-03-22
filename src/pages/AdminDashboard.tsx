@@ -184,6 +184,79 @@ function AdminContent() {
         />
       </div>
 
+      {/* Pack ALTIS Payments */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="border-accent/30 bg-accent/5">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="rounded-full bg-accent/20 p-3">
+              <CreditCard className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Pack ALTIS activés</p>
+              <p className="text-3xl font-bold font-display">{premiumTalents.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-accent/30 bg-accent/5">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="rounded-full bg-accent/20 p-3">
+              <TrendingUp className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Revenus Pack ALTIS</p>
+              <p className="text-3xl font-bold font-display">{estimatedRevenue} €</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-accent/30 bg-accent/5">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="rounded-full bg-accent/20 p-3">
+              <Star className="h-6 w-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Taux premium</p>
+              <p className="text-3xl font-bold font-display">
+                {talentProfiles.length > 0 ? Math.round((premiumTalents.length / talentProfiles.length) * 100) : 0}%
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Pack ALTIS Activations */}
+      {premiumTalents.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-accent" />
+              Dernières activations Pack ALTIS
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {premiumTalents.slice(0, 5).map((t) => (
+                <div key={t.id} className="flex items-center justify-between rounded-lg border border-border/50 p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2.5 w-2.5 rounded-full bg-accent animate-pulse" />
+                    <span className="font-medium">{t.full_name || "Talent"}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge className="bg-accent/15 text-accent border-accent/30 hover:bg-accent/20">
+                      ⭐ Premium
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {t.premium_unlocked_at
+                        ? new Date(t.premium_unlocked_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+                        : "—"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Secondary stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="border-border/50">
