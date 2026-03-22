@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -21,8 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Mail, CheckCircle2, XCircle, Clock, RefreshCw } from "lucide-react";
-import { format } from "date-fns";
+import { format, eachDayOfInterval, startOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const TIME_RANGES = [
   { label: "24 heures", value: "24h", hours: 24 },
