@@ -65,39 +65,45 @@ async function sendResendEmail(
         }),
       });
 
-    const resBody = await resendRes.text();
+      const resBody = await resendRes.text();
 
-    if (resendRes.ok) {
-      console.log(`[RESEND] ✅ Email envoyé avec succès à ${to} – Response: ${resBody}`);
-      await supabaseClient.from("email_send_log").insert({
-        template_name: "altis-activation-29",
-        recipient_email: to,
-        status: "sent",
-        metadata: { ...metadata, resend_response: resBody },
-      });
-      return true;
-    } else {
-      console.error(`[RESEND] ❌ Erreur ${resendRes.status}: ${resBody}`);
+      if (resendRes.ok) {
+        console.log(`[RESEND] ✅ Email envoyé avec succès via ${fromAddr} à ${to} – Response: ${resBody}`);
+        await supabaseClient.from("email_send_log").insert({
+          template_name: "altis-activation-29",
+          recipient_email: to,
+          status: "sent",
+          metadata: { ...metadata, from: fromAddr, resend_response: resBody },
+        });
+        return true;
+      } else if (resendRes.status === 403 && fromAddr === FROM_PROD) {
+        console.warn(`[RESEND] ⚠️ Domaine prod non vérifié (403), bascule sur fallback...`);
+        continue; // Try fallback
+      } else {
+        console.error(`[RESEND] ❌ Erreur ${resendRes.status}: ${resBody}`);
+        await supabaseClient.from("email_send_log").insert({
+          template_name: "altis-activation-29",
+          recipient_email: to,
+          status: "failed",
+          error_message: `${resendRes.status}: ${resBody}`,
+          metadata: { ...metadata, from: fromAddr },
+        });
+        return false;
+      }
+    } catch (emailErr) {
+      console.error(`[RESEND] ❌ Exception envoi email:`, emailErr);
+      if (fromAddr === FROM_PROD) continue; // Try fallback
       await supabaseClient.from("email_send_log").insert({
         template_name: "altis-activation-29",
         recipient_email: to,
         status: "failed",
-        error_message: `${resendRes.status}: ${resBody}`,
+        error_message: emailErr?.message || String(emailErr),
         metadata,
       });
       return false;
     }
-  } catch (emailErr) {
-    console.error(`[RESEND] ❌ Exception envoi email:`, emailErr);
-    await supabaseClient.from("email_send_log").insert({
-      template_name: "altis-activation-29",
-      recipient_email: to,
-      status: "failed",
-      error_message: emailErr?.message || String(emailErr),
-      metadata,
-    });
-    return false;
   }
+  return false;
 }
 
 serve(async (req) => {
