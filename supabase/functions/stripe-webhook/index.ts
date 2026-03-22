@@ -92,45 +92,27 @@ serve(async (req) => {
             const resendKey = Deno.env.get("RESEND_API_KEY");
 
             if (resendKey) {
-              const emailHtml = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#ffffff;font-family:'Inter',Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;">
-<tr><td style="background:#0F172A;padding:24px 32px;border-radius:12px 12px 0 0;text-align:center;">
-<p style="font-size:20px;font-weight:800;color:#ffffff;margin:0;letter-spacing:1px;">AXIOM × ALTIS</p>
-<p style="font-size:11px;color:#94a3b8;margin:4px 0 0;">TIaaS — Talent Infrastructure as a Service</p>
-</td></tr>
-<tr><td style="padding:24px 32px 8px;text-align:center;">
-<span style="display:inline-block;background:#ecfdf5;color:#059669;font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;border:1px solid #a7f3d0;">✅ PACK ALTIS ACTIVÉ</span>
-</td></tr>
-<tr><td style="padding:16px 32px 8px;text-align:center;">
-<h1 style="font-size:24px;font-weight:800;color:#0F172A;margin:0;">Félicitations ${talentName} !</h1>
-</td></tr>
-<tr><td style="padding:0 32px 16px;">
-<p style="font-size:14px;color:#475569;line-height:1.6;">Votre paiement de <strong>29 €</strong> a été confirmé. Votre Pack ALTIS Zéro Stress est maintenant actif.</p>
-<p style="font-size:14px;color:#475569;line-height:1.6;">Un conseiller AXIOM vous contactera sous <strong>48 heures</strong> pour démarrer votre dossier.</p>
-</td></tr>
-<tr><td style="padding:0 32px 20px;">
-<table width="100%" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;">
-<tr><td><p style="font-size:14px;font-weight:700;color:#0F172A;margin:0 0 16px;">📦 Votre Pack ALTIS inclut</p></td></tr>
-<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>📋 Préparation dossier ANEF</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Constitution complète de votre dossier de visa de travail.</p></td></tr>
-<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>🎯 Matching prioritaire recruteurs</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Votre profil est mis en avant ×3 auprès des entreprises françaises.</p></td></tr>
-<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>✈️ Accueil aéroport + 🏠 Logement 1 mois</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Prise en charge et hébergement garanti.</p></td></tr>
-<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>📄 Accompagnement administratif</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Sécurité sociale, compte bancaire, titre de séjour.</p></td></tr>
-<tr><td><p style="margin:0;font-size:13px;"><strong>🎓 Certification MINEFOP</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Validation officielle de vos qualifications.</p></td></tr>
-</table>
-</td></tr>
-<tr><td style="padding:0 32px 20px;">
-<table width="100%" style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 20px;">
-<tr><td><p style="font-size:13px;color:#0d9488;margin:0;">🚀 <strong>Badge Profil Vérifié Premium activé</strong> — Les recruteurs voient votre profil en priorité.</p></td></tr>
-</table>
-</td></tr>
-<tr><td style="text-align:center;padding:8px 0 24px;">
-<a href="https://axiom-altis-connect.lovable.app/dashboard-talent" style="display:inline-block;background:#1E40AF;color:#ffffff;font-size:14px;font-weight:700;padding:12px 32px;border-radius:8px;text-decoration:none;">Accéder à mon Dashboard</a>
-</td></tr>
-<tr><td style="border-top:1px solid #e2e8f0;padding:16px 32px;text-align:center;">
-<p style="font-size:11px;color:#94a3b8;">AXIOM × ALTIS · notify@axiom-talents.com</p>
-</td></tr>
-</table></body></html>`;
+              const emailHtml = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;margin:0;}.container{max-width:600px;margin:auto;background:white;border-radius:12px;overflow:hidden;}.header{background:#0A2540;color:white;padding:30px;text-align:center;}.header h1{margin:0;font-size:22px;letter-spacing:1px;}.header p{margin:6px 0 0;font-size:12px;color:#94a3b8;}.content{padding:40px 30px;line-height:1.6;color:#333;}.badge{background:#00C4B4;color:white;padding:8px 20px;border-radius:30px;display:inline-block;margin:15px 0;font-size:13px;font-weight:700;letter-spacing:0.5px;}.btn{background:#00C4B4;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;display:inline-block;margin:20px 0;font-weight:700;font-size:14px;}.footer{padding:20px 30px;text-align:center;font-size:11px;color:#94a3b8;border-top:1px solid #e2e8f0;}ul{padding-left:20px;}ul li{margin-bottom:8px;font-size:14px;}</style></head>
+<body><div class="container">
+<div class="header"><h1>AXIOM × ALTIS</h1><p>Infrastructure Souveraine France-Afrique</p></div>
+<div class="content">
+<h2 style="margin-top:0;">✅ Félicitations ${talentName} !</h2>
+<p>Votre <strong>Pack ALTIS Zéro Stress</strong> est maintenant activé.</p>
+<div class="badge">PROFIL VÉRIFIÉ PREMIUM</div>
+<p>Vous bénéficiez désormais de :</p>
+<ul>
+<li>🚀 <strong>Priorité recruteurs ×3</strong></li>
+<li>📋 Préparation complète du dossier ANEF</li>
+<li>📄 Accompagnement administratif renforcé</li>
+<li>✈️ Accueil aéroport + 🏠 Logement 1 mois</li>
+<li>🎓 Certification MINEFOP validée</li>
+<li>🎯 Badge <strong>AXIOM READY</strong> visible par toutes les entreprises</li>
+</ul>
+<a href="https://axiom-altis-connect.lovable.app/dashboard-talent" class="btn">Accéder à mon tableau de bord</a>
+<p style="font-size:13px;color:#666;">Nous vous contacterons sous 48h pour la prochaine étape de votre mobilité.</p>
+</div>
+<div class="footer">AXIOM × ALTIS · notify@axiom-talents.com</div>
+</div></body></html>`;
 
               try {
                 const resendRes = await fetch("https://api.resend.com/emails", {
