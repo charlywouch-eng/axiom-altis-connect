@@ -40,18 +40,6 @@ const ROLES = [
     dest: "/dashboard-talent",
   },
   {
-    id: "recruteur" as const,
-    label: "Je suis recruteur",
-    sublabel: "Chasseur de talents",
-    description: "Recherchez, sélectionnez et matchez des profils certifiés pour vos missions.",
-    icon: Search,
-    gradient: "from-[hsl(221,83%,20%)] to-[hsl(221,83%,38%)]",
-    accent: "hsl(221,83%,60%)",
-    accentLight: "hsl(221,83%,60%,0.15)",
-    perks: ["Pipeline recrutement", "Matching IA avancé", "Dossiers vérifiés MINEFOP"],
-    dest: "/dashboard-recruteur",
-  },
-  {
     id: "entreprise" as const,
     label: "Je suis une entreprise",
     sublabel: "Employeur / DRH",
@@ -174,7 +162,7 @@ export default function OnboardingRole() {
   if (role) return <Navigate to="/dashboard" replace />;
 
   /* ─── handlers ─── */
-  const selectRole = async (selectedRole: "entreprise" | "talent" | "recruteur") => {
+  const selectRole = async (selectedRole: "entreprise" | "talent") => {
     if (!user) return;
     trackGA4("inscription_start", { role: selectedRole });
     setSubmitting(true);
