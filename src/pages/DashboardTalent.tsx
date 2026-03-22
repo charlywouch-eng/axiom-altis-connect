@@ -467,17 +467,17 @@ export default function DashboardTalent() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-foreground flex items-center gap-2">
-                      Compte Premium Actif
+                      Profil Vérifié Premium
                       <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0 text-[10px] px-2 py-0.5 font-bold gap-1 shadow-sm">
                         <Star className="h-2.5 w-2.5" /> PREMIUM
                       </Badge>
                     </p>
-                    <p className="text-xs text-muted-foreground">Score détaillé · Offres illimitées · Parcours ALTIS complet · Priorité recruteurs ×3</p>
+                    <p className="text-xs text-muted-foreground">Pack ALTIS activé · Préparation dossier commencée · Priorité recruteurs ×3</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 bg-success/10 rounded-lg px-3 py-1.5">
                   <CheckCircle2 className="h-4 w-4 text-success" />
-                  <span className="text-xs font-semibold text-success">Débloqué</span>
+                  <span className="text-xs font-semibold text-success">Service complet activé ✓</span>
                 </div>
               </div>
             ) : (
