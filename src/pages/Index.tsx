@@ -428,7 +428,7 @@ export default function Index() {
                   <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
                     <Icon className="h-[18px] w-[18px] text-accent" />
                   </div>
-                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
+                  {'text' in stat ? <p className="text-3xl font-bold font-display tracking-tight text-foreground">{stat.text}</p> : <AnimatedCounter end={stat.end!} suffix={stat.suffix!} />}
                   <p className="mt-1 text-xs text-muted-foreground font-medium">{stat.label}</p>
                 </motion.div>
               );
