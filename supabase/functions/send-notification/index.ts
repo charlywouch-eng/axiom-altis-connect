@@ -299,12 +299,11 @@ async function isNotificationEnabled(supabase: any, talentUserId: string): Promi
   return data?.email_notifications_enabled !== false;
 }
 
-/** Send via Resend using demo domain (delivered@resend.dev) — no DNS needed */
+/** Send via Resend */
 async function sendEmail(to: string, subject: string, html: string) {
   if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
 
-  // Use demo domain (no DNS verification required)
-  const fromAddr = FROM_EMAIL_DEMO;
+  const fromAddr = FROM_EMAIL;
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
