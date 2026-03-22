@@ -78,29 +78,81 @@ serve(async (req) => {
         }
         console.log(`Premium unlocked for user ${user_id}`);
 
-        // Send Pack ALTIS confirmation email for full (29€) tier
+        // Send Pack ALTIS confirmation email via Resend for full (29€) tier
         if (payment_type === "deblocage_complet") {
           const customerEmail = session.customer_details?.email || session.customer_email;
           if (customerEmail) {
-            // Fetch talent name for personalization
             const { data: talentData } = await supabaseClient
               .from("talent_profiles")
               .select("full_name")
               .eq("user_id", user_id)
               .maybeSingle();
 
-            const { error: emailError } = await supabaseClient.functions.invoke("send-transactional-email", {
-              body: {
-                templateName: "pack-altis-confirmation",
-                recipientEmail: customerEmail,
-                idempotencyKey: `pack-altis-confirm-${session.id}`,
-                templateData: { name: talentData?.full_name || undefined },
-              },
-            });
-            if (emailError) {
-              console.error("Failed to send Pack ALTIS confirmation email:", emailError);
+            const talentName = talentData?.full_name || "Talent";
+            const resendKey = Deno.env.get("RESEND_API_KEY");
+
+            if (resendKey) {
+              const emailHtml = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:'Inter',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;">
+<tr><td style="background:#0F172A;padding:24px 32px;border-radius:12px 12px 0 0;text-align:center;">
+<p style="font-size:20px;font-weight:800;color:#ffffff;margin:0;letter-spacing:1px;">AXIOM × ALTIS</p>
+<p style="font-size:11px;color:#94a3b8;margin:4px 0 0;">TIaaS — Talent Infrastructure as a Service</p>
+</td></tr>
+<tr><td style="padding:24px 32px 8px;text-align:center;">
+<span style="display:inline-block;background:#ecfdf5;color:#059669;font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;border:1px solid #a7f3d0;">✅ PACK ALTIS ACTIVÉ</span>
+</td></tr>
+<tr><td style="padding:16px 32px 8px;text-align:center;">
+<h1 style="font-size:24px;font-weight:800;color:#0F172A;margin:0;">Félicitations ${talentName} !</h1>
+</td></tr>
+<tr><td style="padding:0 32px 16px;">
+<p style="font-size:14px;color:#475569;line-height:1.6;">Votre paiement de <strong>29 €</strong> a été confirmé. Votre Pack ALTIS Zéro Stress est maintenant actif.</p>
+<p style="font-size:14px;color:#475569;line-height:1.6;">Un conseiller AXIOM vous contactera sous <strong>48 heures</strong> pour démarrer votre dossier.</p>
+</td></tr>
+<tr><td style="padding:0 32px 20px;">
+<table width="100%" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;">
+<tr><td><p style="font-size:14px;font-weight:700;color:#0F172A;margin:0 0 16px;">📦 Votre Pack ALTIS inclut</p></td></tr>
+<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>📋 Préparation dossier ANEF</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Constitution complète de votre dossier de visa de travail.</p></td></tr>
+<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>🎯 Matching prioritaire recruteurs</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Votre profil est mis en avant ×3 auprès des entreprises françaises.</p></td></tr>
+<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>✈️ Accueil aéroport + 🏠 Logement 1 mois</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Prise en charge et hébergement garanti.</p></td></tr>
+<tr><td style="padding:0 0 10px;"><p style="margin:0;font-size:13px;"><strong>📄 Accompagnement administratif</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Sécurité sociale, compte bancaire, titre de séjour.</p></td></tr>
+<tr><td><p style="margin:0;font-size:13px;"><strong>🎓 Certification MINEFOP</strong></p><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Validation officielle de vos qualifications.</p></td></tr>
+</table>
+</td></tr>
+<tr><td style="padding:0 32px 20px;">
+<table width="100%" style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 20px;">
+<tr><td><p style="font-size:13px;color:#0d9488;margin:0;">🚀 <strong>Badge Profil Vérifié Premium activé</strong> — Les recruteurs voient votre profil en priorité.</p></td></tr>
+</table>
+</td></tr>
+<tr><td style="text-align:center;padding:8px 0 24px;">
+<a href="https://axiom-altis-connect.lovable.app/dashboard-talent" style="display:inline-block;background:#1E40AF;color:#ffffff;font-size:14px;font-weight:700;padding:12px 32px;border-radius:8px;text-decoration:none;">Accéder à mon Dashboard</a>
+</td></tr>
+<tr><td style="border-top:1px solid #e2e8f0;padding:16px 32px;text-align:center;">
+<p style="font-size:11px;color:#94a3b8;">AXIOM × ALTIS · notify@axiom-talents.com</p>
+</td></tr>
+</table></body></html>`;
+
+              try {
+                const resendRes = await fetch("https://api.resend.com/emails", {
+                  method: "POST",
+                  headers: { "Authorization": `Bearer ${resendKey}`, "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    from: "AXIOM × ALTIS <notify@axiom-talents.com>",
+                    to: [customerEmail],
+                    subject: "✅ Votre Pack ALTIS Zéro Stress est activé !",
+                    html: emailHtml,
+                  }),
+                });
+                if (resendRes.ok) {
+                  console.log(`Pack ALTIS confirmation email sent via Resend to ${customerEmail}`);
+                } else {
+                  console.error(`Resend error: ${resendRes.status} ${await resendRes.text()}`);
+                }
+              } catch (emailErr) {
+                console.error("Failed to send Resend email:", emailErr);
+              }
             } else {
-              console.log(`Pack ALTIS confirmation email queued for ${customerEmail}`);
+              console.warn("RESEND_API_KEY not configured, skipping confirmation email");
             }
           }
         }

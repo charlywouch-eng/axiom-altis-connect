@@ -208,7 +208,7 @@ export default function DashboardTalent() {
       queryClient.invalidateQueries({ queryKey: ["talent_profile", user?.id] });
       const tier = params.get("tier");
       if (tier === "full") {
-        toast({ title: "✅ Pack ALTIS activé avec succès", description: "Préparation dossier commencée · Badge Profil Vérifié Premium débloqué." });
+        toast({ title: "✅ Pack ALTIS activé avec succès", description: "Email de confirmation envoyé · Préparation dossier commencée · Badge Profil Vérifié Premium débloqué." });
       } else {
         toast({ title: "🎉 Analyse Complète débloquée !", description: "Score détaillé, offres France Travail et parcours ALTIS maintenant accessibles." });
       }
