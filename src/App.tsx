@@ -282,6 +282,7 @@ const App = () => (
             <Route path="/leads" element={<Leads />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/pack-altis-success" element={<PackAltisSuccess />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route
               path="/admin/leads"
               element={
