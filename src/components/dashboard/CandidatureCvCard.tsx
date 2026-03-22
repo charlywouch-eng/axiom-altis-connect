@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import {
   Phone, MapPin, Briefcase, GraduationCap,
-  Award, Heart, ShieldCheck, Zap, Star
+  Award, Heart, ShieldCheck, Zap, Star, BadgeCheck
 } from "lucide-react";
 
 interface Experience {
