@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,11 +15,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreditCard, CheckCircle, XCircle, ExternalLink, FileText, RefreshCw, Receipt } from "lucide-react";
+import { CreditCard, CheckCircle, XCircle, ExternalLink, FileText, RefreshCw, Receipt, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { format, subMonths, startOfMonth } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 interface StripeInvoice {
   id: string;
@@ -81,6 +82,29 @@ export default function Billing() {
     ...invoices.map((inv) => ({ ...inv, type: "invoice" as const })),
     ...payments.map((p) => ({ ...p, type: "payment" as const, pdf_url: null, hosted_url: null, receipt_url: p.receipt_url })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  // Compute monthly spending for chart (last 6 months)
+  const monthlyData = useMemo(() => {
+    const now = new Date();
+    const months: { key: string; label: string; total: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = subMonths(now, i);
+      const key = format(d, "yyyy-MM");
+      months.push({ key, label: format(d, "MMM yyyy", { locale: fr }), total: 0 });
+    }
+    for (const tx of allTransactions) {
+      if (tx.status !== "paid") continue;
+      const txKey = format(new Date(tx.date), "yyyy-MM");
+      const month = months.find((m) => m.key === txKey);
+      if (month) month.total += tx.amount;
+    }
+    return months;
+  }, [allTransactions]);
+
+  const totalPaid = allTransactions.filter((t) => t.status === "paid").reduce((s, t) => s + t.amount, 0);
+  const currentMonthTotal = monthlyData[monthlyData.length - 1]?.total ?? 0;
+  const prevMonthTotal = monthlyData[monthlyData.length - 2]?.total ?? 0;
+  const trend = prevMonthTotal === 0 ? 0 : ((currentMonthTotal - prevMonthTotal) / prevMonthTotal) * 100;
 
   useEffect(() => {
     const handlePaymentResult = async () => {
@@ -179,6 +203,89 @@ export default function Billing() {
             </Button>
           </div>
         </div>
+
+        {/* Monthly spending summary + chart */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Total payé</CardDescription>
+              <CardTitle className="text-2xl">
+                {totalPaid.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-muted-foreground">Sur toutes les transactions</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Ce mois-ci</CardDescription>
+              <CardTitle className="text-2xl">
+                {currentMonthTotal.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-1 text-xs">
+                {trend > 0 ? (
+                  <><TrendingUp className="h-3.5 w-3.5 text-destructive" /><span className="text-destructive">+{trend.toFixed(0)}%</span></>
+                ) : trend < 0 ? (
+                  <><TrendingDown className="h-3.5 w-3.5 text-accent" /><span className="text-accent">{trend.toFixed(0)}%</span></>
+                ) : (
+                  <><Minus className="h-3.5 w-3.5 text-muted-foreground" /><span className="text-muted-foreground">stable</span></>
+                )}
+                <span className="text-muted-foreground ml-1">vs mois précédent</span>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Transactions</CardDescription>
+              <CardTitle className="text-2xl">{allTransactions.length}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-muted-foreground">
+                {allTransactions.filter((t) => t.status === "paid").length} payées · {allTransactions.filter((t) => t.status !== "paid").length} en attente
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Dépenses mensuelles
+            </CardTitle>
+            <CardDescription>Évolution sur les 6 derniers mois</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {billingLoading ? (
+              <Skeleton className="h-[220px] w-full" />
+            ) : (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={monthlyData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="label" tick={{ fontSize: 12 }} className="fill-muted-foreground" />
+                  <YAxis tick={{ fontSize: 12 }} className="fill-muted-foreground" tickFormatter={(v) => `${v} €`} />
+                  <Tooltip
+                    formatter={(value: number) => [`${value.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €`, "Dépenses"]}
+                    contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
+                    labelStyle={{ color: "hsl(var(--foreground))" }}
+                  />
+                  <Bar dataKey="total" radius={[6, 6, 0, 0]} maxBarSize={48}>
+                    {monthlyData.map((entry, index) => (
+                      <Cell
+                        key={entry.key}
+                        fill={index === monthlyData.length - 1 ? "hsl(var(--accent))" : "hsl(var(--primary))"}
+                        fillOpacity={index === monthlyData.length - 1 ? 1 : 0.6}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Pay success fee */}
         <Card>
