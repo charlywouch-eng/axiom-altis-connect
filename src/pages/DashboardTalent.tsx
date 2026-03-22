@@ -204,17 +204,17 @@ export default function DashboardTalent() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (params.get("premium") === "true" && params.get("session_id")) {
-      // Full pack (29€) payment success
+    if (params.get("payment") === "success") {
       queryClient.invalidateQueries({ queryKey: ["talent_profile", user?.id] });
-      toast({ title: "🎉 Pack ALTIS activé !", description: "Préparation dossier commencée · Badge Profil Vérifié Premium débloqué." });
-      window.history.replaceState({}, "", "/dashboard-talent");
-    } else if (params.get("premium") === "true") {
-      queryClient.invalidateQueries({ queryKey: ["talent_profile", user?.id] });
-      toast({ title: "🎉 Analyse Complète débloquée !", description: "Score détaillé, offres France Travail et parcours ALTIS maintenant accessibles." });
+      const tier = params.get("tier");
+      if (tier === "full") {
+        toast({ title: "✅ Pack ALTIS activé avec succès", description: "Préparation dossier commencée · Badge Profil Vérifié Premium débloqué." });
+      } else {
+        toast({ title: "🎉 Analyse Complète débloquée !", description: "Score détaillé, offres France Travail et parcours ALTIS maintenant accessibles." });
+      }
       window.history.replaceState({}, "", "/dashboard-talent");
     }
-    if (params.get("canceled") === "true") {
+    if (params.get("payment") === "cancel") {
       toast({ title: "Paiement annulé", description: "Vous pouvez réessayer à tout moment.", variant: "destructive" });
       window.history.replaceState({}, "", "/dashboard-talent");
     }
