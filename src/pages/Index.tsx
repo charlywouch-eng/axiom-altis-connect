@@ -419,8 +419,8 @@ export default function Index() {
             {[
               { end: 500, suffix: "+", label: "Talents qualifiés", icon: Users },
               { end: 98, suffix: "%", label: "Taux de rétention", icon: BarChart3 },
-              { end: 15, suffix: "", label: "Pays d'origine", icon: Globe },
-              { end: 30, suffix: "j", label: "Délai moyen", icon: Clock },
+              { text: "Multi-pays", label: "Couverture Afrique", icon: Globe },
+              { text: "Express", label: "Délai de placement", icon: Clock },
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
