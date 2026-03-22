@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, FileText, TrendingUp, ShieldAlert, Bell, Building2, ClipboardList } from "lucide-react";
+import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, FileText, TrendingUp, ShieldAlert, Bell, Building2, ClipboardList, Mail } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -39,6 +39,7 @@ const adminLinks = [
   { title: "Leads", url: "/admin/leads", icon: TrendingUp },
   { title: "Audit & Sécurité", url: "/admin/audit-logs", icon: ShieldAlert },
   { title: "Notifications", url: "/admin/notifications", icon: Bell },
+  { title: "Emails", url: "/admin/emails", icon: Mail },
   { title: "Facturation", url: "/admin/facturation", icon: CreditCard },
 ];
 
