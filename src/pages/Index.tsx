@@ -9,7 +9,8 @@ import {
 import {
   ArrowRight, Mail, Shield, CheckCircle2,
   Zap, Globe, Users, Clock, BarChart3, Plane, Star, Lock,
-  Sparkles, BellRing, MapPin, Briefcase,
+  Sparkles, BellRing, MapPin, Briefcase, Award, GraduationCap,
+  Building2, Target, HeartHandshake, FileCheck,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { FullPageLoader } from "@/components/FullPageLoader";
@@ -20,13 +21,13 @@ import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 import heroTechNetwork from "@/assets/hero-tech-network.jpg";
 import heroTechNetworkWebp from "@/assets/hero-tech-network.jpg?format=webp";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { getAvatarForTalent, TALENT_PHOTOS_WEBP } from "@/lib/metierAvatars";
 
 const NetworkCanvas = lazy(() => import("@/components/landing/NetworkCanvas"));
 const HowItWorksSection = lazy(() => import("@/components/landing/HowItWorksSection"));
 const TestimonialsSection = lazy(() => import("@/components/landing/TestimonialsSection"));
 const PartnersCarousel = lazy(() => import("@/components/landing/PartnersCarousel"));
 
-// ── Animation configs ──────────────────────────────────────────
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const fadeUp = {
@@ -44,7 +45,7 @@ const scaleIn = {
     transition: { delay: i * 0.07, duration: 0.45, ease },
   }),
 };
-// ── Animated Counter ──────────────────────────────────────────
+
 function AnimatedCounter({ end, suffix, duration = 1.8 }: { end: number; suffix: string; duration?: number }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
@@ -60,7 +61,6 @@ function AnimatedCounter({ end, suffix, duration = 1.8 }: { end: number; suffix:
           const start = performance.now();
           const step = (now: number) => {
             const progress = Math.min((now - start) / (duration * 1000), 1);
-            // ease-out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
             setDisplay(Math.round(eased * end));
             if (progress < 1) requestAnimationFrame(step);
@@ -81,32 +81,12 @@ function AnimatedCounter({ end, suffix, duration = 1.8 }: { end: number; suffix:
   );
 }
 
-
-const SECTEURS = [
-  { emoji: "🏗️", label: "BTP & Construction", rome: "F1703", tag: "Grande demande", color: "from-orange-500/10 to-orange-500/5 border-orange-300/30 dark:border-orange-700/30" },
-  { emoji: "🏥", label: "Santé & Aide à la personne", rome: "J1501", tag: "Pénurie critique", color: "from-emerald-500/10 to-emerald-500/5 border-emerald-300/30 dark:border-emerald-700/30" },
-  { emoji: "🍽️", label: "Hôtellerie & Restauration", rome: "G1602", tag: "Grande demande", color: "from-purple-500/10 to-purple-500/5 border-purple-300/30 dark:border-purple-700/30" },
-  { emoji: "🚚", label: "Transport & Logistique", rome: "N4101", tag: "Forte tension", color: "from-sky-500/10 to-sky-500/5 border-sky-300/30 dark:border-sky-700/30" },
-  { emoji: "⚡", label: "Maintenance & Industrie", rome: "I1304", tag: "Grande demande", color: "from-yellow-500/10 to-yellow-500/5 border-yellow-300/30 dark:border-yellow-700/30" },
-  { emoji: "🌾", label: "Agriculture & Agroalimentaire", rome: "A1414", tag: "Saisonnier+", color: "from-lime-500/10 to-lime-500/5 border-lime-300/30 dark:border-lime-700/30" },
-  { emoji: "💻", label: "Informatique & Tech", rome: "M1805", tag: "Grande demande", color: "from-blue-500/10 to-blue-500/5 border-blue-300/30 dark:border-blue-700/30" },
-  { emoji: "👔", label: "Commerce & Vente", rome: "D1502", tag: "Flux constant", color: "from-pink-500/10 to-pink-500/5 border-pink-300/30 dark:border-pink-700/30" },
-  { emoji: "🏢", label: "Support & Entreprise", rome: "M1607", tag: "Stable & élevé", color: "from-slate-500/10 to-slate-500/5 border-slate-300/30 dark:border-slate-700/30" },
-];
-
-const TRUST_CARDS = [
-  { icon: Zap, title: "Matching IA précis", desc: "Algorithme ROME certifié — profil scoré en 30 secondes", accent: "text-accent", bg: "bg-accent/10" },
-  { icon: Shield, title: "Certifications MINEFOP", desc: "Diplômes apostillés, reconnus par l'État français", accent: "text-success", bg: "bg-success/10" },
-  { icon: Plane, title: "Pack ALTIS Zéro Stress", desc: "Formalités visa de travail (procédure ANEF) + accueil aéroport + logement meublé 1 mois + accompagnement administratif", accent: "text-primary", bg: "bg-primary/10" },
-  { icon: Star, title: "Inscription gratuite", desc: "Commencez sans engagement, débloquez le premium après", accent: "text-tension", bg: "bg-tension/10" },
-];
-
 const LIVE_OFFERS = [
-  { poste: "Maçon qualifié", ville: "Lyon", secteur: "BTP", delay: 0 },
-  { poste: "Aide-soignant(e)", ville: "Paris", secteur: "Santé", delay: 4000 },
-  { poste: "Chauffeur PL", ville: "Bordeaux", secteur: "Transport", delay: 8000 },
-  { poste: "Serveur / Serveuse", ville: "Marseille", secteur: "CHR", delay: 12000 },
-  { poste: "Technicien maintenance", ville: "Toulouse", secteur: "Industrie", delay: 16000 },
+  { poste: "Maçon qualifié", ville: "Lyon", secteur: "BTP" },
+  { poste: "Aide-soignant(e)", ville: "Paris", secteur: "Santé" },
+  { poste: "Chauffeur PL", ville: "Bordeaux", secteur: "Transport" },
+  { poste: "Serveur / Serveuse", ville: "Marseille", secteur: "CHR" },
+  { poste: "Technicien maintenance", ville: "Toulouse", secteur: "Industrie" },
 ];
 
 const METIER_OPTIONS = [
@@ -119,7 +99,66 @@ const METIER_OPTIONS = [
   { label: "Agriculture / Agroalim.", value: "A1401", icon: "🌱" },
 ];
 
-// ── Component ─────────────────────────────────────────────────
+const TALENT_CARDS = [
+  {
+    icon: Target,
+    title: "Score IA & badge AXIOM READY",
+    desc: "Matching instantané sur les codes ROME français. Score de compatibilité calculé en 30 secondes. Les profils qualifiés reçoivent le badge AXIOM READY visible par les recruteurs.",
+    badge: "AXIOM READY",
+    badgeColor: "bg-accent/15 text-accent border-accent/25",
+    iconBg: "bg-accent/10",
+    iconColor: "text-accent",
+  },
+  {
+    icon: GraduationCap,
+    title: "Formations recommandées",
+    desc: "Parcours personnalisés alignés avec les exigences françaises. Formations MINEFOP certifiées, mises à niveau linguistiques et préparations métier spécifiques à votre secteur.",
+    badge: "Personnalisé",
+    badgeColor: "bg-primary/15 text-primary border-primary/25",
+    iconBg: "bg-primary/10",
+    iconColor: "text-primary",
+  },
+  {
+    icon: Plane,
+    title: "Pack ALTIS Zéro Stress",
+    desc: "Visa de travail (procédure ANEF), accueil aéroport, logement meublé premier mois, accompagnement administratif complet. Vous ne gérez rien, ALTIS s'occupe de tout.",
+    badge: "Tout inclus",
+    badgeColor: "bg-success/15 text-success border-success/25",
+    iconBg: "bg-success/10",
+    iconColor: "text-success",
+  },
+];
+
+const ENTREPRISE_CARDS = [
+  {
+    icon: FileCheck,
+    title: "Talents vérifiés et certifiés",
+    desc: "Diplômes apostillés MINEFOP, vérification d'identité, antécédents professionnels validés. Chaque candidat passe un audit Delta Classes Miroirs avant d'être présenté.",
+    badge: "Certifié",
+    badgeColor: "bg-accent/15 text-accent border-accent/25",
+    iconBg: "bg-accent/10",
+    iconColor: "text-accent",
+  },
+  {
+    icon: BarChart3,
+    title: "Matching ultra-précis ROME",
+    desc: "Notre algorithme IA croise compétences, expérience et codes ROME pour un matching de précision. Taux de rétention de 98 % à 12 mois sur les profils recommandés.",
+    badge: "IA avancée",
+    badgeColor: "bg-primary/15 text-primary border-primary/25",
+    iconBg: "bg-primary/10",
+    iconColor: "text-primary",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Service ALTIS complet",
+    desc: "De la sélection à l'intégration opérationnelle jour 1 : visa, hébergement, transport, accompagnement RH. Un interlocuteur unique pour votre entreprise. Forfait 2 450 € tout compris.",
+    badge: "2 450 €",
+    badgeColor: "bg-tension/15 text-tension border-tension/25",
+    iconBg: "bg-tension/10",
+    iconColor: "text-tension",
+  },
+];
+
 export default function Index() {
   const { session, role, loading } = useAuth();
   const navigate = useNavigate();
@@ -129,14 +168,12 @@ export default function Index() {
   const [scrollY, setScrollY] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
 
-  // Parallax scroll tracking
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Rotate live alerts
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentAlert((prev) => (prev + 1) % LIVE_OFFERS.length);
@@ -202,34 +239,26 @@ export default function Index() {
 
       {/* ── Hero Full-Screen ─────────────────────────────────── */}
       <section ref={heroRef} className="relative lg:min-h-screen flex items-start lg:items-center overflow-x-hidden pt-16 pb-24 lg:pb-0">
-        {/* Tech network background — enriched multi-layer gradient */}
         <div className="absolute inset-0">
           <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-50" loading="eager" decoding="async" fetchPriority="high" />
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,4%)]/98 via-[hsl(221,83%,12%)]/92 to-[hsl(187,94%,15%)]/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-[hsl(222,47%,4%)] via-transparent to-[hsl(222,47%,4%)]/60" />
-          {/* Radial spotlight from center-left */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_50%,hsl(187,94%,43%,0.08),transparent_70%)]" />
         </div>
-        {/* Dot grid overlay */}
         <div className="absolute inset-0 bg-hero-dots opacity-40 z-[1]" />
-        {/* Animated node network */}
         <div className="absolute inset-0 z-[2]">
           <Suspense fallback={null}>
             <NetworkCanvas nodeCount={50} maxDistance={190} />
           </Suspense>
         </div>
-        {/* Floating orbs with parallax — each moves at different speed */}
         <div className="absolute top-[20%] right-[12%] w-[380px] h-[380px] rounded-full bg-accent/12 blur-[140px] pointer-events-none animate-float-orb transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * -0.12}px)` }} />
         <div className="absolute bottom-[20%] left-[8%] w-[450px] h-[450px] rounded-full bg-primary/14 blur-[160px] pointer-events-none animate-float-orb-slow transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * 0.08}px)` }} />
         <div className="absolute top-[50%] right-[30%] w-[280px] h-[280px] rounded-full bg-accent/8 blur-[110px] pointer-events-none animate-float-orb transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * -0.06}px) translateX(${scrollY * 0.03}px)` }} />
-        <div className="absolute top-[10%] left-[40%] w-[200px] h-[200px] rounded-full bg-primary/6 blur-[100px] pointer-events-none animate-float-orb-slow transition-transform duration-100 will-change-transform" style={{ transform: `translateY(${scrollY * 0.15}px)` }} />
 
         <div className="relative z-[3] mx-auto max-w-6xl px-5 py-20 md:px-10 md:py-28 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 
-            {/* ── Left: Copy ───────────────────────────────────── */}
             <motion.div initial="hidden" animate="visible" className="flex-1 max-w-xl">
-
               <motion.div custom={0} variants={fadeUp} className="mb-6">
                 <Badge className="border-accent/30 text-accent bg-accent/10 px-3.5 py-1.5 text-xs font-bold tracking-wider gap-2">
                   <Globe className="h-3.5 w-3.5" />
@@ -239,7 +268,7 @@ export default function Index() {
 
               <motion.h1
                 custom={1} variants={fadeUp}
-                className="text-[38px] font-black leading-[1.04] text-white sm:text-[50px] md:text-[58px] tracking-tight"
+                className="text-[34px] font-black leading-[1.06] text-white sm:text-[46px] md:text-[54px] tracking-tight"
               >
                 Les secteurs qui recrutent le plus en France{" "}
                 <span className="text-gradient-accent">vous attendent</span>
@@ -249,10 +278,9 @@ export default function Index() {
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où <strong className="text-accent">votre talent peut s'épanouir</strong>
+                Talents d'Afrique certifiés MINEFOP • Matching IA instantané • Accompagnement <strong className="text-accent">ALTIS Zéro Stress</strong>
               </motion.p>
 
-              {/* Proof points */}
               <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
                 {["Gratuit depuis l'Afrique", "Certifications MINEFOP", "Score vérifié en 30 sec", "Visa & logement inclus"].map((item) => (
                   <span key={item} className="flex items-center gap-2 text-sm text-white/50">
@@ -262,21 +290,31 @@ export default function Index() {
                 ))}
               </motion.div>
 
-              {/* Single CTA */}
-              <motion.div custom={4} variants={fadeUp} className="mt-10 flex justify-center">
+              {/* Dual CTAs */}
+              <motion.div custom={4} variants={fadeUp} className="mt-10 flex flex-col sm:flex-row items-center gap-3">
                 <Button
                   asChild
                   size="lg"
-                  className="w-[90%] max-w-md sm:w-auto text-base px-10 py-6 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground btn-ripple animate-micro-pulse transition-transform duration-200 mx-auto"
+                  className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground btn-ripple animate-micro-pulse"
                 >
                   <Link to="/signup-light">
-                    Commencer
+                    Commencer mon évaluation gratuite
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 h-auto rounded-2xl font-semibold border-white/15 text-white/80 hover:text-white hover:bg-white/8 hover:border-white/25"
+                >
+                  <Link to="/signup">
+                    <Building2 className="mr-2 h-4 w-4" />
+                    Je suis une entreprise → Recruter
                   </Link>
                 </Button>
               </motion.div>
 
-              {/* Social proof */}
               <motion.div custom={5} variants={fadeUp} className="mt-8 flex items-center gap-4">
                 <div className="flex -space-x-2">
                   {["🇨🇲", "🇸🇳", "🇨🇮", "🇬🇳"].map((flag, i) => (
@@ -298,7 +336,6 @@ export default function Index() {
               transition={{ delay: 0.45, duration: 0.8, ease }}
               className="flex flex-col w-full lg:w-[420px] xl:w-[460px] gap-5 relative z-10"
             >
-              {/* Live offer alert */}
               <div className="rounded-2xl border border-accent/15 bg-white/5 backdrop-blur-md p-4 overflow-hidden shadow-lg shadow-accent/5">
                 <div className="flex items-center gap-2 mb-3">
                   <BellRing className="h-4 w-4 text-accent animate-pulse" />
@@ -326,22 +363,13 @@ export default function Index() {
                     </div>
                     <Badge className="bg-success/15 text-success border-success/25 text-[10px] shrink-0">CDI</Badge>
                   </motion.div>
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="mt-2.5 text-[11px] text-accent/80 font-semibold flex items-center gap-1.5"
-                  >
-                    <Sparkles className="h-3 w-3 text-accent" /> Votre profil match 85 % – Éligible visa ?
-                  </motion.p>
                 </AnimatePresence>
               </div>
 
-              {/* Teaser leads form */}
               <form onSubmit={handleTeaserSubmit} className="rounded-2xl border border-accent/15 bg-white/5 backdrop-blur-md p-5 shadow-lg shadow-primary/5">
                 <div className="flex items-center gap-2 mb-4">
                   <Sparkles className="h-4 w-4 text-accent" />
-                  <span className="text-sm font-bold text-white">Testez votre éligibilité</span>
+                  <span className="text-sm font-bold text-white">Évaluation gratuite (30 secondes)</span>
                   <Badge className="ml-auto bg-accent/15 text-accent border-accent/25 text-[9px]">Gratuit</Badge>
                 </div>
                 <div className="space-y-3">
@@ -366,7 +394,7 @@ export default function Index() {
                     </SelectContent>
                   </Select>
                   <Button type="submit" className="w-full h-12 bg-gradient-cta text-white font-bold border-0 hover:opacity-90 shadow-lg shadow-accent/20 text-base sm:text-sm">
-                    Voir mon score IA <ArrowRight className="ml-2 h-4 w-4" />
+                    Commencer mon évaluation gratuite <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
                 <p className="text-[10px] text-white/30 mt-3 text-center">
@@ -378,7 +406,6 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Bottom fade */}
         <div className="absolute bottom-0 left-0 right-0 h-20 lg:h-40 bg-gradient-to-t from-background via-background/70 to-transparent z-[4] pointer-events-none" />
       </section>
 
@@ -410,91 +437,143 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ── Partners Carousel ─────────────────────────────────── */}
+      {/* ── Partners ─────────────────────────────────────────── */}
       <Suspense fallback={null}>
         <PartnersCarousel />
       </Suspense>
 
-      {/* ── Secteurs Grid ────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════
+           SECTION « POUR LES TALENTS »
+         ══════════════════════════════════════════════════════════ */}
       <section className="mx-auto max-w-6xl px-5 py-24 md:px-10 md:py-32">
-        <motion.div initial="hidden" animate="visible" className="text-center mb-14">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} className="text-center mb-14">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-            Opportunités 2026
+            Pour les Talents
           </motion.p>
           <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[42px] leading-tight tracking-tight">
-            Les <span className="text-gradient-primary">secteurs qui recrutent</span> en France
+            Votre avenir en France,{" "}
+            <span className="text-gradient-accent">simplifié</span>
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
-            Construction • Santé • Restauration • Logistique • Industrie et bien d'autres domaines où votre talent peut s'épanouir
+            De l'inscription gratuite au premier jour de travail — scoring IA, formations certifiées et relocalisation complète.
           </motion.p>
         </motion.div>
 
-        <motion.div
-          initial="hidden" animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5"
-        >
-          {SECTEURS.map((s, i) => (
-            <motion.div
-              key={s.rome}
-              custom={i}
-              variants={scaleIn}
-              whileHover={{ y: -8, scale: 1.04, boxShadow: "0 20px 40px -12px rgba(6,182,212,0.15)", transition: { duration: 0.25 } }}
-              className={`group relative rounded-2xl border bg-gradient-to-br p-5 cursor-default transition-all duration-500 hover:border-accent/30 ${s.color}`}
-            >
-              <div className="absolute inset-0 rounded-2xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative">
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-3xl group-hover:scale-110 transition-transform duration-300">{s.emoji}</span>
-                  <Badge className="bg-tension/12 text-tension border-tension/25 text-[10px] px-2 py-0.5 font-bold shrink-0">
-                    {s.tag}
-                  </Badge>
-                </div>
-                <h3 className="font-bold text-sm text-foreground mb-1 group-hover:text-accent transition-colors">{s.label}</h3>
-                <p className="text-[11px] text-muted-foreground font-mono mb-3">{s.rome}</p>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <CheckCircle2 className="h-3 w-3 text-success shrink-0" />
-                  Certifiable MINEFOP
-                </div>
-              </div>
+        {/* Avatars cosmopolites */}
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }} className="flex justify-center gap-3 mb-12">
+          {TALENT_PHOTOS_WEBP.slice(0, 5).map((src, i) => (
+            <motion.div key={i} custom={i} variants={scaleIn} className="relative">
+              <img
+                src={src}
+                alt={`Talent ${i + 1}`}
+                className="h-14 w-14 md:h-16 md:w-16 rounded-full object-cover border-2 border-accent/30 shadow-lg shadow-accent/10"
+                loading="lazy"
+              />
+              {i === 2 && (
+                <Badge className="absolute -bottom-1 -right-1 bg-accent text-accent-foreground text-[8px] px-1.5 py-0.5 border-0">
+                  <Award className="h-2.5 w-2.5 mr-0.5" /> READY
+                </Badge>
+              )}
             </motion.div>
           ))}
         </motion.div>
 
-        <motion.div initial="hidden" animate="visible" className="text-center mt-10">
+        <motion.div
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {TALENT_CARDS.map((card, i) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={card.title}
+                custom={i}
+                variants={scaleIn}
+                className="group rounded-2xl border bg-card p-7 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
+              >
+                <div className="flex items-start justify-between mb-5">
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className={`h-5 w-5 ${card.iconColor}`} />
+                  </div>
+                  <Badge className={`${card.badgeColor} text-[10px] font-bold`}>{card.badge}</Badge>
+                </div>
+                <h3 className="mb-3 font-bold text-lg text-foreground group-hover:text-accent transition-colors">{card.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mt-10">
           <motion.div custom={0} variants={fadeUp}>
-            <Link to="/metiers-en-tension">
-              <Button variant="outline" className="rounded-xl border-primary/25 text-primary hover:bg-primary/5 font-semibold">
-                Voir tous les métiers en tension <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <Button asChild size="lg" className="rounded-2xl bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-8 py-5 h-auto shadow-lg shadow-accent/25 border-0 group">
+              <Link to="/signup-light">
+                Commencer mon évaluation gratuite (30 secondes)
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* ── Notre Mission ────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-20 md:py-28">
+      {/* ══════════════════════════════════════════════════════════
+           SECTION « POUR LES ENTREPRISES »
+         ══════════════════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden py-24 md:py-32">
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,8%)] via-[hsl(217,33%,12%)] to-[hsl(199,89%,48%/0.08)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,hsl(var(--accent)/0.06),transparent_70%)]" />
-        <div className="relative z-10 mx-auto max-w-4xl px-5 md:px-10 text-center">
-          <motion.div initial="hidden" animate="visible">
-            <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
-              Notre Mission
+        <div className="absolute inset-0 bg-hero-dots opacity-20" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-5 md:px-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} className="text-center mb-14">
+            <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
+              Pour les Entreprises
             </motion.p>
-            <motion.h2 custom={1} variants={fadeUp} className="font-black text-2xl md:text-[38px] leading-tight tracking-tight text-white">
-              AXIOM Talent Passport™
+            <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[42px] leading-tight tracking-tight text-white">
+              Recrutez des <span className="text-gradient-accent">talents certifiés</span> d'Afrique
             </motion.h2>
-            <motion.p custom={2} variants={fadeUp} className="mt-6 text-base md:text-lg text-white/60 leading-relaxed max-w-3xl mx-auto">
-              La première plateforme certifiée qui <strong className="text-accent">pré-approuve, match via IA et relocalise physiquement</strong> des talents africains qualifiés en CDI France en <strong className="text-white/90">45–60 jours</strong>.
+            <motion.p custom={2} variants={fadeUp} className="mt-4 text-white/60 text-base max-w-2xl mx-auto">
+              Secteurs en tension (BTP, Santé, CHR, Logistique) — des profils opérationnels jour 1, certifiés et accompagnés.
             </motion.p>
-            <motion.div custom={3} variants={fadeUp} className="mt-8 flex justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/25 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground"
-              >
-                <Link to="/signup-light">
-                  Commencer mon évaluation gratuite
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+          </motion.div>
+
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {ENTREPRISE_CARDS.map((card, i) => {
+              const Icon = card.icon;
+              return (
+                <motion.div
+                  key={card.title}
+                  custom={i}
+                  variants={scaleIn}
+                  className="group rounded-2xl border border-white/10 glass-card p-7 transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
+                >
+                  <div className="flex items-start justify-between mb-5">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className={`h-5 w-5 ${card.iconColor}`} />
+                    </div>
+                    <Badge className={`${card.badgeColor} text-[10px] font-bold`}>{card.badge}</Badge>
+                  </div>
+                  <h3 className="mb-3 font-bold text-lg text-white group-hover:text-accent transition-colors">{card.title}</h3>
+                  <p className="text-sm text-white/55 leading-relaxed">{card.desc}</p>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mt-10">
+            <motion.div custom={0} variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button asChild size="lg" className="rounded-2xl bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-8 py-5 h-auto shadow-lg shadow-accent/25 border-0 group">
+                <Link to="/signup">
+                  Recruter maintenant
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="rounded-2xl border-white/15 text-white/80 hover:text-white hover:bg-white/8 px-8 py-5 h-auto">
+                <Link to="/demande-devis">
+                  Demander un devis personnalisé
                 </Link>
               </Button>
             </motion.div>
@@ -507,43 +586,6 @@ export default function Index() {
         <HowItWorksSection />
       </Suspense>
 
-      {/* ── 4 Cartes Confiance ───────────────────────────────── */}
-      <section className="bg-muted/30 py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-5 md:px-10">
-          <motion.div initial="hidden" animate="visible" className="text-center mb-12">
-            <motion.h2 custom={0} variants={fadeUp} className="font-black text-3xl md:text-[38px] tracking-tight">
-              Pourquoi <span className="text-gradient-primary">AXIOM × ALTIS</span> ?
-            </motion.h2>
-            <motion.p custom={1} variants={fadeUp} className="mt-3 text-muted-foreground text-base max-w-md mx-auto">
-              Une infrastructure complète de bout en bout, de l'inscription au premier jour de travail.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial="hidden" animate="visible"
-            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {TRUST_CARDS.map((card, i) => {
-              const Icon = card.icon;
-              return (
-                <motion.div
-                  key={card.title}
-                  custom={i}
-                  variants={scaleIn}
-                  className="group rounded-2xl border bg-card p-6 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
-                >
-                  <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl ${card.bg} group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className={`h-5 w-5 ${card.accent}`} />
-                  </div>
-                  <h3 className="mb-2 font-bold text-base text-foreground group-hover:text-accent transition-colors">{card.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
       {/* ── Testimonials ─────────────────────────────────────── */}
       <Suspense fallback={null}>
         <TestimonialsSection />
@@ -551,7 +593,6 @@ export default function Index() {
 
       {/* ── CTA Final ────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Tech background with network */}
         <div className="absolute inset-0">
           <OptimizedImage webpSrc={heroTechNetworkWebp} fallbackSrc={heroTechNetwork} alt="" className="w-full h-full object-cover opacity-30" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-[hsl(222,47%,5%)]/90" />
@@ -564,7 +605,7 @@ export default function Index() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent/8 blur-3xl pointer-events-none" />
 
         <div className="relative z-[2] mx-auto max-w-2xl px-5 py-24 text-center md:px-10 md:py-28">
-          <motion.div initial="hidden" animate="visible">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-4">
               Prêt à commencer ?
             </motion.p>
@@ -575,7 +616,7 @@ export default function Index() {
             <motion.p custom={2} variants={fadeUp} className="mt-4 text-base text-white/55 max-w-md mx-auto">
               Inscription en 30 secondes. Score immédiat. Accompagnement ALTIS complet.
             </motion.p>
-             <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center relative z-10">
+            <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center relative z-10">
               <Button
                 size="lg"
                 className="w-[90%] max-w-md sm:w-auto text-base px-10 py-5 h-auto rounded-2xl font-bold shadow-2xl bg-accent hover:bg-accent/90 border-0 group text-accent-foreground mx-auto sm:mx-0"
@@ -597,42 +638,71 @@ export default function Index() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────── */}
-      <footer className="border-t border-border/50 bg-card px-5 py-8 md:py-10">
+      <footer className="border-t border-border/50 bg-card px-5 py-10 md:py-14">
         <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col items-center gap-5 md:flex-row md:justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="text-white font-black text-[10px]">A</span>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+            {/* Brand */}
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <span className="text-white font-black text-[10px]">A</span>
+                </div>
+                <span className="font-black text-base text-primary">AXIOM</span>
+                <span className="text-muted-foreground/40 text-sm mx-1">·</span>
+                <span className="font-bold text-sm text-accent">ALTIS</span>
               </div>
-              <span className="font-black text-base text-primary">AXIOM</span>
-              <span className="text-muted-foreground/40 text-sm mx-1.5">·</span>
-              <span className="font-bold text-sm text-accent">ALTIS Mobility</span>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Infrastructure Souveraine France-Afrique. Recrutement certifié, matching IA et relocalisation complète.
+              </p>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-              <Link to="/signup-light" className="hover:text-foreground transition-colors flex items-center gap-1.5 font-medium text-accent/80 hover:text-accent">
-                <ArrowRight className="h-3 w-3" /> S'inscrire
-              </Link>
-              <span className="text-muted-foreground/30">·</span>
-              <Link to="/leads" className="hover:text-foreground transition-colors flex items-center gap-1.5 font-medium text-accent/80 hover:text-accent">
-                <Zap className="h-3 w-3" /> Tester mon profil
-              </Link>
-              <span className="text-muted-foreground/30">·</span>
-              <Link to="/pricing" className="hover:text-foreground transition-colors">Tarifs</Link>
-              <Link to="/a-propos" className="hover:text-foreground transition-colors">À propos</Link>
-              <Link to="/fiches-metiers" className="hover:text-foreground transition-colors">Fiches métiers</Link>
-              <Link to="/rgpd-light" className="hover:text-foreground transition-colors">Mentions légales</Link>
-              <Link to="/rgpd-light" className="hover:text-foreground transition-colors">CGU</Link>
-              <Link to="/rgpd-light" className="hover:text-foreground transition-colors flex items-center gap-1">
-                <Lock className="h-3 w-3" /> RGPD
-              </Link>
-              <a href="mailto:charly@axiom-talents.com" className="hover:text-foreground transition-colors flex items-center gap-1"><Mail className="h-3 w-3" /> charly@axiom-talents.com</a>
-              <a href="tel:+33686401810" className="hover:text-foreground transition-colors text-xs">+33 6 86 40 18 10</a>
+
+            {/* Talents */}
+            <div>
+              <p className="font-bold text-sm text-foreground mb-3">Talents</p>
+              <div className="flex flex-col gap-2">
+                <Link to="/signup-light" className="text-sm text-muted-foreground hover:text-accent transition-colors">S'inscrire gratuitement</Link>
+                <Link to="/leads" className="text-sm text-muted-foreground hover:text-accent transition-colors">Tester mon profil</Link>
+                <Link to="/fiches-metiers" className="text-sm text-muted-foreground hover:text-accent transition-colors">Fiches métiers</Link>
+                <Link to="/metiers-en-tension" className="text-sm text-muted-foreground hover:text-accent transition-colors">Métiers en tension</Link>
+              </div>
+            </div>
+
+            {/* Entreprises */}
+            <div>
+              <p className="font-bold text-sm text-foreground mb-3">Entreprises</p>
+              <div className="flex flex-col gap-2">
+                <Link to="/signup" className="text-sm text-muted-foreground hover:text-accent transition-colors">Recruter des talents</Link>
+                <Link to="/demande-devis" className="text-sm text-muted-foreground hover:text-accent transition-colors">Demander un devis</Link>
+                <Link to="/pricing" className="text-sm text-muted-foreground hover:text-accent transition-colors">Tarifs</Link>
+              </div>
+            </div>
+
+            {/* Légal */}
+            <div>
+              <p className="font-bold text-sm text-foreground mb-3">Légal & Contact</p>
+              <div className="flex flex-col gap-2">
+                <Link to="/rgpd" className="text-sm text-muted-foreground hover:text-accent transition-colors">RGPD & Confidentialité</Link>
+                <Link to="/a-propos" className="text-sm text-muted-foreground hover:text-accent transition-colors">À propos</Link>
+                <a href="mailto:contact@axiom-talents.com" className="text-sm text-muted-foreground hover:text-accent transition-colors flex items-center gap-1.5">
+                  <Mail className="h-3 w-3" /> contact@axiom-talents.com
+                </a>
+              </div>
             </div>
           </div>
-          <div className="mt-5 border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
-            © 2026 AXIOM × ALTIS Mobility · SIRET en cours d'immatriculation ·{" "}
-            <Link to="/rgpd" className="hover:text-muted-foreground transition-colors">Politique de confidentialité</Link>
+
+          {/* Bottom bar */}
+          <div className="border-t border-border/30 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Lock className="h-3.5 w-3.5 text-accent/60" />
+              <p className="text-xs text-muted-foreground/60">
+                Infrastructure Souveraine France-Afrique · Données hébergées en UE · Conformité RGPD
+              </p>
+            </div>
+            <p className="text-xs text-muted-foreground/40">
+              © {new Date().getFullYear()} AXIOM × ALTIS Mobility — Tous droits réservés
+            </p>
           </div>
+
           <CesedaLegalNotice />
         </div>
       </footer>
