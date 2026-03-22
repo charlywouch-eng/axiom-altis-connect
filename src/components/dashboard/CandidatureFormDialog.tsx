@@ -37,6 +37,7 @@ const STEPS = [
   { label: "Formation", icon: GraduationCap },
   { label: "Compétences", icon: Award },
   { label: "Souhait", icon: Heart },
+  { label: "Passport", icon: Shield },
 ];
 
 interface Props {
