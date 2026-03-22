@@ -143,7 +143,7 @@ serve(async (req) => {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
       body: JSON.stringify({
-        from: "AXIOM × ALTIS <contact@axiom-talents.com>",
+        from: "AXIOM & ALTIS <notify@axiom-talents.com>",
         to: [COMMERCIAL_EMAIL],
         subject: `[Devis généré] ${quoteData.quoteNumber} — ${quoteData.companyName}`,
         html: htmlEmail,
