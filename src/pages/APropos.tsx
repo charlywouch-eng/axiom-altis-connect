@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight, Globe, Brain, Plane, Shield, CheckCircle2,
   Users, Target, Cpu, Lock, Zap, Building2, Mail,
+  TrendingUp, TrendingDown, Minus, Crown,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
