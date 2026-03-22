@@ -336,6 +336,32 @@ serve(async (req) => {
   }
 
   try {
+    // ── Authentication: require valid user JWT or service role key ──
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Non autorisé" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const token = authHeader.replace("Bearer ", "");
+
+    // Allow internal calls from DB triggers that pass the anon key or service role key
+    const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    const isInternalCall = token === SERVICE_KEY || token === ANON_KEY;
+
+    if (!isInternalCall) {
+      // Validate as user JWT
+      const anonClient = createClient(SUPABASE_URL, ANON_KEY);
+      const { data: userData, error: userError } = await anonClient.auth.getUser(token);
+      if (userError || !userData.user) {
+        return new Response(
+          JSON.stringify({ error: "Non autorisé" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
     const { type, payload } = await req.json();
 
