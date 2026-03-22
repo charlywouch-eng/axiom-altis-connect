@@ -13,8 +13,9 @@ import { toast } from "sonner";
 import {
   User, Phone, MapPin, Briefcase, GraduationCap,
   Award, Heart, ChevronRight, ChevronLeft, CheckCircle2,
-  Plus, X, Loader2, Sparkles
+  Plus, X, Loader2, Sparkles, Shield
 } from "lucide-react";
+import ExperiencePassportSection, { type AttestationFile } from "./ExperiencePassportSection";
 
 interface Experience {
   poste: string;
