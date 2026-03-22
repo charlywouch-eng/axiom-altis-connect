@@ -162,7 +162,7 @@ export default function OnboardingRole() {
   if (role) return <Navigate to="/dashboard" replace />;
 
   /* ─── handlers ─── */
-  const selectRole = async (selectedRole: "entreprise" | "talent" | "recruteur") => {
+  const selectRole = async (selectedRole: "entreprise" | "talent") => {
     if (!user) return;
     trackGA4("inscription_start", { role: selectedRole });
     setSubmitting(true);
