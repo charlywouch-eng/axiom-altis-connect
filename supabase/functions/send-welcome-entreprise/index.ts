@@ -121,7 +121,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "AXIOM × ALTIS <contact@axiom-talents.com>",
+        from: "AXIOM & ALTIS <notify@axiom-talents.com>",
         to: [user.email],
         subject: "Bienvenue sur AXIOM × ALTIS – Votre espace recruteur est prêt",
         html,
