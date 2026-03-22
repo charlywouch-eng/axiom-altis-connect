@@ -291,6 +291,13 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/emails"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminEmailLogs />
+                </ProtectedRoute>
+              }
             <Route path="*" element={<NotFound />} />
           </Routes>
           <CookieConsentBanner />
