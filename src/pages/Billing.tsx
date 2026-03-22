@@ -83,7 +83,30 @@ export default function Billing() {
     ...payments.map((p) => ({ ...p, type: "payment" as const, pdf_url: null, hosted_url: null, receipt_url: p.receipt_url })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  useEffect(() => {
+  // Compute monthly spending for chart (last 6 months)
+  const monthlyData = useMemo(() => {
+    const now = new Date();
+    const months: { key: string; label: string; total: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = subMonths(now, i);
+      const key = format(d, "yyyy-MM");
+      months.push({ key, label: format(d, "MMM yyyy", { locale: fr }), total: 0 });
+    }
+    for (const tx of allTransactions) {
+      if (tx.status !== "paid") continue;
+      const txKey = format(new Date(tx.date), "yyyy-MM");
+      const month = months.find((m) => m.key === txKey);
+      if (month) month.total += tx.amount;
+    }
+    return months;
+  }, [allTransactions]);
+
+  const totalPaid = allTransactions.filter((t) => t.status === "paid").reduce((s, t) => s + t.amount, 0);
+  const currentMonthTotal = monthlyData[monthlyData.length - 1]?.total ?? 0;
+  const prevMonthTotal = monthlyData[monthlyData.length - 2]?.total ?? 0;
+  const trend = prevMonthTotal === 0 ? 0 : ((currentMonthTotal - prevMonthTotal) / prevMonthTotal) * 100;
+
+
     const handlePaymentResult = async () => {
       const offerId = searchParams.get("offer");
       if (searchParams.get("success") === "true") {
