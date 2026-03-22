@@ -84,10 +84,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: tier === "full"
-        ? `${origin}/pack-altis-success?session_id={CHECKOUT_SESSION_ID}`
-        : `${origin}/dashboard-talent?premium=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/dashboard-talent?canceled=true`,
+      success_url: `${origin}/dashboard-talent?payment=success&tier=${tier}`,
+      cancel_url: `${origin}/dashboard-talent?payment=cancel`,
       metadata: {
         user_id: userId,
         payment_type: priceConfig.payment_type,
