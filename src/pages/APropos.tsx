@@ -286,6 +286,98 @@ export default function APropos() {
         </div>
       </section>
 
+      {/* ── Tendances RH 2026 ─────────────────────────────── */}
+      <section className="py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-5 md:px-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
+            <motion.div custom={0} variants={fadeUp}>
+              <Badge className="border-accent/30 text-accent bg-accent/10 px-4 py-1.5 text-xs font-bold tracking-wider gap-2 mb-4">
+                <TrendingUp className="h-3.5 w-3.5" />
+                Benchmark 2026
+              </Badge>
+            </motion.div>
+            <motion.h2 custom={1} variants={fadeUp} className="font-black text-3xl md:text-[40px] tracking-tight">
+              Tendances RH <span className="text-gradient-accent">2026</span>
+            </motion.h2>
+            <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
+              AXIOM se positionne comme la seule plateforme <strong className="text-foreground">TIaaS</strong> (Talent Infrastructure as a Service) combinant sourcing international, conformité réglementaire et logistique intégrée.
+            </motion.p>
+          </motion.div>
+
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { trend: "Pénurie structurelle BTP/Santé/CHR", direction: "up" as const, impact: "Critique", detail: "200 000+ postes non pourvus en France. AXIOM active les viviers Afrique francophone certifiés ROME.", axiom: "Sourcing ciblé + certification MINEFOP" },
+              { trend: "Durcissement conformité visa/ANEF", direction: "up" as const, impact: "Fort", detail: "Complexité administrative croissante. ALTIS prend en charge 100 % des formalités.", axiom: "Pack ALTIS Zéro Stress intégré" },
+              { trend: "IA dans le recrutement", direction: "up" as const, impact: "Transformateur", detail: "Les entreprises cherchent du matching prédictif. AXIOM traduit compétences locales → codes ROME.", axiom: "Matching IA prédictif exclusif" },
+              { trend: "Coût d'un mauvais recrutement", direction: "up" as const, impact: "45 000 € moy.", detail: "Turnover coûteux. AXIOM réduit le risque onboarding de 80 % via la pré-certification.", axiom: "Réduction risque -80 %" },
+              { trend: "Plateformes généralistes", direction: "down" as const, impact: "Saturation", detail: "LinkedIn, Indeed : trop de bruit, peu de conformité internationale. AXIOM = niche premium.", axiom: "Positionnement TIaaS unique" },
+              { trend: "RSE & diversité", direction: "up" as const, impact: "Priorité DRH", detail: "Recrutement inclusif international = levier RSE fort. AXIOM documente l'impact social.", axiom: "Impact social mesuré & certifié" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.trend}
+                custom={i}
+                variants={scaleIn}
+                className="group rounded-2xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-accent/30 relative overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary via-accent to-primary opacity-60" />
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    {item.direction === "up" ? (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
+                        <TrendingUp className="h-4 w-4 text-accent" />
+                      </div>
+                    ) : (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/10">
+                        <TrendingDown className="h-4 w-4 text-destructive" />
+                      </div>
+                    )}
+                  </div>
+                  <Badge variant="outline" className="text-[10px] font-bold border-accent/30 text-accent">
+                    {item.impact}
+                  </Badge>
+                </div>
+                <h3 className="font-bold text-sm text-foreground mb-2 leading-snug">{item.trend}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4">{item.detail}</p>
+                <div className="flex items-center gap-2 pt-3 border-t border-border/30">
+                  <Crown className="h-3.5 w-3.5 text-accent shrink-0" />
+                  <span className="text-xs font-semibold text-accent">{item.axiom}</span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* TIaaS positioning banner */}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true }}
+            className="mt-12 rounded-3xl border border-accent/20 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 p-8 md:p-10 relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-cta" />
+            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-accent/5 blur-3xl" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+              <div className="flex-1">
+                <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-2">
+                  Notre avantage concurrentiel
+                </motion.p>
+                <motion.h3 custom={1} variants={fadeUp} className="font-black text-xl md:text-2xl tracking-tight">
+                  TIaaS — <span className="text-gradient-accent">Talent Infrastructure as a Service</span>
+                </motion.h3>
+                <motion.p custom={2} variants={fadeUp} className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                  Aucune plateforme ne combine <strong className="text-foreground">sourcing IA prédictif</strong>, <strong className="text-foreground">certification MINEFOP/MINREX</strong>, <strong className="text-foreground">conformité visa ANEF</strong> et <strong className="text-foreground">logistique terrain ALTIS</strong> dans une seule infrastructure souveraine. C'est notre moat.
+                </motion.p>
+              </div>
+              <div className="shrink-0">
+                <Link to="/pricing">
+                  <Button size="lg" className="rounded-2xl font-bold bg-gradient-cta hover:opacity-90 border-0 text-white px-8 py-5 h-auto shadow-xl shadow-accent/20 group">
+                    Découvrir les offres
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── Contact ──────────────────────────────────────── */}
       <section className="py-20 md:py-28">
         <div className="mx-auto max-w-2xl px-5 md:px-10">
