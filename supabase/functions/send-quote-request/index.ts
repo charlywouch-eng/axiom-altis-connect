@@ -94,7 +94,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "AXIOM × ALTIS <contact@axiom-talents.com>",
+        from: "AXIOM & ALTIS <notify@axiom-talents.com>",
         to: [COMMERCIAL_EMAIL],
         subject: `[Devis] ${company} – ${sector}`,
         html: htmlContent,
