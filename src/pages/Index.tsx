@@ -102,8 +102,8 @@ const METIER_OPTIONS = [
 const TALENT_CARDS = [
   {
     icon: Target,
-    title: "Score IA & badge AXIOM READY",
-    desc: "Matching instantané sur les codes ROME français. Score de compatibilité calculé en 30 secondes. Les profils qualifiés reçoivent le badge AXIOM READY visible par les recruteurs.",
+    title: "Évaluation & badge AXIOM READY",
+    desc: "Vos compétences sont évaluées selon les référentiels français. Les profils conformes reçoivent le badge AXIOM READY visible par les recruteurs.",
     badge: "AXIOM READY",
     badgeColor: "bg-accent/15 text-accent border-accent/25",
     iconBg: "bg-accent/10",
