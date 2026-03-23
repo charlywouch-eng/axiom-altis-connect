@@ -741,7 +741,7 @@ export default function SignupLight() {
                               </div>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-bold text-white">Score IA estimé</p>
+                              <p className="text-sm font-bold text-white">Évaluation estimée</p>
                               <p className="text-xs mt-0.5 text-white/45">
                                 Complétez le formulaire pour le score détaillé
                               </p>
@@ -856,7 +856,7 @@ export default function SignupLight() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-white">
-                              Score IA estimé : {score}%
+                              Évaluation estimée : {score}%
                             </p>
                             <p className="text-xs mt-0.5 text-white/45">
                               Validez pour voir le détail complet
@@ -1153,7 +1153,7 @@ export default function SignupLight() {
                       <Sparkles className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="font-black text-sm text-white">Votre score IA complet est prêt.</p>
+                      <p className="font-black text-sm text-white">Votre évaluation complète est prêt.</p>
                       <p className="text-xs mt-1 leading-relaxed text-white/45">
                         Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).
                       </p>
@@ -1211,7 +1211,7 @@ export default function SignupLight() {
                 <Award className="h-8 w-8 text-accent" />
               </div>
               <DialogTitle className="font-black text-xl text-white">
-                Votre score IA complet est prêt.
+                Votre évaluation complète est prêt.
               </DialogTitle>
               <DialogDescription className="text-sm leading-relaxed text-white/50">
                 Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).

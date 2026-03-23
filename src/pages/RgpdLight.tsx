@@ -25,7 +25,7 @@ const POINTS = [
   {
     icon: Lock,
     title: "Pourquoi ?",
-    desc: "Matching IA avec offres France en tension (BTP, Santé, CHR, Logistique) et mobilité professionnelle.",
+    desc: "Mise en relation avec les offres France en tension (BTP, Santé, CHR, Logistique) et mobilité professionnelle.",
   },
   {
     icon: Shield,

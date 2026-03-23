@@ -285,7 +285,7 @@ export default function Leads() {
                     </p>
                     <p>
                       AXIOM vous connecte en quelques clics :{" "}
-                      <span style={{ color: "hsl(189,94%,43%)" }}>matching IA précis + score conformité + accompagnement visa & installation ALTIS.</span>
+                      <span style={{ color: "hsl(189,94%,43%)" }}>certification officielle + conformité rigoureuse + accompagnement visa & installation ALTIS.</span>
                     </p>
                     <div className="rounded-2xl p-4 border mt-4" style={{ background: "hsl(0,0%,100%,0.03)", borderColor: "hsl(189,94%,43%,0.2)" }}>
                       <p className="text-sm italic" style={{ color: "hsl(215,25%,60%)" }}>
