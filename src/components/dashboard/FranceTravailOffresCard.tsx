@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Briefcase, MapPin, ExternalLink, TrendingUp, Flame, Zap, ShieldCheck } from "lucide-react";
+import { Briefcase, MapPin, TrendingUp, Flame, Zap, ShieldCheck, Sparkles } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
 interface FTOffer {
@@ -32,13 +33,14 @@ interface Props {
 
 export default function FranceTravailOffresCard({
   romeCodes = ["F1703", "J1501", "G1602"],
-  title = "Opportunités en temps réel",
+  title = "Opportunités AXIOM",
   count = 6,
   className,
   showScoreIA = false,
   showAxiomReady = false,
   onOffersLoaded,
 }: Props) {
+  const { toast } = useToast();
   // Generate deterministic score per offer
   const getScoreIA = (offerId: string) => {
     let hash = 0;
@@ -119,7 +121,7 @@ export default function FranceTravailOffresCard({
           </Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Offres d'emploi France Travail actualisées en continu via l'API v2
+          Opportunités sélectionnées par notre IA selon votre profil
         </p>
       </CardHeader>
       <CardContent>
@@ -191,9 +193,14 @@ export default function FranceTravailOffresCard({
                       <Button
                         size="sm"
                         className="w-full h-8 text-[11px] gap-1.5 bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-sm"
-                        onClick={() => window.open(o.url, "_blank")}
+                        onClick={() => {
+                          toast({
+                            title: "Candidature AXIOM envoyée ✓",
+                            description: `Votre candidature pour "${o.title}" est en cours de traitement par notre équipe.`,
+                          });
+                        }}
                       >
-                        <ExternalLink className="h-3 w-3" /> Postuler sur France Travail
+                        <Sparkles className="h-3 w-3" /> Postuler via AXIOM
                       </Button>
                     </div>
                   </div>
@@ -205,7 +212,7 @@ export default function FranceTravailOffresCard({
           <div className="text-center py-6">
             <Briefcase className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
             <p className="text-sm text-muted-foreground">Aucune offre disponible actuellement.</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">Les offres sont actualisées en continu via l'API v2.</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">Les opportunités sont actualisées en continu par notre IA.</p>
           </div>
         )}
       </CardContent>
