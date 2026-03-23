@@ -33,13 +33,14 @@ interface Props {
 
 export default function FranceTravailOffresCard({
   romeCodes = ["F1703", "J1501", "G1602"],
-  title = "Opportunités en temps réel",
+  title = "Opportunités AXIOM",
   count = 6,
   className,
   showScoreIA = false,
   showAxiomReady = false,
   onOffersLoaded,
 }: Props) {
+  const { toast } = useToast();
   // Generate deterministic score per offer
   const getScoreIA = (offerId: string) => {
     let hash = 0;
