@@ -17,7 +17,7 @@ import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
   Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList,
-  TrendingUp, Sparkles, Phone, Award, Star, MessageSquare, Bookmark
+  TrendingUp, Sparkles, Award, Star, MessageSquare, Bookmark, Download
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
@@ -453,10 +453,42 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
 
       {/* ── Shortlist summary ── */}
       {shortlist.size > 0 && (
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex items-center gap-3 bg-accent/10 border border-accent/30 rounded-xl px-5 py-3">
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex flex-wrap items-center gap-3 bg-accent/10 border border-accent/30 rounded-xl px-5 py-3">
           <Bookmark className="h-5 w-5 text-accent" />
           <span className="text-sm text-white font-medium">{shortlist.size} talent{shortlist.size > 1 ? "s" : ""} dans votre shortlist</span>
           <Badge className="bg-accent/20 text-accent border-0 text-[10px]">Sélection en cours</Badge>
+          <Button
+            size="sm"
+            variant="outline"
+            className="ml-auto border-accent/40 text-accent hover:bg-accent/10 text-xs gap-1.5"
+            onClick={() => {
+              const shortlisted = talents?.filter(t => shortlist.has(t.id)) ?? [];
+              if (!shortlisted.length) return;
+              const headers = ["Nom","Pays","Code ROME","Métier","Score conformité","Niveau français","Expérience (ans)","Disponible"];
+              const rows = shortlisted.map(t => [
+                t.full_name || "",
+                t.country || "",
+                t.rome_code || "",
+                t.rome_label || "",
+                String(t.compliance_score ?? 0),
+                t.french_level || "",
+                String(t.experience_years ?? 0),
+                t.available ? "Oui" : "Non",
+              ]);
+              const csv = [headers, ...rows].map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
+              const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `shortlist-axiom-${new Date().toISOString().slice(0,10)}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+              toast({ title: "✅ Export CSV téléchargé", description: `${shortlisted.length} talent(s) exporté(s).` });
+            }}
+          >
+            <Download className="h-3.5 w-3.5" />
+            Exporter CSV
+          </Button>
         </motion.div>
       )}
 
