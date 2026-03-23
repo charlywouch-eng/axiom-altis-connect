@@ -92,6 +92,9 @@ export default function DashboardRecruteur() {
               <TabsTrigger value="candidatures" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
                 <ClipboardList className="h-4 w-4" /> Candidatures
               </TabsTrigger>
+              <TabsTrigger value="shortlist" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
+                <Bookmark className="h-4 w-4" /> Ma Shortlist
+              </TabsTrigger>
               <TabsTrigger value="offres-ft" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
                 <Briefcase className="h-4 w-4" /> Offres France Travail
                 {ftOffersCount != null && ftOffersCount > 0 && (
