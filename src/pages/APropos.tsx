@@ -39,11 +39,11 @@ const scaleIn = {
 const VISION_ITEMS = [
   {
     icon: Brain,
-    title: "AXIOM — Le cerveau technologique",
+    title: "AXIOM — La plateforme de certification",
     points: [
-      "Matching IA prédictif France ↔ Afrique",
-      "Traduction compétences locales → codes ROME",
-      "Score de conformité temps réel",
+      "Mise en relation qualifiée France ↔ Afrique",
+      "Certification officielle des compétences",
+      "Conformité rigoureuse aux normes françaises",
       "Souveraineté totale de la donnée",
     ],
     accent: "text-accent", bg: "bg-accent/10", border: "border-accent/20",
