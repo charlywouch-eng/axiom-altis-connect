@@ -179,6 +179,27 @@
     border: 1px solid hsla(0, 0%, 100%, 0.5);
   }
 
+  .bg-sovereign-section {
+    background:
+      radial-gradient(circle at top center, hsl(var(--accent) / 0.18), transparent 30%),
+      linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--primary) / 0.34) 55%, hsl(var(--accent) / 0.16) 100%);
+  }
+
+  .premium-dark-panel {
+    background: linear-gradient(180deg, hsl(var(--secondary) / 0.88), hsl(var(--secondary) / 0.74));
+    border: 1px solid hsl(var(--accent) / 0.16);
+    backdrop-filter: blur(18px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .text-on-dark-muted {
+    color: hsl(var(--secondary-foreground) / 0.72);
+  }
+
+  .text-on-dark-soft {
+    color: hsl(var(--secondary-foreground) / 0.58);
+  }
+
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
   }
