@@ -36,7 +36,7 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
   const [savingNotes, setSavingNotes] = useState<Set<string>>(new Set());
-  const [tagMenuOpen, setTagMenuOpen] = useState<string | null>(null);
+  
 
   const toggleTag = async (talentProfileId: string, tag: string) => {
     if (!session?.user?.id) return;
