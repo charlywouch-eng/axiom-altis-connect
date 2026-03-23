@@ -30,6 +30,11 @@ function AdminContent() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Error boundary for query failures
+  const onError = (error: Error) => {
+    console.error("[AdminDashboard] Query error:", error.message);
+  };
+
   // Real talent count from talent_profiles
   const { data: talentProfiles = [], isLoading: loadingTalents } = useQuery({
     queryKey: ["admin_talent_profiles"],
