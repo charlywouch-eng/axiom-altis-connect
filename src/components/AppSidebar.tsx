@@ -32,6 +32,7 @@ const adminLinks = [
   { title: "Talents", url: "/admin", icon: Users },
   { title: "Import CSV", url: "/admin/import-talents", icon: FileUp },
   { title: "Statistiques", url: "/admin/statistics", icon: BarChart3 },
+  { title: "Analytics", url: "/admin/analytics", icon: Activity },
   { title: "Offres", url: "/admin/offres", icon: Briefcase },
   { title: "Candidatures", url: "/admin/candidatures", icon: ClipboardList },
   { title: "Subventions", url: "/admin/subventions", icon: GraduationCap },
