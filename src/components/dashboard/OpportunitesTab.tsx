@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -109,6 +110,7 @@ export default function OpportunitesTab({
   itemVariants,
 }: OpportunitesTabProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [contractFilter, setContractFilter] = useState<string>("all");
@@ -256,7 +258,7 @@ export default function OpportunitesTab({
           </div>
           <span className="text-[10px] text-muted-foreground flex items-center gap-1.5">
             {ftOffers && ftOffers.length > 0
-              ? <><CheckCircle2 className="h-3 w-3 text-success" />France Travail</>
+              ? <><CheckCircle2 className="h-3 w-3 text-success" />Marché français</>
               : <><RefreshCw className="h-3 w-3" />Données simulées</>
             }
           </span>
@@ -386,6 +388,14 @@ export default function OpportunitesTab({
                           <Button
                             size="sm"
                             className="h-8 text-xs gap-1.5 bg-primary hover:bg-primary/90 shadow-sm"
+                            onClick={() => navigate(`/offres/${String(offer.id ?? "")}`)}
+                          >
+                            <Briefcase className="h-3 w-3" /> Voir fiche AXIOM
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 text-xs gap-1.5"
                             onClick={() => handlePostulerAxiom(String(offer.id ?? ""), title)}
                           >
                             {isPremium || axiomStatus === "ready"
@@ -463,9 +473,14 @@ export default function OpportunitesTab({
                       size="sm"
                       variant="outline"
                       className="w-full border-primary/30 text-primary hover:bg-primary/5 gap-1.5 text-xs"
-                      onClick={() => { if (company.url && company.url !== "#") window.open(company.url, "_blank"); }}
+                      onClick={() => {
+                        toast({
+                          title: "Candidature spontanée envoyée ✓",
+                          description: `Votre intérêt pour ${company.name} a été transmis à notre équipe.`,
+                        });
+                      }}
                     >
-                      <Mail className="h-3 w-3" /> Candidature spontanée
+                      <Mail className="h-3 w-3" /> Candidature spontanée via AXIOM
                     </Button>
                   </CardContent>
                 </Card>

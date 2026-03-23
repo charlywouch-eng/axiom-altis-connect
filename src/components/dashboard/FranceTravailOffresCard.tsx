@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +42,7 @@ export default function FranceTravailOffresCard({
   onOffersLoaded,
 }: Props) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   // Generate deterministic score per offer
   const getScoreIA = (offerId: string) => {
     let hash = 0;
@@ -189,18 +191,13 @@ export default function FranceTravailOffresCard({
                       </div>
                     )}
 
-                    <div className="mt-auto pt-2">
+                    <div className="mt-auto pt-2 flex gap-2">
                       <Button
                         size="sm"
-                        className="w-full h-8 text-[11px] gap-1.5 bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-sm"
-                        onClick={() => {
-                          toast({
-                            title: "Candidature AXIOM envoyée ✓",
-                            description: `Votre candidature pour "${o.title}" est en cours de traitement par notre équipe.`,
-                          });
-                        }}
+                        className="flex-1 h-8 text-[11px] gap-1.5 bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-sm"
+                        onClick={() => navigate(`/offres/${o.id}`)}
                       >
-                        <Sparkles className="h-3 w-3" /> Postuler via AXIOM
+                        <Briefcase className="h-3 w-3" /> Voir fiche AXIOM
                       </Button>
                     </div>
                   </div>
