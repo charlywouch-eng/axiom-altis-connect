@@ -348,7 +348,7 @@ export default function SignupLight() {
         <meta name="description" content="Inscrivez-vous en 2 min sans mot de passe. Score de compatibilité IA gratuit pour les métiers en tension en France : BTP, santé, CHR, logistique. Certification MINEFOP + Pack ALTIS visa." />
         <link rel="canonical" href="https://axiom-talents.com/signup-light" />
         <meta property="og:title" content="Inscription talent rapide – AXIOM & ALTIS" />
-        <meta property="og:description" content="Score IA gratuit + certification MINEFOP. Inscription sans mot de passe en 2 min pour travailler en France." />
+        <meta property="og:description" content="Évaluation gratuite + certification officielle. Inscription sans mot de passe en 2 min pour travailler en France." />
         <meta property="og:url" content="https://axiom-talents.com/signup-light" />
       </Helmet>
 
