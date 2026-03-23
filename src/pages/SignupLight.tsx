@@ -330,8 +330,8 @@ export default function SignupLight() {
       case "contact": return "Continuer mon évaluation d'éligibilité";
       case "secteur": return "Continuer — affiner mon profil";
       case "experience": return "Continuer — presque terminé";
-      case "pays": return "Valider et voir mon score";
-      case "confirm": return loading ? "Analyse en cours…" : "Obtenir mon score IA maintenant";
+      case "pays": return "Valider et voir mon évaluation";
+      case "confirm": return loading ? "Analyse en cours…" : "Obtenir mon évaluation maintenant";
       default: return "Continuer";
     }
   }, [funnelStep, loading]);
