@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import {
-  Building2, Users, Search, Shield, ArrowRight, CheckCircle2,
+  Building2, Users, Shield, ArrowRight, CheckCircle2,
   Briefcase, Globe, Star, Zap, ChevronRight
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
