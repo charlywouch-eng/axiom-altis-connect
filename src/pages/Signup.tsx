@@ -327,7 +327,7 @@ export default function Signup() {
                             <span className="text-primary">– Gratuit & sans engagement</span>
                           </h1>
                           <p className="text-sm text-muted-foreground leading-relaxed">
-                            Matching IA + offres France en tension{" "}
+                            Certification officielle + offres France en tension{" "}
                             <span className="font-medium text-foreground/70">BTP · Santé · CHR · Logistique</span>
                           </p>
                         </div>
