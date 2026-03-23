@@ -175,7 +175,7 @@ export default function SignupLight() {
       return `Excellent ! Vous êtes à 70 % de votre score complet. Dernière validation avant résultat.`;
     }
     if (funnelStep === "score") {
-      return `Votre score IA complet est prêt — ${score}% de compatibilité.`;
+      return `Votre évaluation est prête — ${score}% de compatibilité.`;
     }
     return STEP_MESSAGES[funnelStep];
   }, [funnelStep, form.contact, form.secteur, selectedSecteur, score]);
