@@ -113,7 +113,8 @@ async function fetchCompetencesData(romeCode: string): Promise<CompetencesData |
 }
 
 export default function MetierDetail() {
-  const { code } = useParams<{ code: string }>();
+  const params = useParams<{ code?: string; rome?: string }>();
+  const code = params.code || params.rome?.toUpperCase().match(/^[A-Z]\d{4}/)?.[0] || params.rome;
 
   const { data: metier, isLoading } = useQuery({
     queryKey: ["metier", code],
