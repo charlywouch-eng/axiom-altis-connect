@@ -28,13 +28,22 @@ const TALENT_FULL_PERKS = [
   "Priorité matching recruteurs ×3",
 ];
 
-const RECRUTEUR_PERKS = [
-  "Accès illimité aux talents certifiés",
-  "Mise en relation avancée par compétences",
-  "Dossiers conformité vérifiés",
+const PLATFORM_PERKS = [
+  "Accès illimité à la base de talents certifiés",
+  "Matching IA prédictif multi-critères",
+  "Sourcing prioritaire sur les profils exclusifs",
   "Pipeline de recrutement intégré",
-  "Tooltips ROI & analytics",
-  "Support prioritaire dédié",
+  "Dossiers conformité vérifiés",
+  "Support dédié & analytics avancées",
+];
+
+const ALTIS_PACK_PERKS = [
+  "Procédure visa de travail (ANEF)",
+  "Billet d'avion aller inclus",
+  "Accueil aéroport personnalisé",
+  "Logement meublé 1 mois",
+  "Accompagnement administratif complet",
+  "Garantie intégration 30 jours",
 ];
 
 const MONTHLY_PRICE = 499;
