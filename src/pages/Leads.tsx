@@ -15,22 +15,22 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Zap, CheckCircle2, ArrowRight, Lock, Globe, Briefcase,
-  Star, Shield, ChevronRight, Sparkles, Users, MapPin,
+  Zap, CheckCircle2, ArrowRight, ArrowLeft, Shield, Globe,
+  Sparkles, Star,
 } from "lucide-react";
-import heroImg from "@/assets/logo-rh-tech.png";
+import { getAvatarForTalent } from "@/lib/metierAvatars";
 
-/* ─── Config ──────────────────────────────────────────────────── */
-const SECTEURS = [
-  { label: "Maçonnerie / BTP",              rome: "F1703", sector: "BTP",         demand: "Très forte", icon: "🏗️", base: 88 },
-  { label: "Aide-soignant / Santé",         rome: "J1501", sector: "Santé",       demand: "Très forte", icon: "🏥", base: 86 },
-  { label: "Transport / Logistique",        rome: "N4101", sector: "Logistique",  demand: "Forte",      icon: "🚛", base: 81 },
-  { label: "Service salle / CHR",           rome: "G1602", sector: "CHR",         demand: "Forte",      icon: "🍽️", base: 79 },
-  { label: "Maintenance industrielle",      rome: "I1304", sector: "Maintenance", demand: "Forte",      icon: "⚙️", base: 77 },
-  { label: "Hôtellerie / Accueil",          rome: "G1703", sector: "Hôtellerie",  demand: "Modérée",    icon: "🏨", base: 76 },
-  { label: "Commerce / Distribution",       rome: "D1212", sector: "Commerce",    demand: "Modérée",    icon: "🛒", base: 71 },
-  { label: "Agriculture / Agroalim.",       rome: "A1401", sector: "Agriculture", demand: "Forte",      icon: "🌱", base: 73 },
-  { label: "Support & Administratif",       rome: "M1607", sector: "Support",     demand: "Modérée",    icon: "💼", base: 74 },
+/* ─── Data ─────────────────────────────────────────────────────── */
+const METIERS = [
+  { rome: "F1703", label: "Maçon qualifié",            salary: "2 200 – 2 800 €/mois", sector: "BTP",        demand: "Très forte", icon: "🏗️", base: 88 },
+  { rome: "J1501", label: "Aide-soignant(e)",          salary: "2 000 – 2 500 €/mois", sector: "Santé",      demand: "Très forte", icon: "🏥", base: 86 },
+  { rome: "I1308", label: "Technicien maintenance",    salary: "2 300 – 3 000 €/mois", sector: "Industrie",  demand: "Forte",      icon: "⚙️", base: 84 },
+  { rome: "J1506", label: "Infirmier(ère) DE",         salary: "2 400 – 3 200 €/mois", sector: "Santé",      demand: "Très forte", icon: "🏥", base: 87 },
+  { rome: "G1602", label: "Cuisinier / CHR",           salary: "2 100 – 2 600 €/mois", sector: "CHR",        demand: "Forte",      icon: "🍽️", base: 79 },
+  { rome: "N4101", label: "Chauffeur routier",         salary: "2 100 – 2 700 €/mois", sector: "Logistique", demand: "Forte",      icon: "🚛", base: 81 },
+  { rome: "F1702", label: "Couvreur",                  salary: "2 200 – 2 900 €/mois", sector: "BTP",        demand: "Forte",      icon: "🏗️", base: 82 },
+  { rome: "A1101", label: "Ouvrier agricole",          salary: "1 800 – 2 200 €/mois", sector: "Agriculture",demand: "Forte",      icon: "🌱", base: 73 },
+  { rome: "F1605", label: "Plombier-chauffagiste",     salary: "2 300 – 3 000 €/mois", sector: "BTP",        demand: "Forte",      icon: "🏗️", base: 83 },
 ];
 
 const EXP_BRACKETS = [
@@ -40,84 +40,135 @@ const EXP_BRACKETS = [
   { label: "Plus de 10 ans", value: "10+",  bonus: 10 },
 ];
 
-function calcScore(rome: string, exp: string): number {
-  const s = SECTEURS.find(s => s.rome === rome);
-  const e = EXP_BRACKETS.find(e => e.value === exp);
-  return Math.min(95, (s?.base ?? 70) + (e?.bonus ?? 0));
+const DIPLOMES = [
+  { value: "CQP",     label: "CQP (Certificat de Qualification Professionnelle)" },
+  { value: "DQP",     label: "DQP (Diplôme de Qualification Professionnelle)" },
+  { value: "BAC_PRO", label: "Bac Pro / BEP / CAP" },
+  { value: "BTS",     label: "BTS / DUT / Licence" },
+  { value: "MASTER",  label: "Master / Ingénieur" },
+  { value: "AUTRE",   label: "Autre formation" },
+];
+
+const PAYS = [
+  "Cameroun", "Sénégal", "Côte d'Ivoire", "Mali", "Guinée",
+  "Burkina Faso", "Togo", "Bénin", "Niger", "Congo (RDC)",
+  "Congo (Brazzaville)", "Gabon", "Madagascar", "Tunisie", "Maroc", "Autre",
+];
+
+// Score: 40% compétences métier, 25% expérience, 20% visa, 15% intégration
+function calcScore(rome: string, exp: string, diplome: string): number {
+  const metier = METIERS.find(m => m.rome === rome);
+  const expBracket = EXP_BRACKETS.find(e => e.value === exp);
+
+  // 40% compétences → base du métier normalisé
+  const competenceScore = ((metier?.base ?? 70) / 100) * 40;
+
+  // 25% expérience
+  const expScore = exp === "10+" ? 25 : exp === "5-10" ? 20 : exp === "2-5" ? 15 : 8;
+
+  // 20% éligibilité visa (diplôme impact)
+  const visaScore = ["CQP", "DQP", "BAC_PRO"].includes(diplome) ? 18
+    : ["BTS", "MASTER"].includes(diplome) ? 20 : 12;
+
+  // 15% intégration/logement (fixed for now)
+  const integrationScore = 12;
+
+  return Math.min(95, Math.round(competenceScore + expScore + visaScore + integrationScore + (expBracket?.bonus ?? 0)));
 }
 
 function getScoreLabel(score: number) {
-  if (score >= 88) return { label: "Excellent potentiel", color: "#10b981" };
-  if (score >= 82) return { label: "Très bon potentiel",  color: "#06b6d4" };
-  if (score >= 75) return { label: "Bon potentiel",       color: "#3b82f6" };
-  return             { label: "Potentiel confirmé",        color: "#f59e0b" };
+  if (score >= 85) return { label: "Excellent potentiel", color: "hsl(158,64%,42%)" };
+  if (score >= 75) return { label: "Très bon potentiel",  color: "hsl(189,94%,43%)" };
+  if (score >= 65) return { label: "Bon potentiel",       color: "hsl(221,83%,53%)" };
+  return             { label: "Potentiel confirmé",        color: "hsl(45,93%,47%)" };
 }
 
-/* ─── Component ─────────────────────────────────────────────────*/
+/* ─── Shared styles ────────────────────────────────────────────── */
+const cardBg = "hsl(0,0%,100%,0.04)";
+const cardBorder = "hsl(0,0%,100%,0.09)";
+const textPrimary = "hsl(0,0%,97%)";
+const textSecondary = "hsl(215,25%,62%)";
+const textMuted = "hsl(215,25%,45%)";
+const accentColor = "hsl(189,94%,43%)";
+const bleuSouverain = "hsl(221,83%,53%)";
+
+/* ─── Component ────────────────────────────────────────────────── */
 export default function Leads() {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
-  const [step,     setStep]     = useState<"form" | "score">("form");
-  const [loading,  setLoading]  = useState(false);
-  const [score,    setScore]    = useState(0);
-  const [selectedSecteur, setSelectedSecteur] = useState<typeof SECTEURS[0] | null>(null);
-  const [form, setForm] = useState({ emailOrPhone: "", metier: "", experience: "", rgpd: false });
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [loading, setLoading] = useState(false);
+  const [score, setScore] = useState(0);
+  const [selectedMetier, setSelectedMetier] = useState<typeof METIERS[0] | null>(null);
+  const [_paymentLoading, setPaymentLoading] = useState(false);
   const [fullPaymentLoading, setFullPaymentLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    firstName: "", lastName: "", experience: "", diplome: "", pays: "",
+    emailOrPhone: "", rgpd: false,
+  });
 
   const utmSource   = searchParams.get("utm_source");
   const utmMedium   = searchParams.get("utm_medium");
   const utmCampaign = searchParams.get("utm_campaign");
 
-  // Pre-fill from teaser query params + handle cancel
+  // Pre-fill from URL
   useEffect(() => {
-    const email = searchParams.get("email");
     const metier = searchParams.get("metier");
     const canceled = searchParams.get("canceled");
-    if (email) setForm(f => ({ ...f, emailOrPhone: email }));
     if (metier) {
-      setForm(f => ({ ...f, metier }));
-      setSelectedSecteur(SECTEURS.find(s => s.rome === metier) ?? null);
+      const found = METIERS.find(m => m.rome === metier);
+      if (found) { setSelectedMetier(found); setStep(2); }
     }
     if (canceled === "true") {
-      toast({ title: "Paiement annulé", description: "Vous pouvez réessayer à tout moment.", variant: "default" });
+      toast({ title: "Paiement annulé", description: "Vous pouvez réessayer à tout moment." });
     }
-  }, [searchParams]);
+  }, [searchParams, toast]);
 
-  const handleMetierChange = (value: string) => {
-    setSelectedSecteur(SECTEURS.find(s => s.rome === value) ?? null);
-    setForm(f => ({ ...f, metier: value }));
+  /* ─── Step 1: Select métier ────────────────────────────────── */
+  const handleSelectMetier = (metier: typeof METIERS[0]) => {
+    setSelectedMetier(metier);
+    setStep(2);
+    trackGA4("metier_selected", { rome_code: metier.rome });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  /* ─── Step 2: Submit form → calculate score ────────────────── */
+  const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.emailOrPhone.trim()) {
-      toast({ title: "Champ requis", description: "Entrez votre email ou téléphone.", variant: "destructive" }); return;
-    }
-    if (!form.metier) {
-      toast({ title: "Champ requis", description: "Sélectionnez votre métier.", variant: "destructive" }); return;
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      toast({ title: "Champ requis", description: "Entrez votre nom et prénom.", variant: "destructive" }); return;
     }
     if (!form.experience) {
       toast({ title: "Champ requis", description: "Sélectionnez vos années d'expérience.", variant: "destructive" }); return;
     }
+    if (!form.diplome) {
+      toast({ title: "Champ requis", description: "Sélectionnez votre diplôme.", variant: "destructive" }); return;
+    }
+    if (!form.pays) {
+      toast({ title: "Champ requis", description: "Sélectionnez votre pays.", variant: "destructive" }); return;
+    }
+    if (!form.emailOrPhone.trim()) {
+      toast({ title: "Champ requis", description: "Entrez votre email ou téléphone.", variant: "destructive" }); return;
+    }
     if (!form.rgpd) {
-      toast({ title: "Consentement requis", description: "Acceptez la politique RGPD pour continuer.", variant: "destructive" }); return;
+      toast({ title: "Consentement requis", description: "Acceptez la politique RGPD.", variant: "destructive" }); return;
     }
 
     setLoading(true);
-    const calculatedScore = calcScore(form.metier, form.experience);
+    const calculatedScore = calcScore(selectedMetier!.rome, form.experience, form.diplome);
 
     try {
       await (supabase.from as any)("leads").insert({
-        email_or_phone:    form.emailOrPhone.trim(),
-        metier:            selectedSecteur?.label ?? form.metier,
-        rome_code:         form.metier,
+        email_or_phone:     form.emailOrPhone.trim(),
+        metier:             selectedMetier?.label ?? "",
+        rome_code:          selectedMetier?.rome ?? "",
         experience_bracket: form.experience,
-        score_mock:        calculatedScore,
-        rgpd_consent:      true,
-        utm_source:        utmSource,
-        utm_medium:        utmMedium,
-        utm_campaign:      utmCampaign,
-        status:            "a_contacter",
+        score_mock:         calculatedScore,
+        rgpd_consent:       true,
+        utm_source:         utmSource,
+        utm_medium:         utmMedium,
+        utm_campaign:       utmCampaign,
+        status:             "a_contacter",
       });
     } catch (err) {
       console.error("Lead save:", err);
@@ -125,12 +176,11 @@ export default function Leads() {
 
     setScore(calculatedScore);
     setLoading(false);
-    setStep("score");
-    trackGA4("score_viewed", { rome_code: form.metier, score: calculatedScore });
-
+    setStep(3);
+    trackGA4("score_viewed", { rome_code: selectedMetier?.rome, score: calculatedScore });
     trackFunnel({
       event_name: "lead_form_submitted",
-      rome_code: form.metier,
+      rome_code: selectedMetier?.rome ?? "",
       experience: form.experience,
       email_hash: form.emailOrPhone,
       source: "leads",
@@ -138,328 +188,323 @@ export default function Leads() {
     });
   };
 
-  const [paymentLoading, setPaymentLoading] = useState(false);
-
-  const handlePayment = async () => {
-    setPaymentLoading(true);
-    trackGA4("paiement_started", { rome_code: form.metier, source: "leads" });
+  /* ─── Payment handlers ─────────────────────────────────────── */
+  const handlePayment = async (tier: "test" | "full") => {
+    const setLoader = tier === "full" ? setFullPaymentLoading : setPaymentLoading;
+    setLoader(true);
+    trackGA4("paiement_started", { rome_code: selectedMetier?.rome, source: `leads_${tier}` });
     try {
       const email = form.emailOrPhone.includes("@") ? form.emailOrPhone : undefined;
       const { data, error } = await supabase.functions.invoke("create-payment-lead", {
         body: {
           email,
-          metier: selectedSecteur?.label ?? form.metier,
-          rome_code: form.metier,
+          metier: selectedMetier?.label ?? "",
+          rome_code: selectedMetier?.rome ?? "",
           experience: form.experience,
           source: "leads",
+          ...(tier === "full" ? { tier: "full" } : {}),
         },
       });
       if (error) throw error;
       if (data?.url) {
         trackFunnel({
           event_name: "lead_payment_clicked",
-          rome_code: form.metier,
+          rome_code: selectedMetier?.rome ?? "",
           experience: form.experience,
           email_hash: form.emailOrPhone,
           source: "leads",
         });
         window.location.href = data.url;
-      } else {
-        throw new Error("Aucune URL Stripe reçue");
-      }
+      } else throw new Error("Aucune URL Stripe reçue");
     } catch (err: any) {
-      toast({
-        title: "Erreur de paiement",
-        description: err.message ?? "Impossible d'initier le paiement. Réessayez.",
-        variant: "destructive",
-      });
+      toast({ title: "Erreur de paiement", description: err.message ?? "Réessayez.", variant: "destructive" });
     } finally {
-      setPaymentLoading(false);
-    }
-  };
-
-  const handleFullPayment = async () => {
-    setFullPaymentLoading(true);
-    trackGA4("paiement_started", { rome_code: form.metier, source: "leads_full" });
-    try {
-      const email = form.emailOrPhone.includes("@") ? form.emailOrPhone : undefined;
-      const { data, error } = await supabase.functions.invoke("create-payment-lead", {
-        body: {
-          email,
-          metier: selectedSecteur?.label ?? form.metier,
-          rome_code: form.metier,
-          experience: form.experience,
-          source: "leads",
-          tier: "full",
-        },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        trackFunnel({
-          event_name: "lead_payment_clicked",
-          rome_code: form.metier,
-          experience: form.experience,
-          email_hash: form.emailOrPhone,
-          source: "leads",
-        });
-        window.location.href = data.url;
-      } else {
-        throw new Error("Aucune URL Stripe reçue");
-      }
-    } catch (err: any) {
-      toast({
-        title: "Erreur de paiement",
-        description: err.message ?? "Impossible d'initier le paiement. Réessayez.",
-        variant: "destructive",
-      });
-    } finally {
-      setFullPaymentLoading(false);
+      setLoader(false);
     }
   };
 
   const { label: scoreLabel, color: scoreColor } = getScoreLabel(score);
-  const circumference = 2 * Math.PI * 44; // r=44
+  const circumference = 2 * Math.PI * 44;
+  const isAxiomReady = score >= 70;
 
   return (
     <div className="min-h-screen" style={{ background: "linear-gradient(135deg, hsl(222,47%,7%) 0%, hsl(221,83%,14%) 60%, hsl(189,94%,10%) 100%)" }}>
       <Helmet>
-        <title>Candidature talent – AXIOM & ALTIS | Testez votre éligibilité France</title>
-        <meta name="description" content="Testez gratuitement votre éligibilité au marché français. Score de compatibilité IA, certification MINEFOP, Pack ALTIS visa + logement. BTP, santé, CHR, logistique." />
+        <title>Test d'éligibilité gratuit – AXIOM & ALTIS | Travaillez en France</title>
+        <meta name="description" content="Testez gratuitement votre éligibilité au marché français. Choisissez votre métier, évaluez votre profil, obtenez votre score IA." />
         <link rel="canonical" href="https://axiom-talents.com/leads" />
-        <meta property="og:title" content="Testez votre éligibilité – AXIOM & ALTIS" />
-        <meta property="og:description" content="Évaluation gratuite pour travailler en France. Métiers en tension BTP, santé, CHR. Certification officielle + visa ALTIS." />
-        <meta property="og:url" content="https://axiom-talents.com/leads" />
       </Helmet>
 
       {/* ── Header ── */}
       <header className="sticky top-0 z-50 border-b safe-top" style={{ background: "hsl(222,47%,7%,0.88)", backdropFilter: "blur(14px)", borderColor: "hsl(0,0%,100%,0.07)" }}>
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: "hsl(189,94%,43%,0.18)" }}>
-              <Zap className="h-4 w-4" style={{ color: "hsl(189,94%,43%)" }} />
+            <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: `${accentColor}18` }}>
+              <Zap className="h-4 w-4" style={{ color: accentColor }} />
             </div>
-            <span className="font-bold text-sm tracking-wide" style={{ color: "hsl(0,0%,95%)" }}>
-              AXIOM <span style={{ color: "hsl(189,94%,43%)" }}>×</span> ALTIS
+            <span className="font-bold text-sm tracking-wide" style={{ color: textPrimary }}>
+              AXIOM <span style={{ color: accentColor }}>×</span> ALTIS
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <span className="text-xs hidden sm:block" style={{ color: "hsl(215,25%,45%)" }}>Déjà inscrit ?</span>
-            <Button variant="outline" size="sm" className="text-xs h-8" style={{ borderColor: "hsl(0,0%,100%,0.12)", color: "hsl(215,25%,65%)" }} asChild>
+            <span className="text-xs hidden sm:block" style={{ color: textMuted }}>Déjà inscrit ?</span>
+            <Button variant="outline" size="sm" className="text-xs h-8" style={{ borderColor: cardBorder, color: textSecondary }} asChild>
               <Link to="/login">Connexion</Link>
             </Button>
           </div>
         </div>
       </header>
 
+      {/* ── Progress bar ── */}
+      <div className="max-w-5xl mx-auto px-4 pt-6 pb-2">
+        <div className="flex items-center gap-2 mb-2">
+          {[1, 2, 3].map(s => (
+            <div key={s} className="flex-1 flex items-center gap-2">
+              <div
+                className="h-1.5 flex-1 rounded-full transition-all duration-500"
+                style={{ background: step >= s ? accentColor : "hsl(0,0%,100%,0.08)" }}
+              />
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-center" style={{ color: textMuted }}>
+          Étape {step}/3 · {step === 1 ? "Choisissez votre métier" : step === 2 ? "Complétez votre profil" : "Votre résultat"}
+        </p>
+      </div>
+
       <AnimatePresence mode="wait">
 
-        {/* ═══════════════════ STEP 1 : FORM ═══════════════════ */}
-        {step === "form" && (
-          <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -16 }}>
+        {/* ═══════════════ STEP 1 : MÉTIER CARDS ═══════════════ */}
+        {step === 1 && (
+          <motion.div key="step1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -40 }} className="max-w-5xl mx-auto px-4 pb-16">
+            <div className="text-center mb-8 mt-4">
+              <h1 className="text-2xl sm:text-3xl font-extrabold mb-3" style={{ color: textPrimary }}>
+                Quel métier visez-vous <span style={{ color: accentColor }}>en France ?</span>
+              </h1>
+              <p className="text-sm max-w-lg mx-auto" style={{ color: textSecondary }}>
+                Sélectionnez le poste qui correspond à votre expérience. Nos offres concernent les métiers en tension les plus demandés.
+              </p>
+            </div>
 
-            {/* Hero */}
-            <section className="max-w-5xl mx-auto px-4 pt-8 sm:pt-12 pb-6 sm:pb-8">
-              <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 items-center">
-
-                {/* Left copy */}
-                <motion.div
-                  initial={{ opacity: 0, x: -28 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {METIERS.map((m, i) => (
+                <motion.button
+                  key={m.rome}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => handleSelectMetier(m)}
+                  className="group text-left rounded-2xl border p-0 overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/10"
+                  style={{ background: cardBg, borderColor: cardBorder }}
                 >
-                  <Badge className="mb-4 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full" style={{ background: "hsl(189,94%,43%,0.14)", color: "hsl(189,94%,43%)", border: "1px solid hsl(189,94%,43%,0.25)" }}>
-                    Gratuit & sans engagement
-                  </Badge>
-
-                  <h1 className="text-2xl sm:text-4xl font-extrabold leading-tight mb-4 sm:mb-5" style={{ color: "hsl(0,0%,97%)" }}>
-                    Votre avenir en France<br />
-                    <span style={{ color: "hsl(189,94%,43%)" }}>commence ici.</span>
-                  </h1>
-
-                  <div className="space-y-3 mb-6 text-base leading-relaxed" style={{ color: "hsl(215,25%,62%)" }}>
-                    <p>
-                      Imaginez décrocher un <strong style={{ color: "hsl(0,0%,88%)" }}>CDI en France</strong> dans les métiers qui manquent cruellement de bras — BTP, Santé, CHR, Logistique — sans passer des mois à chercher.
-                    </p>
-                    <p>
-                      Des entreprises françaises cherchent <strong style={{ color: "hsl(0,0%,85%)" }}>activement des talents comme vous</strong> — certifiés et prêts jour 1.
-                    </p>
-                    <p>
-                      AXIOM vous connecte en quelques clics :{" "}
-                      <span style={{ color: "hsl(189,94%,43%)" }}>certification officielle + conformité rigoureuse + accompagnement visa & installation ALTIS.</span>
-                    </p>
-                    <div className="rounded-2xl p-4 border mt-4" style={{ background: "hsl(0,0%,100%,0.03)", borderColor: "hsl(189,94%,43%,0.2)" }}>
-                      <p className="text-sm italic" style={{ color: "hsl(215,25%,60%)" }}>
-                        "Des talents d'Afrique comme vous sont déjà en poste à Paris, Lyon, Bordeaux…{" "}
-                        <strong style={{ color: "hsl(189,94%,43%)" }}>Et si c'était votre tour ?"</strong>
-                      </p>
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={getAvatarForTalent(m.rome, i)}
+                      alt={m.label}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <p className="text-sm font-bold text-white">{m.label}</p>
+                      <p className="text-[11px] text-white/70">ROME {m.rome}</p>
                     </div>
+                    <Badge
+                      className="absolute top-2 right-2 text-[9px] font-bold"
+                      style={{
+                        background: m.demand === "Très forte" ? "hsl(0,70%,50%,0.85)" : "hsl(45,93%,47%,0.85)",
+                        color: "white", border: "none",
+                      }}
+                    >
+                      {m.demand}
+                    </Badge>
                   </div>
-
-                  <div className="flex flex-wrap gap-2.5">
-                    {[
-                      { icon: Users,    label: "+2 400 talents placés"  },
-                      { icon: MapPin,   label: "Paris · Lyon · Bordeaux" },
-                      { icon: Star,     label: "MINEFOP certifié"        },
-                    ].map(({ icon: Icon, label }) => (
-                      <div key={label} className="flex items-center gap-1.5 text-xs rounded-full px-3 py-1.5" style={{ background: "hsl(0,0%,100%,0.06)", color: "hsl(215,25%,60%)" }}>
-                        <Icon className="h-3.5 w-3.5" style={{ color: "hsl(189,94%,43%)" }} />{label}
-                      </div>
-                    ))}
+                  <div className="p-3 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium" style={{ color: accentColor }}>{m.salary}</p>
+                      <p className="text-[10px]" style={{ color: textMuted }}>{m.sector} · France</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: accentColor }} />
                   </div>
-                </motion.div>
+                </motion.button>
+              ))}
+            </div>
 
-                {/* Right image */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.93 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  className="hidden lg:flex items-center justify-center"
-                >
-                  <motion.img
-                    src={heroImg}
-                    alt="Talents France-Afrique"
-                    className="w-full max-w-xs max-h-72 object-contain mx-auto rounded-2xl drop-shadow-[0_12px_24px_rgba(6,182,212,0.25)]"
-                    style={{ filter: "drop-shadow(0 24px 48px hsl(189,94%,43%,0.22))" }}
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-                  />
-                </motion.div>
-              </div>
-            </section>
-
-            {/* Form card */}
-            <section className="max-w-lg mx-auto px-4 pb-16">
-              <motion.div
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                className="rounded-2xl p-6 sm:p-8 border"
-                style={{ background: "hsl(0,0%,100%,0.04)", borderColor: "hsl(0,0%,100%,0.09)" }}
-              >
-                <div className="flex items-center gap-2 mb-6">
-                  <Sparkles className="h-5 w-5" style={{ color: "hsl(189,94%,43%)" }} />
-                  <h2 className="text-lg font-bold" style={{ color: "hsl(0,0%,96%)" }}>
-                    Tester mon profil gratuitement
-                  </h2>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-
-                  {/* Email / Phone */}
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium" style={{ color: "hsl(215,25%,72%)" }}>
-                      Email ou téléphone <span style={{ color: "hsl(0,60%,65%)" }}>*</span>
-                    </label>
-                    <Input
-                      placeholder="exemple@email.com ou +237 6XX XXX XXX"
-                      value={form.emailOrPhone}
-                      onChange={e => setForm(f => ({ ...f, emailOrPhone: e.target.value }))}
-                      inputMode="email"
-                      autoComplete="email"
-                      className="text-base sm:text-sm h-12 sm:h-10 rounded-xl"
-                      style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}
-                    />
-                  </div>
-
-                  {/* Métier */}
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium" style={{ color: "hsl(215,25%,72%)" }}>
-                      Métier principal <span style={{ color: "hsl(0,60%,65%)" }}>*</span>
-                    </label>
-                    <Select value={form.metier} onValueChange={handleMetierChange}>
-                      <SelectTrigger className="text-base sm:text-sm h-12 sm:h-10 rounded-xl" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
-                        <SelectValue placeholder="Sélectionnez votre secteur…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SECTEURS.map(s => (
-                          <SelectItem key={s.rome} value={s.rome}>
-                            <span className="flex items-center gap-2">
-                              <span>{s.icon}</span>
-                              <span>{s.label}</span>
-                              <Badge className="ml-1 text-[8px] px-1 py-0 border" style={{ background: "hsl(0,70%,50%,0.12)", color: "hsl(0,70%,60%)", borderColor: "hsl(0,70%,50%,0.25)" }}>{s.demand}</Badge>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {selectedSecteur && (
-                      <p className="text-xs" style={{ color: "hsl(189,94%,43%)" }}>
-                        Code ROME : <strong>{selectedSecteur.rome}</strong> · Tension {selectedSecteur.demand}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Expérience */}
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium" style={{ color: "hsl(215,25%,72%)" }}>
-                      Années d'expérience <span style={{ color: "hsl(0,60%,65%)" }}>*</span>
-                    </label>
-                    <Select value={form.experience} onValueChange={v => setForm(f => ({ ...f, experience: v }))}>
-                      <SelectTrigger className="text-base sm:text-sm h-12 sm:h-10 rounded-xl" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
-                        <SelectValue placeholder="Sélectionnez une tranche…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {EXP_BRACKETS.map(e => (
-                          <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* RGPD */}
-                  <div className="flex items-start gap-3 pt-1">
-                    <Checkbox
-                      id="rgpd-lead"
-                      checked={form.rgpd}
-                      onCheckedChange={v => setForm(f => ({ ...f, rgpd: !!v }))}
-                      className="mt-0.5 shrink-0"
-                    />
-                    <label htmlFor="rgpd-lead" className="text-xs leading-relaxed cursor-pointer" style={{ color: "hsl(215,25%,48%)" }}>
-                      J'accepte la{" "}
-                      <Link to="/rgpd-light" target="_blank" className="underline" style={{ color: "hsl(189,94%,43%)" }}>
-                        politique RGPD & CGU
-                      </Link>{" "}
-                      d'AXIOM · Données traitées à des fins de mise en relation professionnelle.
-                    </label>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-14 sm:h-12 text-base sm:text-sm font-bold rounded-xl mt-2"
-                    style={{ background: "hsl(221,83%,53%)", color: "white" }}
-                  >
-                    {loading ? (
-                      <span className="flex items-center gap-2">
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
-                          className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
-                        />
-                        Analyse IA en cours…
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4" />
-                        Recevoir mon évaluation &amp; alertes offres
-                        <ArrowRight className="h-4 w-4" />
-                      </span>
-                    )}
-                  </Button>
-                </form>
-
-                <p className="mt-4 text-center text-xs" style={{ color: "hsl(215,25%,35%)" }}>
-                  🔒 Aucune carte bancaire · Données sécurisées · RGPD Art. 13
-                </p>
-              </motion.div>
-            </section>
+            <p className="text-center text-xs mt-6" style={{ color: textMuted }}>
+              🔒 Évaluation 100 % gratuite · Sans engagement · Résultats immédiats
+            </p>
           </motion.div>
         )}
 
-        {/* ═══════════════════ STEP 2 : SCORE ═══════════════════ */}
-        {step === "score" && (
+        {/* ═══════════════ STEP 2 : FORMULAIRE ═══════════════ */}
+        {step === 2 && selectedMetier && (
+          <motion.div key="step2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="max-w-lg mx-auto px-4 pb-16 mt-4">
+
+            {/* Back + selected métier */}
+            <button onClick={() => setStep(1)} className="flex items-center gap-1.5 text-xs mb-4 hover:underline" style={{ color: textSecondary }}>
+              <ArrowLeft className="h-3.5 w-3.5" /> Changer de métier
+            </button>
+
+            <div className="flex items-center gap-3 rounded-xl p-3 mb-6 border" style={{ background: cardBg, borderColor: `${accentColor}33` }}>
+              <img src={getAvatarForTalent(selectedMetier.rome, 0)} alt={selectedMetier.label} className="h-12 w-12 rounded-lg object-cover" />
+              <div>
+                <p className="text-sm font-bold" style={{ color: textPrimary }}>{selectedMetier.label}</p>
+                <p className="text-[11px]" style={{ color: accentColor }}>ROME {selectedMetier.rome} · {selectedMetier.salary}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl p-6 sm:p-8 border" style={{ background: cardBg, borderColor: cardBorder }}>
+              <div className="flex items-center gap-2 mb-6">
+                <Sparkles className="h-5 w-5" style={{ color: accentColor }} />
+                <h2 className="text-lg font-bold" style={{ color: textPrimary }}>
+                  Complétez votre profil
+                </h2>
+              </div>
+
+              <form onSubmit={handleSubmitForm} className="space-y-4">
+                {/* Nom + Prénom */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium" style={{ color: textSecondary }}>Prénom *</label>
+                    <Input
+                      placeholder="Jean"
+                      value={form.firstName}
+                      onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
+                      className="h-11 rounded-xl"
+                      style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium" style={{ color: textSecondary }}>Nom *</label>
+                    <Input
+                      placeholder="Dupont"
+                      value={form.lastName}
+                      onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
+                      className="h-11 rounded-xl"
+                      style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Expérience */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium" style={{ color: textSecondary }}>
+                    Années d'expérience en {selectedMetier.label.toLowerCase()} *
+                  </label>
+                  <Select value={form.experience} onValueChange={v => setForm(f => ({ ...f, experience: v }))}>
+                    <SelectTrigger className="h-11 rounded-xl" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
+                      <SelectValue placeholder="Sélectionnez…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {EXP_BRACKETS.map(e => (
+                        <SelectItem key={e.value} value={e.value}>{e.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Diplôme */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium" style={{ color: textSecondary }}>
+                    Diplôme / Formation *
+                  </label>
+                  <Select value={form.diplome} onValueChange={v => setForm(f => ({ ...f, diplome: v }))}>
+                    <SelectTrigger className="h-11 rounded-xl" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
+                      <SelectValue placeholder="Sélectionnez votre diplôme…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DIPLOMES.map(d => (
+                        <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Pays */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium" style={{ color: textSecondary }}>
+                    Pays de résidence *
+                  </label>
+                  <Select value={form.pays} onValueChange={v => setForm(f => ({ ...f, pays: v }))}>
+                    <SelectTrigger className="h-11 rounded-xl" style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}>
+                      <SelectValue placeholder="Sélectionnez votre pays…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PAYS.map(p => (
+                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Email / Phone */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium" style={{ color: textSecondary }}>
+                    Email ou téléphone *
+                  </label>
+                  <Input
+                    placeholder="exemple@email.com ou +237 6XX XXX XXX"
+                    value={form.emailOrPhone}
+                    onChange={e => setForm(f => ({ ...f, emailOrPhone: e.target.value }))}
+                    inputMode="email"
+                    autoComplete="email"
+                    className="h-11 rounded-xl"
+                    style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}
+                  />
+                </div>
+
+                {/* RGPD */}
+                <div className="flex items-start gap-3 pt-1">
+                  <Checkbox
+                    id="rgpd-lead"
+                    checked={form.rgpd}
+                    onCheckedChange={v => setForm(f => ({ ...f, rgpd: !!v }))}
+                    className="mt-0.5 shrink-0"
+                  />
+                  <label htmlFor="rgpd-lead" className="text-xs leading-relaxed cursor-pointer" style={{ color: textMuted }}>
+                    J'accepte la{" "}
+                    <Link to="/rgpd-light" target="_blank" className="underline" style={{ color: accentColor }}>
+                      politique RGPD & CGU
+                    </Link>{" "}
+                    d'AXIOM · Données traitées à des fins de mise en relation professionnelle.
+                  </label>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-13 text-base font-bold rounded-xl mt-2"
+                  style={{ background: bleuSouverain, color: "white" }}
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
+                        className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
+                      />
+                      Calcul du score IA en cours…
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4" />
+                      Lancer mon évaluation gratuite
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  )}
+                </Button>
+              </form>
+
+              <p className="mt-4 text-center text-xs" style={{ color: textMuted }}>
+                🔒 Aucune carte bancaire · Données sécurisées · RGPD Art. 13
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ═══════════════ STEP 3 : SCORE ═══════════════ */}
+        {step === 3 && selectedMetier && (
           <motion.div
-            key="score"
+            key="step3"
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
@@ -472,15 +517,17 @@ export default function Leads() {
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200, damping: 16, delay: 0.1 }}
                 className="inline-flex h-16 w-16 items-center justify-center rounded-full mb-4"
-                style={{ background: "hsl(189,94%,43%,0.14)", border: "2px solid hsl(189,94%,43%,0.3)" }}
+                style={{ background: `${accentColor}18`, border: `2px solid ${accentColor}44` }}
               >
-                <CheckCircle2 className="h-8 w-8" style={{ color: "hsl(189,94%,43%)" }} />
+                <CheckCircle2 className="h-8 w-8" style={{ color: accentColor }} />
               </motion.div>
-              <h2 className="text-xl font-bold mb-1" style={{ color: "hsl(0,0%,96%)" }}>Analyse terminée !</h2>
-              <p className="text-sm" style={{ color: "hsl(215,25%,50%)" }}>Votre score de compatibilité France · IA AXIOM</p>
+              <h2 className="text-xl font-bold mb-1" style={{ color: textPrimary }}>Analyse terminée !</h2>
+              <p className="text-sm" style={{ color: textSecondary }}>
+                Votre profil correspond à <strong style={{ color: accentColor }}>{score} %</strong> au poste de <strong style={{ color: textPrimary }}>{selectedMetier.label}</strong>
+              </p>
             </div>
 
-            {/* Score circle SVG */}
+            {/* Score circle */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -505,11 +552,11 @@ export default function Leads() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.9 }}
                     className="text-4xl font-extrabold"
-                    style={{ color: "hsl(0,0%,96%)" }}
+                    style={{ color: textPrimary }}
                   >
                     {score}%
                   </motion.span>
-                  <span className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: "hsl(215,25%,50%)" }}>MATCH IA</span>
+                  <span className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: textMuted }}>MATCH IA</span>
                 </div>
               </div>
 
@@ -519,94 +566,95 @@ export default function Leads() {
                 transition={{ delay: 1.1 }}
                 className="text-center mt-3"
               >
-                <p className="text-lg font-bold" style={{ color: scoreColor }}>{scoreLabel}</p>
-                <p className="text-sm mt-1" style={{ color: "hsl(215,25%,52%)" }}>
-                  {selectedSecteur?.label ?? "BTP"} · Code ROME {selectedSecteur?.rome ?? "F1703"}
+                <div className="flex items-center gap-2 justify-center">
+                  <p className="text-lg font-bold" style={{ color: scoreColor }}>{scoreLabel}</p>
+                  {isAxiomReady && (
+                    <Badge className="text-[10px] font-bold gap-1" style={{ background: "hsl(158,64%,42%,0.15)", color: "hsl(158,64%,42%)", border: "1px solid hsl(158,64%,42%,0.3)" }}>
+                      <Shield className="h-3 w-3" /> AXIOM READY
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-sm mt-1" style={{ color: textSecondary }}>
+                  {selectedMetier.label} · ROME {selectedMetier.rome} · {selectedMetier.salary}
                 </p>
               </motion.div>
             </motion.div>
 
-            {/* Upsell card */}
+            {/* Score breakdown */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.3 }}
+              className="rounded-xl p-4 border mb-6 space-y-2"
+              style={{ background: cardBg, borderColor: cardBorder }}
+            >
+              <p className="text-xs font-semibold mb-2" style={{ color: textPrimary }}>Détail du calcul</p>
+              {[
+                { label: "Compétences métier", pct: "40%", color: accentColor },
+                { label: "Expérience professionnelle", pct: "25%", color: bleuSouverain },
+                { label: "Éligibilité visa", pct: "20%", color: "hsl(158,64%,42%)" },
+                { label: "Intégration & logement", pct: "15%", color: "hsl(45,93%,47%)" },
+              ].map(({ label, pct, color }) => (
+                <div key={label} className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full" style={{ background: color }} />
+                  <span className="text-xs flex-1" style={{ color: textSecondary }}>{label}</span>
+                  <span className="text-xs font-medium" style={{ color: textPrimary }}>{pct}</span>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Upsell */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 }}
+              transition={{ delay: 1.5 }}
               className="rounded-2xl p-6 border mb-6"
-              style={{ background: "hsl(221,83%,14%,0.55)", borderColor: "hsl(189,94%,43%,0.25)" }}
+              style={{ background: "hsl(221,83%,14%,0.55)", borderColor: `${accentColor}40` }}
             >
               <p className="text-sm font-semibold mb-3" style={{ color: "hsl(0,0%,90%)" }}>
-                🎯 Votre profil correspond déjà à des offres en tension en France. Vous êtes potentiellement éligible au <strong style={{ color: "hsl(189,94%,43%)" }}>visa de travail (procédure ANEF)</strong>.
+                🎯 {isAxiomReady
+                  ? `Félicitations ${form.firstName} ! Votre profil est compatible avec les offres en tension.`
+                  : `${form.firstName}, votre profil montre un bon potentiel. L'accompagnement ALTIS peut maximiser vos chances.`
+                }
               </p>
 
               <div className="space-y-2 mb-5">
                 {[
-                  "Score détaillé par compétence & niveau ROME",
-                  "3 à 5 offres CDI France Travail matchées",
-                  "Parcours ALTIS : visa + accueil + logement",
+                  "Rapport complet : score détaillé par compétence",
+                  "3 à 5 offres CDI matchées en France",
+                  "Préparation dossier ALTIS : visa + accueil + logement 1er mois",
                 ].map(item => (
                   <div key={item} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: "hsl(189,94%,43%)" }} />
-                    <span className="text-xs" style={{ color: "hsl(215,25%,62%)" }}>{item}</span>
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: accentColor }} />
+                    <span className="text-xs" style={{ color: textSecondary }}>{item}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="rounded-xl p-3 mb-4 border text-center" style={{ background: "hsl(0,0%,100%,0.03)", borderColor: "hsl(0,0%,100%,0.07)" }}>
-                <p className="text-xs" style={{ color: "hsl(215,25%,58%)" }}>
-                  Débloquez pour{" "}
-                  <strong style={{ color: "hsl(189,94%,43%)", fontSize: "1rem" }}>4,99 €</strong>{" "}
-                  : évaluation complète + analyse détaillée + accès offres en tension
-                </p>
-              </div>
-
-              <Button
-                className="w-full h-12 font-bold text-sm rounded-xl mb-2"
-                style={{ background: "hsl(221,83%,53%)", color: "white" }}
-                onClick={handlePayment}
-                disabled={paymentLoading}
-              >
-                {paymentLoading ? (
-                  <span className="flex items-center gap-2">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
-                      className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
-                    />
-                    Redirection Stripe…
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
-                    Débloquer pour 4,99 €
-                    <ArrowRight className="h-4 w-4" />
-                  </span>
-                )}
-              </Button>
-
-              {/* ── Full unlock 29 € ── */}
-              <div className="relative rounded-xl p-3 mb-3 border text-center" style={{ background: "hsl(189,94%,43%,0.06)", borderColor: "hsl(189,94%,43%,0.2)" }}>
+              {/* ── Full unlock CTA ── */}
+              <div className="relative rounded-xl p-3 mb-3 border text-center" style={{ background: `${accentColor}0A`, borderColor: `${accentColor}33` }}>
                 <motion.span
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: [1, 1.08, 1], opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.6, repeat: Infinity, repeatDelay: 3 }}
                   className="absolute -top-2.5 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold shadow-lg"
-                  style={{ background: "linear-gradient(135deg, hsl(158,64%,38%), hsl(158,64%,48%))", color: "white", boxShadow: "0 2px 12px hsl(158,64%,38%,0.4)" }}
+                  style={{ background: "linear-gradient(135deg, hsl(158,64%,38%), hsl(158,64%,48%))", color: "white" }}
                 >
                   ⭐ Recommandé
                 </motion.span>
-                <p className="text-xs" style={{ color: "hsl(215,25%,58%)" }}>
-                  Ou passez directement au{" "}
-                  <strong style={{ color: "hsl(45,93%,47%)", fontSize: "1rem" }}>déblocage complet — 29 €</strong>
+                <p className="text-xs" style={{ color: textSecondary }}>
+                  Débloquer le rapport complet + préparation dossier
                 </p>
-                <p className="text-[10px] mt-1" style={{ color: "hsl(215,25%,45%)" }}>
-                  Score + offres + dossier ALTIS complet (visa, billet, logement)
+                <p className="mt-1">
+                  <strong style={{ color: accentColor, fontSize: "1.25rem" }}>29 €</strong>{" "}
+                  <span className="text-[10px]" style={{ color: textMuted }}>une seule fois</span>
                 </p>
               </div>
 
               <Button
                 className="w-full h-12 font-bold text-sm rounded-xl mb-2"
-                style={{ background: "linear-gradient(135deg, hsl(45,93%,47%), hsl(36,100%,50%))", color: "hsl(222,47%,7%)" }}
-                onClick={handleFullPayment}
+                style={{ background: `linear-gradient(135deg, ${accentColor}, ${bleuSouverain})`, color: "white" }}
+                onClick={() => handlePayment("full")}
                 disabled={fullPaymentLoading}
               >
                 {fullPaymentLoading ? (
@@ -614,14 +662,14 @@ export default function Leads() {
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
-                      className="h-4 w-4 border-2 border-current/30 border-t-current rounded-full"
+                      className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
                     />
-                    Redirection Stripe…
+                    Redirection…
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
                     <Star className="h-4 w-4" />
-                    Déblocage complet — 29 €
+                    Débloquer le rapport complet — 29 €
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 )}
@@ -630,7 +678,7 @@ export default function Leads() {
               <Button
                 variant="ghost"
                 className="w-full text-xs h-8"
-                style={{ color: "hsl(215,25%,38%)" }}
+                style={{ color: textMuted }}
                 asChild
               >
                 <Link to="/signup-light">Continuer gratuitement (version limitée)</Link>
@@ -640,11 +688,11 @@ export default function Leads() {
             {/* Trust */}
             <div className="flex justify-center gap-5">
               {[
-                { icon: Shield, label: "RGPD compliant"   },
+                { icon: Shield, label: "RGPD compliant" },
                 { icon: Globe,  label: "Afrique → France" },
-                { icon: Star,   label: "MINEFOP certifié"  },
+                { icon: Star,   label: "MINEFOP certifié" },
               ].map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-1.5 text-xs" style={{ color: "hsl(215,25%,38%)" }}>
+                <div key={label} className="flex items-center gap-1.5 text-xs" style={{ color: textMuted }}>
                   <Icon className="h-3 w-3" />{label}
                 </div>
               ))}
