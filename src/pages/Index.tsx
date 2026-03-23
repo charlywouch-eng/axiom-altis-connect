@@ -133,7 +133,7 @@ const ENTREPRISE_CARDS = [
   {
     icon: FileCheck,
     title: "Talents vérifiés et certifiés",
-    desc: "Diplômes apostillés MINEFOP, vérification d'identité, antécédents professionnels validés. Chaque candidat passe un audit Delta Classes Miroirs avant d'être présenté.",
+    desc: "Diplômes apostillés, vérification d'identité et antécédents professionnels validés. Chaque candidat est certifié conforme aux exigences françaises avant d'être présenté.",
     badge: "Certifié",
     badgeColor: "bg-accent/15 text-accent border-accent/25",
     iconBg: "bg-accent/10",
@@ -141,9 +141,9 @@ const ENTREPRISE_CARDS = [
   },
   {
     icon: BarChart3,
-    title: "Matching ultra-précis ROME",
-    desc: "Notre algorithme IA croise compétences, expérience et codes ROME pour un matching de précision. Taux de rétention de 98 % à 12 mois sur les profils recommandés.",
-    badge: "IA avancée",
+    title: "Conformité et précision",
+    desc: "AXIOM & ALTIS combine certification officielle des compétences, conformité rigoureuse aux normes françaises et un accompagnement complet. Taux de rétention de 98 % à 12 mois.",
+    badge: "Premium",
     badgeColor: "bg-primary/15 text-primary border-primary/25",
     iconBg: "bg-primary/10",
     iconColor: "text-primary",

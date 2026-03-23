@@ -179,7 +179,7 @@ export default function FicheMetierAideSoignant() {
                       </CardContent></Card>
                     </motion.div>
                     <motion.div custom={4} variants={fadeUp}>
-                      <Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=J1501">Découvrir mon score et commencer mon parcours <ArrowRight className="h-4 w-4" /></Link></Button>
+                      <Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=J1501">Vérifier mon éligibilité et commencer mon parcours <ArrowRight className="h-4 w-4" /></Link></Button>
                     </motion.div>
                   </CardContent>
                 </Card>

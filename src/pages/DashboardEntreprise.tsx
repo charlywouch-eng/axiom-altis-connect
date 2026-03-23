@@ -604,7 +604,7 @@ export default function DashboardEntreprise() {
                   <div>
                     <h2 className="font-display text-xl font-bold">Candidats matchés</h2>
                     <p className="text-sm text-muted-foreground mt-0.5">
-                      Scoring prédictif AXIOM · Score = ROME×skills (70%) + Origine Afrique (20%) + Certification (10%)
+                      Profils certifiés et conformes aux normes françaises
                     </p>
                   </div>
                   <Badge className="bg-accent/15 text-accent border border-accent/30 text-xs font-semibold">

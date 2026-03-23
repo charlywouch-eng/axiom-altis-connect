@@ -25,8 +25,8 @@ const STEPS = [
   {
     icon: Brain,
     step: "02",
-    title: "Score IA instantané",
-    desc: "Notre algorithme ROME croise vos compétences avec les métiers en tension France et calcule votre score d'éligibilité.",
+    title: "Évaluation de vos compétences",
+    desc: "Vos compétences et certifications sont analysées au regard des normes françaises pour vérifier votre éligibilité aux métiers en tension.",
     accent: "from-accent to-accent/60",
     glow: "bg-accent/15",
     iconColor: "text-accent",
