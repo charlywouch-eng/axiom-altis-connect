@@ -237,6 +237,42 @@ function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
     queryClient.invalidateQueries({ queryKey: ["recruiter-shortlist"] });
   };
 
+  const { data: talents, isLoading } = useQuery({
+    queryKey: ["recruteur-talents"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("talent_profiles")
+        .select("*")
+        .eq("available", true)
+        .order("compliance_score", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: offersCount } = useQuery({
+    queryKey: ["tension-offers-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("job_offers")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "open");
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const { data: candidaturesCount } = useQuery({
+    queryKey: ["candidatures-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("candidatures")
+        .select("*", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
   const filtered = talents?.filter(t => {
     const matchSearch = !search ||
       t.full_name?.toLowerCase().includes(search.toLowerCase()) ||
