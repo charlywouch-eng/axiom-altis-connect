@@ -54,6 +54,9 @@ export default function CandidatureCvCard({ candidature, onContact, onActivateAl
   const c = candidature;
   const initials = c.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const hasMinefop = c.formations?.some((f: any) => f.minefop);
+  const hasVerifiedExperience = c.certifications?.some(
+    (cert: string) => cert.toLowerCase().includes("minrex") || cert.toLowerCase().includes("axiom verified")
+  );
 
   // Compute a mock score based on completeness
   const score = Math.min(100, 
