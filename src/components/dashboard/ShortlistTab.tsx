@@ -13,7 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import {
   Bookmark, Download, Trash2, Search, Brain,
   ShieldCheck, Star, Eye, CheckCircle2,
-  MessageSquare, Save, X,
+  MessageSquare, Save, Loader2,
 } from "lucide-react";
 
 interface ShortlistTabProps {
