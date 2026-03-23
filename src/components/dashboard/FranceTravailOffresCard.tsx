@@ -212,7 +212,7 @@ export default function FranceTravailOffresCard({
           <div className="text-center py-6">
             <Briefcase className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
             <p className="text-sm text-muted-foreground">Aucune offre disponible actuellement.</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">Les offres sont actualisées en continu via l'API v2.</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">Les opportunités sont actualisées en continu par notre IA.</p>
           </div>
         )}
       </CardContent>
