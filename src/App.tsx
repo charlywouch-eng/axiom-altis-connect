@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,67 +9,78 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { GA4RouteTracker } from "@/components/GA4RouteTracker";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
-
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { FullPageLoader } from "@/components/FullPageLoader";
+
+// Eager: critical public pages
 import Index from "./pages/Index";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import SignupLight from "./pages/SignupLight";
-import SignupTalent from "./pages/SignupTalent";
-import OnboardingRole from "./pages/OnboardingRole";
-import Dashboard from "./pages/Dashboard";
-import DashboardEntreprise from "./pages/DashboardEntreprise";
-import EntrepriseProfile from "./pages/EntrepriseProfile";
-import EntrepriseCandidats from "./pages/EntrepriseCandidats";
-import OfferDetail from "./pages/OfferDetail";
-import DashboardTalent from "./pages/DashboardTalent";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminOffres from "./pages/AdminOffres";
-import AdminSubventions from "./pages/AdminSubventions";
-import AdminImportTalents from "./pages/AdminImportTalents";
-import AdminStatistics from "./pages/AdminStatistics";
-import AdminLeads from "./pages/AdminLeads";
-import AdminQuotes from "./pages/AdminQuotes";
-import AdminAuditLogs from "./pages/AdminAuditLogs";
-import AdminNotifications from "./pages/AdminNotifications";
-import AdminCandidatures from "./pages/AdminCandidatures";
-import AdminEmailLogs from "./pages/AdminEmailLogs";
-import Billing from "./pages/Billing";
-import MetierDetail from "./pages/MetierDetail";
-import MetiersEnTension from "./pages/MetiersEnTension";
-import DashboardRecruteur from "./pages/DashboardRecruteur";
-import DashboardSociete from "./pages/DashboardSociete";
-import LienMagique from "./pages/LienMagique";
-import FicheMetierMacon from "./pages/FicheMetierMacon";
-import FicheMetierInfirmier from "./pages/FicheMetierInfirmier";
-import FicheMetierAideSoignant from "./pages/FicheMetierAideSoignant";
-import FicheMetierPeintreBatiment from "./pages/FicheMetierPeintreBatiment";
-import FicheMetierTechnicienMaintenance from "./pages/FicheMetierTechnicienMaintenance";
-import FicheMetierAuxiliairePuericulture from "./pages/FicheMetierAuxiliairePuericulture";
-import FicheMetierInfirmierBloc from "./pages/FicheMetierInfirmierBloc";
-import FicheMetierCouvreur from "./pages/FicheMetierCouvreur";
-import FicheMetierPlombier from "./pages/FicheMetierPlombier";
-import FicheMetierCarreleur from "./pages/FicheMetierCarreleur";
-import FicheMetierCuisinier from "./pages/FicheMetierCuisinier";
-import FicheMetierServeur from "./pages/FicheMetierServeur";
-import FicheMetierAgentRestauration from "./pages/FicheMetierAgentRestauration";
-import FicheMetierChauffeurRoutier from "./pages/FicheMetierChauffeurRoutier";
-import FicheMetierCariste from "./pages/FicheMetierCariste";
-import FicheMetierOuvrierAgricole from "./pages/FicheMetierOuvrierAgricole";
-import FichesMetiersIndex from "./pages/FichesMetiersIndex";
-
-import Rgpd from "./pages/Rgpd";
-import RgpdLight from "./pages/RgpdLight";
-import Leads from "./pages/Leads";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import PackAltisSuccess from "./pages/PackAltisSuccess";
-import Unsubscribe from "./pages/Unsubscribe";
-import Pricing from "./pages/Pricing";
-import APropos from "./pages/APropos";
-import Pitch from "./pages/Pitch";
-import ResetPassword from "./pages/ResetPassword";
-import DemandeDevis from "./pages/DemandeDevis";
 import NotFound from "./pages/NotFound";
+
+// Lazy: auth pages
+const Signup = lazy(() => import("./pages/Signup"));
+const SignupLight = lazy(() => import("./pages/SignupLight"));
+const SignupTalent = lazy(() => import("./pages/SignupTalent"));
+const OnboardingRole = lazy(() => import("./pages/OnboardingRole"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const LienMagique = lazy(() => import("./pages/LienMagique"));
+
+// Lazy: public pages
+const MetiersEnTension = lazy(() => import("./pages/MetiersEnTension"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const APropos = lazy(() => import("./pages/APropos"));
+const Pitch = lazy(() => import("./pages/Pitch"));
+const DemandeDevis = lazy(() => import("./pages/DemandeDevis"));
+const Rgpd = lazy(() => import("./pages/Rgpd"));
+const RgpdLight = lazy(() => import("./pages/RgpdLight"));
+const Leads = lazy(() => import("./pages/Leads"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const PackAltisSuccess = lazy(() => import("./pages/PackAltisSuccess"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const MetierDetail = lazy(() => import("./pages/MetierDetail"));
+
+// Lazy: fiches métiers
+const FichesMetiersIndex = lazy(() => import("./pages/FichesMetiersIndex"));
+const FicheMetierMacon = lazy(() => import("./pages/FicheMetierMacon"));
+const FicheMetierInfirmier = lazy(() => import("./pages/FicheMetierInfirmier"));
+const FicheMetierAideSoignant = lazy(() => import("./pages/FicheMetierAideSoignant"));
+const FicheMetierPeintreBatiment = lazy(() => import("./pages/FicheMetierPeintreBatiment"));
+const FicheMetierTechnicienMaintenance = lazy(() => import("./pages/FicheMetierTechnicienMaintenance"));
+const FicheMetierAuxiliairePuericulture = lazy(() => import("./pages/FicheMetierAuxiliairePuericulture"));
+const FicheMetierInfirmierBloc = lazy(() => import("./pages/FicheMetierInfirmierBloc"));
+const FicheMetierCouvreur = lazy(() => import("./pages/FicheMetierCouvreur"));
+const FicheMetierPlombier = lazy(() => import("./pages/FicheMetierPlombier"));
+const FicheMetierCarreleur = lazy(() => import("./pages/FicheMetierCarreleur"));
+const FicheMetierCuisinier = lazy(() => import("./pages/FicheMetierCuisinier"));
+const FicheMetierServeur = lazy(() => import("./pages/FicheMetierServeur"));
+const FicheMetierAgentRestauration = lazy(() => import("./pages/FicheMetierAgentRestauration"));
+const FicheMetierChauffeurRoutier = lazy(() => import("./pages/FicheMetierChauffeurRoutier"));
+const FicheMetierCariste = lazy(() => import("./pages/FicheMetierCariste"));
+const FicheMetierOuvrierAgricole = lazy(() => import("./pages/FicheMetierOuvrierAgricole"));
+
+// Lazy: dashboards (heavy — recharts, jspdf)
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const DashboardEntreprise = lazy(() => import("./pages/DashboardEntreprise"));
+const DashboardTalent = lazy(() => import("./pages/DashboardTalent"));
+const DashboardRecruteur = lazy(() => import("./pages/DashboardRecruteur"));
+const DashboardSociete = lazy(() => import("./pages/DashboardSociete"));
+const EntrepriseProfile = lazy(() => import("./pages/EntrepriseProfile"));
+const EntrepriseCandidats = lazy(() => import("./pages/EntrepriseCandidats"));
+const OfferDetail = lazy(() => import("./pages/OfferDetail"));
+const Billing = lazy(() => import("./pages/Billing"));
+
+// Lazy: admin pages
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminOffres = lazy(() => import("./pages/AdminOffres"));
+const AdminSubventions = lazy(() => import("./pages/AdminSubventions"));
+const AdminImportTalents = lazy(() => import("./pages/AdminImportTalents"));
+const AdminStatistics = lazy(() => import("./pages/AdminStatistics"));
+const AdminLeads = lazy(() => import("./pages/AdminLeads"));
+const AdminQuotes = lazy(() => import("./pages/AdminQuotes"));
+const AdminAuditLogs = lazy(() => import("./pages/AdminAuditLogs"));
+const AdminNotifications = lazy(() => import("./pages/AdminNotifications"));
+const AdminCandidatures = lazy(() => import("./pages/AdminCandidatures"));
+const AdminEmailLogs = lazy(() => import("./pages/AdminEmailLogs"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
