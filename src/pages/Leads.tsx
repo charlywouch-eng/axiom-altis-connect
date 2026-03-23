@@ -555,7 +555,7 @@ export default function Leads() {
                 <p className="text-xs" style={{ color: "hsl(215,25%,58%)" }}>
                   Débloquez pour{" "}
                   <strong style={{ color: "hsl(189,94%,43%)", fontSize: "1rem" }}>4,99 €</strong>{" "}
-                  : score IA + analyse ROME + accès offres en tension
+                  : évaluation complète + analyse détaillée + accès offres en tension
                 </p>
               </div>
 
