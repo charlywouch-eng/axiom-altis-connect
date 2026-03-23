@@ -349,7 +349,34 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
                       </Badge>
                     </div>
 
-                    {/* Actions */}
+                    {/* Tags */}
+                    <div className="mt-3 border-t border-white/5 pt-3">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <Tag className="h-3 w-3 text-white/30" />
+                        <span className="text-[10px] text-white/30 uppercase tracking-wider font-medium">Tags</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {PRESET_TAGS.map((preset) => {
+                          const entryTags: string[] = (entry as any)?.tags ?? [];
+                          const isActive = entryTags.includes(preset.label);
+                          return (
+                            <button
+                              key={preset.label}
+                              onClick={() => toggleTag(talent.id, preset.label)}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all ${
+                                isActive
+                                  ? `${preset.color} scale-100`
+                                  : "bg-white/5 text-white/25 border-white/10 hover:border-white/20 hover:text-white/40"
+                              }`}
+                            >
+                              {isActive && <X className="h-2.5 w-2.5" />}
+                              {!isActive && <Plus className="h-2.5 w-2.5" />}
+                              {preset.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                     <div className="mt-4 flex gap-2">
                       <Button
                         size="sm"
