@@ -278,7 +278,7 @@ export default function Index() {
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Talents d'Afrique certifiés MINEFOP • Matching IA instantané • Accompagnement <strong className="text-accent">ALTIS Zéro Stress</strong>
+                Talents d'Afrique certifiés • Conformité aux normes françaises • Accompagnement <strong className="text-accent">ALTIS Zéro Stress</strong>
               </motion.p>
 
               <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
