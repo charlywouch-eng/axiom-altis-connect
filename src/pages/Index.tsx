@@ -282,7 +282,7 @@ export default function Index() {
               </motion.p>
 
               <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
-                {["Gratuit depuis l'Afrique", "Certifications MINEFOP", "Score vérifié en 30 sec", "Visa & logement inclus"].map((item) => (
+                {["Gratuit depuis l'Afrique", "Certifications MINEFOP", "Éligibilité vérifiée", "Visa & logement inclus"].map((item) => (
                   <span key={item} className="flex items-center gap-2 text-sm text-white/50">
                     <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
                     {item}
