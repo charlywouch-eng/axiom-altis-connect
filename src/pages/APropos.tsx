@@ -300,7 +300,7 @@ export default function APropos() {
               Tendances RH <span className="text-gradient-accent">2026</span>
             </motion.h2>
             <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
-              AXIOM se positionne comme la seule plateforme <strong className="text-foreground">TIaaS</strong> (Talent Infrastructure as a Service) combinant sourcing international, conformité réglementaire et logistique intégrée.
+               AXIOM & ALTIS combine certification officielle des compétences, conformité rigoureuse aux normes françaises et un accompagnement physique complet pour une intégration réussie et sécurisée.
             </motion.p>
           </motion.div>
 
