@@ -236,7 +236,7 @@ function sectorMatchEmail(talentName: string, matchCount: number, topSector: str
     </div>
     <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:8px 0 24px;">
       <a href="${SITE_URL}/dashboard-talent?tab=opportunites" style="display:inline-block;background:linear-gradient(135deg,#1E40AF,#06B6D4);color:#ffffff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;">
-        Voir mes opportunités →
+        Accéder aux fiches de poste →
       </a>
     </td></tr></table>
     <p style="color:#94a3b8;font-size:12px;text-align:center;margin:0;">
