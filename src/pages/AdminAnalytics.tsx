@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Users, TrendingUp, Zap, CreditCard, UserPlus, Activity,
-  ArrowUpRight, ArrowDownRight, Eye,
+  ArrowUpRight, ArrowDownRight,
 } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
