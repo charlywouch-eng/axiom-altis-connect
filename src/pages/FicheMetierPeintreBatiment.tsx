@@ -158,7 +158,7 @@ export default function FicheMetierPeintreBatiment() {
                         <p className="text-sm font-medium text-accent leading-relaxed">🎨 Votre savoir-faire donne vie aux espaces. En France, les chantiers ont besoin de peintres minutieux et créatifs comme vous. Chaque mur que vous transformez raconte une histoire de talent et de fierté professionnelle.</p>
                       </CardContent></Card>
                     </motion.div>
-                    <motion.div custom={4} variants={fadeUp}><Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=F1502">Découvrir mon score et commencer mon parcours <ArrowRight className="h-4 w-4" /></Link></Button></motion.div>
+                    <motion.div custom={4} variants={fadeUp}><Button asChild className="w-full gap-2" size="lg"><Link to="/signup-light?rome=F1502">Vérifier mon éligibilité et commencer mon parcours <ArrowRight className="h-4 w-4" /></Link></Button></motion.div>
                   </CardContent>
                 </Card>
               </motion.div>

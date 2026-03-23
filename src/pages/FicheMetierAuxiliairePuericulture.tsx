@@ -132,7 +132,7 @@ export default function FicheMetierAuxiliairePuericulture() {
                   <li key={i} className="flex items-center gap-2 text-sm"><s.icon className="h-4 w-4 text-accent shrink-0" />{s.text}</li>
                 ))}</ul>
                 <p className="text-sm text-muted-foreground italic">Avec ALTIS, vous arrivez en France prêt à démarrer rapidement, une fois les éventuelles validations ou formations réalisées par l'employeur.</p>
-                <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90"><Link to="/signup-light?rome=J1403">Découvrir mon score et commencer mon parcours <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
+                <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90"><Link to="/signup-light?rome=J1403">Vérifier mon éligibilité et commencer mon parcours <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
               </CardContent>
             </Card>
             <Card><CardContent className="p-6 space-y-3">
