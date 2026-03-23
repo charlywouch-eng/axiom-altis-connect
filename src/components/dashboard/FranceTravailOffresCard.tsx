@@ -193,9 +193,14 @@ export default function FranceTravailOffresCard({
                       <Button
                         size="sm"
                         className="w-full h-8 text-[11px] gap-1.5 bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-sm"
-                        onClick={() => window.open(o.url, "_blank")}
+                        onClick={() => {
+                          toast({
+                            title: "Candidature AXIOM envoyée ✓",
+                            description: `Votre candidature pour "${o.title}" est en cours de traitement par notre équipe.`,
+                          });
+                        }}
                       >
-                        <ExternalLink className="h-3 w-3" /> Postuler sur France Travail
+                        <Sparkles className="h-3 w-3" /> Postuler via AXIOM
                       </Button>
                     </div>
                   </div>
