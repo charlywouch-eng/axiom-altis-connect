@@ -164,6 +164,7 @@ export default function DashboardRecruteur() {
         {activeTab === "matching" && <MatchingTab query={matchQuery} setQuery={setMatchQuery} />}
         {activeTab === "facturation" && <FacturationTab />}
         {activeTab === "candidatures" && <CandidaturesTab />}
+        {activeTab === "shortlist" && <ShortlistTab onSelectTalent={setSelectedTalent} />}
         {activeTab === "offres-ft" && <OffresFranceTravailTab offresSector={offresSector} setOffresSector={setOffresSector} onOffersLoaded={setFtOffersCount} />}
       </main>
 
