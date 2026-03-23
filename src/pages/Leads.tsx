@@ -100,7 +100,7 @@ export default function Leads() {
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState(0);
   const [selectedMetier, setSelectedMetier] = useState<typeof METIERS[0] | null>(null);
-  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [_paymentLoading, setPaymentLoading] = useState(false);
   const [fullPaymentLoading, setFullPaymentLoading] = useState(false);
 
   const [form, setForm] = useState({
