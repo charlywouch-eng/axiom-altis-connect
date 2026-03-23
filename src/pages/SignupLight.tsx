@@ -488,7 +488,7 @@ export default function SignupLight() {
                       {funnelStep === "confirm" && "Validez votre évaluation"}
                     </h1>
                     <p className="text-white/45 text-sm mt-2">
-                      {funnelStep === "contact" && "Score IA · Matching ROME certifié · Offres France Travail"}
+                      {funnelStep === "contact" && "Évaluation certifiée · Conformité française · Offres France Travail"}
                       {funnelStep === "secteur" && "Sélectionnez le secteur correspondant à votre expertise."}
                       {funnelStep === "experience" && "Votre expérience augmente votre score de compatibilité."}
                       {funnelStep === "pays" && "Cette information nous aide à personnaliser votre parcours."}
