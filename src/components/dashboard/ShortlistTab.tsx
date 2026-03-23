@@ -59,6 +59,8 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
       queryClient.invalidateQueries({ queryKey: ["shortlist-full"] });
     }
   };
+
+  const saveNote = async (talentProfileId: string) => {
     if (!session?.user?.id) return;
     const note = editingNotes[talentProfileId] ?? "";
     setSavingNotes((prev) => new Set(prev).add(talentProfileId));
