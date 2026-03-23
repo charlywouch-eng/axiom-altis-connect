@@ -106,6 +106,7 @@ const App = () => (
         <AuthProvider>
           
           <GA4RouteTracker />
+          <Suspense fallback={<FullPageLoader />}>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
