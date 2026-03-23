@@ -657,8 +657,9 @@ export default function Index() {
                   key={card.title}
                   custom={i}
                   variants={scaleIn}
-                  className="group rounded-2xl border border-white/10 glass-card p-7 transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
+                  className="group rounded-2xl border border-accent/15 glass-card p-7 transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30 relative overflow-hidden"
                 >
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent opacity-60" />
                   <div className="flex items-start justify-between mb-5">
                     <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
                       <Icon className={`h-5 w-5 ${card.iconColor}`} />
@@ -666,7 +667,15 @@ export default function Index() {
                     <Badge className={`${card.badgeColor} text-[10px] font-bold`}>{card.badge}</Badge>
                   </div>
                   <h3 className="mb-3 font-bold text-lg text-white group-hover:text-accent transition-colors">{card.title}</h3>
-                  <p className="text-sm text-white/55 leading-relaxed">{card.desc}</p>
+                  <p className="text-sm text-white/55 leading-relaxed mb-4">{card.desc}</p>
+                  <ul className="space-y-2">
+                    {card.bullets.map((b) => (
+                      <li key={b} className="flex items-center gap-2 text-xs text-white/50">
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-accent" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </motion.div>
               );
             })}
