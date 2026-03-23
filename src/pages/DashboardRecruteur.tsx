@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
+import ShortlistTab from "@/components/dashboard/ShortlistTab";
 
 import avatarSante from "@/assets/talent-sante.jpg";
 import avatarBtp from "@/assets/talent-btp.jpg";
