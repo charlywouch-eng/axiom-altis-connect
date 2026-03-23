@@ -179,7 +179,7 @@ function AnalyticsContent() {
     queryFn: async () => {
       const [leadsRes, funnelRes] = await Promise.all([
         supabase.from("leads").select("created_at, status").gte("created_at", since).order("created_at"),
-        supabase.from("funnel_events" as any).select("event_name, created_at").gte("created_at", since).order("created_at"),
+        (supabase.from as any)("funnel_events").select("event_name, created_at").gte("created_at", since).order("created_at"),
       ]);
       const leads = leadsRes.data ?? [];
       const funnelData = (funnelRes.data ?? []) as { event_name: string; created_at: string }[];
