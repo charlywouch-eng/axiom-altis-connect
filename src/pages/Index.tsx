@@ -109,24 +109,39 @@ const TALENT_CARDS = [
     badgeColor: "bg-accent/15 text-accent border-accent/25",
     iconBg: "bg-accent/10",
     iconColor: "text-accent",
+    bullets: [
+      "Score de conformité IA 0-100 %",
+      "Analyse croisée ROME + MINEFOP",
+      "Visibilité prioritaire recruteurs",
+    ],
   },
   {
     icon: GraduationCap,
     title: "Formations recommandées",
-    desc: "Parcours personnalisés alignés avec les exigences françaises. Formations MINEFOP certifiées, mises à niveau linguistiques et préparations métier spécifiques à votre secteur.",
+    desc: "Parcours personnalisés alignés avec les exigences françaises. Formations MINEFOP certifiées et mises à niveau linguistiques.",
     badge: "Personnalisé",
     badgeColor: "bg-primary/15 text-primary border-primary/25",
     iconBg: "bg-primary/10",
     iconColor: "text-primary",
+    bullets: [
+      "Parcours CQP/DQP certifiés",
+      "Mise à niveau français (B1 → B2)",
+      "Préparation métier sectorielle",
+    ],
   },
   {
     icon: Plane,
     title: "Pack ALTIS Zéro Stress",
-    desc: "Visa de travail (procédure ANEF), accueil aéroport, logement meublé premier mois, accompagnement administratif complet. Vous ne gérez rien, ALTIS s'occupe de tout.",
+    desc: "Visa de travail (ANEF), accueil aéroport, logement meublé, accompagnement administratif complet. ALTIS s'occupe de tout.",
     badge: "Tout inclus",
     badgeColor: "bg-success/15 text-success border-success/25",
     iconBg: "bg-success/10",
     iconColor: "text-success",
+    bullets: [
+      "Billet d'avion aller inclus",
+      "Logement meublé 1er mois",
+      "Garantie intégration 30 jours",
+    ],
   },
 ];
 
@@ -134,29 +149,44 @@ const ENTREPRISE_CARDS = [
   {
     icon: FileCheck,
     title: "Talents vérifiés et certifiés",
-    desc: "Diplômes apostillés, vérification d'identité et antécédents professionnels validés. Chaque candidat est certifié conforme aux exigences françaises avant d'être présenté.",
+    desc: "Chaque candidat est certifié conforme aux exigences françaises avant d'être présenté. Zéro mauvaise surprise.",
     badge: "Certifié",
     badgeColor: "bg-accent/15 text-accent border-accent/25",
     iconBg: "bg-accent/10",
     iconColor: "text-accent",
+    bullets: [
+      "Diplômes apostillés MINREX",
+      "Vérification d'identité complète",
+      "Antécédents professionnels validés",
+    ],
   },
   {
     icon: BarChart3,
     title: "Conformité et précision",
-    desc: "AXIOM & ALTIS combine certification officielle des compétences, conformité rigoureuse aux normes françaises et un accompagnement complet. Taux de rétention de 98 % à 12 mois.",
+    desc: "Certification officielle + conformité rigoureuse aux normes françaises + accompagnement complet. 98 % de rétention à 12 mois.",
     badge: "Premium",
     badgeColor: "bg-primary/15 text-primary border-primary/25",
     iconBg: "bg-primary/10",
     iconColor: "text-primary",
+    bullets: [
+      "Matching IA prédictif multi-critères",
+      "Score conformité ROME vérifié",
+      "Réduction risque onboarding −80 %",
+    ],
   },
   {
     icon: HeartHandshake,
     title: "Service ALTIS complet",
-    desc: "De la sélection à l'intégration opérationnelle jour 1 : visa, hébergement, transport, accompagnement RH. Un interlocuteur unique pour votre entreprise. Forfait 2 450 € tout compris.",
+    desc: "De la sélection à l'intégration opérationnelle jour 1 : visa, hébergement, transport, accompagnement RH. Forfait 2 450 € tout compris.",
     badge: "2 450 €",
     badgeColor: "bg-tension/15 text-tension border-tension/25",
     iconBg: "bg-tension/10",
     iconColor: "text-tension",
+    bullets: [
+      "Procédure visa ANEF gérée",
+      "Accueil aéroport + logement meublé",
+      "Interlocuteur unique entreprise",
+    ],
   },
 ];
 
@@ -560,7 +590,7 @@ export default function Index() {
                 key={card.title}
                 custom={i}
                 variants={scaleIn}
-                className="group rounded-2xl border bg-card p-7 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
+                className="group rounded-2xl border border-accent/15 bg-card p-7 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
               >
                 <div className="flex items-start justify-between mb-5">
                   <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
@@ -569,7 +599,15 @@ export default function Index() {
                   <Badge className={`${card.badgeColor} text-[10px] font-bold`}>{card.badge}</Badge>
                 </div>
                 <h3 className="mb-3 font-bold text-lg text-foreground group-hover:text-accent transition-colors">{card.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">{card.desc}</p>
+                <ul className="space-y-2">
+                  {card.bullets.map((b) => (
+                    <li key={b} className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <CheckCircle2 className={`h-3.5 w-3.5 shrink-0 ${card.iconColor}`} />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
               </motion.div>
             );
           })}
@@ -619,8 +657,9 @@ export default function Index() {
                   key={card.title}
                   custom={i}
                   variants={scaleIn}
-                  className="group rounded-2xl border border-white/10 glass-card p-7 transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
+                  className="group rounded-2xl border border-accent/15 glass-card p-7 transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30 relative overflow-hidden"
                 >
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent opacity-60" />
                   <div className="flex items-start justify-between mb-5">
                     <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
                       <Icon className={`h-5 w-5 ${card.iconColor}`} />
@@ -628,7 +667,15 @@ export default function Index() {
                     <Badge className={`${card.badgeColor} text-[10px] font-bold`}>{card.badge}</Badge>
                   </div>
                   <h3 className="mb-3 font-bold text-lg text-white group-hover:text-accent transition-colors">{card.title}</h3>
-                  <p className="text-sm text-white/55 leading-relaxed">{card.desc}</p>
+                  <p className="text-sm text-white/55 leading-relaxed mb-4">{card.desc}</p>
+                  <ul className="space-y-2">
+                    {card.bullets.map((b) => (
+                      <li key={b} className="flex items-center gap-2 text-xs text-white/50">
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-accent" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </motion.div>
               );
             })}
