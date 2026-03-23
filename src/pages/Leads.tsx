@@ -441,7 +441,7 @@ export default function Leads() {
                     ) : (
                       <span className="flex items-center gap-2">
                         <Sparkles className="h-4 w-4" />
-                        Recevoir mon score IA &amp; alertes offres
+                        Recevoir mon évaluation &amp; alertes offres
                         <ArrowRight className="h-4 w-4" />
                       </span>
                     )}
