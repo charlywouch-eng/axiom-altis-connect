@@ -388,6 +388,14 @@ export default function OpportunitesTab({
                           <Button
                             size="sm"
                             className="h-8 text-xs gap-1.5 bg-primary hover:bg-primary/90 shadow-sm"
+                            onClick={() => navigate(`/offres/${String(offer.id ?? "")}`)}
+                          >
+                            <Briefcase className="h-3 w-3" /> Voir fiche AXIOM
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 text-xs gap-1.5"
                             onClick={() => handlePostulerAxiom(String(offer.id ?? ""), title)}
                           >
                             {isPremium || axiomStatus === "ready"
