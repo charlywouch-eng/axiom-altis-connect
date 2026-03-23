@@ -7,11 +7,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import {
   Bookmark, Download, Trash2, Search, Brain,
   ShieldCheck, Star, Eye, CheckCircle2,
+  MessageSquare, Save, Loader2,
 } from "lucide-react";
 
 interface ShortlistTabProps {
@@ -23,6 +25,27 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
+  const [savingNotes, setSavingNotes] = useState<Set<string>>(new Set());
+
+  const saveNote = async (talentProfileId: string) => {
+    if (!session?.user?.id) return;
+    const note = editingNotes[talentProfileId] ?? "";
+    setSavingNotes((prev) => new Set(prev).add(talentProfileId));
+    const { error } = await supabase
+      .from("talent_shortlist")
+      .update({ notes: note || null })
+      .eq("recruiter_id", session.user.id)
+      .eq("talent_profile_id", talentProfileId);
+    setSavingNotes((prev) => { const n = new Set(prev); n.delete(talentProfileId); return n; });
+    if (error) {
+      toast({ title: "Erreur", description: "Impossible de sauvegarder la note.", variant: "destructive" });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["shortlist-full"] });
+      toast({ title: "✅ Note sauvegardée" });
+      setEditingNotes((prev) => { const n = { ...prev }; delete n[talentProfileId]; return n; });
+    }
+  };
 
   const { data: shortlistEntries = [], isLoading } = useQuery({
     queryKey: ["shortlist-full", session?.user?.id],
@@ -311,6 +334,61 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
                       >
                         <Trash2 className="h-3.5 w-3.5" /> Retirer
                       </Button>
+                    </div>
+
+                    {/* Notes */}
+                    <div className="mt-3 border-t border-white/5 pt-3">
+                      {editingNotes[talent.id] !== undefined ? (
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editingNotes[talent.id]}
+                            onChange={(e) => setEditingNotes((prev) => ({ ...prev, [talent.id]: e.target.value }))}
+                            placeholder="Ajoutez une note sur ce candidat…"
+                            maxLength={500}
+                            rows={3}
+                            className="bg-white/5 border-white/10 text-white placeholder:text-white/30 text-xs resize-none"
+                          />
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-white/40 hover:text-white text-xs h-7 px-2"
+                              onClick={() => setEditingNotes((prev) => { const n = { ...prev }; delete n[talent.id]; return n; })}
+                            >
+                              Annuler
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="bg-accent hover:bg-accent/80 text-white text-xs h-7 px-3 gap-1"
+                              disabled={savingNotes.has(talent.id)}
+                              onClick={() => saveNote(talent.id)}
+                            >
+                              {savingNotes.has(talent.id) ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <Save className="h-3 w-3" />
+                              )}
+                              Sauvegarder
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setEditingNotes((prev) => ({ ...prev, [talent.id]: entry?.notes || "" }))}
+                          className="flex items-start gap-2 w-full text-left group"
+                        >
+                          <MessageSquare className="h-3.5 w-3.5 text-white/20 group-hover:text-accent mt-0.5 shrink-0 transition-colors" />
+                          {entry?.notes ? (
+                            <p className="text-xs text-white/50 group-hover:text-white/70 transition-colors line-clamp-2">
+                              {entry.notes}
+                            </p>
+                          ) : (
+                            <p className="text-xs text-white/20 group-hover:text-white/40 italic transition-colors">
+                              Ajouter une note…
+                            </p>
+                          )}
+                        </button>
+                      )}
                     </div>
 
                     {/* Added date */}
