@@ -56,10 +56,10 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center px-4 py-12" style={{ background: "var(--gradient-hero)" }}>
       <Helmet>
         <title>Connexion – AXIOM & ALTIS | Espace recruteur & talent</title>
-        <meta name="description" content="Connectez-vous à votre espace AXIOM : recruteur, entreprise ou talent. Accédez au matching IA, aux profils certifiés MINEFOP et au suivi de vos recrutements." />
+        <meta name="description" content="Connectez-vous à votre espace AXIOM : recruteur, entreprise ou talent. Accédez aux profils certifiés et au suivi de vos recrutements." />
         <link rel="canonical" href="https://axiom-talents.com/login" />
         <meta property="og:title" content="Connexion – AXIOM & ALTIS" />
-        <meta property="og:description" content="Accédez à votre tableau de bord recruteur ou talent. Matching IA + certifications MINEFOP." />
+        <meta property="og:description" content="Accédez à votre tableau de bord recruteur ou talent. Certification officielle + conformité garantie." />
         <meta property="og:url" content="https://axiom-talents.com/login" />
       </Helmet>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">

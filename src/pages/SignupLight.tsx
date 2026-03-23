@@ -117,8 +117,8 @@ const STEP_MESSAGES: Record<FunnelStep, string> = {
   secteur: "Félicitations ! Vous êtes éligible à un poste en France.",
   experience: "Votre secteur est en forte demande. Continuez pour affiner votre score.",
   pays: "Votre profil correspond déjà à plusieurs offres en tension en France.",
-  confirm: "Dernière étape ! Validez pour obtenir votre score IA complet.",
-  score: "Votre score IA complet est prêt.",
+  confirm: "Dernière étape ! Validez pour obtenir votre évaluation complète.",
+  score: "Votre évaluation de conformité est prête.",
 };
 
 // ── Main Component ──────────────────────────────────────────────
@@ -175,7 +175,7 @@ export default function SignupLight() {
       return `Excellent ! Vous êtes à 70 % de votre score complet. Dernière validation avant résultat.`;
     }
     if (funnelStep === "score") {
-      return `Votre score IA complet est prêt — ${score}% de compatibilité.`;
+      return `Votre évaluation est prête — ${score}% de compatibilité.`;
     }
     return STEP_MESSAGES[funnelStep];
   }, [funnelStep, form.contact, form.secteur, selectedSecteur, score]);
@@ -330,8 +330,8 @@ export default function SignupLight() {
       case "contact": return "Continuer mon évaluation d'éligibilité";
       case "secteur": return "Continuer — affiner mon profil";
       case "experience": return "Continuer — presque terminé";
-      case "pays": return "Valider et voir mon score";
-      case "confirm": return loading ? "Analyse en cours…" : "Obtenir mon score IA maintenant";
+      case "pays": return "Valider et voir mon évaluation";
+      case "confirm": return loading ? "Analyse en cours…" : "Obtenir mon évaluation maintenant";
       default: return "Continuer";
     }
   }, [funnelStep, loading]);
@@ -348,7 +348,7 @@ export default function SignupLight() {
         <meta name="description" content="Inscrivez-vous en 2 min sans mot de passe. Score de compatibilité IA gratuit pour les métiers en tension en France : BTP, santé, CHR, logistique. Certification MINEFOP + Pack ALTIS visa." />
         <link rel="canonical" href="https://axiom-talents.com/signup-light" />
         <meta property="og:title" content="Inscription talent rapide – AXIOM & ALTIS" />
-        <meta property="og:description" content="Score IA gratuit + certification MINEFOP. Inscription sans mot de passe en 2 min pour travailler en France." />
+        <meta property="og:description" content="Évaluation gratuite + certification officielle. Inscription sans mot de passe en 2 min pour travailler en France." />
         <meta property="og:url" content="https://axiom-talents.com/signup-light" />
       </Helmet>
 
@@ -488,7 +488,7 @@ export default function SignupLight() {
                       {funnelStep === "confirm" && "Validez votre évaluation"}
                     </h1>
                     <p className="text-white/45 text-sm mt-2">
-                      {funnelStep === "contact" && "Score IA · Matching ROME certifié · Offres France Travail"}
+                      {funnelStep === "contact" && "Évaluation certifiée · Conformité française · Offres France Travail"}
                       {funnelStep === "secteur" && "Sélectionnez le secteur correspondant à votre expertise."}
                       {funnelStep === "experience" && "Votre expérience augmente votre score de compatibilité."}
                       {funnelStep === "pays" && "Cette information nous aide à personnaliser votre parcours."}
@@ -741,7 +741,7 @@ export default function SignupLight() {
                               </div>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-bold text-white">Score IA estimé</p>
+                              <p className="text-sm font-bold text-white">Évaluation estimée</p>
                               <p className="text-xs mt-0.5 text-white/45">
                                 Complétez le formulaire pour le score détaillé
                               </p>
@@ -856,7 +856,7 @@ export default function SignupLight() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-white">
-                              Score IA estimé : {score}%
+                              Évaluation estimée : {score}%
                             </p>
                             <p className="text-xs mt-0.5 text-white/45">
                               Validez pour voir le détail complet
@@ -1153,7 +1153,7 @@ export default function SignupLight() {
                       <Sparkles className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="font-black text-sm text-white">Votre score IA complet est prêt.</p>
+                      <p className="font-black text-sm text-white">Votre évaluation complète est prêt.</p>
                       <p className="text-xs mt-1 leading-relaxed text-white/45">
                         Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).
                       </p>
@@ -1211,7 +1211,7 @@ export default function SignupLight() {
                 <Award className="h-8 w-8 text-accent" />
               </div>
               <DialogTitle className="font-black text-xl text-white">
-                Votre score IA complet est prêt.
+                Votre évaluation complète est prêt.
               </DialogTitle>
               <DialogDescription className="text-sm leading-relaxed text-white/50">
                 Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).

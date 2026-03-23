@@ -196,7 +196,7 @@ export default function MetierDetail() {
         <meta name="description" content={`Recrutez un ${metier.minefop_title} certifié MINEFOP pour le métier ${metier.rome_title} (${metier.rome_code}). ${metier.description?.slice(0, 120)}…`} />
         <link rel="canonical" href={`https://axiom-talents.com/metier/${metier.rome_code}`} />
         <meta property="og:title" content={`${metier.rome_title} – Talent certifié ${metier.minefop_title}`} />
-        <meta property="og:description" content={`Niveau tension : ${metier.niveau_tension ?? 'N/A'}. Salaire moyen : ${metier.salaire_moyen_france ?? 'N/A'}. Matching IA + Pack ALTIS.`} />
+        <meta property="og:description" content={`Niveau tension : ${metier.niveau_tension ?? 'N/A'}. Salaire moyen : ${metier.salaire_moyen_france ?? 'N/A'}. Certification + Pack ALTIS.`} />
         <meta property="og:url" content={`https://axiom-talents.com/metier/${metier.rome_code}`} />
       </Helmet>
       <div className="min-h-screen bg-background">

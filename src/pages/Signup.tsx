@@ -222,10 +222,10 @@ export default function Signup() {
     <TooltipProvider>
       <Helmet>
         <title>Inscription entreprise – AXIOM & ALTIS | Recrutez des talents certifiés Afrique</title>
-        <meta name="description" content="Créez votre compte entreprise AXIOM. Accédez à des talents certifiés MINEFOP pour BTP, santé, CHR, logistique. Matching IA + Pack ALTIS visa et logement." />
+        <meta name="description" content="Créez votre compte entreprise AXIOM. Accédez à des talents certifiés pour BTP, santé, CHR, logistique. Certification officielle + Pack ALTIS visa et logement." />
         <link rel="canonical" href="https://axiom-talents.com/signup" />
         <meta property="og:title" content="Inscription entreprise – AXIOM & ALTIS" />
-        <meta property="og:description" content="Recrutez des talents d'Afrique certifiés. Inscription gratuite, matching IA, conformité garantie." />
+        <meta property="og:description" content="Recrutez des talents d'Afrique certifiés. Inscription gratuite, conformité garantie, accompagnement complet." />
         <meta property="og:url" content="https://axiom-talents.com/signup" />
       </Helmet>
       <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(220,60%,18%)] flex flex-col" style={{ minHeight: '-webkit-fill-available' }}>
@@ -327,7 +327,7 @@ export default function Signup() {
                             <span className="text-primary">– Gratuit & sans engagement</span>
                           </h1>
                           <p className="text-sm text-muted-foreground leading-relaxed">
-                            Matching IA + offres France en tension{" "}
+                            Certification officielle + offres France en tension{" "}
                             <span className="font-medium text-foreground/70">BTP · Santé · CHR · Logistique</span>
                           </p>
                         </div>
@@ -484,7 +484,7 @@ export default function Signup() {
                         Complétez votre profil
                       </h2>
                       <p className="text-sm text-muted-foreground">
-                        3 champs pour activer votre matching IA
+                        3 champs pour vérifier votre éligibilité
                       </p>
                     </div>
 
@@ -609,7 +609,7 @@ export default function Signup() {
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                           <span className="text-3xl font-bold text-foreground">{mockScore}%</span>
-                          <span className="text-[10px] text-muted-foreground">Score IA</span>
+                          <span className="text-[10px] text-muted-foreground">Conformité</span>
                         </div>
                       </div>
                       <div>

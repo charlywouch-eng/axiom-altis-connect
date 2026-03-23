@@ -227,7 +227,7 @@ export default function Leads() {
         <meta name="description" content="Testez gratuitement votre éligibilité au marché français. Score de compatibilité IA, certification MINEFOP, Pack ALTIS visa + logement. BTP, santé, CHR, logistique." />
         <link rel="canonical" href="https://axiom-talents.com/leads" />
         <meta property="og:title" content="Testez votre éligibilité – AXIOM & ALTIS" />
-        <meta property="og:description" content="Score IA gratuit pour travailler en France. Métiers en tension BTP, santé, CHR. Certification MINEFOP + visa ALTIS." />
+        <meta property="og:description" content="Évaluation gratuite pour travailler en France. Métiers en tension BTP, santé, CHR. Certification officielle + visa ALTIS." />
         <meta property="og:url" content="https://axiom-talents.com/leads" />
       </Helmet>
 
@@ -285,7 +285,7 @@ export default function Leads() {
                     </p>
                     <p>
                       AXIOM vous connecte en quelques clics :{" "}
-                      <span style={{ color: "hsl(189,94%,43%)" }}>matching IA précis + score conformité + accompagnement visa & installation ALTIS.</span>
+                      <span style={{ color: "hsl(189,94%,43%)" }}>certification officielle + conformité rigoureuse + accompagnement visa & installation ALTIS.</span>
                     </p>
                     <div className="rounded-2xl p-4 border mt-4" style={{ background: "hsl(0,0%,100%,0.03)", borderColor: "hsl(189,94%,43%,0.2)" }}>
                       <p className="text-sm italic" style={{ color: "hsl(215,25%,60%)" }}>
@@ -441,7 +441,7 @@ export default function Leads() {
                     ) : (
                       <span className="flex items-center gap-2">
                         <Sparkles className="h-4 w-4" />
-                        Recevoir mon score IA &amp; alertes offres
+                        Recevoir mon évaluation &amp; alertes offres
                         <ArrowRight className="h-4 w-4" />
                       </span>
                     )}
@@ -555,7 +555,7 @@ export default function Leads() {
                 <p className="text-xs" style={{ color: "hsl(215,25%,58%)" }}>
                   Débloquez pour{" "}
                   <strong style={{ color: "hsl(189,94%,43%)", fontSize: "1rem" }}>4,99 €</strong>{" "}
-                  : score IA + analyse ROME + accès offres en tension
+                  : évaluation complète + analyse détaillée + accès offres en tension
                 </p>
               </div>
 

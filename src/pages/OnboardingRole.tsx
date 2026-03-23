@@ -36,7 +36,7 @@ const ROLES = [
     gradient: "from-[hsl(189,94%,20%)] to-[hsl(189,94%,35%)]",
     accent: "hsl(189,94%,43%)",
     accentLight: "hsl(189,94%,43%,0.15)",
-    perks: ["Score matching IA", "Suivi visa & relocation", "Offres BTP / Santé / CHR"],
+    perks: ["Évaluation de conformité", "Suivi visa & relocation", "Offres BTP / Santé / CHR"],
     dest: "/dashboard-talent",
   },
   {
@@ -107,7 +107,7 @@ function WelcomeScreen({ name }: { name?: string | null }) {
             Votre espace Talent est prêt.
           </p>
           <p className="text-sm" style={{ color: "hsl(215,25%,45%)" }}>
-            Matching IA · Visa · Relocation ALTIS
+            Certification · Visa · Relocation ALTIS
           </p>
         </motion.div>
 

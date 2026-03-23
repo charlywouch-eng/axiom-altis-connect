@@ -30,7 +30,7 @@ const TALENT_FULL_PERKS = [
 
 const RECRUTEUR_PERKS = [
   "Accès illimité aux talents certifiés",
-  "Matching IA avancé par compétences",
+  "Mise en relation avancée par compétences",
   "Dossiers conformité vérifiés",
   "Pipeline de recrutement intégré",
   "Tooltips ROI & analytics",
@@ -140,7 +140,7 @@ export default function Pricing() {
                   <Crown className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle className="text-2xl">Test d'éligibilité</CardTitle>
-                <CardDescription>Score IA + analyse ROME de base</CardDescription>
+                <CardDescription>Évaluation + analyse de conformité</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <div className="mb-6">
