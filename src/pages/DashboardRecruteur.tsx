@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
+import ShortlistTab from "@/components/dashboard/ShortlistTab";
 
 import avatarSante from "@/assets/talent-sante.jpg";
 import avatarBtp from "@/assets/talent-btp.jpg";
@@ -91,6 +92,9 @@ export default function DashboardRecruteur() {
               <TabsTrigger value="candidatures" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
                 <ClipboardList className="h-4 w-4" /> Candidatures
               </TabsTrigger>
+              <TabsTrigger value="shortlist" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
+                <Bookmark className="h-4 w-4" /> Ma Shortlist
+              </TabsTrigger>
               <TabsTrigger value="offres-ft" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground gap-2 text-white/60">
                 <Briefcase className="h-4 w-4" /> Offres France Travail
                 {ftOffersCount != null && ftOffersCount > 0 && (
@@ -123,6 +127,9 @@ export default function DashboardRecruteur() {
               </TabsTrigger>
               <TabsTrigger value="candidatures" className="flex-1 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-white/60 text-xs">
                 <ClipboardList className="h-3 w-3" />
+              </TabsTrigger>
+              <TabsTrigger value="shortlist" className="flex-1 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-white/60 text-xs">
+                <Bookmark className="h-3 w-3" />
               </TabsTrigger>
               <TabsTrigger value="offres-ft" className="flex-1 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-white/60 text-xs">
                 <Briefcase className="h-3 w-3" />
@@ -157,6 +164,7 @@ export default function DashboardRecruteur() {
         {activeTab === "matching" && <MatchingTab query={matchQuery} setQuery={setMatchQuery} />}
         {activeTab === "facturation" && <FacturationTab />}
         {activeTab === "candidatures" && <CandidaturesTab />}
+        {activeTab === "shortlist" && <ShortlistTab onSelectTalent={setSelectedTalent} />}
         {activeTab === "offres-ft" && <OffresFranceTravailTab offresSector={offresSector} setOffresSector={setOffresSector} onOffersLoaded={setFtOffersCount} />}
       </main>
 
