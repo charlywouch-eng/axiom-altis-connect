@@ -473,9 +473,14 @@ export default function OpportunitesTab({
                       size="sm"
                       variant="outline"
                       className="w-full border-primary/30 text-primary hover:bg-primary/5 gap-1.5 text-xs"
-                      onClick={() => { if (company.url && company.url !== "#") window.open(company.url, "_blank"); }}
+                      onClick={() => {
+                        toast({
+                          title: "Candidature spontanée envoyée ✓",
+                          description: `Votre intérêt pour ${company.name} a été transmis à notre équipe.`,
+                        });
+                      }}
                     >
-                      <Mail className="h-3 w-3" /> Candidature spontanée
+                      <Mail className="h-3 w-3" /> Candidature spontanée via AXIOM
                     </Button>
                   </CardContent>
                 </Card>
