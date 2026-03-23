@@ -422,7 +422,7 @@ export default function APropos() {
               <span className="text-gradient-accent">rejoindre l'avenir</span> ?
             </motion.h2>
             <motion.p custom={2} variants={fadeUp} className="mt-4 text-base text-white/50 max-w-md mx-auto">
-              Talents certifiés. Matching IA. Accompagnement complet. Infrastructure souveraine.
+              Talents certifiés. Conformité rigoureuse. Accompagnement complet. Infrastructure souveraine.
             </motion.p>
             <motion.div custom={3} variants={fadeUp} className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link to="/signup-light">
