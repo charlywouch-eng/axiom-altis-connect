@@ -195,60 +195,46 @@ const EXP_FILTERS = ["Tous", "0-2 ans", "3-5 ans", "5-10 ans", "10+ ans"] as con
 
 function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
   const { session } = useAuth();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string>("Tous");
   const [countryFilter, setCountryFilter] = useState<string | null>(null);
   const [expFilter, setExpFilter] = useState<string>("Tous");
   const [axiomOnly, setAxiomOnly] = useState(false);
-  const [shortlist, setShortlist] = useState<Set<string>>(new Set());
 
-  const { data: talents, isLoading } = useQuery({
-    queryKey: ["recruteur-talents"],
+  // Fetch shortlist from DB
+  const { data: shortlistData } = useQuery({
+    queryKey: ["recruiter-shortlist"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("talent_profiles")
-        .select("*")
-        .eq("available", true)
-        .order("compliance_score", { ascending: false });
+        .from("talent_shortlist")
+        .select("talent_profile_id")
+        .eq("recruiter_id", session?.user?.id ?? "");
       if (error) throw error;
-      return data;
+      return new Set((data ?? []).map(r => r.talent_profile_id));
     },
+    enabled: !!session?.user?.id,
   });
+  const shortlist = shortlistData ?? new Set<string>();
 
-  const { data: offersCount } = useQuery({
-    queryKey: ["tension-offers-count"],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from("job_offers")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "open");
-      if (error) throw error;
-      return count ?? 0;
-    },
-  });
-
-  const { data: candidaturesCount } = useQuery({
-    queryKey: ["candidatures-count"],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from("candidatures")
-        .select("*", { count: "exact", head: true });
-      if (error) throw error;
-      return count ?? 0;
-    },
-  });
-
-  const toggleShortlist = (id: string) => {
-    setShortlist(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) { next.delete(id); } else { next.add(id); }
-      return next;
-    });
-    toast({
-      title: shortlist.has(id) ? "Retiré de la shortlist" : "✅ Ajouté à la shortlist",
-      description: shortlist.has(id) ? "Talent retiré de votre sélection." : "Talent ajouté à votre sélection recrutement.",
-    });
+  const toggleShortlist = async (talentProfileId: string) => {
+    if (!session?.user?.id) return;
+    const isInList = shortlist.has(talentProfileId);
+    if (isInList) {
+      await supabase
+        .from("talent_shortlist")
+        .delete()
+        .eq("recruiter_id", session.user.id)
+        .eq("talent_profile_id", talentProfileId);
+      toast({ title: "Retiré de la shortlist", description: "Talent retiré de votre sélection." });
+    } else {
+      await supabase
+        .from("talent_shortlist")
+        .insert({ recruiter_id: session.user.id, talent_profile_id: talentProfileId });
+      toast({ title: "✅ Ajouté à la shortlist", description: "Talent ajouté à votre sélection recrutement." });
+    }
+    queryClient.invalidateQueries({ queryKey: ["recruiter-shortlist"] });
   };
 
   const filtered = talents?.filter(t => {
