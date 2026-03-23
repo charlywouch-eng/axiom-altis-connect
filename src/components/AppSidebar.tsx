@@ -1,4 +1,4 @@
-import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, FileText, TrendingUp, ShieldAlert, Bell, Building2, ClipboardList, Mail } from "lucide-react";
+import { Home, Users, UserCircle, Zap, Briefcase, CreditCard, GraduationCap, FileUp, BarChart3, FileText, TrendingUp, ShieldAlert, Bell, Building2, ClipboardList, Mail, Activity } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import {
