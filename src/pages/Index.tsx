@@ -640,9 +640,9 @@ export default function Index() {
       {/* ══════════════════════════════════════════════════════════
            SECTION « POUR LES ENTREPRISES »
          ══════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden py-24 md:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,47%,8%)] via-[hsl(217,33%,12%)] to-[hsl(199,89%,48%/0.08)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,hsl(var(--accent)/0.06),transparent_70%)]" />
+      <section className="relative overflow-hidden py-24 md:py-32 bg-sovereign-section">
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary via-secondary/95 to-primary/20" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,hsl(var(--accent)/0.08),transparent_70%)]" />
         <div className="absolute inset-0 bg-hero-dots opacity-20" />
 
         <div className="relative z-10 mx-auto max-w-6xl px-5 md:px-10">
@@ -669,7 +669,7 @@ export default function Index() {
                   key={card.title}
                   custom={i}
                   variants={scaleIn}
-                  className="group rounded-2xl border border-accent/15 glass-card p-7 transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30 relative overflow-hidden"
+                  className="group premium-dark-panel rounded-2xl p-7 transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30 relative overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent opacity-60" />
                   <div className="flex items-start justify-between mb-5">
@@ -678,11 +678,11 @@ export default function Index() {
                     </div>
                     <Badge className={`${card.badgeColor} text-[10px] font-bold`}>{card.badge}</Badge>
                   </div>
-                  <h3 className="mb-3 font-bold text-lg text-white group-hover:text-accent transition-colors">{card.title}</h3>
-                  <p className="text-sm text-white/55 leading-relaxed mb-4">{card.desc}</p>
+                  <h3 className="mb-3 font-bold text-lg text-secondary-foreground group-hover:text-accent transition-colors">{card.title}</h3>
+                  <p className="text-sm text-on-dark-muted leading-relaxed mb-4">{card.desc}</p>
                   <ul className="space-y-2">
                     {card.bullets.map((b) => (
-                      <li key={b} className="flex items-center gap-2 text-xs text-white/50">
+                      <li key={b} className="flex items-center gap-2 text-xs text-on-dark-soft">
                         <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-accent" />
                         <span>{b}</span>
                       </li>
@@ -701,7 +701,7 @@ export default function Index() {
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-2xl border-white/15 text-white/80 hover:text-white hover:bg-white/8 px-8 py-5 h-auto">
+              <Button asChild size="lg" variant="outline" className="rounded-2xl border-secondary-foreground/15 text-secondary-foreground/85 hover:text-secondary-foreground hover:bg-secondary-foreground/10 px-8 py-5 h-auto">
                 <Link to="/demande-devis">
                   Demander un devis personnalisé
                 </Link>
