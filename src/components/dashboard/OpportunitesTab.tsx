@@ -258,7 +258,7 @@ export default function OpportunitesTab({
           </div>
           <span className="text-[10px] text-muted-foreground flex items-center gap-1.5">
             {ftOffers && ftOffers.length > 0
-              ? <><CheckCircle2 className="h-3 w-3 text-success" />France Travail</>
+              ? <><CheckCircle2 className="h-3 w-3 text-success" />Marché français</>
               : <><RefreshCw className="h-3 w-3" />Données simulées</>
             }
           </span>
