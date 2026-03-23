@@ -362,7 +362,7 @@ export default function APropos() {
                   TIaaS — <span className="text-gradient-accent">Talent Infrastructure as a Service</span>
                 </motion.h3>
                 <motion.p custom={2} variants={fadeUp} className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                  Aucune plateforme ne combine <strong className="text-foreground">sourcing IA prédictif</strong>, <strong className="text-foreground">certification MINEFOP/MINREX</strong>, <strong className="text-foreground">conformité visa ANEF</strong> et <strong className="text-foreground">logistique terrain ALTIS</strong> dans une seule infrastructure souveraine. C'est notre moat.
+                   Aucune plateforme ne combine <strong className="text-foreground">certification officielle des compétences</strong>, <strong className="text-foreground">conformité MINEFOP/MINREX</strong>, <strong className="text-foreground">prise en charge visa ANEF</strong> et <strong className="text-foreground">accompagnement terrain ALTIS</strong> dans une seule infrastructure souveraine.
                 </motion.p>
               </div>
               <div className="shrink-0">

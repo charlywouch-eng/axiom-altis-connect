@@ -16,10 +16,10 @@ export function PremiumBadge() {
         </Badge>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-xs text-xs leading-relaxed">
-        <p className="font-semibold mb-1">Garantie conformité ROME + opérationnel jour 1</p>
+        <p className="font-semibold mb-1">Certification officielle + opérationnel jour 1</p>
         <p>
-          Audit Delta Classes Miroirs + légalisation MINREX. Pour les entreprises : frais d'audit
-          certifié +15 % success fee (facturé post-contrat, réduction risque onboarding 80 %).
+          Vérification des compétences + légalisation MINREX. Pour les entreprises : certification
+          complète et accompagnement intégré pour une intégration réussie et sécurisée.
         </p>
       </TooltipContent>
     </Tooltip>
