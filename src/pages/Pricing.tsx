@@ -100,8 +100,9 @@ export default function Pricing() {
           <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
             Choisissez votre plan
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-            Que vous soyez talent ou recruteur, AXIOM vous connecte aux meilleures opportunités France-Afrique.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+            Que vous soyez talent ou recruteur, AXIOM & ALTIS vous connecte aux meilleures opportunités France-Afrique.
+          </p>
           </p>
         </motion.div>
 
