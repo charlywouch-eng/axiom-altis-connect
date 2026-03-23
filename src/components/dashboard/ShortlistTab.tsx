@@ -13,8 +13,22 @@ import { toast } from "@/hooks/use-toast";
 import {
   Bookmark, Download, Trash2, Search, Brain,
   ShieldCheck, Star, Eye, CheckCircle2,
-  MessageSquare, Save, Loader2,
+  MessageSquare, Save, Loader2, Tag, X, Plus,
 } from "lucide-react";
+
+const PRESET_TAGS = [
+  { label: "Prioritaire", color: "bg-red-500/20 text-red-400 border-red-500/30" },
+  { label: "En attente", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  { label: "Validé RH", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  { label: "Entretien planifié", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  { label: "Top profil", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+  { label: "À recontacter", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
+] as const;
+
+function getTagColor(tag: string) {
+  const preset = PRESET_TAGS.find((p) => p.label === tag);
+  return preset?.color ?? "bg-white/10 text-white/60 border-white/20";
+}
 
 interface ShortlistTabProps {
   onSelectTalent: (talent: any) => void;
