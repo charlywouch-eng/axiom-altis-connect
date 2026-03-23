@@ -42,6 +42,7 @@ export default function FranceTravailOffresCard({
   onOffersLoaded,
 }: Props) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   // Generate deterministic score per offer
   const getScoreIA = (offerId: string) => {
     let hash = 0;
