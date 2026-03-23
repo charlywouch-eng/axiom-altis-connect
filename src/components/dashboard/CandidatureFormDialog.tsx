@@ -13,8 +13,9 @@ import { toast } from "sonner";
 import {
   User, Phone, MapPin, Briefcase, GraduationCap,
   Award, Heart, ChevronRight, ChevronLeft, CheckCircle2,
-  Plus, X, Loader2, Sparkles
+  Plus, X, Loader2, Sparkles, Shield
 } from "lucide-react";
+import ExperiencePassportSection, { type AttestationFile } from "./ExperiencePassportSection";
 
 interface Experience {
   poste: string;
@@ -36,6 +37,7 @@ const STEPS = [
   { label: "Formation", icon: GraduationCap },
   { label: "Compétences", icon: Award },
   { label: "Souhait", icon: Heart },
+  { label: "Passport", icon: Shield },
 ];
 
 interface Props {
@@ -78,6 +80,12 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
   const [mobility, setMobility] = useState("");
   const [desiredSalary, setDesiredSalary] = useState("");
 
+  // Section 6 — Experience Passport
+  const [attestations, setAttestations] = useState<AttestationFile[]>([]);
+  const [minrexConsent, setMinrexConsent] = useState(false);
+  const [employerVerification, setEmployerVerification] = useState(false);
+  const [passportRgpd, setPassportRgpd] = useState(false);
+
   const addCompetence = () => {
     const v = compInput.trim();
     if (v && !competences.includes(v)) {
@@ -100,6 +108,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
     if (step === 2) return formations.some(f => f.diplome.trim());
     if (step === 3) return competences.length > 0;
     if (step === 4) return contractType.trim().length > 0;
+    if (step === 5) return passportRgpd && minrexConsent;
     return true;
   };
 
@@ -393,6 +402,20 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
                   </div>
                 </div>
               )}
+
+              {/* ── STEP 5: Experience Passport */}
+              {step === 5 && (
+                <ExperiencePassportSection
+                  attestations={attestations}
+                  onAttestationsChange={setAttestations}
+                  minrexConsent={minrexConsent}
+                  onMinrexConsentChange={setMinrexConsent}
+                  employerVerification={employerVerification}
+                  onEmployerVerificationChange={setEmployerVerification}
+                  rgpdConsent={passportRgpd}
+                  onRgpdConsentChange={setPassportRgpd}
+                />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -404,7 +427,7 @@ export default function CandidatureFormDialog({ open, onOpenChange, onSuccess, p
             {step === 0 ? "Annuler" : "Précédent"}
           </Button>
 
-          {step < 4 ? (
+          {step < 5 ? (
             <Button size="sm" onClick={() => setStep(step + 1)} disabled={!canProceed()} className="gap-1 text-xs bg-accent text-accent-foreground hover:bg-accent/90">
               Suivant <ChevronRight className="h-3.5 w-3.5" />
             </Button>

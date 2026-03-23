@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import {
   Phone, MapPin, Briefcase, GraduationCap,
-  Award, Heart, ShieldCheck, Zap, Star
+  Award, Heart, ShieldCheck, Zap, Star, BadgeCheck
 } from "lucide-react";
 
 interface Experience {
@@ -54,6 +54,9 @@ export default function CandidatureCvCard({ candidature, onContact, onActivateAl
   const c = candidature;
   const initials = c.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const hasMinefop = c.formations?.some((f: any) => f.minefop);
+  const hasVerifiedExperience = c.certifications?.some(
+    (cert: string) => cert.toLowerCase().includes("minrex") || cert.toLowerCase().includes("axiom verified")
+  );
 
   // Compute a mock score based on completeness
   const score = Math.min(100, 
@@ -90,12 +93,17 @@ export default function CandidatureCvCard({ candidature, onContact, onActivateAl
                   {c.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{c.phone}</span>}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  {hasMinefop && (
-                    <Badge className="bg-amber-400/20 text-amber-300 border-amber-400/30 text-[10px] gap-1">
-                      <ShieldCheck className="h-2.5 w-2.5" /> MINEFOP
-                    </Badge>
-                  )}
-                  {c.contract_type && (
+                    {hasMinefop && (
+                      <Badge className="bg-amber-400/20 text-amber-300 border-amber-400/30 text-[10px] gap-1">
+                        <ShieldCheck className="h-2.5 w-2.5" /> MINEFOP
+                      </Badge>
+                    )}
+                    {hasVerifiedExperience && (
+                      <Badge className="bg-accent/20 text-accent border-accent/30 text-[10px] gap-1">
+                        <BadgeCheck className="h-2.5 w-2.5" /> AXIOM Verified Experience
+                      </Badge>
+                    )}
+                    {c.contract_type && (
                     <Badge variant="outline" className="border-white/20 text-white/70 text-[10px]">
                       {c.contract_type}
                     </Badge>
