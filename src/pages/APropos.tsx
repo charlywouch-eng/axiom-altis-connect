@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
+import MatchingIASection from "@/components/landing/MatchingIASection";
 import { Helmet } from "react-helmet-async";
 import ContactForm from "@/components/about/ContactForm";
 import { Link } from "react-router-dom";
