@@ -785,6 +785,38 @@ export type Database = {
           },
         ]
       }
+      talent_shortlist: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          recruiter_id: string
+          talent_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          recruiter_id: string
+          talent_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          recruiter_id?: string
+          talent_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_shortlist_talent_profile_id_fkey"
+            columns: ["talent_profile_id"]
+            isOneToOne: false
+            referencedRelation: "talent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
