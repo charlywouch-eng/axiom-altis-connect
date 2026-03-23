@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import MatchingIASection from "@/components/landing/MatchingIASection";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -650,6 +651,9 @@ export default function Index() {
           </motion.div>
         </div>
       </section>
+
+      {/* ── Matching IA Prédictif ────────────────────────────── */}
+      <MatchingIASection variant="light" />
 
       {/* ── How It Works ─────────────────────────────────────── */}
       <Suspense fallback={null}>
