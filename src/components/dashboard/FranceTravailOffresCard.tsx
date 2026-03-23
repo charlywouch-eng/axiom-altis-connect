@@ -121,7 +121,7 @@ export default function FranceTravailOffresCard({
           </Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Offres d'emploi France Travail actualisées en continu via l'API v2
+          Opportunités sélectionnées par notre IA selon votre profil
         </p>
       </CardHeader>
       <CardContent>
