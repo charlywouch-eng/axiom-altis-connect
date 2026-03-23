@@ -484,7 +484,7 @@ export default function Signup() {
                         Complétez votre profil
                       </h2>
                       <p className="text-sm text-muted-foreground">
-                        3 champs pour activer votre matching IA
+                        3 champs pour vérifier votre éligibilité
                       </p>
                     </div>
 
