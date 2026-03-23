@@ -161,10 +161,10 @@ export default function SignupTalent() {
     >
       <Helmet>
         <title>Créer mon profil talent – AXIOM &amp; ALTIS | Métiers en pénurie France</title>
-        <meta name="description" content="Créez votre profil talent certifié pour les métiers en pénurie en France. Maçon, aide-soignant, cuisinier, chauffeur… Matching IA + Pack ALTIS visa, billet, logement." />
+        <meta name="description" content="Créez votre profil talent certifié pour les métiers en pénurie en France. Maçon, aide-soignant, cuisinier, chauffeur… Certification officielle + Pack ALTIS visa, billet, logement." />
         <link rel="canonical" href="https://axiom-talents.com/signup-talent" />
         <meta property="og:title" content="Créer mon profil talent – AXIOM & ALTIS" />
-        <meta property="og:description" content="Profil certifié MINEFOP pour travailler en France. Matching IA sur les métiers en tension + logistique ALTIS intégrée." />
+        <meta property="og:description" content="Profil certifié pour travailler en France. Conformité aux normes françaises + logistique ALTIS intégrée." />
         <meta property="og:url" content="https://axiom-talents.com/signup-talent" />
       </Helmet>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">

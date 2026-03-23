@@ -107,7 +107,7 @@ function WelcomeScreen({ name }: { name?: string | null }) {
             Votre espace Talent est prêt.
           </p>
           <p className="text-sm" style={{ color: "hsl(215,25%,45%)" }}>
-            Matching IA · Visa · Relocation ALTIS
+            Certification · Visa · Relocation ALTIS
           </p>
         </motion.div>
 

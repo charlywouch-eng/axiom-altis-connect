@@ -88,10 +88,10 @@ export default function MetiersEnTension() {
     <div className="min-h-screen bg-background">
       <Helmet>
         <title>Métiers en tension France – Recrutez des talents certifiés Afrique | AXIOM</title>
-        <meta name="description" content="Découvrez les métiers en pénurie en France : BTP, santé, hôtellerie, transport… Talents certifiés MINEFOP prêts à travailler. Matching IA + visa ALTIS." />
+        <meta name="description" content="Découvrez les métiers en pénurie en France : BTP, santé, hôtellerie, transport… Talents certifiés prêts à travailler. Certification officielle + visa ALTIS." />
         <link rel="canonical" href="https://axiom-talents.com/metiers-en-tension" />
         <meta property="og:title" content="Métiers en tension France – Talents certifiés Afrique" />
-        <meta property="og:description" content="9 secteurs en pénurie. Talents camerounais certifiés, opérationnels J1. Matching IA + Pack ALTIS." />
+        <meta property="og:description" content="9 secteurs en pénurie. Talents certifiés, opérationnels J1. Certification officielle + Pack ALTIS." />
         <meta property="og:url" content="https://axiom-talents.com/metiers-en-tension" />
       </Helmet>
       <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-xl">
