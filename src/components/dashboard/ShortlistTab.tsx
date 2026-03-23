@@ -25,6 +25,27 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
+  const [savingNotes, setSavingNotes] = useState<Set<string>>(new Set());
+
+  const saveNote = async (talentProfileId: string) => {
+    if (!session?.user?.id) return;
+    const note = editingNotes[talentProfileId] ?? "";
+    setSavingNotes((prev) => new Set(prev).add(talentProfileId));
+    const { error } = await supabase
+      .from("talent_shortlist")
+      .update({ notes: note || null })
+      .eq("recruiter_id", session.user.id)
+      .eq("talent_profile_id", talentProfileId);
+    setSavingNotes((prev) => { const n = new Set(prev); n.delete(talentProfileId); return n; });
+    if (error) {
+      toast({ title: "Erreur", description: "Impossible de sauvegarder la note.", variant: "destructive" });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["shortlist-full"] });
+      toast({ title: "✅ Note sauvegardée" });
+      setEditingNotes((prev) => { const n = { ...prev }; delete n[talentProfileId]; return n; });
+    }
+  };
 
   const { data: shortlistEntries = [], isLoading } = useQuery({
     queryKey: ["shortlist-full", session?.user?.id],
