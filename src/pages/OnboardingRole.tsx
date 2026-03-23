@@ -147,7 +147,6 @@ export default function OnboardingRole() {
   const [submitting, setSubmitting] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   const [showAdminInput, setShowAdminInput] = useState(false);
-  const [adminCode, setAdminCode] = useState("");
   const [showWelcome, setShowWelcome] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
 
