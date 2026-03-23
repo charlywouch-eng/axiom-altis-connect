@@ -195,12 +195,10 @@ const EXP_FILTERS = ["Tous", "0-2 ans", "3-5 ans", "5-10 ans", "10+ ans"] as con
 
 function TalentsTab({ onSelectTalent }: { onSelectTalent: (t: any) => void }) {
   const { session } = useAuth();
-  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [tensionFilter, setTensionFilter] = useState<string>("Tous");
   const [sectorFilter, setSectorFilter] = useState<string>("Tous");
   const [countryFilter, setCountryFilter] = useState<string | null>(null);
-  const [invitingId, setInvitingId] = useState<string | null>(null);
   const [expFilter, setExpFilter] = useState<string>("Tous");
   const [axiomOnly, setAxiomOnly] = useState(false);
   const [shortlist, setShortlist] = useState<Set<string>>(new Set());
