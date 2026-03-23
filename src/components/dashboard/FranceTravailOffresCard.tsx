@@ -195,7 +195,7 @@ export default function FranceTravailOffresCard({
                       <Button
                         size="sm"
                         className="flex-1 h-8 text-[11px] gap-1.5 bg-gradient-to-r from-accent to-primary text-white hover:opacity-90 shadow-sm"
-                        onClick={() => navigate(`/offres/${o.id}`)}
+                        onClick={() => navigate(`/offres/${o.id}`, { state: { offer: o } })}
                       >
                         <Briefcase className="h-3 w-3" /> Voir fiche AXIOM
                       </Button>
