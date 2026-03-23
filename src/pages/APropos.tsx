@@ -379,6 +379,9 @@ export default function APropos() {
         </div>
       </section>
 
+      {/* ── Matching IA Prédictif ────────────────────────── */}
+      <MatchingIASection variant="light" />
+
       {/* ── Contact ──────────────────────────────────────── */}
       <section className="py-20 md:py-28">
         <div className="mx-auto max-w-2xl px-5 md:px-10">

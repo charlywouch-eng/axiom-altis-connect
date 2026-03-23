@@ -652,6 +652,9 @@ export default function Index() {
         </div>
       </section>
 
+      {/* ── Matching IA Prédictif ────────────────────────────── */}
+      <MatchingIASection variant="light" />
+
       {/* ── How It Works ─────────────────────────────────────── */}
       <Suspense fallback={null}>
         <HowItWorksSection />
