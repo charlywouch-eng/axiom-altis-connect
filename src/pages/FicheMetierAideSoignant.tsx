@@ -206,7 +206,7 @@ export default function FicheMetierAideSoignant() {
             <motion.div custom={0} variants={fadeUp}>
               <Card className="border-accent/20 bg-accent/5"><CardContent className="p-6 text-center space-y-4">
                 <p className="text-base font-medium leading-relaxed">✨ Chaque talent est unique. Votre parcours, votre expérience, votre détermination… tout cela a de la valeur en France. Commencez votre évaluation gratuite et découvrez ce que vous valez vraiment.</p>
-                <Button asChild size="lg" className="gap-2"><Link to="/signup-light?rome=J1501">Découvrir mon score gratuitement <ArrowRight className="h-4 w-4" /></Link></Button>
+                <Button asChild size="lg" className="gap-2"><Link to="/signup-light?rome=J1501">Vérifier mon éligibilité gratuitement <ArrowRight className="h-4 w-4" /></Link></Button>
               </CardContent></Card>
             </motion.div>
           </motion.div>

@@ -147,7 +147,7 @@ export default function FichesMetiersIndex() {
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp} className="mt-16 text-center">
             <Link to="/signup-light">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 h-auto text-base font-semibold rounded-xl shadow-xl shadow-accent/20">
-                Découvrir mon score et commencer mon parcours <ArrowRight className="ml-2 h-5 w-5" />
+                Vérifier mon éligibilité et commencer mon parcours <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
           </motion.div>

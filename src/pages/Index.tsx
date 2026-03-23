@@ -102,8 +102,8 @@ const METIER_OPTIONS = [
 const TALENT_CARDS = [
   {
     icon: Target,
-    title: "Score IA & badge AXIOM READY",
-    desc: "Matching instantané sur les codes ROME français. Score de compatibilité calculé en 30 secondes. Les profils qualifiés reçoivent le badge AXIOM READY visible par les recruteurs.",
+    title: "Évaluation & badge AXIOM READY",
+    desc: "Vos compétences sont évaluées selon les référentiels français. Les profils conformes reçoivent le badge AXIOM READY visible par les recruteurs.",
     badge: "AXIOM READY",
     badgeColor: "bg-accent/15 text-accent border-accent/25",
     iconBg: "bg-accent/10",
@@ -278,11 +278,11 @@ export default function Index() {
                 custom={2} variants={fadeUp}
                 className="mt-5 max-w-lg text-base text-white/65 leading-relaxed md:text-lg"
               >
-                Talents d'Afrique certifiés MINEFOP • Matching IA instantané • Accompagnement <strong className="text-accent">ALTIS Zéro Stress</strong>
+                Talents d'Afrique certifiés • Conformité aux normes françaises • Accompagnement <strong className="text-accent">ALTIS Zéro Stress</strong>
               </motion.p>
 
               <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
-                {["Gratuit depuis l'Afrique", "Certifications MINEFOP", "Score vérifié en 30 sec", "Visa & logement inclus"].map((item) => (
+                {["Gratuit depuis l'Afrique", "Certifications MINEFOP", "Éligibilité vérifiée", "Visa & logement inclus"].map((item) => (
                   <span key={item} className="flex items-center gap-2 text-sm text-white/50">
                     <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
                     {item}
@@ -525,7 +525,7 @@ export default function Index() {
             <span className="text-gradient-accent">simplifié</span>
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
-            De l'inscription gratuite au premier jour de travail — scoring IA, formations certifiées et relocalisation complète.
+            De l'inscription gratuite au premier jour de travail — certification, formations certifiées et relocalisation complète.
           </motion.p>
         </motion.div>
 
@@ -722,7 +722,7 @@ export default function Index() {
                 <span className="font-bold text-sm text-accent">ALTIS</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Infrastructure Souveraine France-Afrique. Recrutement certifié, matching IA et relocalisation complète.
+                Infrastructure Souveraine France-Afrique. Recrutement certifié, conformité rigoureuse et relocalisation complète.
               </p>
             </div>
 
