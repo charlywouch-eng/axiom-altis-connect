@@ -16,7 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import {
   Zap, CheckCircle2, ArrowRight, ArrowLeft, Shield, Globe,
-  Sparkles, Users, MapPin, Star, Briefcase,
+  Sparkles, Star,
 } from "lucide-react";
 import { getAvatarForTalent } from "@/lib/metierAvatars";
 

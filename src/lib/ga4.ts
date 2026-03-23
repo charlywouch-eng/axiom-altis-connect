@@ -17,6 +17,7 @@ export const GA_MEASUREMENT_ID = "G-4KKLB8SDHZ";
 type GA4Event =
   | "inscription_start"
   | "score_viewed"
+  | "metier_selected"
   | "teaser_10_eu"
   | "paiement_started"
   | "paiement_4_99_started"
