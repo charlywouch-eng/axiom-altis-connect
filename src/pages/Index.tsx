@@ -590,7 +590,7 @@ export default function Index() {
                 key={card.title}
                 custom={i}
                 variants={scaleIn}
-                className="group rounded-2xl border bg-card p-7 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
+                className="group rounded-2xl border border-accent/15 bg-card p-7 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1.5 hover:border-accent/30"
               >
                 <div className="flex items-start justify-between mb-5">
                   <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
@@ -599,7 +599,15 @@ export default function Index() {
                   <Badge className={`${card.badgeColor} text-[10px] font-bold`}>{card.badge}</Badge>
                 </div>
                 <h3 className="mb-3 font-bold text-lg text-foreground group-hover:text-accent transition-colors">{card.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">{card.desc}</p>
+                <ul className="space-y-2">
+                  {card.bullets.map((b) => (
+                    <li key={b} className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <CheckCircle2 className={`h-3.5 w-3.5 shrink-0 ${card.iconColor}`} />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
               </motion.div>
             );
           })}
