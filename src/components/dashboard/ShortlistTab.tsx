@@ -41,8 +41,24 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
   const [savingNotes, setSavingNotes] = useState<Set<string>>(new Set());
+  const [tagMenuOpen, setTagMenuOpen] = useState<string | null>(null);
 
-  const saveNote = async (talentProfileId: string) => {
+  const toggleTag = async (talentProfileId: string, tag: string) => {
+    if (!session?.user?.id) return;
+    const entry = shortlistEntries.find((e) => e.talent_profile_id === talentProfileId);
+    const currentTags: string[] = (entry as any)?.tags ?? [];
+    const newTags = currentTags.includes(tag) ? currentTags.filter((t) => t !== tag) : [...currentTags, tag];
+    const { error } = await supabase
+      .from("talent_shortlist")
+      .update({ tags: newTags } as any)
+      .eq("recruiter_id", session.user.id)
+      .eq("talent_profile_id", talentProfileId);
+    if (error) {
+      toast({ title: "Erreur", description: "Impossible de modifier les tags.", variant: "destructive" });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["shortlist-full"] });
+    }
+  };
     if (!session?.user?.id) return;
     const note = editingNotes[talentProfileId] ?? "";
     setSavingNotes((prev) => new Set(prev).add(talentProfileId));
