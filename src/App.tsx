@@ -292,6 +292,8 @@ const App = () => (
             <Route path="/fiches-metiers/n4101-chauffeur-routier" element={<FicheMetierChauffeurRoutier />} />
             <Route path="/fiches-metiers/n1101-cariste" element={<FicheMetierCariste />} />
             <Route path="/fiches-metiers/a1101-ouvrier-agricole" element={<FicheMetierOuvrierAgricole />} />
+            {/* Dynamic catch-all for /fiches-metiers/:rome → MetierDetail */}
+            <Route path="/fiches-metiers/:rome" element={<MetierDetail />} />
             <Route
               path="/dashboard-recruteur"
               element={
