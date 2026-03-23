@@ -30,7 +30,7 @@ const TALENT_FULL_PERKS = [
 
 const RECRUTEUR_PERKS = [
   "Accès illimité aux talents certifiés",
-  "Matching IA avancé par compétences",
+  "Mise en relation avancée par compétences",
   "Dossiers conformité vérifiés",
   "Pipeline de recrutement intégré",
   "Tooltips ROI & analytics",
