@@ -17,7 +17,7 @@ import {
   Users, Briefcase, Brain, CreditCard, Search, LogOut,
   ShieldCheck, FileText, GraduationCap, Flame,
   Zap, ArrowRight, CheckCircle2, Eye, Globe, Stamp, Loader2, ClipboardList,
-  TrendingUp, Sparkles, Phone, Award, Star, MessageSquare, Bookmark
+  TrendingUp, Sparkles, Award, Star, MessageSquare, Bookmark, Download
 } from "lucide-react";
 import CandidatureCvCard from "@/components/dashboard/CandidatureCvCard";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
