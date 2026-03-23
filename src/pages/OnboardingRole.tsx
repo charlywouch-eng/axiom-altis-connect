@@ -4,10 +4,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { LogOut } from "lucide-react";
 import {
-  Building2, Users, Search, Shield, ArrowRight, CheckCircle2,
+  Building2, Users, Shield, ArrowRight, CheckCircle2,
   Briefcase, Globe, Star, Zap, ChevronRight
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -148,7 +147,6 @@ export default function OnboardingRole() {
   const [submitting, setSubmitting] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   const [showAdminInput, setShowAdminInput] = useState(false);
-  const [adminCode, setAdminCode] = useState("");
   const [showWelcome, setShowWelcome] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
 
@@ -198,17 +196,20 @@ export default function OnboardingRole() {
   };
 
   const handleAdminSubmit = async () => {
+    if (!user) return;
     setSubmitting(true);
     try {
-      const { data, error } = await supabase.functions.invoke("validate-admin-code", {
-        body: { code: adminCode },
-      });
-      if (error) throw error;
-      if (data?.valid) {
+      // Verify admin role is already assigned in DB (by an existing admin)
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (roleData?.role === "admin") {
         navigate("/admin");
       } else {
-        toast({ title: "Code invalide", description: "Le code administrateur est incorrect.", variant: "destructive" });
-        setAdminCode("");
+        toast({ title: "Accès refusé", description: "Votre compte n'a pas le rôle administrateur. Contactez un admin existant.", variant: "destructive" });
         setSubmitting(false);
       }
     } catch {
@@ -423,35 +424,29 @@ export default function OnboardingRole() {
               >
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4" style={{ color: "hsl(215,25%,50%)" }} />
-                  <p className="text-sm font-medium" style={{ color: "hsl(215,25%,70%)" }}>Code administrateur requis</p>
+                  <p className="text-sm font-medium" style={{ color: "hsl(215,25%,70%)" }}>Vérification du rôle administrateur</p>
                 </div>
-                <Input
-                  type="password"
-                  value={adminCode}
-                  onChange={(e) => setAdminCode(e.target.value)}
-                  placeholder="••••••••"
-                  onKeyDown={(e) => e.key === "Enter" && handleAdminSubmit()}
-                  className="text-sm"
-                  style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}
-                />
+                <p className="text-xs" style={{ color: "hsl(215,25%,45%)" }}>
+                  L'accès admin est attribué par un administrateur existant. Cliquez pour vérifier vos droits.
+                </p>
                 <div className="flex gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
                     className="flex-1 text-xs"
                     style={{ color: "hsl(215,25%,45%)" }}
-                    onClick={() => { setShowAdminInput(false); setAdminCode(""); }}
+                    onClick={() => setShowAdminInput(false)}
                   >
                     Annuler
                   </Button>
                   <Button
                     size="sm"
-                    disabled={submitting || !adminCode}
+                    disabled={submitting}
                     onClick={handleAdminSubmit}
                     className="flex-1 text-xs font-semibold"
                     style={{ background: "hsl(189,94%,43%)", color: "hsl(222,47%,7%)" }}
                   >
-                    Valider
+                    Vérifier mon accès
                   </Button>
                 </div>
               </motion.div>
