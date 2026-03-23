@@ -32,8 +32,7 @@ function buildAltisEmailHtml(talentName: string): string {
 </div></body></html>`;
 }
 
-const FROM_PROD = "AXIOM & ALTIS <notify@axiom-talents.com>";
-const FROM_FALLBACK = "AXIOM & ALTIS <delivered@resend.dev>";
+const FROM_EMAIL = "AXIOM & ALTIS <notify@axiom-talents.com>";
 const REPLY_TO = "contact@axiom-talents.com";
 
 async function sendResendEmail(
