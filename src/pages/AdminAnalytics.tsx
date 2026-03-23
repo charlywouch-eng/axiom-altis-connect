@@ -22,8 +22,8 @@ const tooltipStyle = {
   fontSize: "13px",
 };
 
-function KpiCard({ icon: Icon, title, value, change, changeLabel, accent = "accent" }: {
-  icon: any; title: string; value: string | number; change?: number; changeLabel?: string; accent?: string;
+function KpiCard({ icon: Icon, title, value, change, changeLabel }: {
+  icon: any; title: string; value: string | number; change?: number; changeLabel?: string;
 }) {
   const isPositive = (change ?? 0) >= 0;
   return (
