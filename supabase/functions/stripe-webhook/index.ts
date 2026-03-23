@@ -32,8 +32,7 @@ function buildAltisEmailHtml(talentName: string): string {
 </div></body></html>`;
 }
 
-const FROM_PROD = "AXIOM & ALTIS <notify@axiom-talents.com>";
-const FROM_FALLBACK = "AXIOM & ALTIS <delivered@resend.dev>";
+const FROM_EMAIL = "AXIOM & ALTIS <notify@axiom-talents.com>";
 const REPLY_TO = "contact@axiom-talents.com";
 
 async function sendResendEmail(
@@ -45,62 +44,55 @@ async function sendResendEmail(
 ): Promise<boolean> {
   const emailHtml = buildAltisEmailHtml(talentName);
 
-  for (const fromAddr of [FROM_PROD, FROM_FALLBACK]) {
-    try {
-      const resendRes = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: fromAddr,
-          to: [to],
-          reply_to: REPLY_TO,
-          subject: "✅ Votre Pack ALTIS Zéro Stress est activé !",
-          html: emailHtml,
-        }),
+  try {
+    const resendRes = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: [to],
+        reply_to: REPLY_TO,
+        subject: "✅ Votre Pack ALTIS Zéro Stress est activé !",
+        html: emailHtml,
+      }),
+    });
+
+    const resBody = await resendRes.text();
+
+    if (resendRes.ok) {
+      console.log(`[RESEND] Email envoyé à ${to} depuis ${FROM_EMAIL}`);
+      await supabaseClient.from("email_send_log").insert({
+        template_name: "altis-activation-29",
+        recipient_email: to,
+        status: "sent",
+        metadata: { ...metadata, from: FROM_EMAIL },
       });
-
-      const resBody = await resendRes.text();
-
-      if (resendRes.ok) {
-        console.log(`[RESEND] Email envoyé à ${to} depuis ${fromAddr}`);
-        await supabaseClient.from("email_send_log").insert({
-          template_name: "altis-activation-29",
-          recipient_email: to,
-          status: "sent",
-          metadata: { ...metadata, from: fromAddr },
-        });
-        return true;
-      } else if (resendRes.status === 403 && fromAddr === FROM_PROD) {
-        console.warn(`[RESEND] Domaine prod 403, bascule fallback`);
-        continue;
-      } else {
-        console.error(`[RESEND] Erreur ${resendRes.status}: ${resBody}`);
-        await supabaseClient.from("email_send_log").insert({
-          template_name: "altis-activation-29",
-          recipient_email: to,
-          status: "failed",
-          error_message: `${resendRes.status}: ${resBody}`,
-          metadata: { ...metadata, from: fromAddr },
-        });
-        return false;
-      }
-    } catch (emailErr) {
-      if (fromAddr === FROM_PROD) continue;
-      console.error(`[RESEND] Exception:`, emailErr);
+      return true;
+    } else {
+      console.error(`[RESEND] Erreur ${resendRes.status}: ${resBody}`);
       await supabaseClient.from("email_send_log").insert({
         template_name: "altis-activation-29",
         recipient_email: to,
         status: "failed",
-        error_message: emailErr?.message || String(emailErr),
-        metadata,
+        error_message: `${resendRes.status}: ${resBody}`,
+        metadata: { ...metadata, from: FROM_EMAIL },
       });
       return false;
     }
+  } catch (emailErr) {
+    console.error(`[RESEND] Exception:`, emailErr);
+    await supabaseClient.from("email_send_log").insert({
+      template_name: "altis-activation-29",
+      recipient_email: to,
+      status: "failed",
+      error_message: emailErr?.message || String(emailErr),
+      metadata,
+    });
+    return false;
   }
-  return false;
 }
 
 serve(async (req) => {
