@@ -33,7 +33,7 @@ const TESTIMONIALS = [
     origin: "🇸🇳 Dakar → Marseille",
     avatar: avatarFatou,
     quote:
-      "Mon diplôme MINEFOP a été reconnu grâce à AXIOM. Le matching IA m'a trouvé un poste qui correspond exactement à mes compétences.",
+      "Mon diplôme a été reconnu grâce à AXIOM. J'ai été mise en relation avec un poste qui correspond exactement à mes compétences.",
     score: 88,
     sector: "Santé",
   },

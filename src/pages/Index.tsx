@@ -722,7 +722,7 @@ export default function Index() {
                 <span className="font-bold text-sm text-accent">ALTIS</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Infrastructure Souveraine France-Afrique. Recrutement certifié, matching IA et relocalisation complète.
+                Infrastructure Souveraine France-Afrique. Recrutement certifié, conformité rigoureuse et relocalisation complète.
               </p>
             </div>
 
