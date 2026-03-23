@@ -222,10 +222,10 @@ export default function Signup() {
     <TooltipProvider>
       <Helmet>
         <title>Inscription entreprise – AXIOM & ALTIS | Recrutez des talents certifiés Afrique</title>
-        <meta name="description" content="Créez votre compte entreprise AXIOM. Accédez à des talents certifiés MINEFOP pour BTP, santé, CHR, logistique. Matching IA + Pack ALTIS visa et logement." />
+        <meta name="description" content="Créez votre compte entreprise AXIOM. Accédez à des talents certifiés pour BTP, santé, CHR, logistique. Certification officielle + Pack ALTIS visa et logement." />
         <link rel="canonical" href="https://axiom-talents.com/signup" />
         <meta property="og:title" content="Inscription entreprise – AXIOM & ALTIS" />
-        <meta property="og:description" content="Recrutez des talents d'Afrique certifiés. Inscription gratuite, matching IA, conformité garantie." />
+        <meta property="og:description" content="Recrutez des talents d'Afrique certifiés. Inscription gratuite, conformité garantie, accompagnement complet." />
         <meta property="og:url" content="https://axiom-talents.com/signup" />
       </Helmet>
       <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(220,60%,18%)] flex flex-col" style={{ minHeight: '-webkit-fill-available' }}>
