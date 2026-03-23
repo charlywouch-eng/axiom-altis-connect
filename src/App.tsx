@@ -67,6 +67,7 @@ const DashboardSociete = lazy(() => import("./pages/DashboardSociete"));
 const EntrepriseProfile = lazy(() => import("./pages/EntrepriseProfile"));
 const EntrepriseCandidats = lazy(() => import("./pages/EntrepriseCandidats"));
 const OfferDetail = lazy(() => import("./pages/OfferDetail"));
+const OffreFiche = lazy(() => import("./pages/OffreFiche"));
 const Billing = lazy(() => import("./pages/Billing"));
 
 // Lazy: admin pages
