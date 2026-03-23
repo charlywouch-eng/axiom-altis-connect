@@ -10,13 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import {
-  Bookmark, Download, Trash2, Search, Users, Brain,
-  ShieldCheck, Star, Eye, MessageSquare, CheckCircle2,
+  Bookmark, Download, Trash2, Search, Brain,
+  ShieldCheck, Star, Eye, CheckCircle2,
 } from "lucide-react";
-
-const TALENT_AVATARS = [
-  "/placeholder.svg",
-];
 
 interface ShortlistTabProps {
   onSelectTalent: (talent: any) => void;
