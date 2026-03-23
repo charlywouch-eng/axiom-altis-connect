@@ -144,9 +144,8 @@ function AnalyticsContent() {
   const { data: registrations = [] } = useQuery({
     queryKey: ["analytics-registrations", period],
     queryFn: async () => {
-      const [talentsRes, rolesRes] = await Promise.all([
+      const [talentsRes] = await Promise.all([
         supabase.from("talent_profiles").select("created_at").gte("created_at", since).order("created_at"),
-        supabase.from("user_roles").select("created_at:id, role").gte("id", ""),
       ]);
       const talents = talentsRes.data ?? [];
 
