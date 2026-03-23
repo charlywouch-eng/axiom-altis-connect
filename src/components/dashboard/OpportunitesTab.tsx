@@ -110,6 +110,7 @@ export default function OpportunitesTab({
   itemVariants,
 }: OpportunitesTabProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [sectorFilter, setSectorFilter] = useState<string>("all");
   const [contractFilter, setContractFilter] = useState<string>("all");
