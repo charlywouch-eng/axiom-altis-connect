@@ -80,6 +80,7 @@ const AdminQuotes = lazy(() => import("./pages/AdminQuotes"));
 const AdminAuditLogs = lazy(() => import("./pages/AdminAuditLogs"));
 const AdminNotifications = lazy(() => import("./pages/AdminNotifications"));
 const AdminCandidatures = lazy(() => import("./pages/AdminCandidatures"));
+const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
 const AdminEmailLogs = lazy(() => import("./pages/AdminEmailLogs"));
 
 const queryClient = new QueryClient({
