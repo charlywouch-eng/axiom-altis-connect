@@ -227,7 +227,7 @@ export default function Leads() {
         <meta name="description" content="Testez gratuitement votre éligibilité au marché français. Score de compatibilité IA, certification MINEFOP, Pack ALTIS visa + logement. BTP, santé, CHR, logistique." />
         <link rel="canonical" href="https://axiom-talents.com/leads" />
         <meta property="og:title" content="Testez votre éligibilité – AXIOM & ALTIS" />
-        <meta property="og:description" content="Score IA gratuit pour travailler en France. Métiers en tension BTP, santé, CHR. Certification MINEFOP + visa ALTIS." />
+        <meta property="og:description" content="Évaluation gratuite pour travailler en France. Métiers en tension BTP, santé, CHR. Certification officielle + visa ALTIS." />
         <meta property="og:url" content="https://axiom-talents.com/leads" />
       </Helmet>
 
