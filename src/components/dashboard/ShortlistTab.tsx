@@ -25,11 +25,6 @@ const PRESET_TAGS = [
   { label: "À recontacter", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
 ] as const;
 
-function getTagColor(tag: string) {
-  const preset = PRESET_TAGS.find((p) => p.label === tag);
-  return preset?.color ?? "bg-white/10 text-white/60 border-white/20";
-}
-
 interface ShortlistTabProps {
   onSelectTalent: (talent: any) => void;
 }
