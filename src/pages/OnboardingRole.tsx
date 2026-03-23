@@ -198,17 +198,20 @@ export default function OnboardingRole() {
   };
 
   const handleAdminSubmit = async () => {
+    if (!user) return;
     setSubmitting(true);
     try {
-      const { data, error } = await supabase.functions.invoke("validate-admin-code", {
-        body: { code: adminCode },
-      });
-      if (error) throw error;
-      if (data?.valid) {
+      // Verify admin role is already assigned in DB (by an existing admin)
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (roleData?.role === "admin") {
         navigate("/admin");
       } else {
-        toast({ title: "Code invalide", description: "Le code administrateur est incorrect.", variant: "destructive" });
-        setAdminCode("");
+        toast({ title: "Accès refusé", description: "Votre compte n'a pas le rôle administrateur. Contactez un admin existant.", variant: "destructive" });
         setSubmitting(false);
       }
     } catch {
