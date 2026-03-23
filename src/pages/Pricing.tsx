@@ -84,7 +84,7 @@ export default function Pricing() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-16 sm:py-24">
+      <main className="mx-auto max-w-6xl px-4 py-16 sm:py-24">
         {/* Hero */}
         <motion.div
           initial="hidden"
@@ -101,8 +101,7 @@ export default function Pricing() {
             Choisissez votre plan
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Que vous soyez talent ou recruteur, AXIOM & ALTIS vous connecte aux meilleures opportunités France-Afrique.
-          </p>
+            Que vous soyez talent ou recruteur, AXIOM &amp; ALTIS vous connecte aux meilleures opportunités France-Afrique.
           </p>
         </motion.div>
 
@@ -140,8 +139,12 @@ export default function Pricing() {
           )}
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid gap-8 md:grid-cols-2">
+        {/* Section Talents */}
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0.8} className="mb-6">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Pour les talents</h2>
+        </motion.div>
+
+        <div className="grid gap-8 md:grid-cols-2 mb-16">
           {/* Talent – Test */}
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1}>
             <Card className="relative flex h-full flex-col overflow-hidden border-border/60">
@@ -185,17 +188,53 @@ export default function Pricing() {
             </Card>
           </motion.div>
 
-          {/* Recruteur / Entreprise */}
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={2}>
-            <Card className="relative flex h-full flex-col overflow-hidden border-accent/40 shadow-lg shadow-accent/10">
-              <div className="absolute inset-x-0 top-0 h-1 bg-accent" />
+          {/* Experience Passport */}
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1.2}>
+            <Card className="relative flex h-full flex-col overflow-hidden border-border/60">
               <CardHeader className="pb-2">
-                <Badge className="mb-2 w-fit bg-accent text-accent-foreground">Populaire</Badge>
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
-                  <Building2 className="h-6 w-6 text-accent" />
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+                  <Shield className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Recruteur / Entreprise</CardTitle>
-                <CardDescription>Accès illimité aux talents certifiés</CardDescription>
+                <CardTitle className="text-2xl">Experience Passport</CardTitle>
+                <CardDescription>Certification vérifiée de vos compétences</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col">
+                <div className="mb-6">
+                  <span className="font-display text-5xl font-bold">39&nbsp;€</span>
+                  <span className="ml-1 text-muted-foreground">/ paiement unique</span>
+                </div>
+                <ul className="mb-8 flex-1 space-y-3">
+                  <li className="flex items-start gap-2 text-sm"><Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span>Passeport de compétences certifié</span></li>
+                  <li className="flex items-start gap-2 text-sm"><Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span>Vérification MINEFOP / apostille</span></li>
+                  <li className="flex items-start gap-2 text-sm"><Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span>Badge "Verified" sur votre profil</span></li>
+                  <li className="flex items-start gap-2 text-sm"><Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span>Visibilité prioritaire auprès des recruteurs</span></li>
+                </ul>
+                <Button variant="outline" className="w-full gap-2" size="lg" onClick={() => navigate("/signup-talent")}>
+                  Obtenir mon passeport
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Section Entreprises */}
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1.5} className="mb-6">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-accent">Pour les entreprises</h2>
+        </motion.div>
+
+        <div className="grid gap-8 md:grid-cols-2 mb-12">
+          {/* Abonnement AXIOM Platform — PREMIER */}
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1.7}>
+            <Card className="relative flex h-full flex-col overflow-hidden border-accent/40 shadow-xl shadow-accent/10 ring-1 ring-accent/20">
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-primary via-accent to-primary" />
+              <CardHeader className="pb-2">
+                <Badge className="mb-2 w-fit bg-accent text-accent-foreground font-bold">Recommandé</Badge>
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/20">
+                  <Sparkles className="h-6 w-6 text-accent" />
+                </div>
+                <CardTitle className="text-2xl">Abonnement AXIOM Platform</CardTitle>
+                <CardDescription>Accès complet à l'infrastructure de recrutement souveraine</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <div className="mb-6">
@@ -207,7 +246,7 @@ export default function Pricing() {
                   >
                     {displayPrice}&nbsp;€
                   </motion.span>
-                  <span className="ml-1 text-muted-foreground">{billingLabel}</span>
+                  <span className="ml-1 text-muted-foreground">HT {billingLabel}</span>
                   {isAnnual && (
                     <div className="mt-1">
                       <span className="text-sm text-muted-foreground line-through">{MONTHLY_PRICE} €/mois</span>
@@ -218,7 +257,7 @@ export default function Pricing() {
                   )}
                 </div>
                 <ul className="mb-8 flex-1 space-y-3">
-                  {RECRUTEUR_PERKS.map((p) => (
+                  {PLATFORM_PERKS.map((p) => (
                     <li key={p} className="flex items-start gap-2 text-sm">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                       <span>{p}</span>
@@ -227,6 +266,38 @@ export default function Pricing() {
                 </ul>
                 <Button className="w-full gap-2 bg-accent text-accent-foreground hover:bg-accent/90" size="lg" onClick={() => navigate("/signup")}>
                   Souscrire
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Pack ALTIS Intégral */}
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={2}>
+            <Card className="relative flex h-full flex-col overflow-hidden border-border/60">
+              <CardHeader className="pb-2">
+                <Badge variant="secondary" className="mb-2 w-fit">Add-on</Badge>
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+                  <Building2 className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">Pack ALTIS Intégral</CardTitle>
+                <CardDescription>Accompagnement physique complet du talent</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col">
+                <div className="mb-6">
+                  <span className="font-display text-5xl font-bold">2 450&nbsp;€</span>
+                  <span className="ml-1 text-muted-foreground">HT / talent</span>
+                </div>
+                <ul className="mb-8 flex-1 space-y-3">
+                  {ALTIS_PACK_PERKS.map((p) => (
+                    <li key={p} className="flex items-start gap-2 text-sm">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button variant="outline" className="w-full gap-2" size="lg" onClick={() => navigate("/demande-devis")}>
+                  Demander un devis
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </CardContent>
@@ -247,7 +318,7 @@ export default function Pricing() {
         >
           Success Fee additionnel de 25 % du salaire annuel brut à la signature du CDI.
           <br />
-          Pack ALTIS Intégral disponible à 2 450 € / talent (formalités visa de travail – procédure ANEF + accueil aéroport + logement meublé 1 mois + accompagnement administratif).
+          Tous les tarifs sont indiqués hors taxes. TVA applicable selon la réglementation en vigueur.
         </motion.p>
       </main>
     </div>
