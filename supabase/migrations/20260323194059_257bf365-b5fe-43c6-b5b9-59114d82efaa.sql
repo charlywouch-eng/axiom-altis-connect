@@ -1,0 +1,1 @@
+ALTER TABLE public.talent_shortlist ADD COLUMN tags text[] NOT NULL DEFAULT '{}'::text[];

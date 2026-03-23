@@ -791,6 +791,7 @@ export type Database = {
           id: string
           notes: string | null
           recruiter_id: string
+          tags: string[]
           talent_profile_id: string
         }
         Insert: {
@@ -798,6 +799,7 @@ export type Database = {
           id?: string
           notes?: string | null
           recruiter_id: string
+          tags?: string[]
           talent_profile_id: string
         }
         Update: {
@@ -805,6 +807,7 @@ export type Database = {
           id?: string
           notes?: string | null
           recruiter_id?: string
+          tags?: string[]
           talent_profile_id?: string
         }
         Relationships: [

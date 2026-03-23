@@ -13,8 +13,17 @@ import { toast } from "@/hooks/use-toast";
 import {
   Bookmark, Download, Trash2, Search, Brain,
   ShieldCheck, Star, Eye, CheckCircle2,
-  MessageSquare, Save, Loader2,
+  MessageSquare, Save, Loader2, Tag, X, Plus,
 } from "lucide-react";
+
+const PRESET_TAGS = [
+  { label: "Prioritaire", color: "bg-red-500/20 text-red-400 border-red-500/30" },
+  { label: "En attente", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  { label: "Validé RH", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  { label: "Entretien planifié", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  { label: "Top profil", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+  { label: "À recontacter", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
+] as const;
 
 interface ShortlistTabProps {
   onSelectTalent: (talent: any) => void;
@@ -27,6 +36,24 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
   const [savingNotes, setSavingNotes] = useState<Set<string>>(new Set());
+  
+
+  const toggleTag = async (talentProfileId: string, tag: string) => {
+    if (!session?.user?.id) return;
+    const entry = shortlistEntries.find((e) => e.talent_profile_id === talentProfileId);
+    const currentTags: string[] = (entry as any)?.tags ?? [];
+    const newTags = currentTags.includes(tag) ? currentTags.filter((t) => t !== tag) : [...currentTags, tag];
+    const { error } = await supabase
+      .from("talent_shortlist")
+      .update({ tags: newTags } as any)
+      .eq("recruiter_id", session.user.id)
+      .eq("talent_profile_id", talentProfileId);
+    if (error) {
+      toast({ title: "Erreur", description: "Impossible de modifier les tags.", variant: "destructive" });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["shortlist-full"] });
+    }
+  };
 
   const saveNote = async (talentProfileId: string) => {
     if (!session?.user?.id) return;
@@ -52,7 +79,7 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("talent_shortlist")
-        .select("id, talent_profile_id, notes, created_at")
+        .select("id, talent_profile_id, notes, tags, created_at")
         .eq("recruiter_id", session?.user?.id ?? "")
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -317,7 +344,34 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
                       </Badge>
                     </div>
 
-                    {/* Actions */}
+                    {/* Tags */}
+                    <div className="mt-3 border-t border-white/5 pt-3">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <Tag className="h-3 w-3 text-white/30" />
+                        <span className="text-[10px] text-white/30 uppercase tracking-wider font-medium">Tags</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {PRESET_TAGS.map((preset) => {
+                          const entryTags: string[] = (entry as any)?.tags ?? [];
+                          const isActive = entryTags.includes(preset.label);
+                          return (
+                            <button
+                              key={preset.label}
+                              onClick={() => toggleTag(talent.id, preset.label)}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all ${
+                                isActive
+                                  ? `${preset.color} scale-100`
+                                  : "bg-white/5 text-white/25 border-white/10 hover:border-white/20 hover:text-white/40"
+                              }`}
+                            >
+                              {isActive && <X className="h-2.5 w-2.5" />}
+                              {!isActive && <Plus className="h-2.5 w-2.5" />}
+                              {preset.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                     <div className="mt-4 flex gap-2">
                       <Button
                         size="sm"
