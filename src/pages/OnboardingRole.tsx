@@ -424,35 +424,29 @@ export default function OnboardingRole() {
               >
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4" style={{ color: "hsl(215,25%,50%)" }} />
-                  <p className="text-sm font-medium" style={{ color: "hsl(215,25%,70%)" }}>Code administrateur requis</p>
+                  <p className="text-sm font-medium" style={{ color: "hsl(215,25%,70%)" }}>Vérification du rôle administrateur</p>
                 </div>
-                <Input
-                  type="password"
-                  value={adminCode}
-                  onChange={(e) => setAdminCode(e.target.value)}
-                  placeholder="••••••••"
-                  onKeyDown={(e) => e.key === "Enter" && handleAdminSubmit()}
-                  className="text-sm"
-                  style={{ background: "hsl(0,0%,100%,0.05)", borderColor: "hsl(0,0%,100%,0.10)", color: "hsl(0,0%,90%)" }}
-                />
+                <p className="text-xs" style={{ color: "hsl(215,25%,45%)" }}>
+                  L'accès admin est attribué par un administrateur existant. Cliquez pour vérifier vos droits.
+                </p>
                 <div className="flex gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
                     className="flex-1 text-xs"
                     style={{ color: "hsl(215,25%,45%)" }}
-                    onClick={() => { setShowAdminInput(false); setAdminCode(""); }}
+                    onClick={() => setShowAdminInput(false)}
                   >
                     Annuler
                   </Button>
                   <Button
                     size="sm"
-                    disabled={submitting || !adminCode}
+                    disabled={submitting}
                     onClick={handleAdminSubmit}
                     className="flex-1 text-xs font-semibold"
                     style={{ background: "hsl(189,94%,43%)", color: "hsl(222,47%,7%)" }}
                   >
-                    Valider
+                    Vérifier mon accès
                   </Button>
                 </div>
               </motion.div>
