@@ -306,11 +306,11 @@ export default function APropos() {
 
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { trend: "Pénurie structurelle BTP/Santé/CHR", direction: "up" as const, impact: "Critique", detail: "200 000+ postes non pourvus en France. AXIOM active les viviers Afrique francophone certifiés ROME.", axiom: "Sourcing ciblé + certification MINEFOP" },
+              { trend: "Pénurie structurelle BTP/Santé/CHR", direction: "up" as const, impact: "Critique", detail: "200 000+ postes non pourvus en France. AXIOM identifie les talents qualifiés en Afrique francophone.", axiom: "Certification officielle des compétences" },
               { trend: "Durcissement conformité visa/ANEF", direction: "up" as const, impact: "Fort", detail: "Complexité administrative croissante. ALTIS prend en charge 100 % des formalités.", axiom: "Pack ALTIS Zéro Stress intégré" },
-              { trend: "IA dans le recrutement", direction: "up" as const, impact: "Transformateur", detail: "Les entreprises cherchent du matching prédictif. AXIOM traduit compétences locales → codes ROME.", axiom: "Matching IA prédictif exclusif" },
-              { trend: "Coût d'un mauvais recrutement", direction: "up" as const, impact: "45 000 € moy.", detail: "Turnover coûteux. AXIOM réduit le risque onboarding de 80 % via la pré-certification.", axiom: "Réduction risque -80 %" },
-              { trend: "Plateformes généralistes", direction: "down" as const, impact: "Saturation", detail: "LinkedIn, Indeed : trop de bruit, peu de conformité internationale. AXIOM = niche premium.", axiom: "Positionnement TIaaS unique" },
+              { trend: "Exigences de conformité RH", direction: "up" as const, impact: "Transformateur", detail: "Les entreprises exigent des profils certifiés et conformes aux référentiels français.", axiom: "Certification et conformité intégrées" },
+              { trend: "Coût d'un mauvais recrutement", direction: "up" as const, impact: "45 000 € moy.", detail: "Turnover coûteux. AXIOM réduit le risque d'intégration grâce à la pré-certification.", axiom: "Réduction risque -80 %" },
+              { trend: "Plateformes généralistes", direction: "down" as const, impact: "Saturation", detail: "Les grandes plateformes manquent de conformité internationale. AXIOM = niche premium certifiée.", axiom: "Positionnement TIaaS unique" },
               { trend: "RSE & diversité", direction: "up" as const, impact: "Priorité DRH", detail: "Recrutement inclusif international = levier RSE fort. AXIOM documente l'impact social.", axiom: "Impact social mesuré & certifié" },
             ].map((item, i) => (
               <motion.div
