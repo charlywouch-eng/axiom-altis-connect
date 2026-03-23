@@ -65,7 +65,7 @@ function matchTalentEmail(talentName: string, offerTitle: string, company: strin
     </div>
     <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:8px 0 24px;">
       <a href="${SITE_URL}/dashboard-talent?tab=opportunites" style="display:inline-block;background:#1E40AF;color:#ffffff;font-size:14px;font-weight:600;padding:12px 28px;border-radius:10px;text-decoration:none;">
-        Voir l'offre →
+        Accéder à la fiche de poste →
       </a>
     </td></tr></table>`;
   return {
