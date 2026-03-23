@@ -117,8 +117,8 @@ const STEP_MESSAGES: Record<FunnelStep, string> = {
   secteur: "Félicitations ! Vous êtes éligible à un poste en France.",
   experience: "Votre secteur est en forte demande. Continuez pour affiner votre score.",
   pays: "Votre profil correspond déjà à plusieurs offres en tension en France.",
-  confirm: "Dernière étape ! Validez pour obtenir votre score IA complet.",
-  score: "Votre score IA complet est prêt.",
+  confirm: "Dernière étape ! Validez pour obtenir votre évaluation complète.",
+  score: "Votre évaluation de conformité est prête.",
 };
 
 // ── Main Component ──────────────────────────────────────────────
