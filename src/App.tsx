@@ -155,6 +155,14 @@ const App = () => (
               }
             />
             <Route
+              path="/offres/:id"
+              element={
+                <ProtectedRoute allowedRoles={["talent", "entreprise", "admin", "recruteur"]}>
+                  <OffreFiche />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/dashboard-entreprise/profil"
               element={
                 <ProtectedRoute allowedRoles={["entreprise", "admin"]}>
