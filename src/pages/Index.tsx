@@ -525,7 +525,7 @@ export default function Index() {
             <span className="text-gradient-accent">simplifié</span>
           </motion.h2>
           <motion.p custom={2} variants={fadeUp} className="mt-4 text-muted-foreground text-base max-w-2xl mx-auto">
-            De l'inscription gratuite au premier jour de travail — scoring IA, formations certifiées et relocalisation complète.
+            De l'inscription gratuite au premier jour de travail — certification, formations certifiées et relocalisation complète.
           </motion.p>
         </motion.div>
 
