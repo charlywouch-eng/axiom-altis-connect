@@ -84,7 +84,7 @@ export default function ShortlistTab({ onSelectTalent }: ShortlistTabProps) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("talent_shortlist")
-        .select("id, talent_profile_id, notes, created_at")
+        .select("id, talent_profile_id, notes, tags, created_at")
         .eq("recruiter_id", session?.user?.id ?? "")
         .order("created_at", { ascending: false });
       if (error) throw error;
