@@ -14,10 +14,15 @@
 
 | Produit | Price ID | Montant |
 |---|---|---|
-| Test d'éligibilité (lead) | `price_1TAcRuLLoCKfmmI1JCKUqUey` | 4,99 € |
-| Déblocage complet (lead) | `price_1TAcSgLLoCKfmmI1jy4TZp8h` | 29 € |
-| Test d'éligibilité (talent) | `price_1TAcRuLLoCKfmmI1JCKUqUey` | 4,99 € |
-| Déblocage complet (talent) | `price_1TAcSgLLoCKfmmI1jy4TZp8h` | 29 € |
+| Rapport complet + score détaillé | `price_1TAcRuLLoCKfmmI1JCKUqUey` | 4,99 € |
+| Pack ALTIS complet (visa+accueil+logement) | `price_1TAcSgLLoCKfmmI1jy4TZp8h` | 29 € |
+
+## Positionnement des CTAs (mars 2026)
+
+- **Test d'éligibilité** : 100 % gratuit, affiche le score basique (ex. 83 %)
+- **CTA principal (bleu souverain)** : "Débloquer le rapport complet + score détaillé par compétence" → 4,99 € une seule fois
+- **CTA secondaire (turquoise ALTIS)** : "Activer le Pack ALTIS complet (visa + accueil + logement 1 mois)" → 29 € une seule fois
+- Message : "Test gratuit terminé – Choisissez votre prochaine étape"
 
 ## Payment Types (metadata webhook)
 
@@ -41,7 +46,7 @@
 ## Flux utilisateur type
 
 1. **Landing** (`/`) → teaser form → redirige vers `/leads`
-2. **Leads** (`/leads`) → score IA → CTA 4,99 € ou 29 € → Stripe Checkout
+2. **Leads** (`/leads`) → score IA gratuit → CTA 4,99 € (rapport) ou 29 € (Pack ALTIS) → Stripe Checkout
 3. **PaymentSuccess** (`/payment-success`) → confirmation + upgrade 29 € si test + CTA inscription
 4. **SignupLight** (`/signup-light`) → formulaire + score → CTA 4,99 € ou 29 € → Stripe Checkout
 5. **DashboardTalent** → premium gate → CTA 4,99 € ou 29 € (authentifié)
