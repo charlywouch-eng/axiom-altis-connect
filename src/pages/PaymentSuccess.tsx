@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { trackFunnel } from "@/lib/trackFunnel";
+import { trackGA4 } from "@/lib/ga4";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2, Star, ArrowRight, Zap, Shield, Globe, Briefcase, Crown, Rocket } from "lucide-react";
@@ -124,6 +125,14 @@ export default function PaymentSuccess() {
       experience: exp,
       source: "payment-success",
       metadata: { score },
+    });
+    trackGA4("conversion_payment_success", {
+      tier,
+      rome_code: rome,
+      experience: exp,
+      score,
+      value: tier === "full" ? 29 : 4.99,
+      currency: "EUR",
     });
   }, []);
 
