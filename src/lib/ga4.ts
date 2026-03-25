@@ -28,7 +28,9 @@ type GA4Event =
   | "funnel_step_contact"
   | "funnel_step_secteur"
   | "funnel_step_experience"
-  | "funnel_step_pays";
+  | "funnel_step_pays"
+  | "conversion_payment_success"
+  | "conversion_pack_altis_success";
 
 /**
  * Check if analytics consent has been given.

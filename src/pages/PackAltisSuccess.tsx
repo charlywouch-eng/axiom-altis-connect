@@ -4,6 +4,7 @@ import { CheckCircle2, Plane, Home, FileText, Users, Shield, ArrowRight, Zap } f
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { trackFunnel } from "@/lib/trackFunnel";
+import { trackGA4 } from "@/lib/ga4";
 
 const ALTIS_STEPS = [
   { icon: FileText, title: "Préparation dossier ANEF", desc: "Constitution complète de votre dossier de visa de travail via la procédure ANEF." },
@@ -18,6 +19,10 @@ export default function PackAltisSuccess() {
     trackFunnel({
       event_name: "pack_altis_payment_success",
       source: "pack-altis-success",
+    });
+    trackGA4("conversion_pack_altis_success", {
+      value: 29,
+      currency: "EUR",
     });
   }, []);
 
