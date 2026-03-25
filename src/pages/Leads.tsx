@@ -603,7 +603,7 @@ export default function Leads() {
               ))}
             </motion.div>
 
-            {/* Upsell */}
+            {/* Upsell — Two distinct CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -611,53 +611,21 @@ export default function Leads() {
               className="rounded-2xl p-6 border mb-6"
               style={{ background: "hsl(221,83%,14%,0.55)", borderColor: `${accentColor}40` }}
             >
-              <p className="text-sm font-semibold mb-3" style={{ color: "hsl(0,0%,90%)" }}>
-                🎯 {isAxiomReady
-                  ? `Félicitations ${form.firstName} ! Votre profil est compatible avec les offres en tension.`
-                  : `${form.firstName}, votre profil montre un bon potentiel. L'accompagnement ALTIS peut maximiser vos chances.`
-                }
+              <p className="text-sm font-bold mb-1 text-center" style={{ color: "hsl(0,0%,95%)" }}>
+                ✅ Test gratuit terminé – Choisissez votre prochaine étape
+              </p>
+              <p className="text-xs text-center mb-5" style={{ color: textSecondary }}>
+                Votre score de base est de <strong style={{ color: accentColor }}>{score} %</strong>. Débloquez les détails ou le parcours complet.
               </p>
 
-              <div className="space-y-2 mb-5">
-                {[
-                  "Rapport complet : score détaillé par compétence",
-                  "3 à 5 offres CDI matchées en France",
-                  "Préparation dossier ALTIS : visa + accueil + logement 1er mois",
-                ].map(item => (
-                  <div key={item} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: accentColor }} />
-                    <span className="text-xs" style={{ color: textSecondary }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* ── Full unlock CTA ── */}
-              <div className="relative rounded-xl p-3 mb-3 border text-center" style={{ background: `${accentColor}0A`, borderColor: `${accentColor}33` }}>
-                <motion.span
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: [1, 1.08, 1], opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.6, repeat: Infinity, repeatDelay: 3 }}
-                  className="absolute -top-2.5 right-3 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold shadow-lg"
-                  style={{ background: "linear-gradient(135deg, hsl(158,64%,38%), hsl(158,64%,48%))", color: "white" }}
-                >
-                  ⭐ Recommandé
-                </motion.span>
-                <p className="text-xs" style={{ color: textSecondary }}>
-                  Débloquer le rapport complet + préparation dossier
-                </p>
-                <p className="mt-1">
-                  <strong style={{ color: accentColor, fontSize: "1.25rem" }}>29 €</strong>{" "}
-                  <span className="text-[10px]" style={{ color: textMuted }}>une seule fois</span>
-                </p>
-              </div>
-
+              {/* CTA 1 — 4,99 € — Rapport complet (Bleu souverain) */}
               <Button
-                className="w-full h-12 font-bold text-sm rounded-xl mb-2"
-                style={{ background: `linear-gradient(135deg, ${accentColor}, ${bleuSouverain})`, color: "white" }}
-                onClick={() => handlePayment("full")}
-                disabled={fullPaymentLoading}
+                className="w-full h-12 font-bold text-sm rounded-xl mb-3"
+                style={{ background: bleuSouverain, color: "white", boxShadow: "0 4px 20px hsl(221,83%,53%,0.35)" }}
+                onClick={() => handlePayment("test")}
+                disabled={_paymentLoading}
               >
-                {fullPaymentLoading ? (
+                {_paymentLoading ? (
                   <span className="flex items-center gap-2">
                     <motion.div
                       animate={{ rotate: 360 }}
@@ -668,12 +636,64 @@ export default function Leads() {
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    <Star className="h-4 w-4" />
-                    Débloquer le rapport complet — 29 €
+                    <Sparkles className="h-4 w-4" />
+                    Débloquer le rapport complet + score détaillé — 4,99 €
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 )}
               </Button>
+              <div className="space-y-1 mb-4 pl-2">
+                {["Score détaillé par compétence & niveau ROME", "PDF exportable de votre évaluation", "Offres CDI personnalisées matchées"].map(item => (
+                  <div key={item} className="flex items-start gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: bleuSouverain }} />
+                    <span className="text-xs" style={{ color: textSecondary }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA 2 — 29 € — Pack ALTIS complet (Turquoise) */}
+              <div className="relative">
+                <motion.span
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: [1, 1.08, 1], opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.6, repeat: Infinity, repeatDelay: 3 }}
+                  className="absolute -top-2.5 right-3 z-10 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold shadow-lg"
+                  style={{ background: "linear-gradient(135deg, hsl(158,64%,38%), hsl(158,64%,48%))", color: "white" }}
+                >
+                  ⭐ Recommandé
+                </motion.span>
+                <Button
+                  className="w-full h-12 font-bold text-sm rounded-xl"
+                  style={{ background: `linear-gradient(135deg, ${accentColor}, hsl(158,64%,42%))`, color: "white", boxShadow: `0 4px 20px ${accentColor}55` }}
+                  onClick={() => handlePayment("full")}
+                  disabled={fullPaymentLoading}
+                >
+                  {fullPaymentLoading ? (
+                    <span className="flex items-center gap-2">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
+                        className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
+                      />
+                      Redirection…
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Star className="h-4 w-4" />
+                      Activer le Pack ALTIS complet — 29 €
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  )}
+                </Button>
+              </div>
+              <div className="space-y-1 mt-2 mb-4 pl-2">
+                {["Visa de travail : dossier ANEF complet", "Accueil aéroport en France", "Logement meublé 1er mois garanti", "Accompagnement administratif intégral", "Certification MINEFOP officielle"].map(item => (
+                  <div key={item} className="flex items-start gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: accentColor }} />
+                    <span className="text-xs" style={{ color: textSecondary }}>{item}</span>
+                  </div>
+                ))}
+              </div>
 
               <Button
                 variant="ghost"

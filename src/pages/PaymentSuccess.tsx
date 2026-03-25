@@ -127,12 +127,20 @@ export default function PaymentSuccess() {
     });
   }, []);
 
-  const perks = [
+  const testPerks = [
     { icon: Star,      text: "Score détaillé par compétence & niveau ROME" },
     { icon: Briefcase, text: "3 à 5 offres CDI France Travail matchées" },
-    { icon: Globe,     text: "Parcours ALTIS : formalités visa de travail (procédure ANEF) + accueil aéroport + logement meublé 1 mois + accompagnement administratif" },
-    { icon: Shield,    text: "Accompagnement MINEFOP certifié" },
+    { icon: Shield,    text: "PDF exportable de votre évaluation" },
   ];
+
+  const fullPerks = [
+    { icon: Star,      text: "Rapport complet inclus (score + offres)" },
+    { icon: Globe,     text: "Dossier visa ANEF + accueil aéroport" },
+    { icon: Briefcase, text: "Logement meublé 1er mois garanti" },
+    { icon: Shield,    text: "Accompagnement administratif + certification MINEFOP" },
+  ];
+
+  const perks = tier === "full" ? fullPerks : testPerks;
 
   return (
     <div
@@ -172,13 +180,13 @@ export default function PaymentSuccess() {
             transition={{ delay: 0.5, duration: 0.4 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
             style={{
-              background: "hsl(158 64% 38% / 0.15)",
-              border: "1px solid hsl(158 64% 38% / 0.4)",
-              color: "hsl(158 64% 58%)",
+              background: tier === "full" ? "hsl(158 64% 38% / 0.15)" : "hsl(221 83% 53% / 0.15)",
+              border: tier === "full" ? "1px solid hsl(158 64% 38% / 0.4)" : "1px solid hsl(221 83% 53% / 0.4)",
+              color: tier === "full" ? "hsl(158 64% 58%)" : "hsl(221 83% 68%)",
             }}
           >
             <Zap className="w-3 h-3" />
-            Accès premium activé ✓
+            {tier === "full" ? "Pack ALTIS activé ✓" : "Rapport débloqué ✓"}
           </motion.div>
 
           {/* Title */}
@@ -188,10 +196,10 @@ export default function PaymentSuccess() {
             transition={{ delay: 0.65 }}
           >
             <h1 className="text-2xl font-extrabold text-white mb-1">
-              Votre analyse complète est prête !
+              {tier === "full" ? "Votre Pack ALTIS est confirmé !" : "Votre rapport complet est prêt !"}
             </h1>
             <p className="text-sm" style={{ color: "hsl(215 16% 57%)" }}>
-              Paiement confirmé · Score et offres débloqués
+              {tier === "full" ? "Paiement de 29 € confirmé · Pack ALTIS débloqué" : "Paiement de 4,99 € confirmé · Score détaillé débloqué"}
             </p>
           </motion.div>
 
@@ -257,7 +265,7 @@ export default function PaymentSuccess() {
             ))}
           </motion.ul>
 
-          {/* CTA — upgrade to full or create account */}
+          {/* CTA — upgrade to Pack ALTIS if test tier, or create account */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -271,7 +279,7 @@ export default function PaymentSuccess() {
                   animate={{ scale: [1, 1.08, 1], opacity: 1 }}
                   transition={{ delay: 0.8, duration: 0.6, repeat: Infinity, repeatDelay: 3 }}
                   className="absolute -top-2.5 right-3 z-10 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold shadow-lg"
-                  style={{ background: "linear-gradient(135deg, hsl(45,93%,47%), hsl(36,100%,50%))", color: "hsl(222,47%,7%)", boxShadow: "0 2px 12px hsl(45,93%,47%,0.4)" }}
+                  style={{ background: "linear-gradient(135deg, hsl(158,64%,38%), hsl(158,64%,48%))", color: "white", boxShadow: "0 2px 12px hsl(158,64%,38%,0.4)" }}
                 >
                   ⭐ Recommandé
                 </motion.span>
@@ -280,14 +288,17 @@ export default function PaymentSuccess() {
                   disabled={upgradeLoading}
                   className="w-full h-12 text-base font-bold rounded-xl flex items-center justify-center gap-2 group"
                   style={{
-                    background: "linear-gradient(135deg, hsl(158 64% 30%), hsl(158 64% 42%))",
+                    background: "linear-gradient(135deg, hsl(189 94% 35%), hsl(158 64% 42%))",
                     boxShadow: "0 4px 24px hsl(158 64% 38% / 0.4)",
                   }}
                 >
                   <Crown className="w-4 h-4" />
-                  Déblocage complet — 29 €
+                  Activer le Pack ALTIS complet — 29 €
                   <Rocket className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Button>
+                <p className="text-center text-[11px] mt-1.5" style={{ color: "hsl(158 64% 52%)" }}>
+                  Visa + accueil aéroport + logement 1 mois + certification MINEFOP
+                </p>
               </div>
             )}
             <Link to={signupUrl} className="block w-full">
@@ -307,11 +318,6 @@ export default function PaymentSuccess() {
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
-            {tier === "test" && (
-              <p className="text-center text-[11px]" style={{ color: "hsl(158 64% 52%)" }}>
-                🔓 Score détaillé + offres matchées + parcours ALTIS + certification MINEFOP
-              </p>
-            )}
             <p className="text-xs text-center" style={{ color: "hsl(215 16% 47%)" }}>
               Accès gratuit · Score complet disponible immédiatement après inscription
             </p>

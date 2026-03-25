@@ -1139,7 +1139,7 @@ export default function SignupLight() {
                 </div>
               </div>
 
-              {/* ── CTA: Débloquer résultat ── */}
+              {/* ── CTA: Two distinct options ── */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1148,32 +1148,70 @@ export default function SignupLight() {
               >
                 <div className="h-px w-full bg-gradient-cta" />
                 <div className="p-6">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="h-11 w-11 rounded-xl flex items-center justify-center shrink-0 bg-accent/10 border border-accent/20">
-                      <Sparkles className="h-5 w-5 text-accent" />
-                    </div>
-                    <div>
-                      <p className="font-black text-sm text-white">Votre évaluation complète est prêt.</p>
-                      <p className="text-xs mt-1 leading-relaxed text-white/45">
-                        Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).
-                      </p>
-                    </div>
-                  </div>
+                  <p className="font-bold text-sm text-white text-center mb-1">
+                    ✅ Test gratuit terminé – Choisissez votre prochaine étape
+                  </p>
+                  <p className="text-xs text-center mb-5 text-white/45">
+                    Score basique : <span className="font-bold text-accent">{score}%</span> · Débloquez les détails ci-dessous.
+                  </p>
 
+                  {/* Option 1: 4,99 € — Bleu souverain */}
                   <Button
                     size="lg"
-                    className="w-full h-14 text-base rounded-xl font-bold shadow-md group relative overflow-hidden bg-gradient-cta border-0 text-white animate-micro-pulse"
+                    className="w-full h-14 text-base rounded-xl font-bold shadow-md group relative overflow-hidden border-0 text-white mb-2"
+                    style={{ background: "hsl(221,83%,53%)", boxShadow: "0 4px 20px hsl(221,83%,53%,0.35)" }}
                     onClick={() => setShowPaymentDialog(true)}
                   >
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-cta-hover" />
                     <span className="relative flex items-center justify-center gap-2">
-                      Débloquer mon résultat maintenant – 4,99&nbsp;€
+                      <Sparkles className="h-4 w-4" />
+                      Rapport complet + score détaillé — 4,99 €
                       <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </span>
                   </Button>
+                  <div className="space-y-1 mb-4 pl-2">
+                    {["Score détaillé par compétence & niveau ROME", "PDF exportable de votre évaluation", "Offres CDI personnalisées matchées"].map(i => (
+                      <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
+                        <CheckCircle2 className="h-3 w-3 shrink-0 text-primary" />
+                        {i}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Option 2: 29 € — Turquoise ALTIS */}
+                  <div className="relative">
+                    <Badge className="absolute -top-2 right-3 z-10 text-[10px] bg-success/20 text-success border border-success/30">⭐ Recommandé</Badge>
+                    <Button
+                      size="lg"
+                      className="w-full h-14 text-base rounded-xl font-bold shadow-md group relative overflow-hidden border-0 text-white"
+                      style={{ background: "linear-gradient(135deg, hsl(189,94%,43%), hsl(158,64%,42%))", boxShadow: "0 4px 20px hsl(189,94%,43%,0.35)" }}
+                      onClick={handleFullPayment}
+                      disabled={fullPaymentLoading}
+                    >
+                      {fullPaymentLoading ? (
+                        <span className="flex items-center gap-2">
+                          <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                          Redirection…
+                        </span>
+                      ) : (
+                        <span className="relative flex items-center justify-center gap-2">
+                          <Star className="h-4 w-4" />
+                          Pack ALTIS complet — 29 €
+                          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                        </span>
+                      )}
+                    </Button>
+                  </div>
+                  <div className="space-y-1 mt-2 mb-3 pl-2">
+                    {["Visa de travail : dossier ANEF complet", "Accueil aéroport + logement meublé 1 mois", "Accompagnement administratif intégral", "Certification MINEFOP officielle"].map(i => (
+                      <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
+                        <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
+                        {i}
+                      </div>
+                    ))}
+                  </div>
 
                   <p className="text-center text-[10px] mt-2 text-white/25">
-                    🔒 Paiement sécurisé Stripe · Résultat immédiat
+                    🔒 Paiement sécurisé Stripe · Accès immédiat
                   </p>
 
                   <button
@@ -1211,52 +1249,53 @@ export default function SignupLight() {
                 <Award className="h-8 w-8 text-accent" />
               </div>
               <DialogTitle className="font-black text-xl text-white">
-                Votre évaluation complète est prêt.
+                Choisissez votre prochaine étape
               </DialogTitle>
               <DialogDescription className="text-sm leading-relaxed text-white/50">
-                Pour débloquer le PDF détaillé + priorité recruteurs modérée + accès à vos offres personnalisées, payez 4,99&nbsp;€ (une seule fois).
+                Votre test gratuit est terminé. Débloquez le rapport détaillé ou le parcours complet ALTIS.
               </DialogDescription>
             </DialogHeader>
 
-            {/* Option 4,99 € */}
+            {/* Option 4,99 € — Bleu souverain */}
             <button
               onClick={handlePremiumPayment}
               disabled={paymentLoading}
-              className="w-full text-left p-4 rounded-2xl border-2 border-accent/30 bg-accent/[0.06] hover:bg-accent/[0.12] transition-all group"
+              className="w-full text-left p-4 rounded-2xl border-2 transition-all group"
+              style={{ borderColor: "hsl(221,83%,53%,0.3)", background: "hsl(221,83%,53%,0.06)" }}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-sm text-white">Débloquer mon résultat maintenant</span>
-                <span className="font-black text-lg text-accent">4,99&nbsp;€</span>
+                <span className="font-bold text-sm text-white">Rapport complet + score détaillé</span>
+                <span className="font-black text-lg" style={{ color: "hsl(221,83%,63%)" }}>4,99&nbsp;€</span>
               </div>
               <div className="space-y-1">
-                {["PDF score détaillé", "Priorité recruteurs modérée", "Offres personnalisées", "Résultat immédiat"].map(i => (
+                {["Score détaillé par compétence & ROME", "PDF exportable", "Offres CDI personnalisées", "Résultat immédiat"].map(i => (
                   <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
-                    <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
+                    <CheckCircle2 className="h-3 w-3 shrink-0" style={{ color: "hsl(221,83%,63%)" }} />
                     {i}
                   </div>
                 ))}
               </div>
               {paymentLoading && (
-                <div className="mt-2 flex items-center gap-2 text-xs text-accent">
-                  <span className="h-3 w-3 rounded-full border-2 border-accent/30 border-t-accent animate-spin" />
+                <div className="mt-2 flex items-center gap-2 text-xs" style={{ color: "hsl(221,83%,63%)" }}>
+                  <span className="h-3 w-3 rounded-full border-2 border-current/30 border-t-current animate-spin" />
                   Redirection Stripe…
                 </div>
               )}
             </button>
 
-            {/* Option 29 € */}
+            {/* Option 29 € — Turquoise ALTIS */}
             <button
               onClick={handleFullPayment}
               disabled={fullPaymentLoading}
               className="w-full text-left p-4 rounded-2xl border-2 border-success/30 bg-success/[0.06] hover:bg-success/[0.12] transition-all relative"
             >
-              <Badge className="absolute -top-2 right-3 text-[10px] bg-success/20 text-success border border-success/30">Recommandé</Badge>
+              <Badge className="absolute -top-2 right-3 text-[10px] bg-success/20 text-success border border-success/30">⭐ Recommandé</Badge>
               <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-sm text-white">Déblocage complet</span>
+                <span className="font-bold text-sm text-white">Pack ALTIS complet</span>
                 <span className="font-black text-lg text-success">29 €</span>
               </div>
               <div className="space-y-1">
-                {["Score détaillé par compétence", "3–5 offres CDI matchées", "Pack ALTIS : visa + billet + logement", "Certification MINEFOP officielle", "Priorité recruteurs ×3"].map(i => (
+                {["Visa de travail : dossier ANEF complet", "Accueil aéroport + logement 1 mois", "Accompagnement administratif intégral", "Certification MINEFOP officielle", "Priorité recruteurs ×3"].map(i => (
                   <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
                     <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
                     {i}
