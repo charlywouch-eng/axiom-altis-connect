@@ -247,6 +247,74 @@ function AnalyticsContent() {
     },
   });
 
+  // Payment conversions (4,99 € rapport + 29 € Pack ALTIS) from funnel_events + leads
+  const { data: paymentConversions } = useQuery({
+    queryKey: ["analytics-payment-conversions", period],
+    queryFn: async () => {
+      const [funnelRes, leadsRes] = await Promise.all([
+        supabase.from("funnel_events")
+          .select("event_name, created_at, metadata")
+          .in("event_name", ["lead_payment_clicked"])
+          .gte("created_at", since)
+          .order("created_at", { ascending: false }),
+        supabase.from("leads")
+          .select("created_at, status, score_mock, metier, rome_code")
+          .in("status", ["premium_paid", "rapport_paid"])
+          .gte("created_at", since)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      const funnelData = (funnelRes.data ?? []) as { event_name: string; created_at: string; metadata: any }[];
+      const leadsData = leadsRes.data ?? [];
+
+      // Count by tier from leads status
+      const rapportPaid = leadsData.filter((l) => l.status === "rapport_paid").length;
+      const packAltisPaid = leadsData.filter((l) => l.status === "premium_paid").length;
+
+      // Daily breakdown
+      const dailyMap: Record<string, { rapport: number; altis: number }> = {};
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dailyMap[d.toISOString().slice(0, 10)] = { rapport: 0, altis: 0 };
+      }
+
+      leadsData.forEach((l) => {
+        const key = l.created_at.slice(0, 10);
+        if (dailyMap[key]) {
+          if (l.status === "rapport_paid") dailyMap[key].rapport++;
+          if (l.status === "premium_paid") dailyMap[key].altis++;
+        }
+      });
+
+      const dailyData = Object.entries(dailyMap).map(([date, v]) => ({
+        date: date.slice(5),
+        "Rapport 4,99€": v.rapport,
+        "Pack ALTIS 29€": v.altis,
+      }));
+
+      // Recent transactions
+      const recentTx = leadsData.slice(0, 10).map((l) => ({
+        date: new Date(l.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
+        type: l.status === "premium_paid" ? "Pack ALTIS" : "Rapport",
+        amount: l.status === "premium_paid" ? "29 €" : "4,99 €",
+        metier: l.metier,
+        score: l.score_mock,
+      }));
+
+      return {
+        rapportCount: rapportPaid,
+        altisCount: packAltisPaid,
+        rapportRevenue: rapportPaid * 4.99,
+        altisRevenue: packAltisPaid * 29,
+        totalRevenue: rapportPaid * 4.99 + packAltisPaid * 29,
+        dailyData,
+        recentTx,
+        paymentClicks: funnelData.length,
+      };
+    },
+  });
+
   const funnelSteps = [
     { key: "signup_started", label: "Démarrage", color: "hsl(var(--accent))" },
     { key: "lead_form_submitted", label: "Formulaire", color: "hsl(210, 70%, 55%)" },
