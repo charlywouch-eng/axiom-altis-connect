@@ -85,6 +85,23 @@ function AnalyticsContent() {
         () => {
           queryClient.invalidateQueries({ queryKey: ["analytics-kpis"] });
           queryClient.invalidateQueries({ queryKey: ["analytics-conversions"] });
+          queryClient.invalidateQueries({ queryKey: ["analytics-payment-conversions"] });
+        }
+      ).subscribe(),
+      supabase.channel("analytics-funnel-rt").on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "funnel_events" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["analytics-funnel-summary"] });
+          queryClient.invalidateQueries({ queryKey: ["analytics-payment-conversions"] });
+        }
+      ).subscribe(),
+      supabase.channel("analytics-leads-rt").on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["analytics-kpis"] });
+          queryClient.invalidateQueries({ queryKey: ["analytics-payment-conversions"] });
         }
       ).subscribe(),
     ];
@@ -227,6 +244,74 @@ function AnalyticsContent() {
       const counts: Record<string, number> = {};
       events.forEach((e) => { counts[e.event_name] = (counts[e.event_name] || 0) + 1; });
       return counts;
+    },
+  });
+
+  // Payment conversions (4,99 € rapport + 29 € Pack ALTIS) from funnel_events + leads
+  const { data: paymentConversions } = useQuery({
+    queryKey: ["analytics-payment-conversions", period],
+    queryFn: async () => {
+      const [funnelRes, leadsRes] = await Promise.all([
+        supabase.from("funnel_events")
+          .select("event_name, created_at, metadata")
+          .in("event_name", ["lead_payment_clicked"])
+          .gte("created_at", since)
+          .order("created_at", { ascending: false }),
+        supabase.from("leads")
+          .select("created_at, status, score_mock, metier, rome_code")
+          .in("status", ["premium_paid", "rapport_paid"])
+          .gte("created_at", since)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      const funnelData = (funnelRes.data ?? []) as { event_name: string; created_at: string; metadata: any }[];
+      const leadsData = leadsRes.data ?? [];
+
+      // Count by tier from leads status
+      const rapportPaid = leadsData.filter((l) => l.status === "rapport_paid").length;
+      const packAltisPaid = leadsData.filter((l) => l.status === "premium_paid").length;
+
+      // Daily breakdown
+      const dailyMap: Record<string, { rapport: number; altis: number }> = {};
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dailyMap[d.toISOString().slice(0, 10)] = { rapport: 0, altis: 0 };
+      }
+
+      leadsData.forEach((l) => {
+        const key = l.created_at.slice(0, 10);
+        if (dailyMap[key]) {
+          if (l.status === "rapport_paid") dailyMap[key].rapport++;
+          if (l.status === "premium_paid") dailyMap[key].altis++;
+        }
+      });
+
+      const dailyData = Object.entries(dailyMap).map(([date, v]) => ({
+        date: date.slice(5),
+        "Rapport 4,99€": v.rapport,
+        "Pack ALTIS 29€": v.altis,
+      }));
+
+      // Recent transactions
+      const recentTx = leadsData.slice(0, 10).map((l) => ({
+        date: new Date(l.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
+        type: l.status === "premium_paid" ? "Pack ALTIS" : "Rapport",
+        amount: l.status === "premium_paid" ? "29 €" : "4,99 €",
+        metier: l.metier,
+        score: l.score_mock,
+      }));
+
+      return {
+        rapportCount: rapportPaid,
+        altisCount: packAltisPaid,
+        rapportRevenue: rapportPaid * 4.99,
+        altisRevenue: packAltisPaid * 29,
+        totalRevenue: rapportPaid * 4.99 + packAltisPaid * 29,
+        dailyData,
+        recentTx,
+        paymentClicks: funnelData.length,
+      };
     },
   });
 
@@ -407,7 +492,100 @@ function AnalyticsContent() {
         </CardContent>
       </Card>
 
-      {/* Revenue estimate */}
+      {/* Payment Conversions Dashboard */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          icon={CreditCard}
+          title="Rapports vendus (4,99 €)"
+          value={paymentConversions?.rapportCount ?? 0}
+          changeLabel={`${(paymentConversions?.rapportRevenue ?? 0).toFixed(2)} € de revenus`}
+        />
+        <KpiCard
+          icon={Zap}
+          title="Pack ALTIS vendus (29 €)"
+          value={paymentConversions?.altisCount ?? 0}
+          changeLabel={`${(paymentConversions?.altisRevenue ?? 0).toFixed(2)} € de revenus`}
+        />
+        <KpiCard
+          icon={TrendingUp}
+          title="Revenus totaux"
+          value={`${(paymentConversions?.totalRevenue ?? 0).toFixed(2)} €`}
+        />
+        <KpiCard
+          icon={Activity}
+          title="Clics paiement"
+          value={paymentConversions?.paymentClicks ?? 0}
+          changeLabel="Événements lead_payment_clicked"
+        />
+      </div>
+
+      {/* Payment conversions chart */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <CreditCard className="h-4 w-4 text-accent" />
+            Conversions paiement par jour ({period}j)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={paymentConversions?.dailyData ?? []}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="date" fontSize={11} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+              <YAxis fontSize={11} tick={{ fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Legend />
+              <Bar dataKey="Rapport 4,99€" fill="hsl(210, 70%, 55%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Pack ALTIS 29€" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Recent payment transactions */}
+      {(paymentConversions?.recentTx?.length ?? 0) > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Activity className="h-4 w-4 text-accent" />
+              Dernières conversions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 px-3 text-muted-foreground font-medium">Date</th>
+                    <th className="text-left py-2 px-3 text-muted-foreground font-medium">Type</th>
+                    <th className="text-left py-2 px-3 text-muted-foreground font-medium">Montant</th>
+                    <th className="text-left py-2 px-3 text-muted-foreground font-medium">Métier</th>
+                    <th className="text-left py-2 px-3 text-muted-foreground font-medium">Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentConversions?.recentTx?.map((tx, i) => (
+                    <tr key={i} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                      <td className="py-2 px-3 text-xs">{tx.date}</td>
+                      <td className="py-2 px-3">
+                        <Badge variant={tx.type === "Pack ALTIS" ? "default" : "secondary"} className="text-[10px]">
+                          {tx.type}
+                        </Badge>
+                      </td>
+                      <td className="py-2 px-3 font-semibold">{tx.amount}</td>
+                      <td className="py-2 px-3 text-xs text-muted-foreground">{tx.metier}</td>
+                      <td className="py-2 px-3">
+                        <Badge variant="outline" className="text-[10px]">{tx.score}%</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="border-accent/30 bg-accent/5">
         <CardContent className="p-6 flex items-center gap-6">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/20">
