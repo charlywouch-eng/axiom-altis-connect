@@ -85,6 +85,23 @@ function AnalyticsContent() {
         () => {
           queryClient.invalidateQueries({ queryKey: ["analytics-kpis"] });
           queryClient.invalidateQueries({ queryKey: ["analytics-conversions"] });
+          queryClient.invalidateQueries({ queryKey: ["analytics-payment-conversions"] });
+        }
+      ).subscribe(),
+      supabase.channel("analytics-funnel-rt").on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "funnel_events" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["analytics-funnel-summary"] });
+          queryClient.invalidateQueries({ queryKey: ["analytics-payment-conversions"] });
+        }
+      ).subscribe(),
+      supabase.channel("analytics-leads-rt").on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["analytics-kpis"] });
+          queryClient.invalidateQueries({ queryKey: ["analytics-payment-conversions"] });
         }
       ).subscribe(),
     ];
