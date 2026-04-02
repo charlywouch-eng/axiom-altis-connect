@@ -516,19 +516,19 @@ serve(async (req) => {
         break;
       }
 
-      // ── Demo test: send a test email to verify Gmail works ──
+      // ── Demo test: send a test email via notify@axiom-talents.com ──
       case "demo_test": {
         const testHtml = wrapEmail(
           "Test démo AXIOM",
-          "Email de test pour la présentation",
+          "Email de test",
           `<p style="color:#334155;font-size:15px;line-height:1.6;margin:0 0 16px;">
-            ✅ <strong>Fallback Gmail actif</strong> — Cet email confirme que le système d'envoi fonctionne correctement pour la démo du 17 mars 2026.
+            ✅ <strong>Système d'envoi opérationnel</strong> — Cet email confirme que notify@axiom-talents.com fonctionne correctement.
           </p>
           <p style="color:#64748b;font-size:13px;">Envoyé le ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>`
         );
         await sendEmail(
-          payload?.to || GMAIL_USER,
-          "✅ Test démo AXIOM – Fallback Gmail OK",
+          payload?.to || "contact@axiom-talents.com",
+          "✅ Test démo AXIOM – Envoi OK",
           testHtml
         );
         break;
