@@ -80,6 +80,8 @@ import VerifiedTalentsTab from "@/components/dashboard/VerifiedTalentsTab";
 import { CandidateMatchCard } from "@/components/dashboard/CandidateMatchCard";
 import { QuoteGeneratorDialog } from "@/components/dashboard/QuoteGeneratorDialog";
 import { MyQuotesList } from "@/components/dashboard/MyQuotesList";
+import { TableSkeleton } from "@/components/DashboardSkeleton";
+import { EmptyState } from "@/components/EmptyState";
 import {
   MOCK_OFFERS,
   MOCK_CANDIDATES,
@@ -487,7 +489,14 @@ export default function DashboardEntreprise() {
               </CardHeader>
               <CardContent className="p-0">
                 {isLoading ? (
-                  <div className="p-6 text-sm text-muted-foreground">Chargement…</div>
+                  <div className="p-4"><TableSkeleton rows={4} cols={5} /></div>
+                ) : allOffers.length === 0 ? (
+                  <EmptyState
+                    icon={Briefcase}
+                    title="Aucune offre publiée"
+                    description="Créez votre première offre d'emploi pour commencer à matcher avec des talents certifiés MINEFOP."
+                    action={{ label: "Créer une offre", onClick: () => setCreateOpen(true) }}
+                  />
                 ) : (
                   <div className="overflow-x-auto">
                     <Table>

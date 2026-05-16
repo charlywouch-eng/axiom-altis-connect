@@ -1,8 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { type LucideIcon } from "lucide-react";
+import { type LucideIcon, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 type TensionLevel = "critical" | "high" | "medium" | "low" | "none";
 
@@ -14,6 +15,10 @@ interface PremiumStatCardProps {
   tensionLevel?: TensionLevel;
   tensionLabel?: string;
   subtitle?: string;
+  /** Variation en % vs période précédente. Positif = hausse, négatif = baisse, 0 = stable. */
+  trend?: number;
+  /** Libellé de la période de référence, ex. "vs mois dernier" */
+  trendLabel?: string;
 }
 
 const tensionConfig: Record<TensionLevel, { className: string; defaultLabel: string }> = {
@@ -32,6 +37,8 @@ export function PremiumStatCard({
   tensionLevel,
   tensionLabel,
   subtitle,
+  trend,
+  trendLabel = "vs mois dernier",
 }: PremiumStatCardProps) {
   const [displayValue, setDisplayValue] = useState(0);
   const isNumeric = /^\d+$/.test(value);
@@ -143,6 +150,22 @@ export function PremiumStatCard({
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             {subtitle && (
               <p className="text-xs text-muted-foreground/70">{subtitle}</p>
+            )}
+            {trend !== undefined && (
+              <div className={cn(
+                "inline-flex items-center gap-1 text-xs font-medium mt-1 px-2 py-0.5 rounded-full",
+                trend > 0 ? "bg-emerald-500/10 text-emerald-600" :
+                trend < 0 ? "bg-destructive/10 text-destructive" :
+                "bg-muted text-muted-foreground"
+              )}>
+                {trend > 0 ? <TrendingUp className="h-3 w-3" /> :
+                 trend < 0 ? <TrendingDown className="h-3 w-3" /> :
+                 <Minus className="h-3 w-3" />}
+                <span>
+                  {trend > 0 ? `+${trend}%` : trend < 0 ? `${trend}%` : "Stable"}
+                  {trendLabel && <span className="text-muted-foreground font-normal ml-1">{trendLabel}</span>}
+                </span>
+              </div>
             )}
           </motion.div>
         </CardContent>
