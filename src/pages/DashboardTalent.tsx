@@ -78,6 +78,8 @@ import FranceTravailFormationsCard from "@/components/dashboard/FranceTravailFor
 import FranceTravailAgencesCard from "@/components/dashboard/FranceTravailAgencesCard";
 import FranceTravailOffresCard from "@/components/dashboard/FranceTravailOffresCard";
 import FranceTravailEventsCard from "@/components/dashboard/FranceTravailEventsCard";
+import { DashboardStatsSkeleton, ListItemSkeleton } from "@/components/DashboardSkeleton";
+import { EmptyState } from "@/components/EmptyState";
 
 // ── Types ────────────────────────────────────────────────────
 interface LBBCompany {
@@ -451,6 +453,21 @@ export default function DashboardTalent() {
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const itemVariants = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
+
+  if (isLoading) {
+    return (
+      <TooltipProvider>
+        <DashboardLayout sidebarVariant="talent">
+          <div className="space-y-5 pb-12">
+            <DashboardStatsSkeleton count={3} />
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => <ListItemSkeleton key={i} />)}
+            </div>
+          </div>
+        </DashboardLayout>
+      </TooltipProvider>
+    );
+  }
 
   return (
     <TooltipProvider>
