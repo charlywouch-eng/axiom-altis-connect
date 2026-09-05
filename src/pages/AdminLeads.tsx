@@ -18,6 +18,7 @@ import {
   Kanban,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { LeadCompanyCell, type LeadCompany } from "@/components/dashboard/LeadCompanyCell";
 
 /* ─── Types ──────────────────────────────────────────────────── */
 interface Lead {
@@ -31,6 +32,7 @@ interface Lead {
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;
+  company_id: string | null;
   created_at: string;
 }
 
