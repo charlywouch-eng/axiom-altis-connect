@@ -1,14 +1,29 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const COMMERCIAL_EMAIL = "contact@axiom-talents.com";
+
+// SECURITY (2026-09-05 audit): this endpoint had no rate limiting at all
+// (unlike send-contact, which already had one). Same best-effort, in-memory,
+// per-IP cap — resets on cold start, not coordinated across instances, but
+// raises the bar against a script hammering the quote form / Resend quota.
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX = 3;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (rateLimitMap.get(ip) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (timestamps.length >= RATE_LIMIT_MAX) {
+    rateLimitMap.set(ip, timestamps);
+    return true;
+  }
+  timestamps.push(now);
+  rateLimitMap.set(ip, timestamps);
+  return false;
+}
 
 const esc = (v: unknown): string =>
   String(v ?? "")
@@ -25,7 +40,7 @@ const logStep = (step: string, details?: any) => {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeadersFor(req) });
   }
 
   const supabaseClient = createClient(
@@ -35,6 +50,18 @@ serve(async (req) => {
 
   try {
     logStep("Function started");
+
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      "unknown";
+
+    if (isRateLimited(ip)) {
+      return new Response(
+        JSON.stringify({ error: "Trop de demandes envoyées. Réessayez dans quelques minutes." }),
+        { status: 429, headers: { ...corsHeadersFor(req), "Content-Type": "application/json" } }
+      );
+    }
 
     if (!RESEND_API_KEY) {
       throw new Error("RESEND_API_KEY is not configured");
@@ -117,7 +144,7 @@ serve(async (req) => {
       throw new Error(`Resend error: ${JSON.stringify(resendData)}`);
     }
 
-    // ── Confirmation email to the prospect ──────────────────────
+    // ── Confirmation email to the prospect ─────────────────────
     const confirmationHtml = `
 <!DOCTYPE html>
 <html lang="fr">
@@ -211,14 +238,14 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, message: "Demande de devis envoyée avec succès." }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      { headers: { ...corsHeadersFor(req), "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      { headers: { ...corsHeadersFor(req), "Content-Type": "application/json" }, status: 500 }
     );
   }
 });
