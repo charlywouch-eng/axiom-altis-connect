@@ -342,7 +342,7 @@ export default function Index() {
                   className="w-full sm:w-auto text-sm sm:text-base px-6 sm:px-8 py-5 h-auto rounded-2xl font-bold shadow-2xl shadow-accent/30 bg-accent hover:bg-accent/90 border-0 group text-accent-foreground btn-ripple animate-micro-pulse"
                 >
                   <Link to="/signup-light">
-                    Commencer mon évaluation gratuite
+                    Évaluation gratuite
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
@@ -354,7 +354,7 @@ export default function Index() {
                 >
                   <Link to="/signup">
                     <Building2 className="mr-2 h-4 w-4" />
-                    Je suis une entreprise → Recruter
+                    Espace entreprise
                   </Link>
                 </Button>
               </motion.div>
@@ -485,10 +485,10 @@ export default function Index() {
       <section className="mx-auto max-w-5xl px-5 py-20 md:px-10 md:py-28">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} className="text-center mb-12">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-3">
-            Nos partenariats officiels
+            Cadre d'intervention
           </motion.p>
           <motion.h2 custom={1} variants={fadeUp} className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground leading-tight">
-            Partenariat Officiel avec le{" "}
+            Corridor France–Cameroun —{" "}
             <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">MINEFOP – Cameroun</span>
           </motion.h2>
         </motion.div>
