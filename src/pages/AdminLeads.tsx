@@ -377,6 +377,14 @@ export default function AdminLeads() {
                                   {paymentStatus ? "✓ " : ""}{statusCfg.label}
                                 </Badge>
                               </td>
+                              <td className="py-2.5 pr-4 align-top">
+                                <LeadCompanyCell
+                                  company={lead.company_id ? companyById.get(lead.company_id) : undefined}
+                                  companies={companies}
+                                  disabled={assignCompany.isPending}
+                                  onAssign={(companyId) => assignCompany.mutate({ id: lead.id, companyId })}
+                                />
+                              </td>
                               <td className="py-2.5 text-muted-foreground/50 whitespace-nowrap">
                                 {new Date(lead.created_at).toLocaleDateString("fr-FR")}
                               </td>
