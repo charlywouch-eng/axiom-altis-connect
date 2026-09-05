@@ -121,7 +121,7 @@ Deno.serve(async (req) => {
     // Download the file from storage to get a signed URL for AI
     const { data: signedUrlData, error: urlError } = await supabase.storage
       .from("diplomas")
-      .createSignedUrl(file_path, 600);
+      .createSignedUrl(storedFilePath, 600);
 
     if (urlError || !signedUrlData?.signedUrl) {
       throw new Error("Impossible d'accéder au fichier: " + (urlError?.message || "URL non générée"));
