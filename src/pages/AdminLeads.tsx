@@ -18,6 +18,7 @@ import {
   Kanban,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { LeadCompanyCell, type LeadCompany } from "@/components/dashboard/LeadCompanyCell";
 
 /* ─── Types ──────────────────────────────────────────────────── */
 interface Lead {
@@ -31,6 +32,7 @@ interface Lead {
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;
+  company_id: string | null;
   created_at: string;
 }
 
@@ -147,6 +149,36 @@ export default function AdminLeads() {
     },
   });
 
+  const { data: companies = [] } = useQuery({
+    queryKey: ["admin_company_profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("company_profiles")
+        .select("id, company_name, sector, contact_email, logo_url")
+        .order("company_name", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as LeadCompany[];
+    },
+  });
+
+  const companyById = new Map(companies.map(c => [c.id, c]));
+
+  const assignCompany = useMutation({
+    mutationFn: async ({ id, companyId }: { id: string; companyId: string | null }) => {
+      const { error } = await (supabase.from as any)("leads")
+        .update({ company_id: companyId })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin_leads"] });
+      toast({ title: "Entreprise associée" });
+    },
+    onError: (err: any) => {
+      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+    },
+  });
+
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await (supabase.from as any)("leads").update({ status }).eq("id", id);
@@ -185,14 +217,20 @@ export default function AdminLeads() {
       reconciled: "Réconcilié",
       inactif: "Inactif",
     };
-    const headers = ["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Date contact"];
-    const rows = leads.map(l => [
-      l.email_or_phone,
-      l.rome_code || "—",
-      `${l.score_mock}%`,
-      PAYMENT_STATUSES[l.status] ?? l.status,
-      new Date(l.created_at).toLocaleDateString("fr-FR"),
-    ]);
+    const headers = ["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Entreprise", "Secteur", "Email entreprise", "Date contact"];
+    const rows = leads.map(l => {
+      const c = l.company_id ? companyById.get(l.company_id) : undefined;
+      return [
+        l.email_or_phone,
+        l.rome_code || "—",
+        `${l.score_mock}%`,
+        PAYMENT_STATUSES[l.status] ?? l.status,
+        c?.company_name ?? "—",
+        c?.sector ?? "—",
+        c?.contact_email ?? "—",
+        new Date(l.created_at).toLocaleDateString("fr-FR"),
+      ];
+    });
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -307,10 +345,10 @@ export default function AdminLeads() {
                   </div>
                 ) : (
                   <div className="overflow-x-auto -mx-2">
-                    <table className="w-full text-xs min-w-[550px]">
+                    <table className="w-full text-xs min-w-[760px]">
                       <thead>
                         <tr className="border-b border-border/50">
-                          {["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Date contact"].map(h => (
+                          {["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Fiche entreprise", "Date contact"].map(h => (
                             <th key={h} className="text-left pb-2.5 pr-4 text-muted-foreground font-medium whitespace-nowrap">{h}</th>
                           ))}
                         </tr>
@@ -344,6 +382,14 @@ export default function AdminLeads() {
                                 <Badge className={`text-[9px] px-1.5 py-0 border ${statusCfg.color}`}>
                                   {paymentStatus ? "✓ " : ""}{statusCfg.label}
                                 </Badge>
+                              </td>
+                              <td className="py-2.5 pr-4 align-top">
+                                <LeadCompanyCell
+                                  company={lead.company_id ? companyById.get(lead.company_id) : undefined}
+                                  companies={companies}
+                                  disabled={assignCompany.isPending}
+                                  onAssign={(companyId) => assignCompany.mutate({ id: lead.id, companyId })}
+                                />
                               </td>
                               <td className="py-2.5 text-muted-foreground/50 whitespace-nowrap">
                                 {new Date(lead.created_at).toLocaleDateString("fr-FR")}
