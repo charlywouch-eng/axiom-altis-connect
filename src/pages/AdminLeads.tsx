@@ -217,14 +217,20 @@ export default function AdminLeads() {
       reconciled: "Réconcilié",
       inactif: "Inactif",
     };
-    const headers = ["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Date contact"];
-    const rows = leads.map(l => [
-      l.email_or_phone,
-      l.rome_code || "—",
-      `${l.score_mock}%`,
-      PAYMENT_STATUSES[l.status] ?? l.status,
-      new Date(l.created_at).toLocaleDateString("fr-FR"),
-    ]);
+    const headers = ["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Entreprise", "Secteur", "Email entreprise", "Date contact"];
+    const rows = leads.map(l => {
+      const c = l.company_id ? companyById.get(l.company_id) : undefined;
+      return [
+        l.email_or_phone,
+        l.rome_code || "—",
+        `${l.score_mock}%`,
+        PAYMENT_STATUSES[l.status] ?? l.status,
+        c?.company_name ?? "—",
+        c?.sector ?? "—",
+        c?.contact_email ?? "—",
+        new Date(l.created_at).toLocaleDateString("fr-FR"),
+      ];
+    });
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
