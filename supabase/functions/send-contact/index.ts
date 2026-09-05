@@ -1,10 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 // In-memory rate limiting: max 3 emails per IP per 10 minutes
 const rateLimitMap = new Map<string, number[]>();
@@ -27,7 +22,7 @@ function isRateLimited(ip: string): boolean {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeadersFor(req) });
   }
 
   try {
@@ -40,7 +35,7 @@ serve(async (req) => {
     if (isRateLimited(ip)) {
       return new Response(
         JSON.stringify({ error: "Trop de messages envoyés. Réessayez dans quelques minutes." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 429, headers: { ...corsHeadersFor(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -49,7 +44,7 @@ serve(async (req) => {
     if (!name || !email || !message) {
       return new Response(JSON.stringify({ error: "Tous les champs sont requis" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
       });
     }
 
@@ -61,7 +56,7 @@ serve(async (req) => {
     ) {
       return new Response(JSON.stringify({ error: "Champs invalides ou trop longs" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
       });
     }
 
@@ -69,7 +64,7 @@ serve(async (req) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return new Response(JSON.stringify({ error: "Email invalide" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
       });
     }
 
@@ -120,13 +115,13 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("send-contact error:", error);
     return new Response(JSON.stringify({ error: error.message || "Erreur serveur" }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
     });
   }
 });
