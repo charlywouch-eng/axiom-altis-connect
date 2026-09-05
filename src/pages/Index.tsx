@@ -325,8 +325,8 @@ export default function Index() {
                 Talents d'Afrique certifiés • Conformité aux normes françaises • Accompagnement <strong className="text-accent">ALTIS Zéro Stress</strong>
               </motion.p>
 
-              <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
-               {["Sourcing ASG / ASC → ADV domicile", "Sans équivalence diplôme FR promise", "Délais visa souvent 3 à 6 mois", "Pack ALTIS selon dossier employeur"].map (
+              <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5"> 
+                        {["Sourcing ASG / ASC → ADV domicile", "Sans équivalence diplôme FR promise", "Délais visa souvent 3 à 6 mois", "Pack ALTIS selon dossier employeur"].map((item) => (
                   <span key={item} className="flex items-center gap-2 text-sm text-white/50">
                     <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
                     {item}
@@ -367,10 +367,10 @@ export default function Index() {
                     </div>
                   ))}
                 </div>
-                <p className="text-sm text-white/45">
-                  <span className="text-white/75 font-bold">500+ talents</span> inscrits · 98 % rétention
+                                <p className="text-sm text-white/45">
+                  Pilote de sourcing en cours — corridor France–Cameroun — SAP à domicile
                 </p>
-              </motion.div>
+                           </motion.div>
             </motion.div>
 
             {/* ── Right: Live Alerts + Teaser Form ──────────────── */}
