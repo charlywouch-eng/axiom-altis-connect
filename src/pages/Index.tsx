@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import MatchingIASection from "@/components/landing/MatchingIASection";
 import { Link, useNavigate } from "react-router-dom";
@@ -325,7 +326,7 @@ export default function Index() {
               </motion.p>
 
               <motion.div custom={3} variants={fadeUp} className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
-                {["Gratuit depuis l'Afrique", "Certifications MINEFOP", "Éligibilité vérifiée", "Visa & logement inclus"].map((item) => (
+               {["Sourcing ASG / ASC → ADV domicile", "Sans équivalence diplôme FR promise", "Délais visa souvent 3 à 6 mois", "Pack ALTIS selon dossier employeur"].map (
                   <span key={item} className="flex items-center gap-2 text-sm text-white/50">
                     <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
                     {item}
@@ -460,8 +461,8 @@ export default function Index() {
             className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-2xl bg-gradient-to-r from-primary/20 via-accent/20 to-success/20 shadow-2xl shadow-primary/10 ring-1 ring-white/10"
           >
             {[
-              { end: 500, suffix: "+", label: "Talents qualifiés", icon: Users },
-              { end: 98, suffix: "%", label: "Taux de rétention", icon: BarChart3 },
+         { text: "Pilote", label: "Sourcing SAP domicile", icon: Users },
+              { text: "10", label: "Profils lot 1", icon: BarChart3 },
               { text: "Multi-pays", label: "Couverture Afrique", icon: Globe },
               { text: "Express", label: "Délai de placement", icon: Clock },
             ].map((stat, i) => {
