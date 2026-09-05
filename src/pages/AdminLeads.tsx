@@ -345,7 +345,7 @@ export default function AdminLeads() {
                   </div>
                 ) : (
                   <div className="overflow-x-auto -mx-2">
-                    <table className="w-full text-xs min-w-[550px]">
+                    <table className="w-full text-xs min-w-[760px]">
                       <thead>
                         <tr className="border-b border-border/50">
                           {["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Fiche entreprise", "Date contact"].map(h => (
