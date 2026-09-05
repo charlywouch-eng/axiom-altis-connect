@@ -1,11 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeadersFor, safeRedirectOrigin } from "../_shared/cors.ts";
 
 const PRICES: Record<string, { id: string; payment_type: string }> = {
   test: { id: "price_1TAcRuLLoCKfmmI1JCKUqUey", payment_type: "analyse_complete_lead" },
@@ -14,7 +9,7 @@ const PRICES: Record<string, { id: string; payment_type: string }> = {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeadersFor(req) });
   }
 
   try {
@@ -34,7 +29,12 @@ serve(async (req) => {
 
     const priceConfig = PRICES[tier === "full" ? "full" : "test"];
 
-    const origin = req.headers.get("origin") || "https://axiom-altis-connect.lovable.app";
+    // SECURITY (2026-09-05 audit): the Origin header used to be interpolated
+    // directly into Stripe's success_url/cancel_url. A caller could set an
+    // arbitrary Origin and have Stripe redirect a paying customer to an
+    // attacker-controlled domain right after checkout. Only ever build these
+    // URLs from a known-good origin (same allowlist as CORS, above).
+    const origin = safeRedirectOrigin(req);
 
     // Build success URL with context so DashboardTalent can show the premium state
     // Compute score to forward in success URL
@@ -85,13 +85,13 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create(sessionParams);
 
     return new Response(JSON.stringify({ url: session.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     console.error("create-payment-lead error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
       status: 500,
     });
   }
