@@ -438,6 +438,7 @@ export type Database = {
       }
       leads: {
         Row: {
+          company_id: string | null
           created_at: string
           email_or_phone: string
           experience_bracket: string
@@ -454,6 +455,7 @@ export type Database = {
           utm_source: string | null
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
           email_or_phone: string
           experience_bracket?: string
@@ -470,6 +472,7 @@ export type Database = {
           utm_source?: string | null
         }
         Update: {
+          company_id?: string | null
           created_at?: string
           email_or_phone?: string
           experience_bracket?: string
@@ -485,7 +488,15 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "company_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
