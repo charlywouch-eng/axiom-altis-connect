@@ -8,12 +8,26 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// SECURITY (2026-09-05 audit): talentName comes from talent_profiles.full_name,
+// which the talent sets themselves — it is user-supplied. It used to be
+// interpolated directly into this HTML email with no escaping, so a name like
+// `<img src=x onerror=...>` would execute in whatever mail client renders it.
+// Escape it like any other user-supplied value going into HTML.
+const escHtml = (s: string): string =>
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 function buildAltisEmailHtml(talentName: string): string {
+  const safeName = escHtml(talentName);
   return `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;margin:0;}.container{max-width:600px;margin:auto;background:white;border-radius:12px;overflow:hidden;}.header{background:#0A2540;color:white;padding:30px;text-align:center;}.header h1{margin:0;font-size:22px;letter-spacing:1px;}.header p{margin:6px 0 0;font-size:12px;color:#94a3b8;}.content{padding:40px 30px;line-height:1.6;color:#333;}.badge{background:#00C4B4;color:white;padding:8px 20px;border-radius:30px;display:inline-block;margin:15px 0;font-size:13px;font-weight:700;letter-spacing:0.5px;}.btn{background:#00C4B4;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;display:inline-block;margin:20px 0;font-weight:700;font-size:14px;}.footer{padding:20px 30px;text-align:center;font-size:11px;color:#94a3b8;border-top:1px solid #e2e8f0;}ul{padding-left:20px;}ul li{margin-bottom:8px;font-size:14px;}</style></head>
 <body><div class="container">
 <div class="header"><h1>AXIOM × ALTIS</h1><p>Infrastructure Souveraine France-Afrique</p></div>
 <div class="content">
-<h2 style="margin-top:0;">✅ Félicitations ${talentName} !</h2>
+<h2 style="margin-top:0;">✅ Félicitations ${safeName} !</h2>
 <p>Votre <strong>Pack ALTIS Zéro Stress</strong> est maintenant activé.</p>
 <div class="badge">PROFIL VÉRIFIÉ PREMIUM</div>
 <p>Vous bénéficiez désormais de :</p>
@@ -63,7 +77,7 @@ async function sendResendEmail(
     const resBody = await resendRes.text();
 
     if (resendRes.ok) {
-      console.log(`[RESEND] Email envoyé à ${to} depuis ${FROM_EMAIL}`);
+      console.log(`[RESEND] Email envoyé depuis ${FROM_EMAIL}`);
       await supabaseClient.from("email_send_log").insert({
         template_name: "altis-activation-29",
         recipient_email: to,
@@ -126,7 +140,9 @@ serve(async (req) => {
       const { offer_id, user_id, payment_type } = session.metadata || {};
       console.log(`[WEBHOOK] Webhook reçu – session ID: ${session.id}`);
       console.log(`[WEBHOOK] Metadata: user_id=${user_id}, payment_type=${payment_type}, offer_id=${offer_id}`);
-      console.log(`[WEBHOOK] Customer email: ${session.customer_details?.email || session.customer_email || "N/A"}`);
+      // SECURITY (2026-09-05 audit): don't log the raw customer email — log only
+      // whether one was present on the session.
+      console.log(`[WEBHOOK] Customer email present: ${!!(session.customer_details?.email || session.customer_email)}`);
 
       // ── Abonnement Premium Entreprise ───────────────────────
       if (payment_type === "entreprise_premium" && user_id) {
@@ -182,7 +198,7 @@ serve(async (req) => {
         // Send confirmation email for full (29€) tier
         if (payment_type === "deblocage_complet") {
           const customerEmail = session.customer_details?.email || session.customer_email;
-          console.log(`[WEBHOOK] Pack ALTIS 29€ détecté – Email client: ${customerEmail || "N/A"}`);
+          console.log(`[WEBHOOK] Pack ALTIS 29€ détecté – email client présent: ${!!customerEmail}`);
 
           if (customerEmail) {
             const { data: talentData } = await supabaseClient
@@ -219,7 +235,7 @@ serve(async (req) => {
             .from("leads")
             .update({ status: "premium_paid" })
             .eq("email_or_phone", customerEmail);
-          console.log(`[WEBHOOK] Lead ${customerEmail} marked as premium_paid`);
+          console.log(`[WEBHOOK] Lead marked as premium_paid`);
         }
       }
 
@@ -266,7 +282,7 @@ serve(async (req) => {
               subscription_end: new Date(subscription.current_period_end * 1000).toISOString(),
             })
             .eq("user_id", profile.id);
-          console.log(`[WEBHOOK] Company ${customer.email} subscription deactivated`);
+          console.log(`[WEBHOOK] Company subscription deactivated for profile ${profile.id}`);
         }
       }
     }
