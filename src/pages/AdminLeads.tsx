@@ -342,7 +342,7 @@ export default function AdminLeads() {
                     <table className="w-full text-xs min-w-[550px]">
                       <thead>
                         <tr className="border-b border-border/50">
-                          {["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Date contact"].map(h => (
+                          {["Nom / Contact", "Code ROME", "Score IA", "Statut paiement", "Fiche entreprise", "Date contact"].map(h => (
                             <th key={h} className="text-left pb-2.5 pr-4 text-muted-foreground font-medium whitespace-nowrap">{h}</th>
                           ))}
                         </tr>
