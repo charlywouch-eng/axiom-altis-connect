@@ -10,6 +10,14 @@ const corsHeaders = {
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const COMMERCIAL_EMAIL = "contact@axiom-talents.com";
 
+const esc = (v: unknown): string =>
+  String(v ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[SEND-QUOTE-REQUEST] ${step}${detailsStr}`);
@@ -77,12 +85,12 @@ serve(async (req) => {
     const htmlContent = `
       <h2>📋 Nouvelle demande de devis</h2>
       <table style="border-collapse:collapse;width:100%;max-width:600px;font-family:sans-serif;">
-        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Email</td><td style="padding:8px;border:1px solid #ddd;">${userEmail}</td></tr>
-        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Entreprise</td><td style="padding:8px;border:1px solid #ddd;">${company}</td></tr>
-        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Secteur</td><td style="padding:8px;border:1px solid #ddd;">${sector}</td></tr>
-        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Volume</td><td style="padding:8px;border:1px solid #ddd;">${volume || "Non précisé"}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Email</td><td style="padding:8px;border:1px solid #ddd;">${esc(userEmail)}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Entreprise</td><td style="padding:8px;border:1px solid #ddd;">${esc(company)}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Secteur</td><td style="padding:8px;border:1px solid #ddd;">${esc(sector)}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Volume</td><td style="padding:8px;border:1px solid #ddd;">${esc(volume || "Non précisé")}</td></tr>
         <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Formule</td><td style="padding:8px;border:1px solid #ddd;">Success Fee – 25% du brut annuel</td></tr>
-        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Message</td><td style="padding:8px;border:1px solid #ddd;">${message || "—"}</td></tr>
+        <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Message</td><td style="padding:8px;border:1px solid #ddd;">${esc(message || "—")}</td></tr>
         <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Date</td><td style="padding:8px;border:1px solid #ddd;">${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</td></tr>
       </table>
     `;
@@ -96,7 +104,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: "AXIOM & ALTIS <notify@axiom-talents.com>",
         to: [COMMERCIAL_EMAIL],
-        subject: `[Devis] ${company} – ${sector}`,
+        subject: `[Devis] ${esc(company)} – ${esc(sector)}`,
         html: htmlContent,
         reply_to: userEmail,
       }),
@@ -131,20 +139,20 @@ serve(async (req) => {
             <h2 style="margin:0 0 16px;color:#0F172A;font-size:20px;">Merci pour votre demande de devis !</h2>
             <p style="margin:0 0 20px;color:#475569;font-size:15px;line-height:1.6;">
               Bonjour,<br><br>
-              Nous avons bien reçu votre demande de devis pour <strong>${company}</strong> dans le secteur <strong>${sector}</strong>.
+              Nous avons bien reçu votre demande de devis pour <strong>${esc(company)}</strong> dans le secteur <strong>${esc(sector)}</strong>.
             </p>
             <table style="width:100%;border-collapse:collapse;margin:0 0 24px;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">
               <tr style="background:#f8fafc;">
                 <td style="padding:10px 16px;font-weight:600;color:#334155;font-size:14px;border-bottom:1px solid #e2e8f0;">Entreprise</td>
-                <td style="padding:10px 16px;color:#475569;font-size:14px;border-bottom:1px solid #e2e8f0;">${company}</td>
+                <td style="padding:10px 16px;color:#475569;font-size:14px;border-bottom:1px solid #e2e8f0;">${esc(company)}</td>
               </tr>
               <tr>
                 <td style="padding:10px 16px;font-weight:600;color:#334155;font-size:14px;border-bottom:1px solid #e2e8f0;">Secteur</td>
-                <td style="padding:10px 16px;color:#475569;font-size:14px;border-bottom:1px solid #e2e8f0;">${sector}</td>
+                <td style="padding:10px 16px;color:#475569;font-size:14px;border-bottom:1px solid #e2e8f0;">${esc(sector)}</td>
               </tr>
               <tr style="background:#f8fafc;">
                 <td style="padding:10px 16px;font-weight:600;color:#334155;font-size:14px;border-bottom:1px solid #e2e8f0;">Volume</td>
-                <td style="padding:10px 16px;color:#475569;font-size:14px;border-bottom:1px solid #e2e8f0;">${volume || "Non précisé"}</td>
+                <td style="padding:10px 16px;color:#475569;font-size:14px;border-bottom:1px solid #e2e8f0;">${esc(volume || "Non précisé")}</td>
               </tr>
               <tr>
                 <td style="padding:10px 16px;font-weight:600;color:#334155;font-size:14px;">Pack inclus</td>

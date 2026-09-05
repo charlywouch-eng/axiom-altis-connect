@@ -106,33 +106,6 @@ serve(async (req) => {
   );
 
   try {
-    const url = new URL(req.url);
-
-    // ── Manual test mode: GET /stripe-webhook?test_email=xxx ──
-    if (req.method === "GET" && url.searchParams.get("test_email")) {
-      const testEmail = url.searchParams.get("test_email")!;
-      const resendKey = Deno.env.get("RESEND_API_KEY");
-      console.log(`[TEST] Test email demandé vers ${testEmail}`);
-      console.log(`[TEST] RESEND_API_KEY configurée: ${resendKey ? "OUI (" + resendKey.substring(0, 8) + "...)" : "NON"}`);
-
-      if (!resendKey) {
-        return new Response(JSON.stringify({ error: "RESEND_API_KEY not configured" }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 500,
-        });
-      }
-
-      const sent = await sendResendEmail(resendKey, testEmail, "Test Talent", supabaseClient, {
-        test: true,
-        triggered_at: new Date().toISOString(),
-      });
-
-      return new Response(JSON.stringify({ success: sent, email: testEmail }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: sent ? 200 : 500,
-      });
-    }
-
     // ── Stripe webhook processing ──
     const signature = req.headers.get("stripe-signature");
     if (!signature) throw new Error("Missing stripe-signature header");
