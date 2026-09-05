@@ -82,19 +82,46 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { file_path, diploma_id, talent_id } = await req.json();
+    const { file_path, diploma_id } = await req.json();
 
-    if (!file_path || !diploma_id || !talent_id) {
+    if (!file_path || !diploma_id) {
       return new Response(JSON.stringify({ error: "Paramètres manquants" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // Ownership check: the diploma must belong to the authenticated user
+    const { data: diplomaRow } = await supabase
+      .from("diplomas")
+      .select("user_id, talent_id, file_path")
+      .eq("id", diploma_id)
+      .maybeSingle();
+
+    const isAdmin = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle()
+      .then(({ data }) => !!data);
+
+    if (!diplomaRow || (diplomaRow.user_id !== user.id && !isAdmin)) {
+      return new Response(JSON.stringify({ error: "Accès refusé" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Never trust caller-supplied paths / ids: use the stored ones
+    const storedFilePath = diplomaRow.file_path;
+    const talent_id = diplomaRow.talent_id;
+
+
     // Download the file from storage to get a signed URL for AI
     const { data: signedUrlData, error: urlError } = await supabase.storage
       .from("diplomas")
-      .createSignedUrl(file_path, 600);
+      .createSignedUrl(storedFilePath, 600);
 
     if (urlError || !signedUrlData?.signedUrl) {
       throw new Error("Impossible d'accéder au fichier: " + (urlError?.message || "URL non générée"));
