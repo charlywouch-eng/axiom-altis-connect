@@ -149,6 +149,36 @@ export default function AdminLeads() {
     },
   });
 
+  const { data: companies = [] } = useQuery({
+    queryKey: ["admin_company_profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("company_profiles")
+        .select("id, company_name, sector, contact_email, logo_url")
+        .order("company_name", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as LeadCompany[];
+    },
+  });
+
+  const companyById = new Map(companies.map(c => [c.id, c]));
+
+  const assignCompany = useMutation({
+    mutationFn: async ({ id, companyId }: { id: string; companyId: string | null }) => {
+      const { error } = await (supabase.from as any)("leads")
+        .update({ company_id: companyId })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin_leads"] });
+      toast({ title: "Entreprise associée" });
+    },
+    onError: (err: any) => {
+      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+    },
+  });
+
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await (supabase.from as any)("leads").update({ status }).eq("id", id);
