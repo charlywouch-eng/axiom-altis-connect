@@ -119,7 +119,8 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("send-contact error:", error);
-    return new Response(JSON.stringify({ error: error.message || "Erreur serveur" }), {
+    const errorMessage = error instanceof Error ? error.message : "Erreur serveur";
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { ...corsHeadersFor(req), "Content-Type": "application/json" },
     });

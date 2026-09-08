@@ -98,11 +98,12 @@ async function sendResendEmail(
     }
   } catch (emailErr) {
     console.error(`[RESEND] Exception:`, emailErr);
+    const emailErrorMessage = emailErr instanceof Error ? emailErr.message : String(emailErr);
     await supabaseClient.from("email_send_log").insert({
       template_name: "altis-activation-29",
       recipient_email: to,
       status: "failed",
-      error_message: emailErr?.message || String(emailErr),
+      error_message: emailErrorMessage,
       metadata,
     });
     return false;
@@ -292,8 +293,9 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("[WEBHOOK] ❌ Erreur webhook:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("[WEBHOOK] ❌ Erreur webhook:", errorMessage);
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,
     });
