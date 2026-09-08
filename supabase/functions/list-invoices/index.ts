@@ -62,10 +62,10 @@ serve(async (req) => {
       limit: 50,
     });
 
-    const invoices = stripeInvoices.data.map((inv) => ({
+    const invoices = stripeInvoices.data.map((inv: any) => ({
       id: inv.number || inv.id,
       date: new Date(inv.created * 1000).toISOString(),
-      description: inv.lines.data.map((l) => l.description || "Abonnement").join(", ") || "Facture",
+      description: inv.lines.data.map((l: any) => l.description || "Abonnement").join(", ") || "Facture",
       amount: (inv.amount_paid ?? inv.total ?? 0) / 100,
       status: inv.status === "paid" ? "paid" : inv.status === "open" ? "pending" : inv.status || "unknown",
       pdf_url: inv.invoice_pdf || null,
@@ -79,8 +79,8 @@ serve(async (req) => {
     });
 
     const payments = paymentIntents.data
-      .filter((pi) => pi.status === "succeeded")
-      .map((pi) => ({
+      .filter((pi: any) => pi.status === "succeeded")
+      .map((pi: any) => ({
         id: pi.id.slice(-8).toUpperCase(),
         date: new Date(pi.created * 1000).toISOString(),
         description: pi.description || pi.metadata?.offer_id
@@ -96,7 +96,7 @@ serve(async (req) => {
     // Get receipt URLs for payments
     for (const payment of payments) {
       const matchingPi = paymentIntents.data.find(
-        (pi) => pi.id.slice(-8).toUpperCase() === payment.id
+        (pi: any) => pi.id.slice(-8).toUpperCase() === payment.id
       );
       if (matchingPi?.latest_charge && typeof matchingPi.latest_charge === "string") {
         try {
