@@ -647,6 +647,66 @@ export type Database = {
         }
         Relationships: []
       }
+      placements: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string | null
+          end_date: string | null
+          end_reason: string | null
+          id: string
+          job_offer_id: string | null
+          position_title: string
+          start_date: string
+          status: string
+          talent_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          end_reason?: string | null
+          id?: string
+          job_offer_id?: string | null
+          position_title: string
+          start_date: string
+          status?: string
+          talent_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          end_reason?: string | null
+          id?: string
+          job_offer_id?: string | null
+          position_title?: string
+          start_date?: string
+          status?: string
+          talent_user_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "placements_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "company_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "placements_job_offer_id_fkey"
+            columns: ["job_offer_id"]
+            isOneToOne: false
+            referencedRelation: "job_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -730,6 +790,53 @@ export type Database = {
           volume?: string | null
         }
         Relationships: []
+      }
+      retention_checkpoints: {
+        Row: {
+          checkpoint_day: number
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          due_date: string
+          id: string
+          notes: string | null
+          notified_at: string | null
+          placement_id: string
+          status: string
+        }
+        Insert: {
+          checkpoint_day: number
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          due_date: string
+          id?: string
+          notes?: string | null
+          notified_at?: string | null
+          placement_id: string
+          status?: string
+        }
+        Update: {
+          checkpoint_day?: number
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          due_date?: string
+          id?: string
+          notes?: string | null
+          notified_at?: string | null
+          placement_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retention_checkpoints_placement_id_fkey"
+            columns: ["placement_id"]
+            isOneToOne: false
+            referencedRelation: "placements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       talent_notification_log: {
         Row: {
@@ -937,6 +1044,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      notify_due_retention_checkpoints: { Args: never; Returns: number }
       talent_profile_update_check_rls: {
         Args: {
           new_row: Database["public"]["Tables"]["talent_profiles"]["Row"]
