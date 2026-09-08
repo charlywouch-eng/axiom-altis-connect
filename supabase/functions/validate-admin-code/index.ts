@@ -128,7 +128,8 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("validate-admin-code error:", error);
-    return new Response(JSON.stringify({ valid: false, error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : "Erreur serveur";
+    return new Response(JSON.stringify({ valid: false, error: errorMessage }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
