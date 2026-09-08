@@ -397,6 +397,39 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_type: string
+          id: string
+          metadata: Json
+          points: number
+          source: string
+          talent_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json
+          points?: number
+          source?: string
+          talent_user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json
+          points?: number
+          source?: string
+          talent_user_id?: string
+        }
+        Relationships: []
+      }
       job_offers: {
         Row: {
           company_id: string
@@ -851,7 +884,15 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      talent_integration_scores: {
+        Row: {
+          event_count: number | null
+          last_event_at: string | null
+          talent_user_id: string | null
+          total_score: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       company_update_rls_check: {
