@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { ShieldCheck, Lock } from "lucide-react";
+import { ShieldCheck, ArrowUpRight } from "lucide-react";
 import { AxiomLogo } from "@/components/brand/AxiomLogo";
 import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
 
@@ -44,6 +44,13 @@ const CSS = `
 .ax-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:16px 18px;background:#fff;border:0;border-bottom:1px solid ${T.line};cursor:pointer}
 .ax-row:hover{background:#F9FBFD}
 .ax-num{font-variant-numeric:tabular-nums}
+.ax-choice{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;text-align:left;padding:14px 18px;margin-bottom:10px;border:1px solid ${T.lineStrong};border-radius:12px;background:#fff;color:${T.ink};font:500 16px ${T.sans};cursor:pointer;transition:border-color .15s,background .15s}
+.ax-choice:hover{border-color:${T.brand};background:#F9FBFE}
+.ax-choice[aria-pressed="true"]{border-color:${T.brand};background:${T.brandSoft};box-shadow:inset 0 0 0 1px ${T.brand};font-weight:600}
+.ax-choice:focus-visible{outline:2px solid ${T.accent};outline-offset:2px}
+.ax-choice small{display:block;font:400 13px ${T.sans};color:${T.muted};margin-top:2px}
+@keyframes axIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ax-in{animation:axIn .28s ease-out}
 @media (prefers-reduced-motion:reduce){.ax-sim *{transition:none!important;animation:none!important}}
 `;
 
@@ -58,33 +65,30 @@ export function SimShell({ children, title }: { children: ReactNode; title: stri
       <style>{CSS}</style>
 
       <header style={{ background: T.surface, borderBottom: `1px solid ${T.line}` }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/" aria-label="AXIOM — accueil"><AxiomLogo size={30} /></Link>
-          <span className="hidden sm:inline-flex items-center gap-2" style={{ font: `500 13px ${T.sans}`, color: T.muted }}>
-            <Lock className="h-3.5 w-3.5" /> Connexion sécurisée · Données protégées (RGPD)
-          </span>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          <span className="sm:hidden"><AxiomLogo size={28} tagline={false} /></span>
+          <span className="hidden sm:inline-flex"><AxiomLogo size={28} /></span>
+          <a href="/" className="inline-flex items-center gap-1.5" style={{ font: `600 13px ${T.sans}`, color: T.brand, whiteSpace: "nowrap" }}>
+            Découvrir AXIOM <ArrowUpRight className="h-4 w-4" />
+          </a>
         </div>
       </header>
 
       {children}
 
       <footer style={{ borderTop: `1px solid ${T.line}`, background: T.surface }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 grid gap-4 sm:grid-cols-[1fr_auto] items-start">
-          <div>
-            <AxiomLogo size={24} />
-            <p style={{ font: `13px/1.6 ${T.sans}`, color: T.muted, marginTop: 12, maxWidth: 620 }}>
-              AXIOM accompagne le recrutement de talents francophones sur les métiers en tension en France.
-              Service indépendant, non affilié à France Travail ni à l'administration française.
-              Projet en cours d'immatriculation.
-            </p>
-          </div>
-          <div className="flex flex-col gap-2" style={{ font: `13px ${T.sans}`, color: T.muted }}>
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4" style={{ color: T.brand }} /> Conforme RGPD</span>
-            <Link to="/rgpd-light" className="underline underline-offset-2">Politique de confidentialité</Link>
-            <span>rgpd@axiom-talents.com</span>
-          </div>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 grid gap-3" style={{ font: `12.5px/1.6 ${T.sans}`, color: T.muted }}>
+          <p style={{ margin: 0 }}>
+            <strong style={{ color: T.ink2 }}>AXIOM Talent Mobility</strong> accompagne le recrutement de talents francophones sur les métiers en tension en France.{" "}
+            <a href="/" className="underline underline-offset-2" style={{ color: T.brand }}>En savoir plus sur axiom-talents.com</a>
+          </p>
+          <p style={{ margin: 0 }}>
+            <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5" style={{ color: T.brand }} /> Données traitées conformément au RGPD</span>
+            {" · "}<Link to="/rgpd-light" className="underline underline-offset-2">Confidentialité</Link>
+            {" · "}Service indépendant, non affilié à France Travail ni à l'administration française · Projet en cours d'immatriculation.
+          </p>
+          <CesedaLegalNotice />
         </div>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-6"><CesedaLegalNotice /></div>
       </footer>
     </div>
   );

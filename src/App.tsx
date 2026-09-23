@@ -315,6 +315,7 @@ const App = () => (
             <Route path="/rgpd" element={<Rgpd />} />
             <Route path="/rgpd-light" element={<RgpdLight />} />
             <Route path="/leads" element={<Leads />} />
+            <Route path="/test" element={<Leads />} />
             <Route path="/leads/resultat/:token" element={<SimulationResultat />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/pack-altis-success" element={<PackAltisSuccess />} />

@@ -19,8 +19,12 @@ export interface SimulationResult {
   token: string;
   first_name: string;
   referral_code: string;
-  score: number;
+  /** Présent uniquement une fois le rapport débloqué */
+  score?: number;
   band: Band;
+  criteres_ok: number;
+  criteres_total: number;
+  frein: { cle: string; label: string } | null;
   metier: { rome_code: string; titre: string; tension: string; salaire: string };
   pays: string;
   clicks: number;
@@ -114,6 +118,35 @@ export const BAND_LABELS: Record<Band, { label: string; color: string; soft: str
     label: "Préparation initiale", color: "#B42318", soft: "#FDECEA",
     summary: "À ce stade, votre dossier serait difficile à défendre auprès d'un employeur. Les étapes prioritaires peuvent toutefois faire progresser votre indice rapidement.",
   },
+};
+
+/** Verdict affiché gratuitement (le score chiffré reste réservé au rapport complet). */
+export const VERDICT: Record<Band, { title: string; text: string }> = {
+  fort: {
+    title: "Votre profil a de vraies chances en France.",
+    text: "Votre métier fait partie de ceux que les employeurs français peinent à pourvoir, et votre parcours coche l'essentiel de ce qu'ils attendent.",
+  },
+  reel: {
+    title: "Vous êtes sur la bonne voie.",
+    text: "Votre projet tient debout. Un ou deux points font encore la différence entre un dossier « intéressant » et un dossier retenu.",
+  },
+  a_renforcer: {
+    title: "Le projet est réaliste, avec un peu de préparation.",
+    text: "Votre métier est demandé, mais plusieurs éléments de votre dossier doivent être consolidés avant de convaincre un employeur.",
+  },
+  pas_encore: {
+    title: "Pas encore, mais c'est rattrapable.",
+    text: "Aujourd'hui, votre dossier serait difficile à défendre. La bonne nouvelle : les points qui bloquent se travaillent, étape par étape.",
+  },
+};
+
+/** Explication du point d'attention n°1, visible gratuitement. */
+export const FREIN_COPY: Record<string, { titre: string; pourquoi: string }> = {
+  francais: { titre: "Votre niveau de français", pourquoi: "C'est le premier point qu'un employeur vérifie en entretien, et il se prouve par un test officiel." },
+  diplome: { titre: "La reconnaissance de votre qualification", pourquoi: "Sans diplôme reconnu ou certifié, un employeur hésitera à s'engager, même face à une vraie expérience." },
+  experience: { titre: "La preuve de votre expérience", pourquoi: "Un employeur français s'appuie sur des attestations et des références vérifiables, pas seulement sur un CV." },
+  passeport: { titre: "Votre passeport", pourquoi: "Aucune démarche de visa de travail ne peut démarrer sans passeport valide, et les délais d'obtention sont souvent longs." },
+  tension: { titre: "La demande pour votre métier", pourquoi: "Votre métier est moins recherché en France que certains métiers proches, où vos compétences pourraient mieux se valoriser." },
 };
 
 export const BAND_SCALE = [
