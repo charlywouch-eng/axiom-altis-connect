@@ -473,15 +473,31 @@ export type Database = {
         Row: {
           company_id: string | null
           created_at: string
+          diplome: string | null
           email_or_phone: string
           experience_bracket: string
+          first_name: string | null
+          founder_badge: boolean | null
           id: string
           metier: string
+          niveau_francais: string | null
           notes: string | null
+          owner_device: string | null
+          passeport: boolean | null
+          pays: string | null
+          referral_code: string | null
+          referred_by: string | null
+          result_token: string | null
           rgpd_consent: boolean
           rome_code: string
+          score_details: Json | null
           score_mock: number
+          score_v2: number | null
           status: string
+          testimonial: string | null
+          testimonial_ok: boolean | null
+          unlock_method: string | null
+          unlocked_at: string | null
           updated_at: string
           utm_campaign: string | null
           utm_medium: string | null
@@ -490,15 +506,31 @@ export type Database = {
         Insert: {
           company_id?: string | null
           created_at?: string
+          diplome?: string | null
           email_or_phone: string
           experience_bracket?: string
+          first_name?: string | null
+          founder_badge?: boolean | null
           id?: string
           metier: string
+          niveau_francais?: string | null
           notes?: string | null
+          owner_device?: string | null
+          passeport?: boolean | null
+          pays?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
+          result_token?: string | null
           rgpd_consent?: boolean
           rome_code?: string
+          score_details?: Json | null
           score_mock?: number
+          score_v2?: number | null
           status?: string
+          testimonial?: string | null
+          testimonial_ok?: boolean | null
+          unlock_method?: string | null
+          unlocked_at?: string | null
           updated_at?: string
           utm_campaign?: string | null
           utm_medium?: string | null
@@ -507,15 +539,31 @@ export type Database = {
         Update: {
           company_id?: string | null
           created_at?: string
+          diplome?: string | null
           email_or_phone?: string
           experience_bracket?: string
+          first_name?: string | null
+          founder_badge?: boolean | null
           id?: string
           metier?: string
+          niveau_francais?: string | null
           notes?: string | null
+          owner_device?: string | null
+          passeport?: boolean | null
+          pays?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
+          result_token?: string | null
           rgpd_consent?: boolean
           rome_code?: string
+          score_details?: Json | null
           score_mock?: number
+          score_v2?: number | null
           status?: string
+          testimonial?: string | null
+          testimonial_ok?: boolean | null
+          unlock_method?: string | null
+          unlocked_at?: string | null
           updated_at?: string
           utm_campaign?: string | null
           utm_medium?: string | null
@@ -791,6 +839,27 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_clicks: {
+        Row: {
+          created_at: string
+          id: string
+          referral_code: string
+          visitor_hash: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referral_code: string
+          visitor_hash: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referral_code?: string
+          visitor_hash?: string
+        }
+        Relationships: []
+      }
       retention_checkpoints: {
         Row: {
           checkpoint_day: number
@@ -837,6 +906,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      simulator_settings: {
+        Row: {
+          key: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          value?: Json
+        }
+        Relationships: []
       }
       talent_notification_log: {
         Row: {
@@ -991,6 +1075,19 @@ export type Database = {
       }
     }
     Views: {
+      simulator_beta_kpis: {
+        Row: {
+          deblocages: number | null
+          deblocages_partage: number | null
+          deblocages_temoignage: number | null
+          pays: string | null
+          score_moyen: number | null
+          semaine: string | null
+          tests_termines: number | null
+          venus_par_parrainage: number | null
+        }
+        Relationships: []
+      }
       talent_integration_scores: {
         Row: {
           event_count: number | null
@@ -1002,6 +1099,23 @@ export type Database = {
       }
     }
     Functions: {
+      _sim_reco: {
+        Args: {
+          _details: Json
+          _metier: Database["public"]["Tables"]["metiers_minefop_rome"]["Row"]
+        }
+        Returns: Json
+      }
+      _sim_score: {
+        Args: {
+          _diplome: string
+          _exp: string
+          _fr: string
+          _passeport: boolean
+          _tension: string
+        }
+        Returns: Json
+      }
       company_update_rls_check: {
         Args: {
           _is_subscribed: boolean
@@ -1014,6 +1128,7 @@ export type Database = {
         Args: { _user_a: string; _user_b: string }
         Returns: string
       }
+      get_simulation_result: { Args: { _token: string }; Returns: Json }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -1045,6 +1160,29 @@ export type Database = {
         }[]
       }
       notify_due_retention_checkpoints: { Args: never; Returns: number }
+      simulate_eligibility: {
+        Args: {
+          _device?: string
+          _diplome: string
+          _email_or_phone: string
+          _experience: string
+          _first_name: string
+          _niveau_francais: string
+          _passeport: boolean
+          _pays: string
+          _referred_by?: string
+          _rgpd: boolean
+          _rome_code: string
+          _utm_campaign?: string
+          _utm_medium?: string
+          _utm_source?: string
+        }
+        Returns: Json
+      }
+      submit_testimonial: {
+        Args: { _text: string; _token: string }
+        Returns: Json
+      }
       talent_profile_update_check_rls: {
         Args: {
           new_row: Database["public"]["Tables"]["talent_profiles"]["Row"]
@@ -1062,6 +1200,10 @@ export type Database = {
           _visa_status: string
         }
         Returns: boolean
+      }
+      track_referral_click: {
+        Args: { _code: string; _visitor: string }
+        Returns: Json
       }
     }
     Enums: {
