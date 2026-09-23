@@ -97,16 +97,48 @@ const TENSION_ORDER: Record<string, number> = {
 };
 export const tensionRank = (t: string) => TENSION_ORDER[t] ?? 9;
 
-export const BAND_LABELS: Record<Band, { label: string; color: string }> = {
-  fort:        { label: "Potentiel fort",                               color: "hsl(158,64%,45%)" },
-  reel:        { label: "Potentiel réel",                               color: "hsl(189,94%,43%)" },
-  a_renforcer: { label: "Potentiel à renforcer",                        color: "hsl(45,93%,52%)" },
-  pas_encore:  { label: "Pas encore prêt — voici comment progresser",   color: "hsl(0,80%,68%)" },
+export const BAND_LABELS: Record<Band, { label: string; color: string; soft: string; summary: string }> = {
+  fort: {
+    label: "Préparation élevée", color: "#0F7B5F", soft: "#E7F5F0",
+    summary: "Votre profil correspond bien à un métier où les employeurs français peinent à recruter. Les éléments clés d'un dossier sont réunis ; il reste à les documenter.",
+  },
+  reel: {
+    label: "Préparation intermédiaire", color: "#1D5FB8", soft: "#EAF1FB",
+    summary: "Votre profil présente de vrais atouts pour ce métier. Un ou deux points doivent être renforcés avant une candidature auprès d'employeurs en France.",
+  },
+  a_renforcer: {
+    label: "Préparation à consolider", color: "#A15C00", soft: "#FDF3E4",
+    summary: "Le projet est réaliste mais plusieurs critères sont encore en dessous des attentes des employeurs. Le plan d'action détaillé indique par où commencer.",
+  },
+  pas_encore: {
+    label: "Préparation initiale", color: "#B42318", soft: "#FDECEA",
+    summary: "À ce stade, votre dossier serait difficile à défendre auprès d'un employeur. Les étapes prioritaires peuvent toutefois faire progresser votre indice rapidement.",
+  },
 };
 
+export const BAND_SCALE = [
+  { from: 0, to: 39, key: "pas_encore" as Band },
+  { from: 40, to: 54, key: "a_renforcer" as Band },
+  { from: 55, to: 74, key: "reel" as Band },
+  { from: 75, to: 100, key: "fort" as Band },
+];
+
+/** Pondérations publiques de la méthode (identiques à la fonction serveur _sim_score). */
+export const METHODOLOGY = [
+  { cle: "tension", label: "Demande du métier en France", max: 30, detail: "Niveau de tension du métier selon notre référentiel ROME." },
+  { cle: "experience", label: "Expérience professionnelle", max: 25, detail: "Années d'expérience déclarées dans le métier visé." },
+  { cle: "diplome", label: "Qualification / diplôme", max: 20, detail: "Niveau de qualification et possibilité de reconnaissance en France." },
+  { cle: "francais", label: "Niveau de français", max: 15, detail: "Niveau déclaré selon le Cadre européen commun de référence (CECR)." },
+  { cle: "passeport", label: "Passeport valide", max: 10, detail: "Condition préalable à toute démarche de visa de travail." },
+];
+
+export const reportReference = (r: { token: string; created_at?: string }) =>
+  `AX-${new Date(r.created_at || Date.now()).getFullYear()}-${r.token.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+
 export const DISCLAIMER =
-  "Indice indicatif calculé à partir de la liste des métiers en tension et de votre profil déclaré. " +
-  "Il ne constitue ni une décision administrative ni une garantie de visa ou d'embauche.";
+  "Indice indicatif calculé à partir de votre profil déclaré et de notre référentiel des métiers en tension (nomenclature ROME). " +
+  "Il ne constitue ni une décision administrative, ni une garantie de visa ou d'embauche. " +
+  "AXIOM est un service indépendant, non affilié à France Travail ni à l'administration française.";
 
 const SERVER_ERRORS: Record<string, string> = {
   rgpd_required: "Cochez la case RGPD pour continuer.",

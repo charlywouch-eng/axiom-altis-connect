@@ -1,0 +1,117 @@
+import type { ReactNode } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import { ShieldCheck, Lock } from "lucide-react";
+import { AxiomLogo } from "@/components/brand/AxiomLogo";
+import { CesedaLegalNotice } from "@/components/CesedaLegalNotice";
+
+/** Palette et typographie propres au simulateur (charte « rapport institutionnel »). */
+export const T = {
+  bg: "#F5F7FA",
+  surface: "#FFFFFF",
+  ink: "#0B1F3A",
+  ink2: "#2C3E57",
+  muted: "#5B6B82",
+  faint: "#8A97AA",
+  line: "#E1E6ED",
+  lineStrong: "#C9D2DE",
+  brand: "#123E7C",
+  brandHover: "#0E3266",
+  brandSoft: "#EAF1FB",
+  accent: "#4C8DF6",
+  sans: "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif",
+  serif: "'Source Serif 4', Georgia, 'Times New Roman', serif",
+  mono: "'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace",
+};
+
+const CSS = `
+.ax-sim{background:${T.bg};color:${T.ink};font-family:${T.sans};min-height:100vh;-webkit-font-smoothing:antialiased}
+.ax-sim h1,.ax-sim h2,.ax-sim h3{color:${T.ink};text-wrap:balance}
+.ax-card{background:${T.surface};border:1px solid ${T.line};border-radius:12px}
+.ax-eyebrow{font:600 11px/1.2 ${T.sans};letter-spacing:.12em;text-transform:uppercase;color:${T.muted}}
+.ax-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border-radius:8px;background:${T.brand};color:#fff;font:600 15px ${T.sans};border:0;cursor:pointer;transition:background .15s}
+.ax-btn:hover{background:${T.brandHover}}
+.ax-btn:disabled{opacity:.5;cursor:not-allowed}
+.ax-btn-ghost{background:#fff;color:${T.ink};border:1px solid ${T.lineStrong}}
+.ax-btn-ghost:hover{background:${T.bg}}
+.ax-input{width:100%;height:46px;border:1px solid ${T.lineStrong};border-radius:8px;padding:0 14px;font:15px ${T.sans};color:${T.ink};background:#fff}
+.ax-input:focus,.ax-seg button:focus-visible,.ax-btn:focus-visible,.ax-row:focus-visible{outline:2px solid ${T.accent};outline-offset:2px}
+.ax-label{display:block;font:600 14px ${T.sans};color:${T.ink};margin-bottom:4px}
+.ax-help{font:13px/1.45 ${T.sans};color:${T.muted};margin:0 0 8px}
+.ax-seg{display:flex;flex-wrap:wrap;gap:8px}
+.ax-seg button{min-height:44px;padding:0 16px;border-radius:8px;border:1px solid ${T.lineStrong};background:#fff;color:${T.ink2};font:500 14px ${T.sans};cursor:pointer}
+.ax-seg button[aria-checked="true"]{background:${T.brandSoft};border-color:${T.brand};color:${T.brand};font-weight:600;box-shadow:inset 0 0 0 1px ${T.brand}}
+.ax-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:16px 18px;background:#fff;border:0;border-bottom:1px solid ${T.line};cursor:pointer}
+.ax-row:hover{background:#F9FBFD}
+.ax-num{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.ax-sim *{transition:none!important;animation:none!important}}
+`;
+
+export function SimShell({ children, title }: { children: ReactNode; title: string }) {
+  return (
+    <div className="ax-sim">
+      <Helmet>
+        <title>{title}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" />
+      </Helmet>
+      <style>{CSS}</style>
+
+      <header style={{ background: T.surface, borderBottom: `1px solid ${T.line}` }}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          <Link to="/" aria-label="AXIOM — accueil"><AxiomLogo size={30} /></Link>
+          <span className="hidden sm:inline-flex items-center gap-2" style={{ font: `500 13px ${T.sans}`, color: T.muted }}>
+            <Lock className="h-3.5 w-3.5" /> Connexion sécurisée · Données protégées (RGPD)
+          </span>
+        </div>
+      </header>
+
+      {children}
+
+      <footer style={{ borderTop: `1px solid ${T.line}`, background: T.surface }}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 grid gap-4 sm:grid-cols-[1fr_auto] items-start">
+          <div>
+            <AxiomLogo size={24} />
+            <p style={{ font: `13px/1.6 ${T.sans}`, color: T.muted, marginTop: 12, maxWidth: 620 }}>
+              AXIOM accompagne le recrutement de talents francophones sur les métiers en tension en France.
+              Service indépendant, non affilié à France Travail ni à l'administration française.
+              Projet en cours d'immatriculation.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2" style={{ font: `13px ${T.sans}`, color: T.muted }}>
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4" style={{ color: T.brand }} /> Conforme RGPD</span>
+            <Link to="/rgpd-light" className="underline underline-offset-2">Politique de confidentialité</Link>
+            <span>rgpd@axiom-talents.com</span>
+          </div>
+        </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-6"><CesedaLegalNotice /></div>
+      </footer>
+    </div>
+  );
+}
+
+/** Indicateur de progression en 3 étapes. */
+export function Stepper({ step }: { step: 1 | 2 | 3 }) {
+  const steps = ["Métier visé", "Votre profil", "Rapport"];
+  return (
+    <ol className="flex items-center gap-2 sm:gap-3" aria-label="Progression">
+      {steps.map((label, i) => {
+        const n = i + 1, done = n < step, active = n === step;
+        return (
+          <li key={label} className="flex items-center gap-2 sm:gap-3" aria-current={active ? "step" : undefined}>
+            <span className="inline-flex items-center gap-2">
+              <span className="ax-num inline-flex items-center justify-center rounded-full"
+                style={{ width: 24, height: 24, font: `600 12px ${T.sans}`,
+                  background: active || done ? T.brand : "#fff", color: active || done ? "#fff" : T.faint,
+                  border: `1px solid ${active || done ? T.brand : T.lineStrong}` }}>
+                {done ? "✓" : n}
+              </span>
+              <span className={active ? "" : "hidden sm:inline"} style={{ font: `${active ? 600 : 500} 13px ${T.sans}`, color: active ? T.ink : T.muted }}>{label}</span>
+            </span>
+            {n < 3 && <span aria-hidden style={{ width: 28, height: 1, background: T.lineStrong }} />}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
