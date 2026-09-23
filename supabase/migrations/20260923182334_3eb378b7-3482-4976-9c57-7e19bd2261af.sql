@@ -1,0 +1,11 @@
+update public.metiers_minefop_rome set rome_code='J1506', rome_title='Soins infirmiers généralistes' where rome_code='J1501' and minefop_title='Infirmier';
+update public.metiers_minefop_rome set rome_code='J1501', rome_title='Soins d''hygiène, de confort du patient' where rome_code='J1303';
+update public.metiers_minefop_rome set rome_code='F1703', rome_title='Maçonnerie' where rome_code='F1502';
+update public.metiers_minefop_rome set rome_code='F1602', rome_title='Électricité bâtiment' where rome_code='F1603' and minefop_title ilike 'Électricien%';
+update public.metiers_minefop_rome set rome_code='F1603', rome_title='Installation d''équipements sanitaires et thermiques' where rome_code='F1605';
+update public.metiers_minefop_rome set rome_title='Maintenance d''installation de chauffage' where rome_code='I1308';
+update public.metiers_minefop_rome set rome_code='N1103', rome_title='Magasinage et préparation de commandes' where rome_code='T2A00';
+update public.metiers_minefop_rome set rome_code='N4101', rome_title='Conduite de transport de marchandises sur longue distance' where rome_code='T2C00';
+update public.metiers_minefop_rome set rome_code='A1203', rome_title='Aménagement et entretien des espaces verts' where rome_code='T2Z90';
+update public.metiers_minefop_rome set rome_code='H1502', rome_title='Management et ingénierie qualité industrielle' where rome_code='H1401';
+update public.metiers_minefop_rome set rome_title='Conduite d''équipement de production alimentaire' where rome_code='H2102';
