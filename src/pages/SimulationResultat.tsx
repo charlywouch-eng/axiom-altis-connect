@@ -52,7 +52,9 @@ function ShareActions({ code, onShare }: { code: string; onShare: (canal: string
       <a className="ax-btn" style={{ background: "#1B4F9C" }} href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`} target="_blank" rel="noopener noreferrer" onClick={() => onShare("facebook")}>Partager sur Facebook</a>
       <button type="button" className="ax-btn ax-btn-ghost" onClick={copy}>{copied ? <><Check className="h-4 w-4" /> Lien copié</> : <><Copy className="h-4 w-4" /> Copier le lien</>}</button>
       {canNative && <button type="button" className="ax-btn ax-btn-ghost" onClick={async () => { onShare("native"); try { await navigator.share({ title: "Évaluation AXIOM", text: msg }); } catch { /* annulé */ } }}><Share2 className="h-4 w-4" /> Autres applications</button>}
-      <p className="sm:col-span-2" style={{ font: `12px ${T.sans}`, color: T.muted, margin: "4px 0 0", wordBreak: "break-all" }}>Votre lien personnel : <span style={{ fontFamily: T.mono }}>{link}</span></p>
+      <p className="sm:col-span-2" style={{ font: `13px/1.5 ${T.sans}`, color: T.muted, margin: "4px 0 0" }}>
+        Votre code de recommandation : <strong style={{ fontFamily: T.mono, color: T.ink, letterSpacing: ".06em" }}>{code}</strong>. Il est intégré au lien que vous partagez : chaque proche qui l'ouvre est compté automatiquement.
+      </p>
     </div>
   );
 }
