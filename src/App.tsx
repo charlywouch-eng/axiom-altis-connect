@@ -34,6 +34,7 @@ const DemandeDevis = lazy(() => import("./pages/DemandeDevis"));
 const Rgpd = lazy(() => import("./pages/Rgpd"));
 const RgpdLight = lazy(() => import("./pages/RgpdLight"));
 const Leads = lazy(() => import("./pages/Leads"));
+const SimulationResultat = lazy(() => import("./pages/SimulationResultat"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PackAltisSuccess = lazy(() => import("./pages/PackAltisSuccess"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
@@ -314,6 +315,7 @@ const App = () => (
             <Route path="/rgpd" element={<Rgpd />} />
             <Route path="/rgpd-light" element={<RgpdLight />} />
             <Route path="/leads" element={<Leads />} />
+            <Route path="/leads/resultat/:token" element={<SimulationResultat />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/pack-altis-success" element={<PackAltisSuccess />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />

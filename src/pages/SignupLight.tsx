@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { trackFunnel } from "@/lib/trackFunnel";
 import { trackGA4 } from "@/lib/ga4";
+import { usePaidMode } from "@/lib/simulator";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,6 +124,8 @@ const STEP_MESSAGES: Record<FunnelStep, string> = {
 
 // ── Main Component ──────────────────────────────────────────────
 export default function SignupLight() {
+  // Bêta : aucun paiement tant que simulator_settings.paid_mode = false
+  const paidMode = usePaidMode();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
 
@@ -345,7 +348,7 @@ export default function SignupLight() {
       <ConfettiCanvas trigger={showConfetti} />
       <Helmet>
         <title>Inscription talent rapide – AXIOM & ALTIS | Travaillez en France</title>
-        <meta name="description" content="Inscrivez-vous en 2 min sans mot de passe. Score de compatibilité IA gratuit pour les métiers en tension en France : BTP, santé, CHR, logistique. Certification MINEFOP + Pack ALTIS visa." />
+        <meta name="description" content="Inscrivez-vous en 2 min sans mot de passe. Score de compatibilité IA gratuit pour les métiers en tension en France : BTP, santé, CHR, logistique." />
         <link rel="canonical" href="https://axiom-talents.com/signup-light" />
         <meta property="og:title" content="Inscription talent rapide – AXIOM & ALTIS" />
         <meta property="og:description" content="Évaluation gratuite + certification officielle. Inscription sans mot de passe en 2 min pour travailler en France." />
@@ -1033,7 +1036,7 @@ export default function SignupLight() {
                   <div className="grid grid-cols-3 gap-2.5 mt-6">
                     {[
                       { icon: TrendingUp, label: "Matching", value: score >= 80 ? "Élevé" : "Bon",   color: "text-success", bg: "bg-success/[0.08]" },
-                      { icon: Award,      label: "MINEFOP",  value: "Éligible",                      color: "text-accent", bg: "bg-accent/[0.08]"  },
+                      { icon: Award,      label: "MINEFOP",  value: "Selon diplôme",                      color: "text-accent", bg: "bg-accent/[0.08]"  },
                       { icon: Star,       label: "Priorité", value: score >= 85 ? "Haute" : "Normale", color: "text-tension", bg: "bg-tension/[0.08]" },
                     ].map((s) => {
                       const Icon = s.icon;
@@ -1155,6 +1158,8 @@ export default function SignupLight() {
                     Score basique : <span className="font-bold text-accent">{score}%</span> · Débloquez les détails ci-dessous.
                   </p>
 
+                  {paidMode ? (
+                  <>
                   {/* Option 1: 4,99 € — Bleu souverain */}
                   <Button
                     size="lg"
@@ -1202,7 +1207,7 @@ export default function SignupLight() {
                     </Button>
                   </div>
                   <div className="space-y-1 mt-2 mb-3 pl-2">
-                    {["Visa de travail : dossier ANEF complet", "Accueil aéroport + logement meublé 1 mois", "Accompagnement administratif intégral", "Certification MINEFOP officielle"].map(i => (
+                    {["Accompagnement personnalisé de votre dossier", "Priorité de mise en relation avec les recruteurs"].map(i => (
                       <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
                         <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
                         {i}
@@ -1213,6 +1218,13 @@ export default function SignupLight() {
                   <p className="text-center text-[10px] mt-2 text-white/25">
                     🔒 Paiement sécurisé Stripe · Accès immédiat
                   </p>
+                  </>
+                  ) : (
+                    <Button asChild size="lg" className="w-full h-14 text-base rounded-xl font-bold border-0 text-white"
+                      style={{ background: "hsl(221,83%,53%)" }}>
+                      <Link to="/leads">Voir mon rapport détaillé gratuit (bêta)</Link>
+                    </Button>
+                  )}
 
                   <button
                     onClick={() => window.location.href = "/dashboard-talent"}
@@ -1240,7 +1252,7 @@ export default function SignupLight() {
       {/* ══════════════════════════════════════════════════
           Payment Dialog — Elegant non-aggressive popup
       ══════════════════════════════════════════════════ */}
-      <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+      <Dialog open={paidMode && showPaymentDialog} onOpenChange={setShowPaymentDialog}>
         <DialogContent className="max-w-sm rounded-3xl border-accent/20 bg-[hsl(222,47%,9%)] text-white shadow-2xl p-0 overflow-hidden">
           <div className="h-1 w-full bg-gradient-cta" />
           <div className="p-6 space-y-5">
@@ -1295,7 +1307,7 @@ export default function SignupLight() {
                 <span className="font-black text-lg text-success">29 €</span>
               </div>
               <div className="space-y-1">
-                {["Visa de travail : dossier ANEF complet", "Accueil aéroport + logement 1 mois", "Accompagnement administratif intégral", "Certification MINEFOP officielle", "Priorité recruteurs ×3"].map(i => (
+                {["Accompagnement personnalisé de votre dossier", "Priorité de mise en relation avec les recruteurs"].map(i => (
                   <div key={i} className="flex items-center gap-1.5 text-xs text-white/50">
                     <CheckCircle2 className="h-3 w-3 shrink-0 text-success" />
                     {i}
