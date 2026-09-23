@@ -30,7 +30,12 @@ type GA4Event =
   | "funnel_step_experience"
   | "funnel_step_pays"
   | "conversion_payment_success"
-  | "conversion_pack_altis_success";
+  | "conversion_pack_altis_success"
+  | "sim_started"
+  | "sim_completed"
+  | "sim_share_clicked"
+  | "sim_unlocked"
+  | "sim_pdf_downloaded";
 
 /**
  * Check if analytics consent has been given.

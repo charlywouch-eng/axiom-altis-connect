@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { LeadCompanyCell, type LeadCompany } from "@/components/dashboard/LeadCompanyCell";
+import { SimulatorBetaTab } from "@/components/dashboard/SimulatorBetaTab";
 
 /* ─── Types ──────────────────────────────────────────────────── */
 interface Lead {
@@ -306,12 +307,15 @@ export default function AdminLeads() {
 
         {/* ── Tabs ── */}
         <Tabs defaultValue="pipeline">
-          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex h-auto gap-1 bg-muted/60 p-1 rounded-xl mb-4">
+          <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:flex h-auto gap-1 bg-muted/60 p-1 rounded-xl mb-4">
             <TabsTrigger value="pipeline" className="text-xs font-medium px-4 py-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Kanban className="h-3.5 w-3.5 mr-1.5" />Pipeline
             </TabsTrigger>
             <TabsTrigger value="leads" className="text-xs font-medium px-4 py-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Users className="h-3.5 w-3.5 mr-1.5" />Leads entrants
+            </TabsTrigger>
+            <TabsTrigger value="simulateur" className="text-xs font-medium px-4 py-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              Simulateur bêta
             </TabsTrigger>
             <TabsTrigger value="marketing" className="text-xs font-medium px-4 py-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <Globe className="h-3.5 w-3.5 mr-1.5" />Marketing & Tracking
@@ -522,6 +526,11 @@ export default function AdminLeads() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* ── TAB SIMULATEUR BÊTA ── */}
+          <TabsContent value="simulateur">
+            <SimulatorBetaTab />
           </TabsContent>
 
           {/* ── TAB MARKETING ── */}
